@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEGIS Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090F;
+  --surface: rgba(20, 24, 36, 0.6);
+  --surface-strong: #121623;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #E7EAF2;
+  --muted: #8A93A8;
+  --accent: #5EEAD4;
+  --accent-ink: #04201C;
+  --warn: #F5B942;
+  --danger: #F0616D;
+  --ok: #5EEAD4;
+  --radius-card: 16px;
+  --radius-ctrl: 10px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-head: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(900px 600px at 15% -10%, rgba(94, 234, 212, 0.10), transparent 60%),
+    radial-gradient(800px 600px at 110% 10%, rgba(139, 92, 246, 0.10), transparent 60%);
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.up { color: var(--ok); }
+.down { color: var(--danger); }
+.warn { color: var(--warn); }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  backdrop-filter: blur(14px);
+  background: rgba(7, 9, 15, 0.7);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 700; letter-spacing: 0.04em; }
+.brand-mark { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(from 200deg, var(--accent), #8B5CF6, var(--accent)); }
+.nav { display: flex; gap: 22px; align-items: center; font-size: 14px; color: var(--muted); }
+.nav a:hover { color: var(--text); }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: var(--radius-ctrl);
+  font-weight: 600; font-size: 14px;
+  transition: transform 200ms var(--ease), background 200ms var(--ease), border-color 200ms var(--ease);
+}
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost { border: 1px solid var(--line-strong); }
+.btn-ghost:hover { border-color: var(--accent); }
+.btn-danger { border: 1px solid rgba(240, 97, 109, 0.4); color: var(--danger); }
+.btn-danger:hover { background: rgba(240, 97, 109, 0.1); }
+.btn-small { padding: 6px 10px; font-size: 13px; }
+
+/* Views */
+.view { display: none; }
+.view.active { display: block; animation: fade 400ms var(--ease); }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Landing */
+.hero {
+  max-width: 1200px; margin: 0 auto;
+  padding: 96px 28px 64px;
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center;
+}
+.eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
+.hero h1 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(40px, 5.4vw, 68px); line-height: 1.02; letter-spacing: -0.02em;
+  margin: 18px 0 20px;
+}
+.hero p.lede { font-size: 18px; color: var(--muted); max-width: 52ch; }
+.hero-cta { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+.meter-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card);
+  padding: 26px; backdrop-filter: blur(12px);
+}
+.meter-label { font-size: 13px; color: var(--muted); }
+.meter-value { font-family: var(--font-head); font-size: 56px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; }
+.meter-bar { height: 8px; border-radius: 99px; background: var(--surface-strong); margin: 18px 0 10px; overflow: hidden; }
+.meter-fill { height: 100%; width: 62%; border-radius: 99px; background: linear-gradient(90deg, var(--danger), var(--warn), var(--accent)); transition: width 900ms var(--ease); }
+.meter-rows { display: grid; gap: 10px; margin-top: 18px; font-size: 14px; }
+.meter-rows div { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 10px; }
+
+.ticker { border-block: 1px solid var(--line); overflow: hidden; white-space: nowrap; padding: 14px 0; }
+.ticker-track { display: inline-flex; gap: 48px; animation: scroll 40s linear infinite; font-family: var(--font-mono); font-size: 14px; }
+.ticker-track span b { font-weight: 500; margin-left: 8px; }
+@keyframes scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track, .view.active, .meter-fill { animation: none; transition: none; }
+}
+
+.section { max-width: 1200px; margin: 0 auto; padding: 96px 28px; }
+.section h2 { font-family: var(--font-head); font-size: clamp(28px, 3.2vw, 40px); letter-spacing: -0.02em; line-height: 1.1; max-width: 22ch; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 48px; border-top: 1px solid var(--line); }
+.step { padding: 28px 28px 0 0; }
+.step + .step { padding-left: 28px; border-left: 1px solid var(--line); }
+.step .num { font-family: var(--font-mono); color: var(--accent); font-size: 13px; }
+.step h3 { font-family: var(--font-head); font-size: 22px; margin: 10px 0 8px; }
+.step p { color: var(--muted); }
+
+.trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.trust-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 24px; }
+.trust-card h4 { font-family: var(--font-head); font-size: 17px; margin-bottom: 6px; }
+.trust-card p { color: var(--muted); font-size: 14px; }
+
+footer { border-top: 1px solid var(--line); padding: 32px 28px; color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+
+/* Dashboard */
+.dash { display: grid; grid-template-columns: 240px 1fr 300px; gap: 16px; padding: 16px; min-height: calc(100vh - 62px); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 18px; backdrop-filter: blur(12px); min-width: 0; }
+.panel h5 { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+
+.search {
+  width: 100%; padding: 9px 12px; border-radius: var(--radius-ctrl);
+  background: var(--surface-strong); border: 1px solid var(--line); color: var(--text); font: inherit; font-size: 14px;
+  margin-bottom: 12px;
+}
+.search:focus { outline: none; border-color: var(--accent); }
+.market-row {
+  display: flex; justify-content: space-between; align-items: center;
+  width: 100%; padding: 9px 10px; border-radius: 8px; font-size: 14px; text-align: left;
+  transition: background 200ms var(--ease);
+}
+.market-row:hover { background: rgba(255, 255, 255, 0.04); }
+.market-row.active { background: rgba(94, 234, 212, 0.08); }
+.market-row .mono { font-size: 13px; }
+
+.header-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.pair { font-family: var(--font-head); font-size: 20px; font-weight: 600; }
+.price { font-family: var(--font-mono); font-size: 30px; margin-top: 4px; }
+.health { text-align: right; }
+.health-value { font-family: var(--font-head); font-size: 64px; font-weight: 600; line-height: 1; letter-spacing: -0.03em; }
+.health-state { font-size: 13px; margin-top: 6px; }
+
+.chart { width: 100%; height: 220px; margin-top: 16px; }
+.chart path.line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.chart path.area { fill: url(#grad); }
+
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+.control label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+.book { font-family: var(--font-mono); font-size: 13px; }
+.book-row { display: grid; grid-template-columns: 1fr 1fr; padding: 4px 0; position: relative; }
+.book-row .bar { position: absolute; top: 0; bottom: 0; right: 0; opacity: 0.12; border-radius: 4px; }
+.book-row.ask .bar { background: var(--danger); }
+.book-row.bid .bar { background: var(--accent); left: 0; right: auto; }
+.book-row span { position: relative; }
+.book-row span:last-child { text-align: right; }
+.book-mid { padding: 10px 0; font-family: var(--font-head); font-size: 18px; border-block: 1px solid var(--line); margin: 6px 0; }
+
+.hedges { margin-top: 16px; }
+.hedge {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: 12px; align-items: center;
+  padding: 14px 0; border-top: 1px solid var(--line); font-size: 14px;
+}
+.hedge:first-child { border-top: 0; }
+.tag { font-size: 12px; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--line-strong); color: var(--muted); }
+.tag.ok { color: var(--ok); border-color: rgba(94, 234, 212, 0.4); }
+.tag.warn { color: var(--warn); border-color: rgba(245, 185, 66, 0.4); }
+
+.events { list-style: none; display: grid; gap: 12px; font-size: 14px; }
+.events li { display: grid; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.events li:last-child { border-bottom: 0; }
+.events time { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+.confirm { display: none; margin-top: 10px; gap: 8px; align-items: center; font-size: 13px; }
+.confirm.show { display: flex; }
+
+.sample-note { font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+@media (max-width: 1000px) {
+  .dash { grid-template-columns: 1fr; }
+  .hero, .steps, .trust { grid-template-columns: 1fr; }
+  .step + .step { padding-left: 0; border-left: 0; }
+  .nav a:not(.keep) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#landing" class="brand"><span class="brand-mark" aria-hidden="true"></span>AEGIS</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#landing">Overview</a>
+    <a href="#landing" data-scroll="how">How it works</a>
+    <a href="#landing" data-scroll="trust">Security</a>
+    <a href="#dashboard" class="btn btn-ghost btn-small keep">Dashboard</a>
+  </nav>
+</header>
+
+<!-- LANDING -->
+<main id="landing" class="view active" aria-label="Landing page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Non-custodial hedging on Elysium L2</div>
+      <h1>Your position is protected before it is liquidated.</h1>
+      <p class="lede">AEGIS opens opposite hedges on HyperCore when your health factor falls, so your collateral stays yours and your positions stay open.</p>
+      <div class="hero-cta">
+        <a href="#dashboard" class="btn btn-primary">Open dashboard</a>
+        <a href="#landing" data-scroll="how" class="btn btn-ghost">How hedging works</a>
+      </div>
+    </div>
+    <div class="meter-card" aria-label="Sample health factor">
+      <div class="meter-label">Sample position · ETH perp</div>
+      <div class="meter-value mono" id="heroHealth">1.62</div>
+      <div class="meter-bar"><div class="meter-fill" id="heroFill"></div></div>
+      <div class="meter-rows">
+        <div><span class="muted">Collateral</span><span class="mono">12.40 ETH</span></div>
+        <div><span class="muted">Trigger health</span><span class="mono">1.20</span></div>
+        <div><span class="muted">Hedge ratio</span><span class="mono">50%</span></div>
+      </div>
+      <p class="sample-note">Illustrative values only.</p>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <section class="section" id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>Watch, hedge, restore. Nothing is sold.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Watch</h3>
+        <p>Sentinels read HyperCore order books and mark prices every few milliseconds against your trigger.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Hedge</h3>
+        <p>When health crosses your threshold, AEGIS opens a short perp that offsets your exposure. Collateral is never sold.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Restore</h3>
+        <p>Close the hedge when the market settles, or override it instantly from the dashboard.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="trust">
+    <div class="eyebrow">Security</div>
+    <h2>Built so the vault cannot withdraw.</h2>
+    <div class="trust" style="margin-top: 48px;">
+      <div class="trust-card">
+        <h4>Trade-only session keys</h4>
+        <p>Your delegated key can place hedges and nothing else. Withdrawals are blocked at the contract level.</p>
+      </div>
+      <div class="trust-card">
+        <h4>Slashable sentinel bonds</h4>
+        <p>Every sentinel node stakes a minimum bond that is forfeited if it misses its service levels.</p>
+      </div>
+      <div class="trust-card">
+        <h4>One-click override</h4>
+        <p>Revoke Sentinel authority or close every hedge in a single action, at any time.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 AEGIS Protocol</span>
+    <span><a href="#dashboard">Dashboard</a></span>
+  </footer>
+</main>
+
+<!-- DASHBOARD -->
+<main id="dashboard" class="view" aria-label="Trader dashboard">
+  <div class="dash">
+    <aside class="panel" aria-label="Markets">
+      <h5>Markets</h5>
+      <input class="search" id="search" type="search" placeholder="Search markets" aria-label="Search markets">
+      <div id="markets"></div>
+    </aside>
+
+    <section class="panel" aria-label="Position">
+      <div class="header-row">
+        <div>
+          <div class="pair" id="pairName">ETH-PERP</div>
+          <div class="price mono" id="pairPrice">$3,412.80</div>
+        </div>
+        <div class="health">
+          <div class="muted" style="font-size:13px">Health factor</div>
+          <div class="health-value mono" id="healthValue">1.62</div>
+          <div class="health-state" id="healthState"></div>
+        </div>
+      </div>
+
+      <svg class="chart" id="chart" viewBox="0 0 800 220" preserveAspectRatio="none" role="img" aria-label="Price over time"></svg>
+
+      <div class="controls">
+        <div class="control">
+          <label for="ratio"><span>Hedge ratio</span><span class="mono" id="ratioOut">50%</span></label>
+          <input id="ratio" type="range" min="0" max="100" value="50">
+        </div>
+        <div class="control">
+          <label for="trigger"><span>Trigger health</span><span class="mono" id="triggerOut">1.20</span></label>
+          <input id="trigger" type="range" min="110" max="200" value="120">
+        </div>
+      </div>
+      <p class="sample-note">Sample data. Nothing here is connected to a live vault.</p>
+
+      <div class="hedges">
+        <div class="eyebrow" style="color: var(--muted); margin-bottom: 8px;">Open hedges</div>
+        <div id="hedges"></div>
+        <div class="confirm" id="confirmBox" role="alertdialog" aria-labelledby="confirmText">
+          <span id="confirmText"></span>
+          <button class="btn btn-danger btn-small" id="confirmYes">Confirm</button>
+          <button class="btn btn-ghost btn-small" id="confirmNo">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="Order book and events">
+      <h5>Order book</h5>
+      <div class="book" id="book"></div>
+      <h5 style="margin-top: 22px;">Recent events</h5>
+      <ul class="events" id="events"></ul>
+    </aside>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const fmt = (n, d = 2) => n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  // Sample data only.
+  const markets = [
+    { s: "ETH-PERP", p: 3412.8, c: 2.14 },
+    { s: "BTC-PERP", p: 92140.5, c: -0.67 },
+    { s: "SOL-PERP", p: 186.42, c: 4.02 },
+    { s: "HYPE-PERP", p: 31.07, c: 6.85 },
+    { s: "ARB-PERP", p: 0.7412, c: -1.33 },
+    { s: "AVAX-PERP", p: 38.66, c: 0.41 },
+  ];
+  let current = markets[0];
+  let price = current.p;
+  let health = 1.62;
+
+  // Ticker
+  const tickerHTML = markets.map(m =>
+    `<span>${m.s.replace("-PERP", "")} <b class="${m.c >= 0 ? "up" : "down"}">${m.c >= 0 ? "+" : ""}${m.c.toFixed(2)}%</b></span>`
+  ).join("");
+  $("#ticker").innerHTML = tickerHTML + tickerHTML;
+
+  // Hero meter animation
+  let heroH = 1.62;
+  setInterval(() => {
+    heroH = Math.max(1.1, Math.min(2.2, heroH + (Math.random() - 0.5) * 0.08));
+    $("#heroHealth").textContent = heroH.toFixed(2);
+    $("#heroFill").style.width = Math.round(((heroH - 1) / 1.2) * 100) + "%";
+  }, 1800);
+
+  // Markets list
+  function renderMarkets(filter = "") {
+    $("#markets").innerHTML = markets
+      .filter(m => m.s.toLowerCase().includes(filter.toLowerCase()))
+      .map(m => `
+        <button class="market-row ${m === current ? "active" : ""}" data-sym="${m.s}">
+          <span>${m.s.replace("-PERP", "")}</span>
+          <span class="mono ${m.c >= 0 ? "up" : "down"}">${m.c >= 0 ? "+" : ""}${m.c.toFixed(2)}%</span>
+        </button>`).join("");
+  }
+  $("#markets").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-sym]");
+    if (!btn) return;
+    current = markets.find(m => m.s === btn.dataset.sym);
+    price = current.p;
+    $("#pairName").textContent = current.s;
+    renderMarkets($("#search").value);
+    drawChart();
+  });
+  $("#search").addEventListener("input", (e) => renderMarkets(e.target.value));
+
+  // Health state
+  function setHealth(h) {
+    health = h;
+    const el = $("#healthValue");
+    el.textContent = h.toFixed(2);
+    const trigger = Number($("#trigger").value) / 100;
+    let label, cls;
+    if (h < 1.1) { label = "Liquidation risk"; cls = "down"; }
+    else if (h < trigger) { label = "Below trigger · hedge eligible"; cls = "warn"; }
+    else { label = "Healthy"; cls = "up"; }
+    el.className = "health-value mono " + cls;
+    $("#healthState").className = "health-state " + cls;
+    $("#healthState").textContent = label;
+  }
+
+  // Chart
+  const series = Array.from({ length: 60 }, (_, i) => 3300 + Math.sin(i / 5) * 60 + i * 2);
+  function drawChart() {
+    const svg = $("#chart");
+    const min = Math.min(...series), max = Math.max(...series);
+    const pts = series.map((v, i) => [
+      (i / (series.length - 1)) * 800,
+      200 - ((v - min) / (max - min)) * 180 - 10,
+    ]);
+    const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="area" d="${d} L800 220 L0 220 Z"/>
+      <path class="line" d="${d}"/>`;
+  }
+
+  // Order book
+  function renderBook() {
+    const mid = price;
+    let rows = "";
+    for (let i = 5; i >= 1; i--) {
+      const p = mid + i * 0.6;
+      rows += `<div class="book-row ask"><span class="bar" style="width:${20 + i * 12}%"></span><span class="down">${fmt(p)}</span><span>${(Math.random() * 4 + 0.2).toFixed(2)}</span></div>`;
+    }
+    rows += `<div class="book-mid mono">${fmt(mid)}</div>`;
+    for (let i = 1; i <= 5; i++) {
+      const p = mid - i * 0.6;
+      rows += `<div class="book-row bid"><span class="bar" style="width:${20 + i * 12}%"></span><span class="up">${fmt(p)}</span><span>${(Math.random() * 4 + 0.2).toFixed(2)}</span></div>`;
+    }
+    $("#book").innerHTML = rows;
+  }
+
+  // Hedges
+  const hedges = [
+    { id: 1, market: "ETH-PERP", ratio: 50, state: "Active", opened: "09:12" },
+    { id: 2, market: "SOL-PERP", ratio: 30, state: "Watching", opened: "—" },
+  ];
+  function renderHedges() {
+    $("#hedges").innerHTML = hedges.map(h => `
+      <div class="hedge">
+        <span>${h.market}</span>
+        <span class="mono muted">${h.ratio}% ratio</span>
+        <span><span class="tag ${h.state === "Active" ? "ok" : "warn"}">${h.state}</span></span>
+        <button class="btn btn-danger btn-small" data-close="${h.id}" aria-label="Close ${h.market} hedge">Close</button>
+      </div>`).join("");
+  }
+  let pendingClose = null;
+  $("#hedges").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-close]");
+    if (!btn) return;
+    pendingClose = Number(btn.dataset.close);
+    const h = hedges.find(x => x.id === pendingClose);
+    $("#confirmText").textContent = `Close the ${h.market} hedge?`;
+    $("#confirmBox").classList.add("show");
+    $("#confirmYes").focus();
+  });
+  $("#confirmNo").addEventListener("click", () => { $("#confirmBox").classList.remove("show"); pendingClose = null; });
+  $("#confirmYes").addEventListener("click", () => {
+    const idx = hedges.findIndex(h => h.id === pendingClose);
+    if (idx >= 0) hedges.splice(idx, 1);
+    pushEvent(`Closed hedge on ${current.s.replace("-PERP", "")}`);
+    $("#confirmBox").classList.remove("show");
+    renderHedges();
+    pendingClose = null;
+  });
+
+  // Events
+  const events = [];
+  function pushEvent(text) {
+    const t = new Date().toTimeString().slice(0, 5);
+    events.unshift({ t, text });
+    events.length = Math.min(events.length, 6);
+    $("#events").innerHTML = events.map(e => `<li><time>${e.t}</time>${e.text}</li>`).join("");
+  }
+  pushEvent("Sentinel heartbeat received");
+  pushEvent("Health factor recalculated");
+
+  // Controls
+  $("#ratio").addEventListener("input", (e) => { $("#ratioOut").textContent = e.target.value + "%"; });
+  $("#trigger").addEventListener("input", (e) => {
+    $("#triggerOut").textContent = (e.target.value / 100).toFixed(2);
+    setHealth(health);
+  });
+
+  // Live price simulation
+  setInterval(() => {
+    price = price * (1 + (Math.random() - 0.5) * 0.002);
+    $("#pairPrice").textContent = "$" + fmt(price);
+    setHealth(Math.max(1.0, Math.min(2.2, health + (Math.random() - 0.5) * 0.02)));
+    renderBook();
+  }, 1500);
+
+  // Scroll and routing
+  document.querySelectorAll("[data-scroll]").forEach(a => a.addEventListener("click", (e) => {
+    e.preventDefault();
+    showView("landing");
+    document.getElementById(a.dataset.scroll).scrollIntoView({ behavior: "smooth" });
+  }));
+  function showView(name) {
+    document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === name));
+    window.scrollTo(0, 0);
+  }
+  function route() {
+    showView(location.hash === "#dashboard" ? "dashboard" : "landing");
+  }
+  window.addEventListener("hashchange", route);
+
+  // Init
+  $("#pairName").textContent = current.s;
+  renderMarkets();
+  renderHedges();
+  drawChart();
+  renderBook();
+  setHealth(health);
+  route();
+})();
+</script>
+</body>
+</html>
