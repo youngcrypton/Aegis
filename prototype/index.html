@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Background Glow Gradients -->
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-purple"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v4"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">AEGIS</span>
+          <span class="brand-sub">PROTOCOL</span>
+        </div>
+      </div>
+      <div class="header-separator"></div>
+      <div class="network-badge">
+        <span class="pulse-indicator"></span>
+        <span class="network-name">Elysium L2</span>
+        <span class="network-id">99801</span>
+      </div>
+      <div class="latency-badge" id="latencyBadge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>0x0801 Precompile: <strong>68ms</strong></span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="session-badge safe" id="sessionBadge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Session Key: <strong>Trade-Only (Non-Custodial)</strong></span>
+      </div>
+      <button class="wallet-btn" id="walletBtn">
+        <span class="wallet-dot"></span>
+        <span class="wallet-addr">0x71C...a89F</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Top Bento: Hero Stats Bar -->
+    <section class="bento-row hero-metrics">
+      <div class="metric-card">
+        <div class="metric-label">Protected Portfolio TVL</div>
+        <div class="metric-value font-mono">$2,845,200 <span class="metric-unit">USDC</span></div>
+        <div class="metric-sub text-cyan">Tier 1 Pro Allocation: 100%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Health Factor (H)</div>
+        <div class="metric-value font-mono text-emerald" id="heroHealthValue">1.41 <span class="status-pill pill-emerald">SAFE</span></div>
+        <div class="metric-sub" id="heroLiquidationBuffer">Distance to Liquidation: +21.3%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Sentinel Defense Status</div>
+        <div class="metric-value font-mono text-cyan" id="heroSentinelStatus">ARMED <span class="status-pill pill-cyan">ACTIVE</span></div>
+        <div class="metric-sub">Trigger: $44.20 / H &le; 1.10</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Liquidations Averted</div>
+        <div class="metric-value font-mono text-emerald">$48,250 <span class="metric-unit">SAVED</span></div>
+        <div class="metric-sub">Penalties Spared: 100% Non-Custodial</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">$AEGIS Burned (Flywheel)</div>
+        <div class="metric-value font-mono text-purple" id="heroBurnedTokens">164,820 <span class="metric-unit">AEGIS</span></div>
+        <div class="metric-sub">Real Yield APR: 18.4% USDC</div>
+      </div>
+    </section>
+
+    <!-- Simulation Bar: Interactive Test Engine -->
+    <section class="simulation-bar">
+      <div class="sim-left">
+        <span class="sim-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          Stress Test Simulation:
+        </span>
+        <button class="sim-btn btn-danger" id="btnCrashTest">
+          Simulate Flash Crash (-18%)
+        </button>
+        <button class="sim-btn btn-warning" id="btnRetraceTest">
+          Simulate Retracement (-8% then V-Bounce)
+        </button>
+        <button class="sim-btn btn-secondary" id="btnResetMarket">
+          Reset Market ($48.50)
+        </button>
+      </div>
+      <div class="sim-right">
+        <label class="toggle-switch">
+          <input type="checkbox" id="liveTickerToggle" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Live 100ms Ticker Feed (0x0801 Precompile)</span>
+      </div>
+    </section>
+
+    <!-- Core Workspace: 12-Column Grid -->
+    <section class="workspace-grid">
+
+      <!-- Column 1-8: Position Monitor & HyperCore Orderbook -->
+      <div class="workspace-main">
+
+        <!-- Position Card -->
+        <div class="card position-card">
+          <div class="card-header">
+            <div class="header-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              <span>Protected Vault Position</span>
+            </div>
+            <div class="header-extra">
+              <span class="tag">Vault ID: #0482</span>
+              <span class="tag tag-cyan">Elysium L2</span>
+            </div>
+          </div>
+
+          <div class="position-stats-grid">
+            <div class="stat-box">
+              <span class="stat-name">Collateral Asset</span>
+              <span class="stat-val font-mono">1,000.00 <span class="unit">HYPE</span></span>
+              <span class="stat-sub font-mono" id="collateralUsdVal">$48,500.00 USD</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">Borrowed Debt</span>
+              <span class="stat-val font-mono">$32,000.00 <span class="unit">USDC</span></span>
+              <span class="stat-sub">Stable Liability</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">Liquidation Price</span>
+              <span class="stat-val font-mono text-danger">$40.00 <span class="unit">USD</span></span>
+              <span class="stat-sub">80% Maintenance Line</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">Live Mark Price</span>
+              <span class="stat-val font-mono text-cyan" id="liveMarkPrice">$48.50 <span class="unit">USD</span></span>
+              <span class="stat-sub font-mono" id="markPriceChange">+0.42% (24h)</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Health Factor Gauge & Buffer Bar -->
+          <div class="health-gauge-section">
+            <div class="gauge-header">
+              <span>Position Health Factor Gauge</span>
+              <span class="font-mono text-emerald" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-zone zone-danger" style="width: 25%;"></div>
+              <div class="gauge-zone zone-warning" style="width: 20%;"></div>
+              <div class="gauge-zone zone-safe" style="width: 55%;"></div>
+              <div class="gauge-marker" id="gaugeMarker" style="left: 70%;">
+                <div class="marker-pin"></div>
+                <div class="marker-label font-mono" id="gaugeMarkerVal">1.41</div>
+              </div>
+            </div>
+            <div class="gauge-labels font-mono">
+              <span>1.00 (Liquidated)</span>
+              <span>1.10 (Hedge Trigger)</span>
+              <span>1.25 (Safe Unwind)</span>
+              <span>1.80+ (Ideal)</span>
+            </div>
+          </div>
+
+          <!-- Active Hedge Terminal Box -->
+          <div class="active-hedge-box" id="activeHedgeBox">
+            <div class="hedge-box-header">
+              <div class="hedge-status-badge" id="hedgeStatusBadge">
+                <span class="status-dot"></span>
+                <span id="hedgeStatusText">STANDBY — RISK MONITORED</span>
+              </div>
+              <div class="hedge-meta font-mono" id="hedgeMetaText">Hedge Ratio: 50% (500 HYPE Short)</div>
+            </div>
+            <div class="hedge-details-grid">
+              <div class="hedge-item">
+                <span class="lbl">Hedge Position</span>
+                <span class="val font-mono" id="hedgeSizeVal">0.00 HYPE Short</span>
+              </div>
+              <div class="hedge-item">
+                <span class="lbl">Entry Price</span>
+                <span class="val font-mono" id="hedgeEntryVal">--</span>
+              </div>
+              <div class="hedge-item">
+                <span class="lbl">Floating Hedge PnL</span>
+                <span class="val font-mono" id="hedgePnlVal">$0.00 USDC</span>
+              </div>
+              <div class="hedge-item">
+                <span class="lbl">Net Portfolio Delta</span>
+                <span class="val font-mono" id="netDeltaVal">+1,000 HYPE (Unhedged)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HyperCore Live Orderbook & Depth Card -->
+        <div class="card orderbook-card">
+          <div class="card-header">
+            <div class="header-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="20" x2="12" y2="10"/>
+                <line x1="18" y1="20" x2="18" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="16"/>
+              </svg>
+              <span>HyperCore L1 CLOB Depth (Synchronous 0x0801 Precompile)</span>
+            </div>
+            <div class="header-extra font-mono">
+              <span>Spread: <strong class="text-cyan" id="clobSpread">0.02 USD (0.04%)</strong></span>
+              <span>Depth: <strong class="text-emerald">$1,840,000</strong></span>
+            </div>
+          </div>
+
+          <div class="orderbook-container">
+            <!-- Asks (Red) -->
+            <div class="clob-table clob-asks" id="clobAsks">
+              <div class="clob-row clob-head font-mono">
+                <span>PRICE (USDC)</span>
+                <span>SIZE (HYPE)</span>
+                <span>TOTAL</span>
+              </div>
+              <!-- Injected by JS -->
+            </div>
+
+            <!-- Mid Price Bar -->
+            <div class="clob-mid-bar">
+              <span class="font-mono mid-price" id="clobMidPrice">$48.50</span>
+              <span class="mid-source">0x0801 Direct Oracle Feed</span>
+            </div>
+
+            <!-- Bids (Green) -->
+            <div class="clob-table clob-bids" id="clobBids">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Column 9-12: Pro Trader Risk Parameters Panel & Token Flywheel -->
+      <div class="workspace-sidebar">
+
+        <!-- Pro Configuration Card -->
+        <div class="card config-card">
+          <div class="card-header">
+            <div class="header-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span>Pro Trader Risk Controls</span>
+            </div>
+            <span class="mode-pill">TIER 1 PRO</span>
+          </div>
+
+          <form id="proConfigForm" class="config-form" onsubmit="return false;">
+            <!-- Trigger Mode -->
+            <div class="form-group">
+              <label for="triggerMode">Trigger Mode</label>
+              <select id="triggerMode" class="form-select">
+                <option value="HYBRID" selected>Hybrid (Price OR Health Factor)</option>
+                <option value="PRICE">Exact Collateral Price</option>
+                <option value="HEALTH_FACTOR">Health Factor Only</option>
+              </select>
+            </div>
+
+            <!-- Price Trigger Input -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="priceTrigger">Price Trigger ($)</label>
+                <span class="font-mono text-cyan" id="priceTriggerDisplay">$44.20</span>
+              </div>
+              <input type="range" id="priceTrigger" min="41.00" max="47.00" step="0.10" value="44.20" class="form-range">
+              <div class="range-bounds font-mono">
+                <span>$41.00</span>
+                <span>$47.00</span>
+              </div>
+            </div>
+
+            <!-- Health Factor Trigger -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="healthTrigger">Health Factor Trigger (H)</label>
+                <span class="font-mono text-cyan" id="healthTriggerDisplay">1.10</span>
+              </div>
+              <input type="range" id="healthTrigger" min="1.02" max="1.25" step="0.01" value="1.10" class="form-range">
+              <div class="range-bounds font-mono">
+                <span>1.02 (Critical)</span>
+                <span>1.25 (Early)</span>
+              </div>
+            </div>
+
+            <!-- Hedge Coverage Ratio -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="hedgeCoverage">Delta Coverage Ratio</label>
+                <span class="font-mono text-cyan" id="hedgeCoverageDisplay">50% (500 HYPE)</span>
+              </div>
+              <input type="range" id="hedgeCoverage" min="10" max="100" step="10" value="50" class="form-range">
+              <div class="range-bounds font-mono">
+                <span>10% (Surgical)</span>
+                <span>100% (Full Neutral)</span>
+              </div>
+            </div>
+
+            <!-- Trailing Take Profit -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="trailingTp">Trailing Profit Lock (&tau;)</label>
+                <span class="font-mono text-emerald" id="trailingTpDisplay">1.50% from Lowest Wick</span>
+              </div>
+              <input type="range" id="trailingTp" min="0.5" max="4.0" step="0.1" value="1.5" class="form-range">
+              <div class="range-bounds font-mono">
+                <span>0.5% (Tight)</span>
+                <span>4.0% (Wide)</span>
+              </div>
+            </div>
+
+            <!-- Order Type -->
+            <div class="form-group">
+              <label>HyperCore Order Type</label>
+              <div class="radio-pill-group">
+                <label class="radio-pill">
+                  <input type="radio" name="orderType" value="POST_ONLY" checked>
+                  <span>Post-Only Limit (Maker Rebate)</span>
+                </label>
+                <label class="radio-pill">
+                  <input type="radio" name="orderType" value="IOC">
+                  <span>IOC Limit</span>
+                </label>
+                <label class="radio-pill">
+                  <input type="radio" name="orderType" value="MARKET">
+                  <span>Market Taker</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="btn btn-primary" id="btnSaveConfig">
+              Update Pro Parameters on Elysium L2
+            </button>
+
+            <!-- Emergency Killswitch -->
+            <button class="btn btn-killswitch" id="btnManualOverride">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span>EMERGENCY MANUAL OVERRIDE (CLOSE HEDGES)</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- $AEGIS Token Flywheel Widget -->
+        <div class="card token-card">
+          <div class="card-header">
+            <div class="header-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+                <path d="M12 6V4"/>
+                <path d="M12 20v-2"/>
+              </svg>
+              <span>$AEGIS Economic Engine</span>
+            </div>
+            <span class="tag tag-purple">Ascend Hook Pool</span>
+          </div>
+
+          <div class="token-metrics-list">
+            <div class="token-metric-item">
+              <span class="t-lbl">Bonded Sentinel Stake</span>
+              <span class="t-val font-mono">125,000 $AEGIS</span>
+              <span class="t-sub text-emerald">Skin in the Game (5 Active Nodes)</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Programmatic Burn</span>
+              <span class="t-val font-mono text-purple" id="tokenBurnDisplay">164,820 $AEGIS</span>
+              <span class="t-sub">50% Net Fees Burned to 0x0000...dead</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Staker Real Yield (USDC)</span>
+              <span class="t-val font-mono text-emerald">18.42% APR</span>
+              <span class="t-sub">50% Net Fees Paid in USDC</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Ascend Stage Progression</span>
+              <span class="t-val font-mono text-cyan">Stage 2: Ascended (74%)</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 74%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom Row: Real-Time Audit Trail & Sentinel Event Stream -->
+    <section class="card audit-card">
+      <div class="card-header">
+        <div class="header-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <span>Real-Time Sentinel Event Stream & Execution Audit Trail</span>
+        </div>
+        <div class="header-extra">
+          <span class="pulse-indicator"></span>
+          <span class="font-mono text-cyan">Sub-Second ElysiumCoreWriter (0x0802)</span>
+        </div>
+      </div>
+      <div class="terminal-body font-mono" id="auditTerminal">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
