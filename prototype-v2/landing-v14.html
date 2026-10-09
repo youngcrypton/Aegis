@@ -30,9 +30,9 @@
   --ink: #161230;
   --muted: #5C5778;
   --line: rgba(22, 18, 48, 0.12);
-  --accent: #0BA58E;
+  --accent: #07705F;
   --accent-2: #7B3FE4;
-  --dawn: #E0731A;
+  --dawn: #A34A08;
   --warn: #B7791F;
   --danger: #D6336C;
   --glass-top: rgba(255, 255, 255, 0.86);
@@ -74,6 +74,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background-image: radial-gradient(1px 1px at 12% 18%, #E8ECF8, transparent), radial-gradient(1px 1px at 33% 62%, #E8ECF8, transparent), radial-gradient(1.5px 1.5px at 58% 24%, #E8ECF8, transparent), radial-gradient(1px 1px at 76% 46%, #E8ECF8, transparent), radial-gradient(1px 1px at 88% 82%, #E8ECF8, transparent), radial-gradient(1px 1px at 22% 88%, #E8ECF8, transparent), radial-gradient(1.5px 1.5px at 64% 90%, #E8ECF8, transparent), radial-gradient(1px 1px at 46% 10%, #E8ECF8, transparent); }
 :root:not([data-theme="light"]) .dark-stars { display: block; }
 @keyframes twinkle { to { opacity: 0.25; } }
+/* "Pause sky" freezes the aurora, stars, and drift */
+.sky-paused .dark-aurora span,
+.sky-paused .dark-stars { animation-play-state: paused; }
 .grain { position: fixed; inset: -50%; z-index: -13; pointer-events: none; display: none; opacity: 0.07;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
 :root:not([data-theme="light"]) .grain { display: block; }
@@ -346,7 +349,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <div>
           <div class="eyebrow">I · THE READ</div>
           <h2>Sentinels read <em>every</em> tick.</h2>
-          <p>Sentinel nodes follow HyperCore order books and mark prices against your trigger, continuously, with no batching.</p>
+          <p>Sentinel nodes read live HyperCore order books and mark prices, then check them against the trigger you set.</p>
         </div>
         <div class="panel glass" role="img" aria-label="A price tape with a scanner sweeping across it. Sentinel nodes flash on each read, and a dashed line marks the trigger.">
           <div class="panel-head"><span>Tape · ETH-PERP</span><span class="live">Reading</span></div>
@@ -418,7 +421,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <div>
           <div class="eyebrow">III · THE SETTLE</div>
           <h2>Close it when the <em>market settles.</em></h2>
-          <p>The hedge unwinds automatically, or you override it in one action from the dashboard, at any moment.</p>
+          <p>Trailing profit targets lock in gains as the market recovers. You can override the hedge in one transaction at any time.</p>
         </div>
         <div class="panel glass" role="img" aria-label="A progress ring fills as the short unwinds, the mark recovers beside it, and a delta-restored label appears at the end.">
           <div class="panel-head"><span>Unwind · 50% → 0%</span><span class="live">Settling</span></div>
@@ -474,9 +477,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
     <h3>What the vault cannot do</h3>
     <div class="stmt glass"><p>Withdraw your collateral.</p><small>Trade-only session keys</small></div>
-    <div class="stmt glass"><p>Sell your positions to a liquidator.</p><small>Hedge, never dump</small></div>
-    <div class="stmt glass"><p>Act beyond the ratio you set.</p><small>Set by you, enforced on-chain</small></div>
-    <div class="stmt glass"><p>Keep a sentinel that misses its SLA.</p><small>Slashable bond</small></div>
+    <div class="stmt glass"><p>Sell your collateral to cover a loss.</p><small>Hedge, never dump</small></div>
+    <div class="stmt glass"><p>Act beyond the ratio you set.</p><small>Set by you, enforced by the vault</small></div>
+    <div class="stmt glass"><p>Let a failing sentinel keep its bond.</p><small>10% slashed on a missed SLA</small></div>
   </section>
 
   <section class="close" id="dashboard">
@@ -664,10 +667,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
   /* ---------- Pause control ---------- */
   $("pauseBtn").addEventListener("click", (e) => {
-    paused = !paused;
-    e.currentTarget.setAttribute("aria-pressed", String(paused));
-    e.currentTarget.textContent = paused ? "Play sky" : "Pause sky";
-    if (!paused) { t0 = performance.now(); kick(); }
+    const on = !root.classList.contains("sky-paused");
+    root.classList.toggle("sky-paused", on);
+    e.currentTarget.setAttribute("aria-pressed", String(on));
+    e.currentTarget.textContent = on ? "Play sky" : "Pause sky";
   });
 
   /* ---------- Scroll ---------- */
