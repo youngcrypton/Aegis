@@ -1,14 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
   <defs>
-    <linearGradient id="aegis-grad" x1="6" y1="6" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#5CF0D6"/>
-      <stop offset="1" stop-color="#B794FF"/>
+    <linearGradient id="aegis-blade" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF3E6"/>
+      <stop offset="0.45" stop-color="#C9A6FF"/>
+      <stop offset="1" stop-color="#5CF0D6"/>
     </linearGradient>
   </defs>
-  <!-- A-shaped sentinel: two legs rising to a single apex node -->
-  <path d="M11 39 L24 9 L37 39" stroke="url(#aegis-grad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Horizon bar: the hedge line that holds the position level -->
-  <path d="M17.5 30 Q24 26.5 30.5 30" stroke="url(#aegis-grad)" stroke-width="3" stroke-linecap="round"/>
-  <!-- Apex node: the sentinel reading the market -->
-  <circle cx="24" cy="9" r="3.4" fill="#FBF7F2"/>
+  <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#aegis-blade)"/>
+  <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#aegis-blade)" opacity="0.9"/>
+  <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#aegis-blade)" opacity="0.78"/>
 </svg>
