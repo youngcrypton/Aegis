@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEGIS Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ================= Tokens ================= */
+:root, [data-theme="dark"] {
+  --bg: #03040A;
+  --ink: #F5F7FC;
+  --muted: #A4ACC6;
+  --line: rgba(230, 236, 255, 0.10);
+  --accent: #5CF0D6;
+  --accent-2: #B794FF;
+  --dawn: #FFBE7A;
+  --warn: #FFD166;
+  --danger: #FF7C8E;
+  --glass-top: rgba(214, 226, 255, 0.13);
+  --glass-bot: rgba(214, 226, 255, 0.03);
+  --glass-edge: rgba(214, 226, 255, 0.20);
+  --blob-a: rgba(124, 58, 237, 0.42);
+  --blob-b: rgba(45, 212, 191, 0.20);
+  --blob-c: rgba(255, 170, 110, 0.16);
+  --shadow: 0 34px 90px -34px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0,0,0,0.4);
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  --bg: #F7F1FA;
+  --ink: #161230;
+  --muted: #5C5778;
+  --line: rgba(22, 18, 48, 0.12);
+  --accent: #0BA58E;
+  --accent-2: #7B3FE4;
+  --dawn: #E0731A;
+  --warn: #B7791F;
+  --danger: #D6336C;
+  --glass-top: rgba(255, 255, 255, 0.86);
+  --glass-bot: rgba(255, 255, 255, 0.5);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --blob-a: rgba(167, 139, 250, 0.55);
+  --blob-b: rgba(94, 234, 212, 0.45);
+  --blob-c: rgba(255, 183, 120, 0.45);
+  --shadow: 0 30px 70px -28px rgba(80, 40, 140, 0.35);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); transition: background 600ms ease; scroll-behavior: smooth; }
+body { color: var(--ink); font-family: "Inter", system-ui, sans-serif; font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: color 600ms ease; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 10px; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+
+/* ================= Living background ================= */
+#bgVideo { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -8; }
+.aurora { position: fixed; inset: -10%; z-index: -7; pointer-events: none; filter: blur(70px) saturate(140%); mix-blend-mode: normal; }
+.aurora span { position: absolute; border-radius: 50%; mix-blend-mode: screen; will-change: transform; }
+.aurora span:nth-child(1) { width: 52vmax; height: 52vmax; background: var(--blob-a); left: -12%; top: -8%; animation: floatA 18s ease-in-out infinite alternate; }
+.aurora span:nth-child(2) { width: 46vmax; height: 46vmax; background: var(--blob-b); right: -14%; top: 18%; animation: floatB 22s ease-in-out infinite alternate; }
+.aurora span:nth-child(3) { width: 44vmax; height: 44vmax; background: var(--blob-c); left: 26%; bottom: -22%; animation: floatC 26s ease-in-out infinite alternate; }
+@keyframes floatA { to { transform: translate3d(8vw, 6vh, 0) scale(1.15); } }
+@keyframes floatB { to { transform: translate3d(-9vw, -7vh, 0) scale(1.1); } }
+@keyframes floatC { to { transform: translate3d(-6vw, -10vh, 0) scale(1.2); } }
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -6; }
+.sheen-bg { position: fixed; inset: 0; z-index: -5; pointer-events: none;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.10), transparent 55%), linear-gradient(180deg, transparent 40%, var(--bg) 100%); }
+[data-theme="light"] #sky { display: none; }
+[data-theme="light"] .sheen-bg { background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.9), transparent 55%), linear-gradient(180deg, transparent 40%, var(--bg) 100%); }
+
+/* ================= Glass card (shared) ================= */
+.glass {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: linear-gradient(145deg, var(--glass-top), var(--glass-bot));
+  border: 1px solid var(--glass-edge);
+  border-radius: 24px;
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(255,255,255,0.06);
+  transition: transform 500ms cubic-bezier(.19,1,.22,1), box-shadow 500ms ease, border-color 400ms ease;
+}
+/* Cursor-following specular light */
+.glass::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,0.22), transparent 42%);
+  opacity: 0; transition: opacity 400ms ease;
+}
+.glass:hover::after { opacity: 1; }
+/* Rotating iridescent edge */
+.glass::before {
+  content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1.2px; pointer-events: none;
+  background: conic-gradient(from var(--spin, 0deg), transparent 0 60%, rgba(110,242,220,0.9), rgba(200,162,255,0.9), rgba(255,201,143,0.9), transparent 90%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.55; animation: spin 9s linear infinite;
+}
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes spin { to { --spin: 360deg; } }
+.glass:hover { transform: translateY(-4px); box-shadow: var(--shadow), 0 0 60px -10px rgba(200,162,255,0.45), inset 0 1px 0 rgba(255,255,255,0.45); }
+
+/* Shiny sweep across elements */
+.shine { position: relative; overflow: hidden; }
+.shine::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.55), transparent); transform: skewX(-18deg); animation: sweep 5.5s ease-in-out infinite; }
+@keyframes sweep { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+
+/* ================= Top bar ================= */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; padding: 18px clamp(20px, 4vw, 48px); transition: padding 400ms ease, background 400ms ease; }
+.topbar.scrolled { padding-block: 12px; background: color-mix(in srgb, var(--bg) 55%, transparent); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); box-shadow: 0 1px 0 var(--line); }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand svg { width: 34px; height: 34px; filter: drop-shadow(0 0 12px rgba(92,240,214,0.45)); }
+.wordmark { font-family: "Syne", system-ui, sans-serif; font-weight: 800; font-size: 19px; letter-spacing: 0.26em; line-height: 1; color: var(--ink); padding-left: 0.26em; }
+.nav { display: flex; align-items: center; gap: 26px; font-size: 13px; color: var(--muted); }
+.nav a:hover { color: var(--ink); }
+.nav .open { color: var(--ink); }
+.tag { display: inline-flex; align-items: center; gap: 8px; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+.tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px var(--accent); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 2px var(--accent); opacity: 0.6; } }
+.theme { display: inline-flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-radius: 999px; background: linear-gradient(145deg, var(--glass-top), var(--glass-bot)); border: 1px solid var(--glass-edge); backdrop-filter: blur(16px); font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); }
+.theme:hover { box-shadow: 0 0 24px rgba(110,242,220,0.45); }
+.theme .knob { width: 28px; height: 16px; border-radius: 999px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); position: relative; }
+.theme .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transition: transform 350ms cubic-bezier(.19,1,.22,1); }
+[data-theme="light"] .theme .knob::after { transform: translateX(12px); }
+
+/* ================= Hero ================= */
+.hero { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 140px 24px 150px; }
+.hero h1 { font-size: clamp(66px, 11.5vw, 180px); line-height: 0.92; letter-spacing: -0.02em; }
+.shimmer-text {
+  background: linear-gradient(100deg, var(--ink) 0%, var(--accent) 30%, var(--accent-2) 50%, var(--dawn) 70%, var(--ink) 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: textShine 7s linear infinite;
+}
+@keyframes textShine { to { background-position: -250% 0; } }
+.lede { margin: 26px auto 0; max-width: 46ch; color: var(--muted); font-size: 17px; }
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 1100ms cubic-bezier(.19,1,.22,1), transform 1100ms cubic-bezier(.19,1,.22,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+.sim { width: min(600px, 100%); margin: 60px auto 0; padding: 26px; text-align: left; }
+.sim-row { display: flex; justify-content: space-between; align-items: center; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.state { padding: 5px 12px; border-radius: 999px; border: 1px solid currentColor; transition: color 400ms ease, box-shadow 400ms ease; }
+.value { font-family: "Instrument Serif", Georgia, serif; font-size: 100px; line-height: 1; margin: 16px 0 8px; transition: color 400ms ease, text-shadow 400ms ease; }
+.track { position: relative; height: 8px; border-radius: 8px; background: var(--line); margin-top: 22px; }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 8px; background: linear-gradient(90deg, var(--danger), var(--warn), var(--accent)); box-shadow: 0 0 18px rgba(110,242,220,0.6); transition: width 600ms cubic-bezier(.19,1,.22,1); }
+.mark { position: absolute; top: -8px; bottom: -8px; width: 2px; background: var(--ink); opacity: 0.7; box-shadow: 0 0 10px var(--ink); }
+.mark span { position: absolute; top: 18px; left: 8px; white-space: nowrap; font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); }
+.controls { display: grid; gap: 16px; margin-top: 38px; }
+.controls label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.note { margin-top: 22px; font-size: 12px; color: var(--muted); }
+
+/* ================= Chapters ================= */
+.chapters { padding: 12vh 0 6vh; }
+.chapter { padding: 8vh clamp(24px, 6vw, 96px); display: grid; place-items: center; }
+.chapter-inner { width: min(1140px, 100%); display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(32px, 6vw, 88px); align-items: center; opacity: 0.3; transform: translateY(32px) scale(0.98); transition: opacity 900ms cubic-bezier(.19,1,.22,1), transform 900ms cubic-bezier(.19,1,.22,1); }
+.chapter.on .chapter-inner { opacity: 1; transform: none; }
+.num { display: inline-flex; gap: 10px; align-items: center; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.14em; margin-bottom: 26px; }
+.num::before { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 10px var(--accent); }
+.chapter h2 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: clamp(48px, 5.8vw, 88px); line-height: 0.96; letter-spacing: -0.015em; }
+.chapter h2 em { font-style: italic; background: linear-gradient(100deg, var(--dawn), var(--accent-2), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.chapter p { margin-top: 26px; max-width: 44ch; color: var(--muted); font-size: 17px; }
+
+/* Product-style panels */
+.panel { aspect-ratio: 5 / 4; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.live { display: inline-flex; align-items: center; gap: 7px; color: var(--accent); }
+.live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+.panel svg { width: 100%; flex: 1; min-height: 0; overflow: visible; }
+.axis { stroke: var(--line); stroke-width: 1; }
+.lbl { font-family: "JetBrains Mono", monospace; font-size: 10px; fill: var(--muted); letter-spacing: 0.06em; }
+.lbl-strong { font-family: "JetBrains Mono", monospace; font-size: 11px; fill: var(--ink); letter-spacing: 0.06em; }
+.glow { filter: drop-shadow(0 0 6px currentColor); }
+
+/* Watch */
+.tick-line { fill: none; stroke: url(#gWatch); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.4s 0.2s cubic-bezier(.19,1,.22,1) forwards; }
+.tick-area { fill: url(#gWatchFill); opacity: 0; animation: fadeIn 1.2s 1.6s ease forwards; }
+.scan { stroke: url(#gScan); stroke-width: 2; animation: scanX 4.6s ease-in-out infinite; }
+@keyframes scanX { 0% { transform: translateX(0); } 50% { transform: translateX(340px); } 100% { transform: translateX(0); } }
+.sentinel-ring { fill: none; stroke: var(--accent); stroke-width: 1.4; animation: ring 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.sentinel-ring.r2 { animation-delay: 1.2s; }
+@keyframes ring { 0% { transform: scale(0.3); opacity: 0.9; } 100% { transform: scale(2.6); opacity: 0; } }
+.sentinel-dot { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+.chip { fill: var(--glass-top); stroke: var(--glass-edge); stroke-width: 1; }
+
+/* Hedge */
+.coll-line { fill: none; stroke: var(--danger); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.6s 0.1s cubic-bezier(.19,1,.22,1) forwards; }
+.coll-area { fill: url(#gColl); opacity: 0; animation: fadeIn 1.4s 1.2s ease forwards; }
+.hedge-line { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.6s 0.5s cubic-bezier(.19,1,.22,1) forwards; }
+.hedge-area { fill: url(#gHedge); opacity: 0; animation: fadeIn 1.4s 1.6s ease forwards; }
+.net-line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 6 6; opacity: 0; animation: fadeIn 0.8s 2.6s ease forwards; }
+.open-beam { opacity: 0; animation: fadeIn 0.8s 1.8s ease forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* Restore */
+.ring-track { fill: none; stroke: var(--line); stroke-width: 12; }
+.ring-val { fill: none; stroke: url(#gRing); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transform: rotate(-90deg); transform-origin: 50% 50%; animation: draw 2.4s 0.3s cubic-bezier(.19,1,.22,1) forwards; filter: drop-shadow(0 0 10px rgba(110,242,220,0.7)); }
+.restore-px { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.4s 1.4s cubic-bezier(.19,1,.22,1) forwards; }
+.restore-dot { fill: #fff; filter: drop-shadow(0 0 8px var(--accent)); opacity: 0; animation: fadeIn 0.6s 3.6s forwards; }
+.check-ok { font-family: "Instrument Serif", Georgia, serif; font-size: 34px; fill: var(--ink); opacity: 0; animation: fadeIn 0.8s 3.2s forwards; }
+
+/* Vault */
+.vault-panel { aspect-ratio: 16 / 7; }
+.vault-panel svg { flex: 1; min-height: 0; }
+.rail { fill: none; stroke: url(#gRail); stroke-width: 2; stroke-dasharray: 2 6; animation: flow 2.6s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -32; } }
+.packet { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+.gate { fill: var(--glass-top); stroke: var(--danger); stroke-width: 1.5; }
+.gate-x { stroke: var(--danger); stroke-width: 2.2; stroke-linecap: round; }
+.orb { fill: url(#gOrb); }
+.orb-ring { fill: none; stroke: var(--accent); stroke-width: 1; opacity: 0.6; animation: ring 3.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.orb-ring.r2 { animation-delay: 1.6s; }
+
+/* ================= Statements ================= */
+.stmts { padding: 10vh clamp(24px, 6vw, 96px); max-width: 1180px; margin: 0 auto; }
+.stmts h3 { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 400; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; margin: 56px 0 26px; }
+.stmt { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 26px 30px; margin-bottom: 14px; border-radius: 20px; }
+.stmt p { font-family: "Instrument Serif", Georgia, serif; font-size: clamp(30px, 4vw, 52px); line-height: 1.04; color: var(--ink); }
+.stmt small { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); white-space: nowrap; padding: 6px 12px; border-radius: 999px; background: var(--glass-bot); border: 1px solid var(--line); }
+.stmt:hover { transform: translateX(8px) translateY(-3px); }
+
+/* ================= Close ================= */
+.close { min-height: 90vh; display: grid; place-items: center; text-align: center; padding: 120px 24px; }
+.close h2 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: clamp(64px, 9vw, 150px); line-height: 0.94; letter-spacing: -0.02em; }
+.close p { margin: 24px auto 44px; color: var(--muted); max-width: 42ch; }
+.btn { display: inline-flex; align-items: center; gap: 12px; padding: 18px 32px; border-radius: 999px; background: linear-gradient(100deg, var(--accent), var(--accent-2)); color: #06050F; font-weight: 600; font-size: 15px; box-shadow: 0 0 40px -6px rgba(110,242,220,0.7), inset 0 1px 0 rgba(255,255,255,0.5); transition: transform 350ms cubic-bezier(.19,1,.22,1), box-shadow 350ms ease; }
+.btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 60px -4px rgba(200,162,255,0.9), inset 0 1px 0 rgba(255,255,255,0.5); }
+
+/* ================= Footer bar ================= */
+.footbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 18px clamp(20px, 4vw, 48px); font-size: 12px; color: var(--muted); pointer-events: none; }
+.footbar > * { pointer-events: auto; }
+.footbar button { padding: 8px 14px; border-radius: 999px; background: linear-gradient(145deg, var(--glass-top), var(--glass-bot)); border: 1px solid var(--glass-edge); backdrop-filter: blur(14px); font-size: 12px; }
+.footbar button:hover { color: var(--ink); box-shadow: 0 0 20px rgba(110,242,220,0.4); }
+.foot-label { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+@media (max-width: 880px) {
+  .chapter-inner { grid-template-columns: 1fr; }
+  .nav .hide-sm { display: none; }
+  .stmt { flex-direction: column; align-items: flex-start; }
+  .foot-label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .reveal, .chapter-inner { opacity: 1; transform: none; }
+  .tick-line, .coll-line, .hedge-line, .ring-val, .restore-px { stroke-dashoffset: 0; }
+  .tick-area, .coll-area, .hedge-area, .net-line, .open-beam, .restore-dot, .check-ok { opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- Drop your clip at background.mp4 next to this file to use it as the living background. -->
+<video id="bgVideo" autoplay muted loop playsinline preload="auto"><source src="background.mp4" type="video/mp4"></video>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="sheen-bg" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <a href="#top" class="brand" aria-label="AEGIS home">
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <defs><linearGradient id="gBrand" x1="6" y1="6" x2="42" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5CF0D6"/><stop offset="1" stop-color="#B794FF"/></linearGradient></defs>
+      <path d="M11 39 L24 9 L37 39" stroke="url(#gBrand)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M17.5 30 Q24 26.5 30.5 30" stroke="url(#gBrand)" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <circle cx="24" cy="9" r="3.4" style="fill: var(--ink)"/>
+    </svg>
+    <span class="wordmark">AEGIS</span>
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <span class="tag hide-sm">Elysium L2</span>
+    <a href="#chapters" class="hide-sm">How it works</a>
+    <a href="#trust" class="hide-sm">Security</a>
+    <a href="#dashboard" class="open">Dashboard ↗</a>
+    <button class="theme" id="themeBtn" aria-label="Switch color theme" aria-pressed="false">
+      <span id="themeLabel">Dark</span><span class="knob" aria-hidden="true"></span>
+    </button>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div>
+      <h1 class="serif reveal"><span class="shimmer-text">Hold the line.</span></h1>
+      <p class="lede reveal">When your health factor falls, AEGIS opens a hedge on HyperCore. Your collateral is never sold. Your position stays yours.</p>
+
+      <div class="sim glass reveal" aria-label="Interactive hedge simulator">
+        <div class="sim-row">
+          <span>ETH perp · sample</span>
+          <span class="state" id="state">Healthy</span>
+        </div>
+        <div class="value" id="value">1.92</div>
+        <div class="track" aria-hidden="true">
+          <div class="fill" id="fill"></div>
+          <div class="mark" style="left: 16.7%;"><span>Trigger 1.20</span></div>
+        </div>
+        <div class="controls">
+          <label for="drop"><span>ETH price drop</span><span class="mono" id="dropOut">0%</span></label>
+          <input id="drop" type="range" min="0" max="50" value="0">
+          <label for="hedge"><span>Hedge ratio</span><span class="mono" id="hedgeOut">50%</span></label>
+          <input id="hedge" type="range" min="0" max="100" value="50">
+        </div>
+        <p class="note">Drag the drop and watch the health respond. Illustrative numbers only.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapters" id="chapters">
+    <!-- 01 WATCH -->
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div>
+          <div class="num">01 / WATCH</div>
+          <h2 class="serif">Sentinels read <em>every</em> tick.</h2>
+          <p>Sentinel nodes follow HyperCore order books and mark prices against your trigger, continuously, with no batching.</p>
+        </div>
+        <div class="panel glass" role="img" aria-label="A live price stream with a glowing scanner sweeping the ticks. Sentinel nodes pulse on each read, and a dashed trigger line marks the threshold.">
+          <div class="panel-head"><span>ETH · HyperCore book</span><span class="live">Live</span></div>
+          <svg viewBox="0 0 440 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="gWatch" x1="0" x2="1"><stop offset="0" stop-color="#6EF2DC"/><stop offset="1" stop-color="#C8A2FF"/></linearGradient>
+              <linearGradient id="gWatchFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6EF2DC" stop-opacity="0.35"/><stop offset="1" stop-color="#6EF2DC" stop-opacity="0"/></linearGradient>
+              <linearGradient id="gScan" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6EF2DC" stop-opacity="0"/><stop offset="0.5" stop-color="#6EF2DC"/><stop offset="1" stop-color="#6EF2DC" stop-opacity="0"/></linearGradient>
+            </defs>
+            <line class="axis" x1="0" y1="60" x2="440" y2="60"/>
+            <line class="axis" x1="0" y1="130" x2="440" y2="130"/>
+            <line class="axis" x1="0" y1="200" x2="440" y2="200"/>
+            <line x1="0" y1="168" x2="440" y2="168" stroke="#FCD34D" stroke-width="1.2" stroke-dasharray="6 6" opacity="0.8"/>
+            <text class="lbl" x="6" y="162" fill="#FCD34D">TRIGGER 3,380</text>
+            <path class="tick-area" d="M0 190 C40 170 70 220 110 188 S180 128 220 150 S290 100 330 118 S400 84 440 96 L440 260 L0 260 Z"/>
+            <path class="tick-line" pathLength="1" d="M0 190 C40 170 70 220 110 188 S180 128 220 150 S290 100 330 118 S400 84 440 96"/>
+            <g class="scan"><rect x="98" y="0" width="2" height="260" fill="url(#gScan)"/></g>
+            <g>
+              <circle class="sentinel-ring" cx="110" cy="188" r="6"/>
+              <circle class="sentinel-ring r2" cx="220" cy="150" r="6"/>
+              <circle class="sentinel-ring" cx="330" cy="118" r="6"/>
+              <circle class="sentinel-dot" cx="110" cy="188" r="3.5"/>
+              <circle class="sentinel-dot" cx="220" cy="150" r="3.5"/>
+              <circle class="sentinel-dot" cx="330" cy="118" r="3.5"/>
+            </g>
+            <g transform="translate(300 18)"><rect class="chip" x="0" y="0" width="128" height="26" rx="13"/><text class="lbl-strong" x="64" y="17" text-anchor="middle">4 SENTINELS READING</text></g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 HEDGE -->
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div>
+          <div class="num">02 / HEDGE</div>
+          <h2 class="serif">A short offsets the <em>fall.</em></h2>
+          <p>Past your threshold, AEGIS opens a perpetual short sized to your ratio. The collateral stays exactly where it is.</p>
+        </div>
+        <div class="panel glass" role="img" aria-label="Collateral value falls in rose, the hedge gain rises in teal, and the net position holds flat once the hedge opens at the trigger.">
+          <div class="panel-head"><span>Net exposure</span><span class="live" style="color: var(--accent-2);">Hedged</span></div>
+          <svg viewBox="0 0 440 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="gColl" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#FF7A8A" stop-opacity="0.32"/><stop offset="1" stop-color="#FF7A8A" stop-opacity="0"/></linearGradient>
+              <linearGradient id="gHedge" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6EF2DC" stop-opacity="0.32"/><stop offset="1" stop-color="#6EF2DC" stop-opacity="0"/></linearGradient>
+            </defs>
+            <line class="axis" x1="0" y1="60" x2="440" y2="60"/>
+            <line class="axis" x1="0" y1="130" x2="440" y2="130"/>
+            <line class="axis" x1="0" y1="200" x2="440" y2="200"/>
+            <path class="coll-area" d="M0 70 C110 80 170 130 240 170 S350 220 440 236 L440 260 L0 260 Z"/>
+            <path class="coll-line" pathLength="1" d="M0 70 C110 80 170 130 240 170 S350 220 440 236"/>
+            <path class="hedge-area" d="M0 232 C110 222 170 190 240 150 S350 92 440 74 L440 260 L0 260 Z"/>
+            <path class="hedge-line" pathLength="1" d="M0 232 C110 222 170 190 240 150 S350 92 440 74"/>
+            <path class="net-line" d="M0 150 L440 150"/>
+            <g class="open-beam">
+              <line x1="240" y1="20" x2="240" y2="260" stroke="#FCD34D" stroke-width="1" stroke-dasharray="3 5"/>
+              <rect x="252" y="14" width="98" height="24" rx="12" fill="rgba(252,211,77,0.16)" stroke="#FCD34D"/>
+              <text class="lbl-strong" x="301" y="30" text-anchor="middle" fill="#FCD34D">HEDGE OPENS</text>
+            </g>
+            <text class="lbl" x="8" y="60" fill="#FF7A8A">COLLATERAL</text>
+            <text class="lbl" x="8" y="250" fill="#6EF2DC">HEDGE GAIN</text>
+            <text class="lbl-strong" x="392" y="140" text-anchor="end">NET · FLAT</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 RESTORE -->
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div>
+          <div class="num">03 / RESTORE</div>
+          <h2 class="serif">Close it when the <em>market settles.</em></h2>
+          <p>The hedge unwinds automatically, or you override it in one action from the dashboard, at any moment.</p>
+        </div>
+        <div class="panel glass" role="img" aria-label="A glowing progress ring fills to complete, and the price recovers beside it as the hedge closes. A restored label appears at the end.">
+          <div class="panel-head"><span>Unwind progress</span><span class="live">Settling</span></div>
+          <svg viewBox="0 0 440 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EF2DC"/><stop offset="1" stop-color="#C8A2FF"/></linearGradient>
+            </defs>
+            <circle class="ring-track" cx="110" cy="130" r="72"/>
+            <circle class="ring-val" pathLength="1" cx="110" cy="130" r="72"/>
+            <text class="serif" x="110" y="142" text-anchor="middle" font-size="46" fill="var(--ink)" style="font-family: 'Instrument Serif', serif;">100%</text>
+            <text class="lbl" x="110" y="164" text-anchor="middle">HEDGE CLOSED</text>
+            <path class="restore-px" pathLength="1" d="M210 200 C250 190 280 170 320 150 S380 110 420 96"/>
+            <circle class="restore-dot" cx="420" cy="96" r="6"/>
+            <text class="lbl" x="210" y="222">PRICE RECOVERING</text>
+            <text class="check-ok" x="330" y="60" text-anchor="middle">Restored</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stmts" id="trust">
+    <div class="glass vault-panel panel" role="img" aria-label="A glowing vault holds the collateral. Paths for withdrawing, selling, and exceeding the ratio all stop at a blocked gate.">
+      <div class="panel-head"><span>Vault · your collateral</span><span class="live">Locked</span></div>
+      <svg viewBox="0 0 880 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <radialGradient id="gOrb" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#C8A2FF" stop-opacity="0.9"/><stop offset="0.6" stop-color="#6EF2DC" stop-opacity="0.35"/><stop offset="1" stop-color="#6EF2DC" stop-opacity="0"/></radialGradient>
+          <linearGradient id="gRail" x1="0" x2="1"><stop offset="0" stop-color="#6EF2DC" stop-opacity="0.2"/><stop offset="1" stop-color="#FF7A8A" stop-opacity="0.9"/></linearGradient>
+        </defs>
+        <circle class="orb" cx="170" cy="160" r="110"/>
+        <circle class="orb-ring" cx="170" cy="160" r="74"/>
+        <circle class="orb-ring r2" cx="170" cy="160" r="74"/>
+        <rect x="128" y="132" width="84" height="66" rx="14" fill="var(--glass-top)" stroke="var(--glass-edge)"/>
+        <path d="M146 132 V118 a24 24 0 0 1 48 0 V132" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <path class="rail" d="M260 110 C380 110 420 70 560 70"/>
+        <path class="rail" d="M260 150 C380 150 420 150 560 150"/>
+        <path class="rail" d="M260 190 C380 190 420 230 560 230"/>
+        <circle class="packet" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M260 110 C380 110 420 70 560 70"/></circle>
+        <circle class="packet" r="4"><animateMotion dur="2.6s" begin="0.8s" repeatCount="indefinite" path="M260 150 C380 150 420 150 560 150"/></circle>
+        <circle class="packet" r="4"><animateMotion dur="2.6s" begin="1.6s" repeatCount="indefinite" path="M260 190 C380 190 420 230 560 230"/></circle>
+        <g>
+          <rect class="gate" x="570" y="50" width="160" height="40" rx="12"/>
+          <path class="gate-x" d="M694 62 L712 80 M712 62 L694 80"/>
+          <text class="lbl-strong" x="586" y="75">WITHDRAW</text>
+          <rect class="gate" x="570" y="130" width="160" height="40" rx="12"/>
+          <path class="gate-x" d="M694 142 L712 160 M712 142 L694 160"/>
+          <text class="lbl-strong" x="586" y="155">SELL</text>
+          <rect class="gate" x="570" y="210" width="160" height="40" rx="12"/>
+          <path class="gate-x" d="M694 222 L712 240 M712 222 L694 240"/>
+          <text class="lbl-strong" x="586" y="235">EXCEED RATIO</text>
+        </g>
+        <text class="lbl" x="22" y="290">ENFORCED AT THE CONTRACT LEVEL</text>
+      </svg>
+    </div>
+
+    <h3>What the vault cannot do</h3>
+    <div class="stmt glass"><p>Withdraw your collateral.</p><small>Trade-only session keys</small></div>
+    <div class="stmt glass"><p>Sell your positions to a liquidator.</p><small>Hedge, never dump</small></div>
+    <div class="stmt glass"><p>Act beyond the ratio you set.</p><small>Set by you, enforced on-chain</small></div>
+    <div class="stmt glass"><p>Keep a sentinel that misses its SLA.</p><small>Slashable bond</small></div>
+  </section>
+
+  <section class="close" id="dashboard">
+    <div class="reveal">
+      <h2 class="serif"><span class="shimmer-text">Stand your ground.</span></h2>
+      <p>Set your trigger, choose a ratio, and keep full custody through the drawdown.</p>
+      <a href="#dashboard" class="btn shine">Open dashboard ↗</a>
+    </div>
+  </section>
+</main>
+
+<div class="footbar" aria-label="Page controls">
+  <div><button id="pauseBtn" aria-pressed="false">Pause sky</button></div>
+  <span class="foot-label">Elysium · HyperCore</span>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const root = document.documentElement;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Theme */
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    $("themeLabel").textContent = t === "light" ? "Light" : "Dark";
+    $("themeBtn").setAttribute("aria-pressed", String(t === "light"));
+    try { localStorage.setItem("aegis-theme", t); } catch (e) {}
+  }
+  $("themeBtn").addEventListener("click", () => setTheme(root.getAttribute("data-theme") === "light" ? "dark" : "light"));
+  let saved = null;
+  try { saved = localStorage.getItem("aegis-theme"); } catch (e) {}
+  setTheme(saved || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+
+  /* Video: hides itself if the file is missing so the aurora shows through */
+  const vid = $("bgVideo");
+  vid.addEventListener("error", () => { vid.style.display = "none"; });
+
+  /* Starfield */
+  const cvs = $("sky"), ctx = cvs.getContext("2d");
+  let W = 0, H = 0, stars = [], paused = reduce, mx = 0, my = 0;
+  function resize() {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cvs.width = W * d; cvs.height = H * d;
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    stars = Array.from({ length: Math.round((W * H) / 4200) }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.4 + 0.3, s: Math.random() * 0.6 + 0.1,
+      t: Math.random() * Math.PI * 2, z: Math.random() * 0.8 + 0.2,
+    }));
+  }
+  function draw(now) {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      const tw = 0.55 + 0.45 * Math.sin(now * 0.001 * s.s * 2 + s.t);
+      const px = s.x + mx * 16 * s.z, py = s.y + my * 12 * s.z;
+      ctx.globalAlpha = 0.3 + tw * 0.65 * s.z;
+      ctx.fillStyle = "#FBF7F2";
+      ctx.beginPath(); ctx.arc(px, py, s.r * (0.6 + s.z * 0.5), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!paused) requestAnimationFrame(draw);
+  }
+  addEventListener("resize", () => { resize(); if (paused) requestAnimationFrame(draw); });
+  resize();
+  requestAnimationFrame(draw);
+
+  /* Cursor light on glass cards, and a gentle parallax on the stars */
+  addEventListener("pointermove", (e) => {
+    mx = e.clientX / W - 0.5; my = e.clientY / H - 0.5;
+    document.querySelectorAll(".glass").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      el.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+    if (paused) requestAnimationFrame(draw);
+  }, { passive: true });
+
+  /* Pause control: stops the star field, the aurora, and the video */
+  const aurora = document.querySelector(".aurora");
+  $("pauseBtn").addEventListener("click", (e) => {
+    paused = !paused;
+    e.currentTarget.setAttribute("aria-pressed", String(paused));
+    e.currentTarget.textContent = paused ? "Play sky" : "Pause sky";
+    aurora.style.animationPlayState = paused ? "paused" : "running";
+    document.querySelectorAll(".aurora span").forEach((s) => s.style.animationPlayState = paused ? "paused" : "running");
+    if (paused) vid.pause(); else { vid.play().catch(() => {}); requestAnimationFrame(draw); }
+  });
+  if (reduce) { vid.pause(); document.querySelectorAll(".aurora span").forEach((s) => s.style.animationPlayState = "paused"); }
+
+  /* Scroll: top bar state and a slow colour drift */
+  function onScroll() {
+    $("topbar").classList.toggle("scrolled", scrollY > 40);
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* Reveals and chapters */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in", "on"); });
+  }, { threshold: 0.3 });
+  document.querySelectorAll(".reveal, [data-chapter]").forEach((el) => io.observe(el));
+
+  /* Simulator */
+  const COLLATERAL = 12.4, PRICE0 = 3412.8, DEBT = 22000, TRIGGER = 1.2, LIQ = 1.1;
+  function update() {
+    const drop = Number($("drop").value) / 100;
+    const hedge = Number($("hedge").value) / 100;
+    $("dropOut").textContent = Math.round(drop * 100) + "%";
+    $("hedgeOut").textContent = Math.round(hedge * 100) + "%";
+    const price = PRICE0 * (1 - drop);
+    const base = (COLLATERAL * price) / DEBT;
+    const lost = (COLLATERAL * (PRICE0 - price)) / DEBT;
+    const hedged = base < TRIGGER && hedge > 0;
+    const health = hedged ? base + lost * hedge : base;
+    let label, color;
+    if (health < LIQ) { label = "Liquidation risk"; color = "var(--danger)"; }
+    else if (hedged) { label = "AEGIS hedging"; color = "var(--dawn)"; }
+    else if (base < TRIGGER) { label = "Below trigger · no hedge"; color = "var(--warn)"; }
+    else { label = "Healthy"; color = "var(--accent)"; }
+    $("value").textContent = health.toFixed(2);
+    $("value").style.color = color;
+    $("value").style.textShadow = `0 0 30px ${color}`;
+    $("state").textContent = label;
+    $("state").style.color = color;
+    $("state").style.boxShadow = `0 0 18px -2px ${color}`;
+    $("fill").style.width = Math.max(0, Math.min(1, (health - 1) / 1.2)) * 100 + "%";
+  }
+  $("drop").addEventListener("input", update);
+  $("hedge").addEventListener("input", update);
+  update();
+})();
+</script>
+</body>
+</html>
