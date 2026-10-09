@@ -681,19 +681,14 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   }, { threshold: 0.3 });
   document.querySelectorAll(".reveal, [data-chapter]").forEach((el) => io.observe(el));
 
-  /* ---------- Splash: shows once per browser tab session ---------- */
+  /* ---------- Splash: plays on every page load ---------- */
   const splash = $("splash");
   function endSplash() {
     if (!splash || splash.classList.contains("out")) return;
     splash.classList.add("out");
     setTimeout(() => splash.remove(), 950);
   }
-  let seenSplash = false;
-  try {
-    seenSplash = sessionStorage.getItem("aegis-splash") === "1";
-    sessionStorage.setItem("aegis-splash", "1");
-  } catch (e) {}
-  if (seenSplash || reduce) {
+  if (reduce) {
     splash.remove();
   } else {
     setTimeout(endSplash, 2900);
