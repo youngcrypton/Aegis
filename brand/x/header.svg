@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1500" y2="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2B2A33"/>
+      <stop offset="0.45" stop-color="#1C2238"/>
+      <stop offset="1" stop-color="#0F2C2C"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF3E6"/>
+      <stop offset="0.45" stop-color="#C9A6FF"/>
+      <stop offset="1" stop-color="#5CF0D6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1500" height="500" fill="url(#bg)"/>
+  <!-- Mark on the right, clear of the avatar that sits bottom-left -->
+  <g transform="translate(1040 112) scale(11) translate(-4 -9)">
+    <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#blade)"/>
+    <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#blade)" opacity="0.9"/>
+    <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#blade)" opacity="0.78"/>
+  </g>
+  <!-- Wordmark and line, kept left of the mark -->
+  <text x="384" y="262" font-family="Inter Display, Inter, sans-serif" font-weight="700" font-size="128" letter-spacing="10" fill="#E8ECF8">AEGIS</text>
+  <text x="388" y="324" font-family="Inter Display, Inter, sans-serif" font-weight="500" font-size="30" fill="#E8ECF8">Hedge drawdowns. Never get liquidated.</text>
+  <text x="388" y="368" font-family="Inter Display, Inter, sans-serif" font-weight="500" font-size="22" fill="#5CF0D6">Autonomous delta hedging on HyperCore</text>
+</svg>
