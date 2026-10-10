@@ -153,6 +153,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero { min-height: 100svh; display: flex; align-items: center; padding-top: 140px; padding-bottom: 96px; }
 .hero-grid { width: min(var(--measure), 100%); margin: 0 auto; padding-inline: var(--gutter); display: grid; grid-template-columns: 1.1fr minmax(0, 460px); gap: clamp(40px, 6vw, 96px); align-items: center; }
 .hero h1 { font-size: var(--t-display); line-height: 0.98; letter-spacing: -0.01em; }
+.hero-mark { width: 36px; height: 36px; display: block; margin-bottom: 22px; }
 .kicker { font-size: var(--t-small); color: var(--ink-2); margin-bottom: 28px; }
 .lede { margin-top: 28px; max-width: 46ch; color: var(--ink-2); font-size: var(--t-body); }
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 40px; }
@@ -373,6 +374,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   <section class="hero">
     <div class="hero-grid">
       <div>
+        <svg class="hero-mark" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="gHero" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#gHero)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#gHero)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#gHero)"/></svg>
         <p class="kicker">HyperCore native · Autonomous delta hedging</p>
         <h1 class="display">Hedge drawdowns. Never get liquidated.</h1>
         <p class="lede">When market wicks threaten your borrow health, AEGIS triggers atomic perpetual short hedges on HyperCore. Your collateral is never dumped. Your position stays 100% yours.</p>
