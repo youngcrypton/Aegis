@@ -236,6 +236,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes fadeIn { to { opacity: 1; } }
 
+.ring-spin { fill: none; stroke: var(--rule); stroke-width: 1.2; stroke-dasharray: 2 7; transform-box: view-box; transform-origin: 110px 130px; animation: spin 18s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.mark-halo { fill: none; stroke: var(--accent); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: ring 2.2s ease-out infinite; }
+.mark-runner { fill: var(--accent); }
+.delta-ok { animation: fadeIn 0.8s 3.2s forwards, breathe 3.2s 4s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: 0.45; } }
 .ring-track { fill: none; stroke: var(--rule); stroke-width: 10; }
 .ring-val { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transform: rotate(-90deg); transform-box: view-box; transform-origin: 110px 130px; animation: draw 2.4s 0.3s cubic-bezier(.19,1,.22,1) forwards; }
 .mark-path { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.4s 1.4s cubic-bezier(.19,1,.22,1) forwards; }
@@ -512,12 +518,15 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <div class="panel surface" role="img" aria-label="A progress ring fills as the short unwinds, the mark recovers beside it, and a delta-restored label appears at the end.">
           <div class="panel-head"><span>Unwind · hedge 50% → 0%</span><span class="live">Settling</span></div>
           <svg viewBox="0 0 440 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <circle class="ring-spin" cx="110" cy="130" r="88"/>
             <circle class="ring-track" cx="110" cy="130" r="72"/>
             <circle class="ring-val" pathLength="1" cx="110" cy="130" r="72"/>
             <text x="110" y="140" text-anchor="middle" font-size="36" fill="var(--ink)" style="font-family: 'Marcellus', serif;">100%</text>
             <text class="lbl" x="110" y="164" text-anchor="middle">Unwound</text>
             <path class="mark-path" pathLength="1" d="M210 200 C250 190 280 170 320 150 S380 110 420 96"/>
+            <circle class="mark-halo" cx="420" cy="96" r="5"/>
             <circle class="mark-dot" cx="420" cy="96" r="5"/>
+            <circle class="mark-runner" r="3.5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M210 200 C250 190 280 170 320 150 S380 110 420 96"/></circle>
             <text class="lbl" x="210" y="222">Mark recovering · hedge 0%</text>
             <text class="delta-ok" x="320" y="70" text-anchor="middle">Delta restored</text>
           </svg>
