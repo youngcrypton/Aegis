@@ -249,12 +249,13 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .delta-ok { font-family: "Marcellus", Georgia, serif; font-size: 26px; fill: var(--ink); opacity: 0; animation: fadeIn 0.8s 3.2s forwards; }
 
 /* ================= Comparison ================= */
-.cmp { display: grid; grid-template-columns: 1fr 140px 1fr; border-top: 1px solid var(--rule); }
-.cmp > * { padding: 26px 24px; border-bottom: 1px solid var(--rule); }
+.cmp { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 16px; }
+.cmp > * { padding: 26px 24px; }
 .cmp-head { font-family: "Marcellus", Georgia, serif; font-weight: 400; font-size: var(--t-sub); line-height: 1.2; padding-top: 20px; padding-bottom: 20px; color: var(--ink-2); }
 .cmp-head.aegis { color: var(--ink); }
-.cmp-topic { display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; color: var(--ink-2); }
-.cmp-cell { font-size: var(--t-body); color: var(--ink-2); }
+.cmp-topic { display: flex; align-items: center; justify-content: center; text-align: center; font-size: var(--t-meta); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.cmp-cell { font-size: var(--t-body); color: var(--ink-2); border: 1px solid var(--rule); border-radius: 16px; background: color-mix(in srgb, var(--raised) 72%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.cmp-cell.aegis { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 .cmp-cell b { display: block; font-weight: 600; font-size: var(--t-small); margin-bottom: 4px; color: var(--ink); }
 .cmp-cell.aegis { color: var(--ink); }
 .cmp-cell .x { color: var(--danger); margin-right: 8px; }
@@ -313,7 +314,6 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .cmp-topic { display: none; }
   .cmp-head { padding-top: 18px; padding-bottom: 8px; border-bottom: 0; }
   .cmp > .cmp-cell { padding-top: 14px; padding-bottom: 14px; }
-  .cmp-cell.legacy { border-bottom: 0; }
   .vault { aspect-ratio: auto; min-height: 340px; }
 }
 @media (max-width: 480px) {
