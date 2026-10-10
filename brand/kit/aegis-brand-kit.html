@@ -18,7 +18,7 @@
   --on-accent: #FFFFFF;
   --hedge: #A34A08;
   --danger: #B8254F;
-  --violet: #7B3FE4;
+  --violet: #6930EA;
   --display: "Marcellus", Georgia, serif;
   --text: "Inter", system-ui, sans-serif;
   color-scheme: light;
@@ -240,12 +240,8 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
 <!-- Shared gradients, defined once and referenced by every mark on the page -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <linearGradient id="mk-dark" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFF3E6"/><stop offset="0.45" stop-color="#C9A6FF"/><stop offset="1" stop-color="#5CF0D6"/>
-    </linearGradient>
-    <linearGradient id="mk-light" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#161230"/><stop offset="0.5" stop-color="#7B3FE4"/><stop offset="1" stop-color="#07705F"/>
-    </linearGradient>
+    <linearGradient id="mk-dark" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient>
+    <linearGradient id="mk-light" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient>
   </defs>
 </svg>
 
@@ -267,9 +263,7 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
       <div class="meta"><span>Version 1.0</span><span>October 2026</span><span>Owner: AEGIS core team</span></div>
     </div>
     <svg class="mark-hero" viewBox="0 0 40 40" aria-hidden="true">
-      <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/>
-      <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/>
-      <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/>
+      <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/>
     </svg>
   </header>
 
@@ -278,12 +272,13 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
     <header>
       <h2 class="display">The mark</h2>
       <p>Three blades rising from one base line, read as a hedge: each blade is one layer of protection. Use the mark on its own where space is tight, and the lockup wherever the name must be read. Never redraw it; use the SVG files.</p>
+      <p class="note">Approved logo, fitted from the master file: a 154 degree gradient from #1F0E4C at 0%, #40178D at 20%, #6928ED at 40%, #4C44CB at 60%, #157286 at 80%, #087E6D at 100%. The mark keeps these colours in light and dark themes. Do not recolour, retint or add opacity.</p>
     </header>
 
     <h3>Lockup</h3>
     <div class="tile on-dark" style="min-height:200px;">
       <div class="lockup">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/></svg>
         <span>Aegis</span>
       </div>
       <div class="label"><b>Primary lockup</b>Mark to the left, wordmark in Marcellus, set on one optical centre line.</div>
@@ -292,15 +287,15 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
     <h3 class="sub">Colourways</h3>
     <div class="logo-grid">
       <div class="tile on-dark">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
-        <div class="label"><b>Dark ground</b>Cream, lavender and teal. Use on the Blade gradient or any navy or graphite ground.</div>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/></svg>
+        <div class="label"><b>Dark ground</b>The approved logo colours. Deep indigo blades lose contrast on navy or graphite, so on dark grounds use the light tile.</div>
       </div>
       <div class="tile on-light">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg>
-        <div class="label"><b>Light ground</b>Ink, violet and deep teal. Use on white, paper or the pale Blade gradient.</div>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-light)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-light)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-light)"/></svg>
+        <div class="label"><b>Light ground</b>The approved logo colours. Use on white, paper or the pale Blade gradient.</div>
       </div>
       <div class="tile on-mono">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="#161230"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="#161230" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="#161230" opacity="0.78"/></svg>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="#161230"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="#161230"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="#161230"/></svg>
         <div class="label"><b>Single ink</b>For one-colour print, stamps, favicons and embossing. Ink only.</div>
       </div>
     </div>
@@ -309,7 +304,7 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
     <div class="logo-grid">
       <div class="tile on-light">
         <div class="clear">
-          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-light)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-light)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-light)"/></svg>
         </div>
         <div class="label"><b>Clear space</b>Keep one blade width (x) free on every side. Nothing enters that space.</div>
       </div>
@@ -326,10 +321,10 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
 
     <h3 class="sub">Do not</h3>
     <div class="misuse">
-      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:rotate(18deg)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> rotate or tilt the mark.</div></div>
-      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:scaleX(1.5)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> stretch or distort.</div></div>
-      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="#FFBE7A"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="#FFBE7A" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="#FFBE7A" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> recolour outside the two colourways.</div></div>
-      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="filter:drop-shadow(0 0 6px #5CF0D6) drop-shadow(0 0 14px #C9A6FF)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> add glows or shadows on light grounds.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:rotate(18deg)"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-light)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-light)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-light)"/></svg><div class="label"><span class="x">Don't</span> rotate or tilt the mark.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:scaleX(1.5)"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-light)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-light)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-light)"/></svg><div class="label"><span class="x">Don't</span> stretch or distort.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="#FFBE7A"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="#FFBE7A"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="#FFBE7A"/></svg><div class="label"><span class="x">Don't</span> recolour outside the two colourways.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="filter:drop-shadow(0 0 6px #5CF0D6) drop-shadow(0 0 14px #C9A6FF)"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-light)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-light)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-light)"/></svg><div class="label"><span class="x">Don't</span> add glows or shadows on light grounds.</div></div>
     </div>
   </section>
 
@@ -352,7 +347,7 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
       <div class="swatch"><div class="chip" style="background:#5FD9BE;color:#04110E"><b>Accent</b>#5FD9BE</div><dl><dt>Dark</dt><dd>#5FD9BE</dd><dt>Light</dt><dd>#07705F</dd><dt>Use</dt><dd>Live state, primary action</dd></dl></div>
       <div class="swatch"><div class="chip" style="background:#FFBE7A;color:#161230"><b>Hedge</b>#FFBE7A</div><dl><dt>Dark</dt><dd>#FFBE7A</dd><dt>Light</dt><dd>#A34A08</dd><dt>Use</dt><dd>Hedge open, trigger level</dd></dl></div>
       <div class="swatch"><div class="chip" style="background:#FF8A9A;color:#161230"><b>Danger</b>#FF8A9A</div><dl><dt>Dark</dt><dd>#FF8A9A</dd><dt>Light</dt><dd>#B8254F</dd><dt>Use</dt><dd>Liquidation risk, refusals</dd></dl></div>
-      <div class="swatch"><div class="chip" style="background:#C9A6FF;color:#161230"><b>Violet</b>#C9A6FF</div><dl><dt>Dark</dt><dd>#C9A6FF</dd><dt>Light</dt><dd>#7B3FE4</dd><dt>Use</dt><dd>Mark and graphics only, never text</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#C9A6FF;color:#161230"><b>Violet</b>#C9A6FF</div><dl><dt>Dark</dt><dd>#C9A6FF</dd><dt>Light</dt><dd>#6930EA</dd><dt>Use</dt><dd>Mark and graphics only, never text</dd></dl></div>
     </div>
 
     <h3 class="sub">Contrast, measured</h3>
@@ -555,7 +550,7 @@ footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule);
     <div class="social">
       <div class="surface">
         <div class="frame square" style="background:linear-gradient(135deg,#2B2A33 0%,#1C2238 45%,#0F2C2C 100%);border-color:transparent;">
-          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/></svg>
         </div>
         <span style="font-size:14px;color:var(--ink-2);"><b style="color:var(--ink);font-weight:600;">Profile picture</b><br>1000 by 1000 px, dark Blade ground with the mark centred and a hairline ring. Files: <span class="num">kit-avatar-1000.png</span>.</span>
       </div>

@@ -8,25 +8,14 @@
       <stop offset="0" stop-color="#07705F" stop-opacity="0.14"/>
       <stop offset="1" stop-color="#07705F" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="blade" x1="0" y1="9" x2="0" y2="34" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#161230"/>
-      <stop offset="0.5" stop-color="#7B3FE4"/>
-      <stop offset="1" stop-color="#07705F"/>
-    </linearGradient>
-    <filter id="soft" filterUnits="userSpaceOnUse" x="0" y="4" width="38" height="36">
-      <feGaussianBlur stdDeviation="1.1" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
+    
+    
   </defs>
   <rect width="1500" height="500" fill="#FFFFFF"/>
   <circle cx="180" cy="40" r="620" fill="url(#violet)"/>
   <circle cx="1300" cy="520" r="560" fill="url(#teal)"/>
   <!-- Mark on the right -->
-  <g filter="url(#soft)" transform="translate(1010 88) scale(13) translate(-4 -9)">
-    <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#blade)"/>
-    <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#blade)"/>
-    <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#blade)"/>
-  </g>
+  <defs><linearGradient id="aegis-grad" gradientUnits="userSpaceOnUse" x1="27.70" y1="-13.51" x2="103.30" y2="141.51"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><g transform="translate(1010 50) scale(3.1)"><polygon points="40.20,0.00 70.40,0.00 26.60,127.00 0.00,127.00" fill="url(#aegis-grad)"/><polygon points="73.00,36.00 101.10,36.00 68.70,127.00 42.60,127.00" fill="url(#aegis-grad)"/><polygon points="104.20,67.00 130.00,67.00 108.50,127.00 83.90,127.00" fill="url(#aegis-grad)"/></g>
   <!-- Wordmark and lines, left of the mark, clear of the avatar -->
   <text x="262" y="252" font-family="Poppins, sans-serif" font-weight="700" font-size="104" letter-spacing="30" fill="#161230">AEGIS</text>
   <text x="266" y="318" font-family="Poppins, sans-serif" font-weight="300" font-size="34" fill="#161230">Hedge drawdowns. Never get liquidated.</text>

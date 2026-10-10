@@ -1,13 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
   <defs>
-    <linearGradient id="blade" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFF3E6"/><stop offset="0.45" stop-color="#C9A6FF"/><stop offset="1" stop-color="#5CF0D6"/></linearGradient>
+    
   </defs>
   <rect width="1500" height="500" fill="#000000"/>
-  <g transform="translate(1010 88) scale(13) translate(-4 -9)">
-    <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#blade)"/>
-    <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#blade)" opacity="0.9"/>
-    <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#blade)" opacity="0.78"/>
-  </g>
+  <defs><linearGradient id="aegis-grad" gradientUnits="userSpaceOnUse" x1="27.70" y1="-13.51" x2="103.30" y2="141.51"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><g transform="translate(1010 50) scale(3.1)"><polygon points="40.20,0.00 70.40,0.00 26.60,127.00 0.00,127.00" fill="url(#aegis-grad)"/><polygon points="73.00,36.00 101.10,36.00 68.70,127.00 42.60,127.00" fill="url(#aegis-grad)"/><polygon points="104.20,67.00 130.00,67.00 108.50,127.00 83.90,127.00" fill="url(#aegis-grad)"/></g>
   <text x="262" y="252" font-family="Poppins, sans-serif" font-weight="700" font-size="104" letter-spacing="30" fill="#FFFFFF">AEGIS</text>
   <line x1="266" y1="280" x2="386" y2="280" stroke="#5CF0D6" stroke-width="1.5"/>
   <text x="266" y="330" font-family="Poppins, sans-serif" font-weight="300" font-size="34" fill="#FFFFFF">Hedge drawdowns. Never get liquidated.</text>
