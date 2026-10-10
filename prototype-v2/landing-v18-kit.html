@@ -346,6 +346,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .tape-line, .coll-line, .short-line, .ring-val, .mark-path { stroke-dashoffset: 0; }
   .tape-area, .coll-area, .short-area, .net-line, .open-beam, .mark-dot, .delta-ok { opacity: 1; }
 }
+.backed { padding-block: 4vh 0; }
+.backed-label { margin: 0 0 16px; font-size: var(--t-meta); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.backed-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 16px; }
+.backed-card { min-width: 0; display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: color-mix(in srgb, var(--raised) 72%, transparent); backdrop-filter: blur(14px); border: 1px solid var(--rule); border-radius: 16px; }
+.backed-card img { width: 40px; height: 40px; flex: none; border-radius: 10px; object-fit: cover; }
+.backed-card span { font-family: "Marcellus", Georgia, serif; font-size: var(--t-sub); line-height: 1.2; color: var(--ink); }
 </style>
 </head>
 <body>
@@ -439,6 +445,21 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <p class="note">Illustrative figures. Drag the drawdown to see the hedge open below the 1.20 trigger.</p>
       </div>
     </div>
+  </section>
+
+  <!-- Backers -->
+  <section class="wrap backed" aria-label="Backed by">
+    <p class="backed-label">Backed by</p>
+    <ul class="backed-row">
+      <li class="backed-card">
+        <img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40">
+        <span>Elysium</span>
+      </li>
+      <li class="backed-card">
+        <img src="assets/backers/ascent.png" alt="Ascent logo" width="40" height="40">
+        <span>Ascent</span>
+      </li>
+    </ul>
   </section>
 
   <!-- Proof: one figure leads, the rest support it -->
