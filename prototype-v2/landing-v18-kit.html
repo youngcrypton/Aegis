@@ -199,11 +199,13 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* ================= Proof: one hero figure, three supporting ================= */
 .proof { padding-block: 12vh 4vh; }
-.proof-main { display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap; }
+.proof-main { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .proof-main b { font-family: "Marcellus", Georgia, serif; font-weight: 400; font-size: var(--t-numeral); line-height: 1; font-variant-numeric: tabular-nums; }
-.proof-main span { color: var(--ink-2); font-size: var(--t-body); }
-.proof-rest { display: flex; flex-wrap: wrap; gap: 14px 40px; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--rule); font-size: var(--t-small); color: var(--ink-2); }
-.proof-rest b { color: var(--ink); font-weight: 500; margin-right: 8px; font-variant-numeric: tabular-nums; }
+.proof-label { margin: 0; color: var(--ink-2); font-size: var(--t-body); }
+.proof-rest { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; margin: 36px 0 0; padding: 0; }
+.proof-rest > div { min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 24px; background: color-mix(in srgb, var(--raised) 72%, transparent); backdrop-filter: blur(14px); border: 1px solid var(--rule); border-radius: 16px; }
+.proof-rest dt { font-size: var(--t-meta); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.proof-rest dd { margin: 0; font-family: "Marcellus", Georgia, serif; font-size: var(--t-sub); line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 /* ================= Mechanics ================= */
 .chapter { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(32px, 6vw, 88px); align-items: center; }
@@ -337,7 +339,6 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .readout { grid-template-columns: 1fr; }
   .readout > div + div { padding-left: 0; border-left: 0; }
   .value { font-size: 56px; }
-  .proof-rest { gap: 12px 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -441,12 +442,15 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
   <!-- Proof: one figure leads, the rest support it -->
   <section class="wrap proof" aria-label="Protocol metrics">
-    <p class="proof-main"><b>$9.4M</b><span>in liquidation penalties averted</span></p>
-    <p class="proof-rest">
-      <span><b>$142.8M</b>collateral monitored</span>
-      <span><b>&lt;78ms</b>average sentinel SLA</span>
-      <span><b>100%</b>non-custodial invariant</span>
-    </p>
+    <div class="proof-main">
+      <b>$9.4M</b>
+      <p class="proof-label">in liquidation penalties averted</p>
+    </div>
+    <dl class="proof-rest">
+      <div><dt>Collateral monitored</dt><dd>$142.8M</dd></div>
+      <div><dt>Average sentinel SLA</dt><dd>&lt;78ms</dd></div>
+      <div><dt>Non-custodial invariant</dt><dd>100%</dd></div>
+    </dl>
   </section>
 
   <!-- Mechanics -->
