@@ -1,0 +1,611 @@
+<title>AEGIS Brand Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: a single reading column with a sticky index on wide screens.
+   Palette and type are the landing page's own tokens, so the kit and the site are one system. */
+
+/* ---- Tokens: light first, dark redefined in two guarded blocks ---- */
+:root {
+  --bg-base: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%);
+  --ground: #F7F1FA;
+  --raised: #FFFFFF;
+  --ink: #161230;
+  --ink-2: #5C5778;
+  --rule: rgba(22, 18, 48, 0.13);
+  --accent: #07705F;
+  --on-accent: #FFFFFF;
+  --hedge: #A34A08;
+  --danger: #B8254F;
+  --violet: #7B3FE4;
+  --display: "Marcellus", Georgia, serif;
+  --text: "Inter", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+    --ground: #1C2238;
+    --raised: #22403F;
+    --ink: #E8ECF8;
+    --ink-2: #A7AFCB;
+    --rule: rgba(220, 230, 255, 0.12);
+    --accent: #5FD9BE;
+    --on-accent: #04110E;
+    --hedge: #FFBE7A;
+    --danger: #FF8A9A;
+    --violet: #C9A6FF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+  --ground: #1C2238;
+  --raised: #22403F;
+  --ink: #E8ECF8;
+  --ink-2: #A7AFCB;
+  --rule: rgba(220, 230, 255, 0.12);
+  --accent: #5FD9BE;
+  --on-accent: #04110E;
+  --hedge: #FFBE7A;
+  --danger: #FF8A9A;
+  --violet: #C9A6FF;
+  color-scheme: dark;
+}
+
+/* ---- Base ---- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ground); }
+body {
+  background: var(--bg-base) fixed;
+  background-color: var(--ground);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-inline: clamp(20px, 5vw, 72px);
+  padding-block: 0 120px;
+}
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+.wrap { width: min(1180px, 100%); margin: 0 auto; }
+.display { font-family: var(--display); font-weight: 400; letter-spacing: 0.005em; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---- Top bar and index ---- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-inline: calc(-1 * clamp(20px, 5vw, 72px)); padding-inline: clamp(20px, 5vw, 72px); padding-block: 18px; background: color-mix(in srgb, var(--ground) 78%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+.top .brand { font-family: var(--display); font-size: 22px; }
+.toggle { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--raised); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.index { display: flex; flex-wrap: wrap; gap: 8px 22px; padding-block: 18px 0; font-size: 14px; }
+.index a { color: var(--ink-2); text-decoration: none; }
+.index a:hover { color: var(--ink); }
+
+/* ---- Cover ---- */
+.cover { padding-block: 14vh 10vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: clamp(32px, 6vw, 80px); align-items: center; }
+.cover h1 { font-family: var(--display); font-weight: 400; font-size: clamp(56px, 9vw, 112px); line-height: 0.98; letter-spacing: -0.01em; }
+.cover p { margin-top: 26px; max-width: 46ch; color: var(--ink-2); font-size: 18px; }
+.cover .meta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13px; color: var(--ink-2); }
+.cover .mark-hero { width: 100%; max-width: 360px; height: auto; aspect-ratio: 1; }
+
+/* ---- Sections ---- */
+section { padding-block: 12vh 0; border-top: 1px solid var(--rule); margin-top: 12vh; }
+section > header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(24px, 5vw, 72px); align-items: end; margin-bottom: 56px; }
+section h2 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 5vw, 64px); line-height: 1.04; text-wrap: balance; }
+section > header p { color: var(--ink-2); font-size: 17px; max-width: 58ch; }
+h3 { font-size: 13px; font-weight: 600; color: var(--ink-2); letter-spacing: 0.02em; margin-bottom: 18px; }
+.sub { margin-top: 64px; }
+.surface { background: var(--raised); border: 1px solid var(--rule); border-radius: 16px; padding: 28px; }
+.logo-grid > *, .misuse > *, .swatches > *, .specimen > *, .grid-demo > *, .tokens > *, .comp > *, .motif > *, .voice > *, .social > *, .motion-list > *, .readout > * { min-width: 0; }
+.note { margin-top: 18px; font-size: 14px; color: var(--ink-2); max-width: 70ch; }
+
+/* ---- Logo ---- */
+.logo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 16px; }
+.tile { border-radius: 16px; border: 1px solid var(--rule); padding: 36px 28px 26px; min-height: 240px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+.tile.on-dark { background: #1C2238; border-color: rgba(220,230,255,0.12); color: #E8ECF8; }
+.tile.on-light { background: #FFFFFF; border-color: rgba(22,18,48,0.13); color: #161230; }
+.tile.on-mono { background: #F7F1FA; border-color: rgba(22,18,48,0.13); color: #161230; }
+.tile svg { width: 84px; height: 84px; }
+.tile .label { font-size: 13px; color: inherit; opacity: 0.75; }
+.tile .label b { display: block; font-weight: 600; font-size: 15px; opacity: 1; margin-bottom: 4px; }
+.lockup { display: flex; align-items: center; gap: 16px; font-family: var(--display); font-size: 48px; line-height: 1; }
+.lockup svg { width: 52px; height: 52px; }
+.clear { position: relative; display: inline-flex; padding: 40px; border: 1px dashed var(--accent); border-radius: 6px; }
+.clear svg { width: 96px; height: 96px; display: block; }
+.misuse { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
+.misuse .tile { min-height: 200px; }
+.misuse .tile svg { width: 72px; height: 72px; }
+.misuse .x { font-size: 12px; color: var(--danger); font-weight: 600; }
+
+/* ---- Colour ---- */
+.swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 16px; }
+.swatch { border-radius: 16px; overflow: hidden; border: 1px solid var(--rule); background: var(--raised); }
+.swatch .chip { height: 128px; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 13px; }
+.swatch .chip b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.1; }
+.swatch dl { padding: 16px 18px 18px; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; }
+.swatch dt { color: var(--ink-2); }
+.swatch dd { font-variant-numeric: tabular-nums; }
+.blade-band { height: 96px; border-radius: 16px; border: 1px solid var(--rule); background: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%); }
+.blade-band.light { background: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%); }
+.pairs { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pairs th, .pairs td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.pairs th { font-weight: 500; color: var(--ink-2); font-size: 13px; }
+.pairs td.num { font-variant-numeric: tabular-nums; }
+.pass { color: var(--accent); font-weight: 600; }
+.tablewrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--rule); background: var(--raised); }
+
+/* ---- Typography ---- */
+.specimen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; }
+.specimen .surface { min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; }
+.specimen .aa { font-family: var(--display); font-size: 120px; line-height: 0.9; }
+.specimen .aa.sans { font-family: var(--text); font-weight: 300; font-size: 104px; letter-spacing: -0.02em; }
+.specimen small { color: var(--ink-2); font-size: 13px; }
+.scale { width: 100%; border-collapse: collapse; margin-top: 16px; }
+.scale td { padding: 16px 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+.scale td:first-child { width: 180px; color: var(--ink-2); font-size: 13px; }
+.scale td:nth-child(2) { font-size: var(--s); color: var(--ink); line-height: 1.1; }
+.scale td:last-child { width: 170px; text-align: right; color: var(--ink-2); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* ---- Layout and spacing ---- */
+.grid-demo { display: grid; grid-template-columns: 1.1fr minmax(0, 520px); gap: 24px; align-items: stretch; }
+.grid-demo .surface { min-height: 160px; }
+.tokens { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.tokens .surface { padding: 22px; }
+.tokens b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.1; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.tokens span { font-size: 13px; color: var(--ink-2); }
+
+/* ---- Components ---- */
+.comp { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px; }
+.comp .surface { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; justify-content: space-between; min-height: 200px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px; text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.ghost-link { font-size: 14px; color: var(--ink-2); border-bottom: 1px solid var(--rule); padding-bottom: 3px; text-decoration: none; }
+.state { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid currentColor; }
+.state.ok { color: var(--accent); }
+.state.hedge { color: var(--hedge); }
+.state.bad { color: var(--danger); }
+.readout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; border-top: 1px solid var(--rule); }
+.readout > div { padding: 14px 0 0; }
+.readout > div + div { padding-left: 18px; border-left: 1px solid var(--rule); }
+.readout b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.specs { width: 100%; border-top: 1px solid var(--rule); font-size: 14px; }
+.specs div { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--rule); }
+.specs dt { color: var(--ink-2); }
+.specs dd { font-variant-numeric: tabular-nums; }
+
+/* ---- Graphics ---- */
+.motif { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 16px; }
+.motif .surface { padding: 0; overflow: hidden; min-height: 220px; display: flex; flex-direction: column; }
+.motif svg { width: 100%; height: 170px; display: block; }
+.motif .cap { padding: 18px 22px 22px; font-size: 14px; color: var(--ink-2); }
+.motif .cap b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 4px; }
+
+/* ---- Voice ---- */
+.voice { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; }
+.voice .surface { display: flex; flex-direction: column; gap: 14px; }
+.voice .say { font-size: 17px; line-height: 1.45; }
+.voice .say.yes::before { content: "Write: "; color: var(--accent); font-weight: 600; font-size: 13px; display: block; margin-bottom: 4px; }
+.voice .say.no::before { content: "Avoid: "; color: var(--danger); font-weight: 600; font-size: 13px; display: block; margin-bottom: 4px; }
+.voice .say.no { color: var(--ink-2); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--danger) 60%, transparent); }
+.rules { margin-top: 18px; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
+
+/* ---- Motion ---- */
+.motion-list { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.motion-list div { display: grid; grid-template-columns: minmax(160px, 220px) minmax(0, 1fr); gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+.motion-list dt { color: var(--ink); font-weight: 500; }
+.motion-list dd { color: var(--ink-2); }
+
+/* ---- Social ---- */
+.social { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; }
+.social .surface { padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+.social .frame { border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); aspect-ratio: 3 / 1; display: flex; align-items: center; justify-content: center; }
+.social .frame.square { aspect-ratio: 1; width: 160px; border-radius: 50%; }
+.social .frame svg { width: 70%; height: 70%; }
+
+/* ---- Open items ---- */
+.open { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.open div { display: grid; grid-template-columns: minmax(180px, 260px) minmax(0, 1fr); gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+.open dt { font-weight: 500; }
+.open dd { color: var(--ink-2); }
+
+footer { margin-top: 14vh; padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 880px) {
+  .cover { grid-template-columns: 1fr; }
+  .cover .mark-hero { max-width: 240px; order: -1; }
+  section > header { grid-template-columns: 1fr; }
+  .grid-demo { grid-template-columns: 1fr; }
+  .motion-list div, .open div { grid-template-columns: 1fr; gap: 6px; }
+  .readout b { font-size: 20px; }
+  .specimen .aa { font-size: 88px; }
+  .specimen .aa.sans { font-size: 76px; }
+}
+@media (max-width: 480px) {
+  .top .brand { font-size: 19px; }
+  .comp .surface, .tokens .surface, .voice .surface { align-items: stretch; }
+  .surface { overflow-wrap: anywhere; }
+  .lockup { font-size: 36px; }
+  .lockup svg { width: 40px; height: 40px; }
+  .scale td:first-child { width: 110px; }
+  .scale td:last-child { display: none; }
+  .clear { padding: 24px; }
+  .clear svg { width: 72px; height: 72px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<!-- Shared gradients, defined once and referenced by every mark on the page -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="mk-dark" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF3E6"/><stop offset="0.45" stop-color="#C9A6FF"/><stop offset="1" stop-color="#5CF0D6"/>
+    </linearGradient>
+    <linearGradient id="mk-light" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#161230"/><stop offset="0.5" stop-color="#7B3FE4"/><stop offset="1" stop-color="#07705F"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<main class="wrap">
+
+  <nav class="top" aria-label="Brand kit">
+    <span class="brand">Aegis</span>
+    <button class="toggle" id="themeBtn" type="button" aria-pressed="false"><span id="themeLabel">Dark</span> mode</button>
+  </nav>
+  <nav class="index" aria-label="Sections">
+    <a href="#logo">Logo</a><a href="#colour">Colour</a><a href="#type">Typography</a><a href="#layout">Layout</a><a href="#components">Components</a><a href="#graphics">Graphics</a><a href="#voice">Voice</a><a href="#motion">Motion</a><a href="#social">Social</a><a href="#open">Open items</a>
+  </nav>
+
+  <!-- Cover -->
+  <header class="cover">
+    <div>
+      <h1 class="display">Aegis brand kit</h1>
+      <p>Hedge drawdowns. Never get liquidated. This kit defines how the AEGIS mark, colour, type and layout are used across the landing page, the dashboard, social profiles and any image we make. It is built from the landing page itself, so the two always match.</p>
+      <div class="meta"><span>Version 1.0</span><span>October 2026</span><span>Owner: AEGIS core team</span></div>
+    </div>
+    <svg class="mark-hero" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/>
+      <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/>
+      <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/>
+    </svg>
+  </header>
+
+  <!-- Logo -->
+  <section id="logo">
+    <header>
+      <h2 class="display">The mark</h2>
+      <p>Three blades rising from one base line, read as a hedge: each blade is one layer of protection. Use the mark on its own where space is tight, and the lockup wherever the name must be read. Never redraw it; use the SVG files.</p>
+    </header>
+
+    <h3>Lockup</h3>
+    <div class="tile on-dark" style="min-height:200px;">
+      <div class="lockup">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
+        <span>Aegis</span>
+      </div>
+      <div class="label"><b>Primary lockup</b>Mark to the left, wordmark in Marcellus, set on one optical centre line.</div>
+    </div>
+
+    <h3 class="sub">Colourways</h3>
+    <div class="logo-grid">
+      <div class="tile on-dark">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
+        <div class="label"><b>Dark ground</b>Cream, lavender and teal. Use on the Blade gradient or any navy or graphite ground.</div>
+      </div>
+      <div class="tile on-light">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg>
+        <div class="label"><b>Light ground</b>Ink, violet and deep teal. Use on white, paper or the pale Blade gradient.</div>
+      </div>
+      <div class="tile on-mono">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="#161230"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="#161230" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="#161230" opacity="0.78"/></svg>
+        <div class="label"><b>Single ink</b>For one-colour print, stamps, favicons and embossing. Ink only.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">Clear space and minimum size</h3>
+    <div class="logo-grid">
+      <div class="tile on-light">
+        <div class="clear">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg>
+        </div>
+        <div class="label"><b>Clear space</b>Keep one blade width (x) free on every side. Nothing enters that space.</div>
+      </div>
+      <div class="tile on-light">
+        <div class="specs" style="margin-top:auto;">
+          <div><dt>Mark, screen</dt><dd>24 px tall minimum</dd></div>
+          <div><dt>Lockup, screen</dt><dd>120 px wide minimum</dd></div>
+          <div><dt>Mark, print</dt><dd>8 mm minimum</dd></div>
+          <div><dt>Lockup, print</dt><dd>30 mm minimum</dd></div>
+        </div>
+        <div class="label"><b>Minimum size</b>Below these sizes the blades blur together. Use the mark alone.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">Do not</h3>
+    <div class="misuse">
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:rotate(18deg)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> rotate or tilt the mark.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="transform:scaleX(1.5)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> stretch or distort.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="#FFBE7A"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="#FFBE7A" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="#FFBE7A" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> recolour outside the two colourways.</div></div>
+      <div class="tile on-mono"><svg viewBox="0 0 40 40" aria-hidden="true" style="filter:drop-shadow(0 0 6px #5CF0D6) drop-shadow(0 0 14px #C9A6FF)"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-light)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-light)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-light)" opacity="0.78"/></svg><div class="label"><span class="x">Don't</span> add glows or shadows on light grounds.</div></div>
+    </div>
+  </section>
+
+  <!-- Colour -->
+  <section id="colour">
+    <header>
+      <h2 class="display">Colour</h2>
+      <p>Every colour has one job. Teal means live, healthy or the primary action. Amber means a hedge is open or a trigger has been reached. Rose means liquidation risk or a refused action. Nothing else carries meaning, so nothing else takes these roles.</p>
+    </header>
+
+    <div class="blade-band" style="margin-bottom:16px;" aria-hidden="true"></div>
+    <div class="blade-band light" style="margin-bottom:40px;" aria-hidden="true"></div>
+    <p class="note" style="margin-top:0;margin-bottom:48px;">The Blade gradient is the brand ground. Dark (top) for dark mode, light (bottom) for light mode. It runs at 135 degrees with stops at 0, 45 and 100 per cent.</p>
+
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:#1C2238;color:#E8ECF8"><b>Ground</b>#1C2238</div><dl><dt>Dark</dt><dd>#1C2238</dd><dt>Light</dt><dd>#F7F1FA</dd><dt>Use</dt><dd>Page ground, under the gradient</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#22403F;color:#E8ECF8"><b>Raised</b>#22403F</div><dl><dt>Dark</dt><dd>#22403F</dd><dt>Light</dt><dd>#FFFFFF</dd><dt>Use</dt><dd>Panels and cards</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#E8ECF8;color:#161230"><b>Ink</b>#E8ECF8</div><dl><dt>Dark</dt><dd>#E8ECF8</dd><dt>Light</dt><dd>#161230</dd><dt>Use</dt><dd>Headlines and body</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#A7AFCB;color:#161230"><b>Ink 2</b>#A7AFCB</div><dl><dt>Dark</dt><dd>#A7AFCB</dd><dt>Light</dt><dd>#5C5778</dd><dt>Use</dt><dd>Supporting text</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#5FD9BE;color:#04110E"><b>Accent</b>#5FD9BE</div><dl><dt>Dark</dt><dd>#5FD9BE</dd><dt>Light</dt><dd>#07705F</dd><dt>Use</dt><dd>Live state, primary action</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#FFBE7A;color:#161230"><b>Hedge</b>#FFBE7A</div><dl><dt>Dark</dt><dd>#FFBE7A</dd><dt>Light</dt><dd>#A34A08</dd><dt>Use</dt><dd>Hedge open, trigger level</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#FF8A9A;color:#161230"><b>Danger</b>#FF8A9A</div><dl><dt>Dark</dt><dd>#FF8A9A</dd><dt>Light</dt><dd>#B8254F</dd><dt>Use</dt><dd>Liquidation risk, refusals</dd></dl></div>
+      <div class="swatch"><div class="chip" style="background:#C9A6FF;color:#161230"><b>Violet</b>#C9A6FF</div><dl><dt>Dark</dt><dd>#C9A6FF</dd><dt>Light</dt><dd>#7B3FE4</dd><dt>Use</dt><dd>Mark and graphics only, never text</dd></dl></div>
+    </div>
+
+    <h3 class="sub">Contrast, measured</h3>
+    <div class="tablewrap">
+      <table class="pairs">
+        <thead><tr><th>Pair</th><th>Mode</th><th>Ratio</th><th>Text</th></tr></thead>
+        <tbody>
+          <tr><td>Ink on the Blade ground</td><td>Dark</td><td class="num">13.3:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Ink 2 on the Blade ground</td><td>Dark</td><td class="num">7.2:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Ink 2 on raised</td><td>Dark</td><td class="num">5.1:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Accent on raised</td><td>Dark</td><td class="num">6.5:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Hedge on raised</td><td>Dark</td><td class="num">6.9:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Danger on raised</td><td>Dark</td><td class="num">5.0:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Ink on paper</td><td>Light</td><td class="num">18.1:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Ink 2 on paper</td><td>Light</td><td class="num">6.1:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Accent on white</td><td>Light</td><td class="num">6.0:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Hedge on white</td><td>Light</td><td class="num">5.9:1</td><td class="pass">Pass</td></tr>
+          <tr><td>Danger on white</td><td>Light</td><td class="num">6.1:1</td><td class="pass">Pass</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Text needs 4.5:1 or better, and large display text 3:1. Every pair above passes for text.</p>
+  </section>
+
+  <!-- Typography -->
+  <section id="type">
+    <header>
+      <h2 class="display">Typography</h2>
+      <p>Two families and no third. Marcellus carries the display: wordmark, headlines and figures that matter. Inter carries everything else, including every table, label and number that changes. Mono is not part of the system.</p>
+    </header>
+
+    <div class="specimen">
+      <div class="surface"><span class="aa">Aa</span><div><b class="display" style="font-weight:400;font-size:24px;">Marcellus</b><small><br>Display. Regular only. Headlines and the wordmark.</small></div></div>
+      <div class="surface"><span class="aa sans">Aa</span><div><b style="font-weight:500;font-size:24px;">Inter</b><small><br>Text. Light 300 for display lines, 400 body, 500 labels, 600 emphasis.</small></div></div>
+    </div>
+
+    <h3 class="sub">Scale</h3>
+    <table class="scale">
+      <tbody>
+        <tr><td>Display</td><td style="--s:clamp(44px,6.5vw,104px);font-family:var(--display);">Hedge drawdowns.</td><td>Marcellus, 104 to 120 px, line 0.98</td></tr>
+        <tr><td>Heading</td><td style="--s:clamp(36px,4.6vw,64px);font-family:var(--display);">Built for millisecond execution.</td><td>Marcellus, 64 px, line 1.04</td></tr>
+        <tr><td>Numeral</td><td style="--s:clamp(40px,4.4vw,56px);font-family:var(--display);font-variant-numeric:tabular-nums;">$9.4M</td><td>Marcellus, 56 px, tabular</td></tr>
+        <tr><td>Subhead</td><td style="--s:24px;font-family:var(--display);">Sentinels read the book.</td><td>Marcellus, 24 px</td></tr>
+        <tr><td>Body</td><td style="--s:17px;">Sentinel nodes query live order books at zero gas cost.</td><td>Inter 400, 17 px, line 1.6</td></tr>
+        <tr><td>Small</td><td style="--s:14px;color:var(--ink-2);">Supporting copy and table text.</td><td>Inter 400, 14 px</td></tr>
+        <tr><td>Meta</td><td style="--s:12px;color:var(--ink-2);">AUTONOMOUS DELTA HEDGING ON HYPERCORE</td><td>Inter 500, 12 px, tracked 0.04em</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Seven steps, no others. Headings sit near 65 characters a line for body text and keep balanced line breaks. Figures that change in a column use tabular numerals.</p>
+  </section>
+
+  <!-- Layout -->
+  <section id="layout">
+    <header>
+      <h2 class="display">Layout and spacing</h2>
+      <p>One side margin, set once, and one reading measure. Content is generous between groups and tight within them. Surfaces are flat: a hairline border and a 16 px radius, with no shadow on content.</p>
+    </header>
+
+    <div class="grid-demo" aria-hidden="true">
+      <div class="surface" style="display:flex;flex-direction:column;justify-content:space-between;">
+        <span class="display" style="font-size:44px;line-height:1;">Hedge drawdowns.</span>
+        <span style="color:var(--ink-2);font-size:15px;">Hero column, 1.1 fraction. Headline and copy share one left edge.</span>
+      </div>
+      <div class="surface" style="display:flex;flex-direction:column;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--ink-2);">Simulator column, 520 px maximum</span>
+        <span class="display" style="font-size:56px;line-height:1;font-variant-numeric:tabular-nums;">1.92</span>
+      </div>
+    </div>
+
+    <h3 class="sub">Tokens</h3>
+    <div class="tokens">
+      <div class="surface"><b>1280 px</b><span>Maximum content width</span></div>
+      <div class="surface"><b>24 to 96 px</b><span>Side gutter, fluid with the screen</span></div>
+      <div class="surface"><b>16 px</b><span>Surface radius. Buttons are pills.</span></div>
+      <div class="surface"><b>1 px</b><span>Hairline rule, the only border weight</span></div>
+      <div class="surface"><b>16 vh</b><span>Section padding on desktop</span></div>
+      <div class="surface"><b>Flat</b><span>Elevation is a border, not a shadow</span></div>
+    </div>
+  </section>
+
+  <!-- Components -->
+  <section id="components">
+    <header>
+      <h2 class="display">Components</h2>
+      <p>Four components cover the landing page. Build new screens from these before inventing another.</p>
+    </header>
+    <div class="comp">
+      <div class="surface">
+        <span style="font-size:13px;color:var(--ink-2);">Primary action</span>
+        <a class="btn" href="#colour">Launch app terminal ↗</a>
+        <span style="font-size:13px;color:var(--ink-2);">Solid accent fill, on-accent text, pill.</span>
+      </div>
+      <div class="surface">
+        <span style="font-size:13px;color:var(--ink-2);">Secondary action</span>
+        <a class="ghost-link" href="#architecture">See how it works</a>
+        <span style="font-size:13px;color:var(--ink-2);">Ink 2 text with a rule underline.</span>
+      </div>
+      <div class="surface">
+        <span style="font-size:13px;color:var(--ink-2);">State</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <span class="state ok">Healthy</span><span class="state hedge">Hedge active</span><span class="state bad">Liquidation risk</span>
+        </div>
+        <span style="font-size:13px;color:var(--ink-2);">Outlined pill in the status colour.</span>
+      </div>
+      <div class="surface">
+        <span style="font-size:13px;color:var(--ink-2);">Readout</span>
+        <div class="readout">
+          <div><span style="font-size:12px;color:var(--ink-2);">HyperCore hedge</span><b>6.20 ETH</b></div>
+          <div><span style="font-size:12px;color:var(--ink-2);">Capital preserved</span><b>+$2,200</b></div>
+        </div>
+        <span style="font-size:13px;color:var(--ink-2);">Two figures split by a hairline.</span>
+      </div>
+      <div class="surface" style="grid-column:span 2;">
+        <span style="font-size:13px;color:var(--ink-2);">Specification list</span>
+        <dl class="specs">
+          <div><dt>Precompile</dt><dd>0x0801</dd></div>
+          <div><dt>Read latency</dt><dd>under 70ms</dd></div>
+          <div><dt>Gas cost</dt><dd>zero</dd></div>
+        </dl>
+        <span style="font-size:13px;color:var(--ink-2);">Label left, value right, hairline between rows. Used for technical facts, never for marketing.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Graphics -->
+  <section id="graphics">
+    <header>
+      <h2 class="display">Graphics</h2>
+      <p>The product's own picture is the graphic. The hedge chart, the trigger line and the glow of the blades are the only motifs. Do not add stock imagery or abstract decoration.</p>
+    </header>
+    <div class="motif">
+      <div class="surface">
+        <svg viewBox="0 0 440 170" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="110" x2="440" y2="110" stroke="#FFBE7A" stroke-width="1.2" stroke-dasharray="6 6"/>
+          <path d="M0 40 C110 50 170 96 240 120 S350 150 440 156" fill="none" stroke="#5FD9BE" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <div class="cap"><b>Trigger line</b>A dashed amber line marks the level where the hedge opens. Use it on any chart that shows a threshold.</div>
+      </div>
+      <div class="surface">
+        <svg viewBox="0 0 440 170" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 60 C110 70 170 120 240 140 S350 160 440 160" fill="none" stroke="#FF8A9A" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M0 150 C110 140 170 100 240 80 S350 40 440 30" fill="none" stroke="#5FD9BE" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <div class="cap"><b>Two-line comparison</b>Rose for the collateral falling, teal for the hedge rising. The two meet and hold the net position flat.</div>
+      </div>
+      <div class="surface" style="background:linear-gradient(135deg,#2B2A33 0%,#1C2238 45%,#0F2C2C 100%);">
+        <svg viewBox="0 0 440 170" aria-hidden="true" style="height:170px;">
+          <defs><radialGradient id="gl" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#5CF0D6" stop-opacity="0.45"/><stop offset="1" stop-color="#5CF0D6" stop-opacity="0"/></radialGradient></defs>
+          <circle cx="330" cy="60" r="120" fill="url(#gl)"/>
+          <path d="M220 40 L236 40 L210 150 L194 150 Z" fill="#FFF3E6" opacity="0.92"/>
+          <path d="M248 60 L262 60 L240 150 L226 150 Z" fill="#C9A6FF" opacity="0.9"/>
+          <path d="M270 90 L282 90 L268 150 L256 150 Z" fill="#5CF0D6" opacity="0.78"/>
+        </svg>
+        <div class="cap" style="color:#A7AFCB;"><b style="color:#E8ECF8;">Glow</b>Soft teal light behind the mark on dark grounds only. Never on light.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Voice -->
+  <section id="voice">
+    <header>
+      <h2 class="display">Voice</h2>
+      <p>Say what the thing is and what it does. The product is about money and risk, so the copy is calm, exact and never excited.</p>
+    </header>
+    <div class="voice">
+      <div class="surface"><p class="say yes">Hedge drawdowns. Never get liquidated.</p><p class="say no">Protect your portfolio with our amazing hedging magic!</p></div>
+      <div class="surface"><p class="say yes">Launch app terminal</p><p class="say no">Start your journey now 🚀</p></div>
+      <div class="surface"><p class="say yes">Health factor 1.92. Hedge opens at 1.20.</p><p class="say no">You're doing amazing, keep it up!</p></div>
+    </div>
+    <ul class="rules">
+      <li>Sentence case for headlines, labels and buttons. Never all caps, except the one meta line.</li>
+      <li>Active voice. A button names the action it performs.</li>
+      <li>Figures are exact and carry their units: 12.40 ETH, $22,000, 1.20.</li>
+      <li>No emoji, no exclamation marks, no greetings in the interface.</li>
+      <li>Every claim must match the protocol specification. If the spec does not say it, the page does not say it.</li>
+    </ul>
+  </section>
+
+  <!-- Motion -->
+  <section id="motion">
+    <header>
+      <h2 class="display">Motion</h2>
+      <p>Motion is used sparingly and always means something changed. The splash is the one brand moment; everything else responds to a person's action.</p>
+    </header>
+    <dl class="motion-list">
+      <div><dt>Splash</dt><dd>Three palettes combine in one pass, graphite, lavender, then the Blade ground, and hand off to the page. Once per load. Skippable with a click or key.</dd></div>
+      <div><dt>Chart draw-in</dt><dd>Each mechanics panel draws its line once when it enters the view. Holds still after that.</dd></div>
+      <div><dt>Aurora and stars</dt><dd>Slow ambient drift on the dark ground only. The viewer can pause it.</dd></div>
+      <div><dt>Feedback</dt><dd>Controls respond within 150 ms. Changes to figures ease over 300 to 500 ms.</dd></div>
+      <div><dt>Reduced motion</dt><dd>All motion stops. Charts and figures show their final state.</dd></div>
+    </dl>
+  </section>
+
+  <!-- Social -->
+  <section id="social">
+    <header>
+      <h2 class="display">Social</h2>
+      <p>The X profile picture and header use the same mark, ground and type as the landing page. Keep the mark inside the circular crop.</p>
+    </header>
+    <div class="social">
+      <div class="surface">
+        <div class="frame square" style="background:linear-gradient(135deg,#2B2A33 0%,#1C2238 45%,#0F2C2C 100%);border-color:transparent;">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#mk-dark)"/><path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#mk-dark)" opacity="0.9"/><path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#mk-dark)" opacity="0.78"/></svg>
+        </div>
+        <span style="font-size:14px;color:var(--ink-2);"><b style="color:var(--ink);font-weight:600;">Profile picture</b><br>1000 by 1000 px, dark Blade ground with the mark centred and a hairline ring. Files: <span class="num">kit-avatar-1000.png</span>.</span>
+      </div>
+      <div class="surface">
+        <div class="frame" style="background:linear-gradient(135deg,#2B2A33 0%,#1C2238 45%,#0F2C2C 100%);border-color:transparent;">
+          <span class="display" style="font-size:28px;color:#E8ECF8;letter-spacing:0.3em;">AEGIS</span>
+        </div>
+        <span style="font-size:14px;color:var(--ink-2);"><b style="color:var(--ink);font-weight:600;">Header</b><br>1500 by 500 px, 3 to 1. Keep text clear of the bottom-left corner where the picture sits. Files: <span class="num">kit-banner-1500x500.png</span>.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open items -->
+  <section id="open">
+    <header>
+      <h2 class="display">Open items</h2>
+      <p>What this version does not yet settle. Each item needs a decision before the kit is final.</p>
+    </header>
+    <dl class="open">
+      <div><dt>Wordmark case</dt><dd>The site writes "Aegis" in Marcellus. The X header writes "AEGIS" in tracked caps. Pick one as the standard; this kit uses "Aegis" for running text and the lockup.</dd></div>
+      <div><dt>Font in images</dt><dd>The X header and profile graphics are set in Poppins as a stand-in. Re-render them in Marcellus once the font file is supplied.</dd></div>
+      <div><dt>Iconography</dt><dd>No icon set is defined. Pick one line weight, match it to Inter's 400 weight, and add it here.</dd></div>
+      <div><dt>Dashboard</dt><dd>The dashboard is not yet built. The "Open dashboard" link is still a placeholder, so this kit does not define dashboard components.</dd></div>
+      <div><dt>Sentinel latency</dt><dd>The page states "under 70 ms" for a read and "under 78 ms" for the average SLA. Confirm both against the specification before publishing.</dd></div>
+    </dl>
+  </section>
+
+  <footer>
+    <span>© 2026 AEGIS Protocol</span>
+    <span>Source files: brand/ on the prototype-v2 branch</span>
+  </footer>
+
+</main>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const btn = document.getElementById("themeBtn");
+  const label = document.getElementById("themeLabel");
+  const dark = () => root.getAttribute("data-theme") === "dark" ||
+    (root.getAttribute("data-theme") !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  function sync() {
+    label.textContent = dark() ? "Light" : "Dark";
+    btn.setAttribute("aria-pressed", String(!dark() ? false : true));
+  }
+  btn.addEventListener("click", () => {
+    root.setAttribute("data-theme", dark() ? "light" : "dark");
+    sync();
+  });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", sync);
+  sync();
+})();
+</script>
