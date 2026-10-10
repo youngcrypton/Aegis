@@ -217,7 +217,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .specs dt { color: var(--ink-2); }
 .specs dd { color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
 
-.panel { aspect-ratio: 5 / 4; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.chapter .visual { width: 100%; max-width: 460px; justify-self: end; }
+.panel { aspect-ratio: 16 / 10; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; color: var(--ink-2); }
 .live { display: inline-flex; align-items: center; gap: 7px; color: var(--accent); white-space: nowrap; }
 .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.6s ease-in-out infinite; }
@@ -272,7 +273,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .cmp-cell .ok { color: var(--accent); margin-right: 8px; }
 
 /* ================= Security ================= */
-.vault { aspect-ratio: 16 / 7; max-width: 880px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.vault { aspect-ratio: 16 / 7; max-width: 640px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .vault svg { flex: 1; min-height: 0; width: 100%; overflow: visible; }
 .orb { fill: var(--accent); fill-opacity: 0.14; }
 .orb-ring { fill: none; stroke: var(--accent); stroke-width: 1; opacity: 0.5; animation: ring 3.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
