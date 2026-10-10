@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**STOP. The AEGIS brand kit is the only standard for UI, graphics and social assets. Read `brand/kit/aegis-brand-kit.html` and use `brand/kit/tokens.css` before you write any UI. The brand is not yours to change: the open items (wordmark case "Aegis" vs "AEGIS", and navy on white) are unresolved, so follow the kit as written and flag them. Never pick a side, and never invent, override or substitute a colour, typeface or style.**
+
 These rules apply to every agent and contributor writing UI, graphics or copy for AEGIS, whatever tool they use.
 
 ## Brand is mandatory for UI
