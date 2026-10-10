@@ -1,0 +1,51 @@
+/* AEGIS brand tokens. Source of truth: brand/kit/aegis-brand-kit.html.
+   Import this file in every UI. Do not hard-code colours, fonts or gradients elsewhere. */
+
+:root {
+  --bg-base: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%);
+  --ground: #F7F1FA;
+  --raised: #FFFFFF;
+  --ink: #161230;
+  --ink-2: #5C5778;
+  --rule: rgba(22, 18, 48, 0.13);
+  --accent: #07705F;
+  --on-accent: #FFFFFF;
+  --hedge: #A34A08;
+  --danger: #B8254F;
+  --violet: #7B3FE4;
+  --display: "Marcellus", Georgia, serif;
+  --text: "Inter", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+    --ground: #1C2238;
+    --raised: #22403F;
+    --ink: #E8ECF8;
+    --ink-2: #A7AFCB;
+    --rule: rgba(220, 230, 255, 0.12);
+    --accent: #5FD9BE;
+    --on-accent: #04110E;
+    --hedge: #FFBE7A;
+    --danger: #FF8A9A;
+    --violet: #C9A6FF;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+  --ground: #1C2238;
+  --raised: #22403F;
+  --ink: #E8ECF8;
+  --ink-2: #A7AFCB;
+  --rule: rgba(220, 230, 255, 0.12);
+  --accent: #5FD9BE;
+  --on-accent: #04110E;
+  --hedge: #FFBE7A;
+  --danger: #FF8A9A;
+  --violet: #C9A6FF;
+  color-scheme: dark;
+}
