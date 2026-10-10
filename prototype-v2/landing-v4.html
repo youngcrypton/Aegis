@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEGIS Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #05060B;
+  --ink: #F4EFE6;
+  --muted: #8B90A3;
+  --line: rgba(244, 239, 230, 0.10);
+  --line-strong: rgba(244, 239, 230, 0.22);
+  --glass: rgba(16, 18, 28, 0.42);
+  --teal: #7FE3D0;
+  --dawn: #F2B880;
+  --warn: #F5B942;
+  --danger: #F0616D;
+  --dawn-rgb: 242, 184, 128;
+  --ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; scroll-behavior: smooth; background: var(--night); }
+body { color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 1.5px solid var(--teal); outline-offset: 4px; border-radius: 6px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Sky: starfield canvas + horizon that shifts with scroll and health */
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -3; }
+.horizon {
+  position: fixed; left: -10%; right: -10%; bottom: -38vh; height: 80vh; z-index: -2; pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--dawn-rgb), calc(0.20 + var(--glow, 0.5) * 0.45)), rgba(var(--dawn-rgb), 0.04) 60%, transparent 72%);
+  filter: blur(18px);
+  transition: background 600ms var(--ease);
+}
+.haze { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(5, 6, 11, 0.2), rgba(5, 6, 11, 0.85) 75%, var(--night)); }
+
+/* Top bar */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px clamp(20px, 4vw, 48px);
+  transition: background 400ms var(--ease), border-color 400ms var(--ease);
+  border-bottom: 1px solid transparent;
+}
+.topbar.scrolled { background: rgba(5, 6, 11, 0.6); backdrop-filter: blur(16px); border-bottom-color: var(--line); padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 12px; font-family: var(--serif); font-size: 24px; letter-spacing: 0.01em; }
+.brand svg { width: 26px; height: 26px; }
+.right { display: flex; align-items: center; gap: 28px; font-size: 13px; color: var(--muted); }
+.tag { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
+.tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+.right a:hover { color: var(--ink); }
+.open { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+.open span { transition: transform 300ms var(--ease); }
+.open:hover span { transform: translate(2px, -2px); }
+
+/* Hero */
+.hero { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 120px 24px 140px; position: relative; }
+.hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(64px, 11vw, 168px); line-height: 0.92; letter-spacing: -0.02em; }
+.hero h1 i { color: var(--dawn); }
+.hero .sub { margin: 26px auto 0; max-width: 46ch; color: var(--muted); font-size: 17px; }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 1000ms var(--ease), transform 1000ms var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Simulator card */
+.sim {
+  width: min(560px, 100%); margin: 56px auto 0; padding: 22px; border-radius: 22px;
+  background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(20px) saturate(120%);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+  text-align: left;
+}
+.sim-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.state { transition: color 400ms var(--ease); }
+.value { font-family: var(--serif); font-size: 84px; line-height: 1; margin: 14px 0 6px; transition: color 400ms var(--ease); }
+.track { position: relative; height: 4px; border-radius: 4px; background: rgba(244,239,230,0.1); margin-top: 18px; }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: linear-gradient(90deg, var(--danger), var(--warn), var(--teal)); transition: width 500ms var(--ease); }
+.mark { position: absolute; top: -8px; bottom: -8px; width: 1px; background: var(--ink); opacity: 0.55; }
+.mark span { position: absolute; top: 14px; left: 6px; white-space: nowrap; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.controls { display: grid; gap: 14px; margin-top: 34px; }
+.controls label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--dawn); }
+.note { margin-top: 20px; font-size: 12px; color: var(--muted); }
+
+/* Chapters */
+.chapters { position: relative; padding: 16vh 0 10vh; }
+.chapter { min-height: 90vh; display: grid; place-items: center; padding: 0 clamp(24px, 6vw, 96px); }
+.chapter-inner { width: min(980px, 100%); display: grid; grid-template-columns: 200px 1fr; gap: 40px; align-items: start; }
+.num { font-family: var(--mono); font-size: 12px; color: var(--teal); letter-spacing: 0.14em; padding-top: 14px; border-top: 1px solid var(--line-strong); }
+.chapter h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 6.4vw, 92px); line-height: 0.98; letter-spacing: -0.015em; }
+.chapter h2 em { color: var(--dawn); }
+.chapter p { margin-top: 26px; max-width: 46ch; color: var(--muted); font-size: 17px; }
+.chapter .chapter-inner { opacity: 0.25; transform: translateY(24px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); }
+.chapter.on .chapter-inner { opacity: 1; transform: none; }
+
+/* Statements */
+.stmts { padding: 12vh clamp(24px, 6vw, 96px); max-width: 1180px; margin: 0 auto; }
+.stmts h3 { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--teal); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 36px; }
+.stmt { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); cursor: default; }
+.stmt:last-child { border-bottom: 1px solid var(--line); }
+.stmt p { font-family: var(--serif); font-size: clamp(30px, 4vw, 54px); line-height: 1.05; transition: color 400ms var(--ease), transform 400ms var(--ease); color: rgba(244, 239, 230, 0.55); }
+.stmt:hover p { color: var(--ink); transform: translateX(10px); }
+.stmt small { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* Closing */
+.close { min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 120px 24px; }
+.close h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(56px, 8vw, 128px); line-height: 0.96; letter-spacing: -0.02em; }
+.close p { margin: 22px auto 40px; color: var(--muted); max-width: 42ch; }
+.btn { display: inline-flex; align-items: center; gap: 12px; padding: 16px 26px; border-radius: 999px; background: var(--ink); color: var(--night); font-weight: 600; font-size: 14px; transition: transform 300ms var(--ease), background 300ms var(--ease); }
+.btn:hover { transform: translateY(-2px); background: #fff; }
+.btn span { transition: transform 300ms var(--ease); }
+.btn:hover span { transform: translate(2px, -2px); }
+
+/* Footer bar */
+.footbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center;
+  padding: 18px clamp(20px, 4vw, 48px); font-size: 12px; color: var(--muted); pointer-events: none;
+}
+.footbar > * { pointer-events: auto; }
+.footbar .group { display: flex; gap: 22px; align-items: center; }
+.footbar button:hover { color: var(--ink); }
+.footbar .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+@media (max-width: 800px) {
+  .chapter-inner { grid-template-columns: 1fr; gap: 18px; }
+  .right .hide-sm { display: none; }
+  .stmt { flex-direction: column; align-items: flex-start; }
+  .footbar .label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .reveal, .chapter .chapter-inner { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="horizon" id="horizon" aria-hidden="true"></div>
+<div class="haze" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <a href="#top" class="brand" aria-label="AEGIS home">
+    <svg viewBox="0 0 26 26" aria-hidden="true">
+      <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#7FE3D0"/><stop offset="1" stop-color="#F2B880"/></linearGradient></defs>
+      <path d="M13 2 L23 6 V13 C23 19 18.5 23 13 24.5 C7.5 23 3 19 3 13 V6 Z" fill="none" stroke="url(#g)" stroke-width="1.5"/>
+      <path d="M13 7 L13 19" stroke="url(#g)" stroke-width="1.5"/>
+    </svg>
+    AEGIS
+  </a>
+  <nav class="right" aria-label="Primary">
+    <span class="tag hide-sm">Built for Elysium L2</span>
+    <a href="#chapters" class="hide-sm">How it works</a>
+    <a href="#trust" class="hide-sm">Security</a>
+    <a href="#dashboard" class="open">Open dashboard <span>↗</span></a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div>
+      <h1 class="reveal">Hold the <i>line.</i></h1>
+      <p class="sub reveal">When your health factor falls, AEGIS opens a hedge on HyperCore. Your collateral is never sold. Your position stays yours.</p>
+
+      <div class="sim reveal" aria-label="Interactive hedge simulator">
+        <div class="sim-row">
+          <span>ETH perp · sample</span>
+          <span class="state" id="state">Healthy</span>
+        </div>
+        <div class="value mono" id="value" style="font-family: var(--serif);">1.92</div>
+        <div class="track" aria-hidden="true">
+          <div class="fill" id="fill"></div>
+          <div class="mark" style="left: 16.7%;"><span>Trigger 1.20</span></div>
+        </div>
+        <div class="controls">
+          <label for="drop"><span>ETH price drop</span><span class="mono" id="dropOut">0%</span></label>
+          <input id="drop" type="range" min="0" max="50" value="0">
+          <label for="hedge"><span>Hedge ratio</span><span class="mono" id="hedgeOut">50%</span></label>
+          <input id="hedge" type="range" min="0" max="100" value="50">
+        </div>
+        <p class="note">Drag the drop and watch the horizon respond. Illustrative numbers only.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapters" id="chapters">
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div class="num">01 / WATCH</div>
+        <div>
+          <h2>Sentinels read <em>every</em> tick.</h2>
+          <p>Sentinel nodes follow HyperCore order books and mark prices against your trigger, continuously, with no batching.</p>
+        </div>
+      </div>
+    </div>
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div class="num">02 / HEDGE</div>
+        <div>
+          <h2>A short offsets the <em>fall.</em></h2>
+          <p>Past your threshold, AEGIS opens a perpetual short sized to your ratio. The collateral stays exactly where it is.</p>
+        </div>
+      </div>
+    </div>
+    <div class="chapter" data-chapter>
+      <div class="chapter-inner">
+        <div class="num">03 / RESTORE</div>
+        <div>
+          <h2>Close it when the <em>market settles.</em></h2>
+          <p>The hedge unwinds automatically, or you override it in one action from the dashboard, at any moment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stmts" id="trust">
+    <h3>What the vault cannot do</h3>
+    <div class="stmt"><p>Withdraw your collateral.</p><small>Trade-only session keys</small></div>
+    <div class="stmt"><p>Sell your positions to a liquidator.</p><small>Hedge, never dump</small></div>
+    <div class="stmt"><p>Act beyond the ratio you set.</p><small>Set by you, enforced on-chain</small></div>
+    <div class="stmt"><p>Keep a sentinel that misses its SLA.</p><small>Slashable bond</small></div>
+  </section>
+
+  <section class="close" id="dashboard">
+    <div class="reveal">
+      <h2>Stand your <i style="color: var(--dawn);">ground.</i></h2>
+      <p>Set your trigger, choose a ratio, and keep full custody through the drawdown.</p>
+      <a href="#dashboard" class="btn">Open dashboard <span>↗</span></a>
+    </div>
+  </section>
+</main>
+
+<div class="footbar" aria-label="Page controls">
+  <div class="group">
+    <button id="pauseBtn" aria-pressed="false">Pause sky</button>
+  </div>
+  <span class="label">Elysium · HyperCore</span>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Starfield */
+  const cvs = $("sky"), ctx = cvs.getContext("2d");
+  let W = 0, H = 0, stars = [], paused = reduce, mx = 0, my = 0;
+  function resize() {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cvs.width = W * d; cvs.height = H * d;
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    stars = Array.from({ length: Math.round((W * H) / 5200) }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.2, s: Math.random() * 0.6 + 0.1,
+      t: Math.random() * Math.PI * 2, z: Math.random() * 0.8 + 0.2,
+    }));
+  }
+  function frame(now) {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      const tw = 0.55 + 0.45 * Math.sin(now * 0.001 * s.s * 2 + s.t);
+      const px = s.x + mx * 14 * s.z, py = s.y + my * 10 * s.z;
+      ctx.globalAlpha = 0.25 + tw * 0.6 * s.z;
+      ctx.fillStyle = "#F4EFE6";
+      ctx.beginPath(); ctx.arc(px, py, s.r * (0.6 + s.z * 0.5), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!paused) requestAnimationFrame(frame);
+  }
+  addEventListener("resize", () => { resize(); if (paused) requestAnimationFrame(frame); });
+  addEventListener("pointermove", (e) => { mx = e.clientX / W - 0.5; my = e.clientY / H - 0.5; if (paused) requestAnimationFrame(frame); }, { passive: true });
+  resize();
+  requestAnimationFrame(frame);
+
+  /* Dawn colour follows scroll */
+  const stops = [[242, 184, 128], [139, 124, 246], [127, 227, 208]];
+  function dawnFor(p) {
+    const x = Math.min(0.999, Math.max(0, p)) * (stops.length - 1);
+    const i = Math.floor(x), f = x - i;
+    const a = stops[i], b = stops[i + 1];
+    return a.map((v, k) => Math.round(v + (b[k] - v) * f));
+  }
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const p = max > 0 ? scrollY / max : 0;
+    const c = dawnFor(p);
+    document.documentElement.style.setProperty("--dawn-rgb", c.join(", "));
+    document.documentElement.style.setProperty("--glow", (0.35 + 0.3 * Math.sin(p * Math.PI)).toFixed(3));
+    $("topbar").classList.toggle("scrolled", scrollY > 40);
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* Chapters and reveals */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in", "on"); });
+  }, { threshold: 0.35 });
+  document.querySelectorAll(".reveal, [data-chapter]").forEach((el) => io.observe(el));
+
+  /* Simulator */
+  const COLLATERAL = 12.4, PRICE0 = 3412.8, DEBT = 22000, TRIGGER = 1.2, LIQ = 1.1;
+  function update() {
+    const drop = Number($("drop").value) / 100;
+    const hedge = Number($("hedge").value) / 100;
+    $("dropOut").textContent = Math.round(drop * 100) + "%";
+    $("hedgeOut").textContent = Math.round(hedge * 100) + "%";
+
+    const price = PRICE0 * (1 - drop);
+    const base = (COLLATERAL * price) / DEBT;
+    const lost = (COLLATERAL * (PRICE0 - price)) / DEBT;
+    const hedged = base < TRIGGER && hedge > 0;
+    const health = hedged ? base + lost * hedge : base;
+
+    let label, color;
+    if (health < LIQ) { label = "Liquidation risk"; color = "var(--danger)"; }
+    else if (hedged) { label = "AEGIS hedging"; color = "var(--dawn)"; }
+    else if (base < TRIGGER) { label = "Below trigger · no hedge"; color = "var(--warn)"; }
+    else { label = "Healthy"; color = "var(--teal)"; }
+
+    $("value").textContent = health.toFixed(2);
+    $("value").style.color = color;
+    $("state").textContent = label;
+    $("state").style.color = color;
+    $("fill").style.width = Math.max(0, Math.min(1, (health - 1) / 1.2)) * 100 + "%";
+
+    // Horizon brightens when the hedge is working
+    document.documentElement.style.setProperty("--glow", (hedged ? 0.8 : 0.4).toFixed(2));
+  }
+  $("drop").addEventListener("input", update);
+  $("hedge").addEventListener("input", update);
+  update();
+
+  /* Controls */
+  $("pauseBtn").addEventListener("click", (e) => {
+    paused = !paused;
+    e.currentTarget.setAttribute("aria-pressed", String(paused));
+    e.currentTarget.textContent = paused ? "Play sky" : "Pause sky";
+    if (!paused) requestAnimationFrame(frame);
+  });
+})();
+</script>
+</body>
+</html>
