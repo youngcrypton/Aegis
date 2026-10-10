@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <defs>
+    <linearGradient id="blade" x1="4" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFF3E6"/><stop offset="0.45" stop-color="#C9A6FF"/><stop offset="1" stop-color="#5CF0D6"/></linearGradient>
+  </defs>
+  <rect width="1500" height="500" fill="#000000"/>
+  <g transform="translate(1010 88) scale(13) translate(-4 -9)">
+    <path d="M4 34 L11 9 L16 9 L9 34 Z" fill="url(#blade)"/>
+    <path d="M14 34 L20 16 L25 16 L19 34 Z" fill="url(#blade)" opacity="0.9"/>
+    <path d="M23 34 L29 22 L34 22 L28 34 Z" fill="url(#blade)" opacity="0.78"/>
+  </g>
+  <text x="262" y="252" font-family="Poppins, sans-serif" font-weight="700" font-size="104" letter-spacing="30" fill="#FFFFFF">AEGIS</text>
+  <line x1="266" y1="280" x2="386" y2="280" stroke="#5CF0D6" stroke-width="1.5"/>
+  <text x="266" y="330" font-family="Poppins, sans-serif" font-weight="300" font-size="34" fill="#FFFFFF">Hedge drawdowns. Never get liquidated.</text>
+  <text x="266" y="372" font-family="Poppins, sans-serif" font-weight="500" font-size="20" letter-spacing="2.5" fill="#5CF0D6">AUTONOMOUS DELTA HEDGING ON HYPERCORE</text>
+</svg>
