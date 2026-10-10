@@ -287,6 +287,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .site-foot { width: min(var(--measure), 100%); margin: 0 auto; padding: 72px var(--gutter) 40px; border-top: 1px solid var(--rule); }
 .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr)); gap: 40px; }
 .foot-brand p { margin-top: 16px; max-width: 34ch; color: var(--ink-2); font-size: var(--t-small); }
+.foot-lockup { display: flex; align-items: center; gap: 12px; }
+.foot-mark { width: 28px; height: 28px; }
 .foot-word { font-family: "Marcellus", Georgia, serif; font-size: 22px; line-height: 1; }
 .foot-grid h4 { font-size: var(--t-meta); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 16px; }
 .foot-grid ul { list-style: none; display: grid; gap: 10px; font-size: var(--t-small); }
@@ -646,7 +648,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 <footer class="site-foot">
   <div class="foot-grid">
     <div class="foot-brand">
-      <span class="foot-word">Aegis</span>
+      <div class="foot-lockup"><svg class="foot-mark" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="gFoot" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#gFoot)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#gFoot)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#gFoot)"/></svg><span class="foot-word">Aegis</span></div>
       <p>Autonomous delta hedging on HyperCore, built on Elysium L2.</p>
     </div>
     <div>
