@@ -136,10 +136,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .nav .net { display: inline-flex; align-items: center; gap: 8px; }
 .nav .net::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: 0.35; } }
-.theme { display: inline-flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-radius: 999px; border: 1px solid var(--rule); font-size: var(--t-meta); color: var(--ink); }
-.theme .knob { width: 28px; height: 16px; border-radius: 999px; background: var(--rule); position: relative; }
-.theme .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); transition: transform 300ms cubic-bezier(.19,1,.22,1); }
-[data-theme="light"] .theme .knob::after { transform: translateX(12px); }
+.theme { display: inline-flex; align-items: center; gap: 8px; padding: 5px 5px 5px 12px; border-radius: 999px; border: 1px solid var(--rule); font-size: var(--t-meta); color: var(--ink); }
+.theme .knob { width: 24px; height: 14px; border-radius: 999px; background: var(--rule); position: relative; }
+.theme .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transition: transform 300ms cubic-bezier(.19,1,.22,1); }
+[data-theme="light"] .theme .knob::after { transform: translateX(10px); }
 
 /* ================= Shared ================= */
 .wrap { width: min(var(--measure), 100%); margin: 0 auto; padding-inline: var(--gutter); }
