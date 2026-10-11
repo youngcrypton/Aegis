@@ -16,6 +16,7 @@ Last updated: 2026-10-11
 ## Brand
 
 - **Done:** brand kit (`brand/kit/aegis-brand-kit.html`), tokens (`brand/kit/tokens.css`), approved master mark, X and social assets in `brand/x/`.
+- **Done:** aligned `DESIGN.md` to the AEGIS brand kit, replacing legacy cybernetic tokens/fonts with `tokens.css`, dual-theme tokens, and Marcellus/Inter typography.
 - **Open:** splash graphite and lavender colour stops are not yet in the kit's hex list.
 
 ## Trader app (`app/`)

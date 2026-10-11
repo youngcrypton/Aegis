@@ -13,15 +13,21 @@
 ---
 
 ## 🛠️ Environment & Runtime Status
-- **Local HTTP Server**:
-  - Entry point: [`server.js`](file:///c:/Users/ascend%20X%20elysium/server.js)
+- **Pro-Trader Terminal Server**:
+  - Entry point: [`app/serve.js`](file:///c:/Users/ascend%20X%20elysium/app/serve.js)
   - Port: `3000`
-  - Routes:
-    - `/` and `/landing` &rarr; [`prototype-v2/landing-v14.html`](file:///c:/Users/ascend%20X%20elysium/prototype-v2/landing-v14.html)
-    - `/app` &rarr; [`prototype/index.html`](file:///c:/Users/ascend%20X%20elysium/prototype/index.html) (or `app/`)
+  - URL: `http://localhost:3000/`
+  - Serves: AEGIS Pro-Trader Terminal ([`app/index.html`](file:///c:/Users/ascend%20X%20elysium/app/index.html))
+- **Root Protocol & Docs Server**:
+  - Entry command: `python -m http.server 8000`
+  - Port: `8000`
+  - URLs:
+    - Landing Page: `http://localhost:8000/` ([`index.html`](file:///c:/Users/ascend%20X%20elysium/index.html))
+    - Technical Documentation: `http://localhost:8000/docs/` ([`docs/index.html`](file:///c:/Users/ascend%20X%20elysium/docs/index.html))
+    - Brand Kit: `http://localhost:8000/brand/kit/aegis-brand-kit.html`
 - **Browser Executable**:
   - Chrome binary path: `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`
-  - Launch command: `Start-Process "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:3000/"`
+  - Launch command: `Start-Process "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:8000/"`
 
 ---
 
@@ -48,6 +54,10 @@
   - Refined mobile layout for `docs/`: streamlined `.docs-header` at widths under 880px and 600px, relocated secondary links to the mobile slide-out drawer, added mobile search icon button, and verified clean rendering at 390px mobile viewport with zero text collisions.
   - Verified link behaviors via `browser_subagent`.
   - Updated `STATUS.md`.
+- **Project Architect Audit & Brand Drift Alignment**:
+  - Executed read-only workspace audit under `/project-architect` framework.
+  - Resolved specification drift between `DESIGN.md` (legacy cybernetic neon archetype) and the official `AEGIS` brand kit (`tokens.css` and `AGENTS.md`).
+  - Stripped legacy cybernetic frontmatter and Section 6 from `DESIGN.md`, replacing with official tokens, dual-theme definitions, and Marcellus/Inter typography while preserving 100% of the protocol mathematical models ($H, \gamma, \tau$), smart contract specifications, and security invariants.
 
 ---
 

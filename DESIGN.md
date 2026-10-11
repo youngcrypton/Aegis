@@ -1,53 +1,22 @@
 ---
-name: "AEGIS Protocol Design System & Architecture Specification"
-version: "1.0.0"
-archetype: "Cybernetic Pro-Terminal / Modular Bento Grid"
-references:
-  - name: "Hyperliquid High-Frequency Trading Terminal"
-    url: "https://hyperliquid.xyz"
-  - name: "Linear Modern Spatial UI"
-    url: "https://linear.app"
-  - name: "BentoGrids Pro Dashboard Standards"
-    url: "https://bentogrids.com"
+name: "AEGIS Protocol Architecture & Technical Specification"
+version: "1.1.0"
+brand_system: "AEGIS Brand Kit (brand/kit/tokens.css)"
+compliance: "AGENTS.md mandatory brand tokens"
 tokens:
-  colors:
-    background:
-      base: "#0A0D14"
-      surface: "rgba(18, 22, 34, 0.75)"
-      elevated: "#161B26"
-    borders:
-      subtle: "rgba(255, 255, 255, 0.08)"
-      glow: "rgba(0, 242, 254, 0.35)"
-    accent:
-      primary: "#00F2FE"
-      secondary: "#8B5CF6"
-      success: "#10B981"
-      warning: "#F59E0B"
-      danger: "#EF4444"
+  reference: "brand/kit/tokens.css"
   typography:
-    fonts:
-      heading: "Outfit, -apple-system, sans-serif"
-      body: "Inter, -apple-system, sans-serif"
-      mono: "JetBrains Mono, monospace"
-    weights:
-      normal: 400
-      medium: 500
-      semibold: 600
-      bold: 700
-  layout:
-    grid: "12-column responsive bento"
-    radius:
-      card: "14px"
-      button: "8px"
-      pill: "9999px"
-    blur:
-      backdrop: "12px"
-  motion:
-    duration:
-      fast: "150ms"
-      normal: "250ms"
-      slow: "400ms"
-    easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+    display: "Marcellus, Georgia, serif"
+    body: "Inter, system-ui, sans-serif"
+    numeric: "tabular-nums"
+  surfaces:
+    radius: "16px"
+    border: "1px solid var(--rule)"
+    fill: "var(--raised)"
+    ground: "var(--ground)"
+  themes:
+    - "Light"
+    - "Dark"
 ---
 
 # AEGIS Protocol: Architecture & Design System Specification
@@ -259,51 +228,58 @@ The $AEGIS token has three non-negotiable economic sinks designed to prevent cap
 
 ## 6. UI/UX Design System Specification
 
-### 6.1 Visual Identity & Archetype
-- **Archetype**: Cybernetic Pro-Terminal / Modular Bento Grid.
-- **Aesthetic**: Deep dark surfaces, high-contrast numerical readouts, subtle translucent glass borders, high-density data tables.
-- **Color Tokens**:
-  - Base Background: `#0A0D14`
-  - Card Surface: `rgba(18, 22, 34, 0.75)` with `backdrop-filter: blur(12px)`
-  - Elevated Elements: `#161B26`
-  - Subtle Borders: `rgba(255, 255, 255, 0.08)`
-  - Active Glow: `rgba(0, 242, 254, 0.35)`
-  - Cyan Accent: `#00F2FE` (Primary branding and active states)
-  - Purple Accent: `#8B5CF6` (Sentinel execution status)
-  - Emerald Green: `#10B981` (Safe health factor, profit captures)
-  - Amber Yellow: `#F59E0B` (Caution health factor zone)
-  - Crimson Red: `#EF4444` (Danger zone, manual override killswitch)
+> **Compliance Requirement**: Per `AGENTS.md`, the AEGIS Brand Kit (`brand/kit/aegis-brand-kit.html`) and its tokens (`brand/kit/tokens.css`) are the sole, mandatory standard for all AEGIS interfaces. No hard-coded hex colors, third-party palettes, or decorative glows may be introduced.
 
-### 6.2 Typography Tokens
-- **Heading**: `Outfit`, sans-serif (weights: 600, 700; letter-spacing: -0.02em)
-- **Body UI**: `Inter`, sans-serif (weights: 400, 500; base: 14px)
-- **Monospace & Numerical**: `JetBrains Mono`, monospace with `font-variant-numeric: tabular-nums`
+### 6.1 Visual Identity & Token Architecture
+- **Standard**: AEGIS Brand Kit v1.0 (`brand/kit/tokens.css`).
+- **Surface Philosophy**: Clean, flat panels with 16px border radius, 1px `var(--rule)` borders, and `var(--raised)` fill. No cybernetic glows or decorative gradients on product UI; ambient effects belong strictly to the landing page.
+- **Dual-Theme Support**: Light and Dark modes are mandatory across all views.
+  - Light mode defined on `:root`
+  - Dark mode defined in `@media (prefers-color-scheme: dark)` and `:root[data-theme="dark"]`
 
-### 6.3 12-Column Responsive Bento Layout
+### 6.2 Semantic Color Tokens
+All UI components strictly reference CSS variables:
+- `--ground`: Page ground background (`#F7F1FA` light / `#1C2238` dark)
+- `--raised`: Panel and card surface (`#FFFFFF` light / `#22403F` dark)
+- `--ink`: Primary headlines, numbers, and text (`#161230` light / `#E8ECF8` dark)
+- `--ink-2`: Secondary captions and metadata (`#5C5778` light / `#A7AFCB` dark)
+- `--rule`: Structural borders and separators (`rgba(22, 18, 48, 0.13)` light / `rgba(220, 230, 255, 0.12)` dark)
+- `--accent`: Teal — active state, healthy status, primary action button (`#07705F` light / `#5FD9BE` dark)
+- `--on-accent`: Contrasting text on accent surface (`#FFFFFF` light / `#04110E` dark)
+- `--hedge`: Amber — hedge actively open, caution trigger levels (`#A34A08` light / `#FFBE7A` dark)
+- `--danger`: Rose — liquidation risk, critical alerts, emergency killswitch (`#B8254F` light / `#FF8A9A` dark)
+- `--violet`: Violet — brand mark and graphics only; never for body text (`#6930EA` light / `#C9A6FF` dark)
+
+### 6.3 Typography Tokens
+- **Display & Headings**: `Marcellus`, Georgia, serif (`var(--display)`).
+- **Body UI & Controls**: `Inter`, system-ui, sans-serif (`var(--text)`).
+- **Numerical & Financial Readouts**: `Inter` with `font-variant-numeric: tabular-nums` (or system monospace) for tabular alignment.
+
+### 6.4 Responsive Pro-Trader Terminal Layout
+The Pro-Trader Terminal organizes high-frequency telemetry into structured 16px-radius panels:
 
 ```
 +----------------------------------------------------------------------------------------------------+
-| TOP NAVIGATION: Logo, Network (Elysium L2 99801), Latency (72ms), Session Key Status, Wallet       |
+| TOP BAR: Master Mark & Lockup, Network (Elysium L2 99801), Latency (~70ms), Session Key, Theme Toggle|
 +----------------------------------------------------------------------------------------------------+
-| HERO STATS BENTO (Cols 1-12)                                                                       |
-| [ Protected TVL: $2.45M ] [ Health: 1.34 SAFE ] [ Active Hedges: 1 ] [ Fees Saved: $18,420 ]      |
+| HERO STATS ROW (16px Flat Cards, 1px var(--rule))                                                  |
+| [ Protected TVL: $2.84M ] [ Health: 1.41 SAFE ] [ Sentinel: ARMED ] [ Fees Saved: $48,250 ]        |
 +------------------------------------------------------------------+---------------------------------+
-| LIVE POSITION & HYPERCORE MONITOR (Cols 1-8)                     | PRO TRADER CONTROL PANEL (9-12) |
-| - Collateral: 1,000 HYPE ($45,200)                               | - Mode: Pro Trader (Manual)     |
+| VAULT POSITION & HYPERCORE MONITOR                               | PRO TRADER CONTROL PANEL        |
+| - Collateral: 1,000 HYPE ($48,500)                               | - Trigger Mode: Hybrid          |
 | - Debt: $32,000 USDC                                             | - Trigger Price: [$44.20]       |
 | - Liquidation Price: $40.00                                      | - Trigger Health: [1.10]        |
 | - Current Health Factor: 1.41                                    | - Hedge Coverage: [50%]         |
-| - Live 0x0801 Perp Price: $45.18                                 | - Trailing Profit Take: [1.5%]  |
-| - Active Hedge: 500 HYPE Short @ $44.90                          | - Order Type: [Post-Only Limit] |
-| - Unrealized Hedge PnL: +$140.00                                 | - Slippage Limit: [0.20%]       |
-| - Historical Protection Chart (Health vs Time)                   |                                 |
+| - Live 0x0801 Perp Price: $48.50                                 | - Trailing Profit Take: [1.5%]  |
+| - Active Hedge Box (Standby / Armed / Hedging)                   | - Order Type: [Post-Only Limit] |
+| - Dynamic Health Gauge (Danger / Warning / Safe zones)           | - Slippage Limit: [0.20%]       |
 |                                                                  | [ UPDATE PRO PARAMETERS ]       |
-|                                                                  | [ EMERGENCY KILLSWITCH ] (Red)  |
+|                                                                  | [ EMERGENCY KILLSWITCH ] (Rose) |
 +------------------------------------------------------------------+---------------------------------+
-| REAL-TIME SENTINEL EVENT FEED & EXECUTIONS (Cols 1-7)            | $AEGIS TOKEN FLYWHEEL (Cols 8-12|
-| - [16:04:12] OrderIntentEmitted -> 500 HYPE Short via 0x0802     | - Staked Bond: 50,000 $AEGIS    |
-| - [16:04:14] HyperCore Fill -> 500 @ $44.90 (0.01% slippage)     | - Total Burned: 142,390 $AEGIS  |
-| - [16:08:22] Trailing Stop Adjusted -> $44.20 locked             | - Real Yield APR: 18.4% (USDC)  |
+| REAL-TIME SENTINEL EVENT FEED & TELEMETRY                        | $AEGIS TOKEN FLYWHEEL           |
+| - OrderIntentEmitted -> 500 HYPE Short via 0x0802                | - Staked Bond: 50,000 $AEGIS    |
+| - HyperCore Fill -> 500 @ $44.90 (0.01% slippage)                | - Total Burned: 164,820 $AEGIS  |
+| - Trailing Stop Adjusted -> $44.20 locked                        | - Real Yield APR: 18.4% (USDC)  |
 +------------------------------------------------------------------+---------------------------------+
 ```
 
@@ -332,7 +308,7 @@ AEGIS enforces five formal system invariants verified by fuzz testing and formal
 ### Phase 1: Pro Trader & Institutional Engine (Current Focus)
 - Deploy Solidity contracts to Elysium L2 (`AegisTypes`, `AegisSentinelRegistry`, `AegisVault`, `AegisFeeCollector`).
 - Implement the `@aegis/sentinel` daemon reading `0x0801` and writing via `0x0802`.
-- Build the Pro Trader Cybernetic Bento Terminal with full parameter controls and instant manual override.
+- Build the Pro Trader Terminal with full parameter controls and instant manual override, compliant with the AEGIS Brand Kit.
 - Comprehensive Foundry test suite (`forge test`) validating margin math, slashing bounds, and non-custodial invariants.
 
 ### Phase 2: Autonomous Set-and-Forget Presets (Roadmap)
