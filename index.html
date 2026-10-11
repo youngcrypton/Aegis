@@ -85,38 +85,35 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .num { font-variant-numeric: tabular-nums; }
 
 /* ================= Splash: the one opening moment ================= */
-.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: linear-gradient(135deg, var(--s1), var(--s2) 45%, var(--s3)); animation: morphDark 2.6s cubic-bezier(.45,0,.25,1) forwards; overflow: hidden; transition: opacity 900ms cubic-bezier(.19,1,.22,1), transform 900ms cubic-bezier(.19,1,.22,1); }
-.splash.out { opacity: 0; transform: scale(1.03); pointer-events: none; }
-/* Three palettes, combined in one pass: graphite, then lavender, then the Blade gradient the page keeps */
-@property --s1 { syntax: "<color>"; inherits: false; initial-value: #2A2E37; }
-@property --s2 { syntax: "<color>"; inherits: false; initial-value: #1A1D25; }
-@property --s3 { syntax: "<color>"; inherits: false; initial-value: #0F1116; }
-@keyframes morphDark {
-  0%   { --s1: #2A2E37; --s2: #1A1D25; --s3: #0F1116; }   /* graphite */
-  50%  { --s1: #2E2250; --s2: #1E1640; --s3: #07050F; }   /* lavender */
-  100% { --s1: #2B2A33; --s2: #1C2238; --s3: #0F2C2C; }   /* blade */
-}
-@keyframes morphLight {
-  0%   { --s1: #F4F5F8; --s2: #E6E8ED; --s3: #D5D9E1; }   /* graphite */
-  50%  { --s1: #FBF8FF; --s2: #EFE6FD; --s3: #E4D7FA; }   /* lavender */
-  100% { --s1: #FFF6EC; --s2: #D6F5EC; --s3: #DCCBFF; }   /* blade */
-}
-[data-theme="light"] .splash { animation-name: morphLight; }
+/* Background: the Blade gradient sits underneath. Graphite and lavender are stacked above it and
+   cross-fade out, so the page only animates opacity (cheap on phones) instead of repainting a
+   full-screen gradient every frame. */
+.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%); overflow: hidden; transition: opacity 900ms cubic-bezier(.19,1,.22,1); }
+.splash.out { opacity: 0; pointer-events: none; }
+[data-theme="light"] .splash { background: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%); }
+.splash-bg { position: absolute; inset: 0; pointer-events: none; }
+.splash-bg i { position: absolute; inset: 0; opacity: 0; will-change: opacity; transform: translateZ(0); }
+.splash-bg .l-g { background: linear-gradient(135deg, #2A2E37 0%, #1A1D25 45%, #0F1116 100%); opacity: 1; animation: fadeG 2.6s cubic-bezier(.45,0,.25,1) forwards; }
+.splash-bg .l-l { background: linear-gradient(135deg, #2E2250 0%, #1E1640 45%, #07050F 100%); animation: fadeL 2.6s cubic-bezier(.45,0,.25,1) forwards; }
+[data-theme="light"] .splash-bg .l-g { background: linear-gradient(135deg, #F4F5F8 0%, #E6E8ED 45%, #D5D9E1 100%); }
+[data-theme="light"] .splash-bg .l-l { background: linear-gradient(135deg, #FBF8FF 0%, #EFE6FD 45%, #E4D7FA 100%); }
+@keyframes fadeG { 0% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes fadeL { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 .splash-inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 30px; }
 .splash-mark { width: 116px; height: 116px; }
-.splash-mark polygon { transform-box: fill-box; transform-origin: 50% 100%; opacity: 0; transform: translateY(26px) scaleY(0.2); animation: bladeRise 1.1s cubic-bezier(.19,1,.22,1) forwards; }
+.splash-mark polygon { transform-box: fill-box; transform-origin: 50% 100%; opacity: 0; transform: translateY(26px) scaleY(0.2); will-change: transform, opacity; animation: bladeRise 1.1s cubic-bezier(.19,1,.22,1) forwards; }
 .splash-mark polygon:nth-child(1) { animation-delay: 0.15s; }
 .splash-mark polygon:nth-child(2) { animation-delay: 0.32s; }
 .splash-mark polygon:nth-child(3) { animation-delay: 0.49s; }
 @keyframes bladeRise { to { opacity: 1; transform: none; } }
 .splash-word { display: inline-flex; font-family: "Marcellus", Georgia, serif; font-size: clamp(44px, 6vw, 72px); line-height: 1; color: var(--ink); }
-.splash-word span { display: inline-block; opacity: 0; transform: translateY(14px); filter: blur(8px); animation: letterIn 0.9s cubic-bezier(.19,1,.22,1) forwards; }
+.splash-word span { display: inline-block; opacity: 0; transform: translateY(14px); will-change: transform, opacity; animation: letterIn 0.9s cubic-bezier(.19,1,.22,1) forwards; }
 .splash-word span:nth-child(1) { animation-delay: 1.00s; }
 .splash-word span:nth-child(2) { animation-delay: 1.06s; }
 .splash-word span:nth-child(3) { animation-delay: 1.12s; }
 .splash-word span:nth-child(4) { animation-delay: 1.18s; }
 .splash-word span:nth-child(5) { animation-delay: 1.24s; }
-@keyframes letterIn { to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes letterIn { to { opacity: 1; transform: none; } }
 .splash-bar { position: relative; width: 180px; height: 1px; background: var(--rule); overflow: hidden; }
 .splash-bar::after { content: ""; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: barFill 1.8s 0.9s cubic-bezier(.65,0,.35,1) forwards; }
 @keyframes barFill { to { transform: translateX(0); } }
@@ -379,7 +376,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 
 <!-- Splash: logo, then name, then the page. Plays on every load. Click or press a key to skip. -->
-<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash" id="splash" aria-hidden="true">
+  <div class="splash-bg"><i class="l-g"></i><i class="l-l"></i></div>
   <div class="splash-inner">
     <svg class="splash-mark" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="gSplash" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#gSplash)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#gSplash)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#gSplash)"/></svg>
     <div class="splash-word"><span>A</span><span>e</span><span>g</span><span>i</span><span>s</span></div>
