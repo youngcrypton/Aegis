@@ -357,18 +357,19 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   .tape-area, .coll-area, .short-area, .net-line, .open-beam, .mark-dot, .delta-ok { opacity: 1; }
 }
 .backed { padding-block: 4vh 0; }
-.backed-label { margin: 0 0 16px; font-size: var(--t-meta); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
-.backed { overflow: hidden; }
-.backed-row { list-style: none; margin: 0; padding: 0; position: relative; height: 120px; }
-.backed-card { position: absolute; left: var(--gutter); top: 0; display: flex; align-items: center; gap: 14px; opacity: 0; animation: drift 14s linear infinite; }
-.backed-card:nth-child(2) { top: 64px; animation-duration: 18s; animation-delay: -9s; }
+.backed-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 20px 56px; }
+.backed-card { min-width: 0; display: flex; align-items: center; gap: 14px; animation: backedIn 0.9s cubic-bezier(.19,1,.22,1) both; }
+.backed-card:nth-child(2) { animation-delay: 0.15s; }
 .backed-card img { width: 40px; height: 40px; flex: none; border-radius: 10px; object-fit: cover; }
-.backed-card span { font-family: "Marcellus", Georgia, serif; font-size: var(--t-sub); line-height: 1.2; color: var(--ink); white-space: nowrap; }
-@keyframes drift {
-  0% { transform: translateX(0); opacity: 0; }
-  12% { opacity: 1; }
-  78% { opacity: 1; }
-  100% { transform: translateX(40vw); opacity: 0; }
+.backed-text { display: flex; flex-direction: column; gap: 4px; }
+.backed-tag { font-size: var(--t-meta); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.backed-name { font-family: "Marcellus", Georgia, serif; font-size: var(--t-sub); line-height: 1.1; color: var(--ink); white-space: nowrap; }
+@keyframes backedIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 480px) {
+  .backed-row { flex-wrap: nowrap; gap: 16px; }
+  .backed-card { gap: 10px; }
+  .backed-card img { width: 32px; height: 32px; border-radius: 8px; }
+  .backed-name { font-size: 20px; }
 }
 </style>
 </head>
@@ -480,15 +481,14 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
   <!-- Backers -->
   <section class="wrap backed" aria-label="Backed by">
-    <p class="backed-label">Built on</p>
     <ul class="backed-row">
       <li class="backed-card">
         <img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40">
-        <span>Elysium</span>
+        <div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div>
       </li>
       <li class="backed-card">
         <img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40">
-        <span>Ascend</span>
+        <div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div>
       </li>
     </ul>
   </section>
