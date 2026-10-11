@@ -140,6 +140,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .theme .knob { width: 24px; height: 14px; border-radius: 999px; background: var(--rule); position: relative; }
 .theme .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transition: transform 300ms cubic-bezier(.19,1,.22,1); }
 [data-theme="light"] .theme .knob::after { transform: translateX(10px); }
+.jump { display: none; flex-direction: column; align-items: flex-end; gap: 2px; font-size: var(--t-meta); line-height: 1.35; white-space: nowrap; }
+.jump a { color: var(--ink-2); }
+.jump a:hover { color: var(--ink); }
+@media (max-width: 880px) { .jump { display: flex; } }
 
 /* ================= Shared ================= */
 .wrap { width: min(var(--measure), 100%); margin: 0 auto; padding-inline: var(--gutter); }
@@ -388,6 +392,11 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     <button class="theme" id="themeBtn" aria-label="Switch color theme" aria-pressed="false">
       <span id="themeLabel">Dark</span><span class="knob" aria-hidden="true"></span>
     </button>
+    <span class="jump" aria-label="Page sections">
+      <a href="#architecture">How it works</a>
+      <a href="#compare">Why AEGIS</a>
+      <a href="#security">Security</a>
+    </span>
   </nav>
 </header>
 
