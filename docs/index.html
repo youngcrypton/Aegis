@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AEGIS Protocol Documentation — Non-Custodial Collateral Protection</title>
+  <meta name="description" content="Technical documentation, financial mathematical specifications, smart contract architecture, and developer integration guides for AEGIS protocol on Elysium L2 and HyperCore.">
+  <script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("aegis-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"));}catch(e){}</script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+  <!-- Shared Master Mark Gradients -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="mk-dark" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+        <stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/>
+        <stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/>
+        <stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/>
+        <stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/>
+      </linearGradient>
+      <linearGradient id="mk-light" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+        <stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/>
+        <stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/>
+        <stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/>
+        <stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Global Header -->
+  <header class="docs-header">
+    <div class="header-left">
+      <button class="nav-toggle-btn" id="navToggleBtn" type="button" aria-label="Toggle Navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <a class="brand-link" href="../index.html" aria-label="AEGIS Home">
+        <svg class="brand-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
+          <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/>
+          <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/>
+          <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/>
+        </svg>
+        <span class="brand-wordmark">Aegis</span>
+        <span class="docs-badge">Docs</span>
+      </a>
+    </div>
+
+    <div class="header-center">
+      <button class="search-trigger-btn" id="searchTriggerBtn" type="button" aria-label="Search documentation">
+        <div class="search-trigger-left">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Search technical documentation...</span>
+        </div>
+        <kbd class="search-kbd">Ctrl K</kbd>
+      </button>
+    </div>
+
+    <div class="header-right">
+      <a class="header-link-btn" href="../index.html">Landing</a>
+      <a class="header-link-btn" href="https://github.com/youngcrypton/Aegis" target="_blank" rel="noopener">GitHub</a>
+      <a class="header-action-btn" href="../app/index.html">Launch App ↗</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-pressed="false">
+        <span id="themeLabel">Dark</span> mode
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Documentation Layout Container -->
+  <div class="docs-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="docs-sidebar" id="docsSidebar">
+      
+      <!-- Group 1: Introduction -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part I: Introduction</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item active">
+            <a href="#welcome">
+              <span>Welcome to AEGIS</span>
+              <span class="nav-tag tag-core">Core</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#problem-forced-liquidation">
+              <span>The Problem: Forced Liquidation</span>
+              <span class="nav-tag tag-core">Core</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#aegis-approach">
+              <span>The AEGIS Approach</span>
+              <span class="nav-tag tag-core">Core</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#core-principles">
+              <span>Core Principles & Invariants</span>
+              <span class="nav-tag tag-sec">Sec</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#key-terminology">
+              <span>Key Terminology & Glossary</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#faq">
+              <span>Frequently Asked Questions</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 2: Core Concepts -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part II: Core Concepts</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#health-factor">
+              <span>Position Health & Math</span>
+              <span class="nav-tag tag-math">Math</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#hedge-lifecycle">
+              <span>14-Stage Hedge Lifecycle</span>
+              <span class="nav-tag tag-core">Core</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 3: Mathematical Specifications -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part III: Mathematical Specs</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#hedge-sizing-math">
+              <span>Hedge Sizing & Trailing Math</span>
+              <span class="nav-tag tag-math">Math</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#worked-examples">
+              <span>Worked Numerical Models</span>
+              <span class="nav-tag tag-math">Quant</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 4: Smart Contracts -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part IV: Smart Contracts</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#contract-architecture">
+              <span>Contract Interfaces & ABIs</span>
+              <span class="nav-tag tag-sol">Sol</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#precompiles">
+              <span>Precompile 0x0801 & 0x0802</span>
+              <span class="nav-tag tag-sol">EVM</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 5: Operations & Security -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part V: Operations & Security</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#sentinel-operator-guide">
+              <span>Sentinel Operator Guide</span>
+              <span class="nav-tag">Node</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#security-invariants">
+              <span>Security Model & Invariants</span>
+              <span class="nav-tag tag-sec">Audit</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 6: Developer Integration -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part VI: Integration</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#developer-quickstart">
+              <span>Developer SDK Quickstart</span>
+              <span class="nav-tag">Dev</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group 7: Brand System & Design Standards -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part VII: Brand & Design</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#brand-kit">
+              <span>Brand Kit & Design System</span>
+              <span class="nav-tag tag-brand">Brand</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- Main Reading Content Area -->
+    <main class="docs-main">
+      <div class="docs-content-wrapper">
+        
+        <!-- Breadcrumbs Navigation -->
+        <nav class="breadcrumbs" id="breadcrumbsNav" aria-label="Breadcrumbs">
+          <a href="#welcome">Docs</a>
+          <span class="breadcrumb-separator">/</span>
+          <span>Introduction</span>
+          <span class="breadcrumb-separator">/</span>
+          <span style="color:var(--ink);">Welcome to AEGIS</span>
+        </nav>
+
+        <!-- Page Header -->
+        <header class="page-header">
+          <h1 class="page-title" id="pageTitle">Welcome to AEGIS</h1>
+          <p class="page-subtitle" id="pageSubtitle">The non-custodial risk engine and collateral protection protocol for Elysium L2 and HyperCore.</p>
+          <div class="page-meta">
+            <span class="meta-pill" id="pageCategoryPill">Introduction</span>
+            <span class="meta-pill status-live" id="pageStatusPill">Live Spec</span>
+            <span>Version: <strong>1.0.0</strong></span>
+            <span>Network: <strong>Elysium L2 (99801)</strong></span>
+          </div>
+        </header>
+
+        <!-- Dynamic Content Injected Here -->
+        <article class="docs-article" id="docsContentArea">
+          <!-- Populated by docs.js -->
+        </article>
+
+        <!-- Previous / Next Navigation Cards -->
+        <nav class="docs-page-nav" id="docsPageNavWrapper" aria-label="Page navigation">
+          <!-- Populated by docs.js -->
+        </nav>
+
+        <!-- Page Footer -->
+        <footer style="margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; gap: 12px;">
+          <div>© 2026 AEGIS Protocol. All specifications built to the approved brand kit.</div>
+          <div><a href="https://github.com/youngcrypton/Aegis" target="_blank" rel="noopener">Edit or view source on GitHub ↗</a></div>
+        </footer>
+
+      </div>
+    </main>
+
+    <!-- Right Table of Contents (On this page) -->
+    <aside class="docs-toc" id="docsToc">
+      <div class="toc-title">On this page</div>
+      <ul class="toc-list" id="tocList">
+        <!-- Populated by docs.js -->
+      </ul>
+    </aside>
+
+  </div>
+
+  <!-- Global Instant Search Modal -->
+  <div class="search-modal-backdrop" id="searchModalBackdrop" role="dialog" aria-modal="true" aria-label="Search Documentation">
+    <div class="search-modal">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ink-2);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input class="search-modal-input" id="searchModalInput" type="text" placeholder="Type a term, formula, contract name, or question..." autocomplete="off" spellcheck="false">
+        <kbd class="search-kbd" onclick="window.aegisCloseSearch()" style="cursor:pointer;">ESC</kbd>
+      </div>
+      <ul class="search-results-list" id="searchResultsList">
+        <!-- Populated by docs.js search engine -->
+      </ul>
+      <div class="search-footer">
+        <span>Press <kbd class="search-kbd">↑</kbd> <kbd class="search-kbd">↓</kbd> to navigate</span>
+        <span>Press <kbd class="search-kbd">ESC</kbd> to exit</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="docs.js"></script>
+</body>
+</html>

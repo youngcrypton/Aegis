@@ -26,7 +26,15 @@ Last updated: 2026-10-11
 
 - `site/archive/` keeps `landing-v15.html` to `landing-v18.html` and the old logo drafts for reference only.
 
+## Documentation Platform (`docs/`)
+
+- **Done:** Comprehensive, production-grade technical documentation platform built in `docs/` (`docs/index.html`, `docs/docs.css`, `docs/docs.js`).
+- **Done:** 100% token-compliant styling using `brand/kit/tokens.css` with zero hard-coded hex colors; dual-theme support (Dark & Light mode) with persistent preference.
+- **Done:** Complete technical coverage across 8 parts: Protocol Overview, Problem of Forced Liquidation, Delta Hedging Approach, Core Principles & Security Invariants (INV-1 to INV-5), Glossary & FAQ, Position Health & Math ($H$), 14-Stage Hedge Lifecycle, Hedge Sizing ($\gamma$) & Trailing Unwind ($\tau$), Worked Numerical Quant Models, Smart Contract Specifications (`AegisVault.sol`, `AegisSentinelRegistry.sol`, `AegisFeeCollector.sol`), Precompile `0x0801` and Predeploy `0x0802`, Sentinel Node Operator Guide (25k $AEGIS bond, latency SLAs, slashing), and Developer SDK Quickstart.
+- **Done:** Interactive features including instantaneous full-text search (`Ctrl+K`), client-side hash routing, interactive code block copy, responsive table of contents (TOC) with scroll-spy, and mobile drawer navigation.
+- **Done:** Linked header, mobile menu, and footer links in `index.html` to `docs/index.html`.
+
 ## Next
 
-- Add real footer URLs and the live app link.
-- Decide on the wordmark case and navy on white.
+- Finalize live app deployment URL for "Launch app" buttons.
+- Community governance resolution on wordmark case ("Aegis" vs "AEGIS") and navy on white token nuances.
