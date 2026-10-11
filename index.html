@@ -359,7 +359,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .backed { padding-block: 4vh 0; }
 /* Continuous horizontal ticker: the list is written twice and slides exactly one copy to the left, looping seamlessly */
 .backed-viewport { overflow: hidden; }
-.backed-row { --gap: 56px; list-style: none; margin: 0; padding: 0 var(--gap) 0 0; display: flex; flex-wrap: nowrap; align-items: center; gap: var(--gap); width: max-content; will-change: transform; animation: marquee 14s linear infinite; }
+.backed-row { --gap: 56px; list-style: none; margin: 0; padding: 0 var(--gap) 0 0; display: flex; flex-wrap: nowrap; align-items: center; gap: var(--gap); width: max-content; will-change: transform; animation: marquee 36s linear infinite; }
 .backed-viewport:hover .backed-row { animation-play-state: paused; }
 @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
 .backed-card { min-width: 0; display: flex; align-items: center; gap: 14px; }
@@ -368,7 +368,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .backed-tag { font-size: var(--t-meta); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
 .backed-name { font-family: "Marcellus", Georgia, serif; font-size: var(--t-sub); line-height: 1.1; color: var(--ink); white-space: nowrap; }
 @media (max-width: 480px) {
-  .backed-row { --gap: 32px; }
+  .backed-row { --gap: 32px; animation-duration: 24s; }
   .backed-card { gap: 10px; }
   .backed-card img { width: 32px; height: 32px; border-radius: 8px; }
   .backed-name { font-size: 20px; }
@@ -485,22 +485,22 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   <section class="wrap backed" aria-label="Backed by">
     <div class="backed-viewport">
       <ul class="backed-row">
-        <li class="backed-card">
-          <img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40">
-          <div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div>
-        </li>
-        <li class="backed-card">
-          <img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40">
-          <div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div>
-        </li>
-        <li class="backed-card" aria-hidden="true">
-          <img src="assets/backers/elysium.png" alt="" width="40" height="40">
-          <div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div>
-        </li>
-        <li class="backed-card" aria-hidden="true">
-          <img src="assets/backers/ascent.png" alt="" width="40" height="40">
-          <div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div>
-        </li>
+        <li class="backed-card"><img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card"><img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="Elysium logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="Ascend logo" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/elysium.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Built on</span><span class="backed-name">Elysium</span></div></li>
+        <li class="backed-card" aria-hidden="true"><img src="assets/backers/ascent.png" alt="" width="40" height="40"><div class="backed-text"><span class="backed-tag">Launching on</span><span class="backed-name">Ascend</span></div></li>
       </ul>
     </div>
   </section>
