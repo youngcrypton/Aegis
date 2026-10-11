@@ -44,6 +44,9 @@
   - Added dedicated **Part VII: Brand Kit & Design System** (`#brand-kit`) to `docs/docs.js`, `docs/docs.css`, and `docs/index.html` featuring interactive token swatches, master mark geometry, WCAG contrast table, typography scale, surface rules, and standalone kit link.
   - Executed automated browser verification via `browser_subagent` on `http://localhost:8000/docs/index.html#brand-kit`; verified dark and light mode rendering and contrast.
   - Verified local Wi-Fi sharing endpoint: `http://192.168.18.5:8000/docs/index.html`.
+  - Connected `Documentation` and `GitHub` links in `index.html` across topbar, mobile drawer, and footer Resources column with `target="_blank" rel="noopener"` to open in dedicated tabs.
+  - Refined mobile layout for `docs/`: streamlined `.docs-header` at widths under 880px and 600px, relocated secondary links to the mobile slide-out drawer, added mobile search icon button, and verified clean rendering at 390px mobile viewport with zero text collisions.
+  - Verified link behaviors via `browser_subagent`.
   - Updated `STATUS.md`.
 
 ---

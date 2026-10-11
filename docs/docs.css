@@ -198,6 +198,27 @@ a:hover {
   font-family: inherit;
 }
 
+.mobile-search-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+
+.mobile-search-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -1106,14 +1127,87 @@ a:hover {
   .header-center {
     display: none;
   }
+
+  .header-link-btn {
+    display: none !important;
+  }
+
+  .docs-badge {
+    display: none !important;
+  }
+
+  .mobile-search-btn {
+    display: inline-flex;
+  }
 }
 
-@media (max-width: 480px) {
-  .brand-wordmark {
-    font-size: 19px;
+@media (max-width: 600px) {
+  .docs-header {
+    padding: 0 14px;
+    gap: 8px;
   }
-  .docs-badge {
-    display: none;
+
+  .header-left {
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .header-right {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .header-action-btn {
+    display: none !important;
+  }
+
+  .theme-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .brand-wordmark {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .docs-header {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .header-left {
+    gap: 6px;
+  }
+
+  .brand-link {
+    gap: 6px;
+  }
+
+  .brand-logo-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .brand-wordmark {
+    font-size: 18px;
+  }
+
+  .theme-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .mobile-search-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-toggle-btn {
+    width: 34px;
+    height: 34px;
   }
 }
 

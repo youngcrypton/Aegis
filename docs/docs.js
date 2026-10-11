@@ -1250,6 +1250,7 @@
     pageNavWrapper: document.getElementById('docsPageNavWrapper'),
     tocList: document.getElementById('tocList'),
     searchTrigger: document.getElementById('searchTriggerBtn'),
+    mobileSearch: document.getElementById('mobileSearchBtn'),
     searchBackdrop: document.getElementById('searchModalBackdrop'),
     searchInput: document.getElementById('searchModalInput'),
     searchResults: document.getElementById('searchResultsList')
@@ -1402,6 +1403,7 @@
   // --- 6. INSTANT SEARCH ENGINE ---
   function initSearch() {
     el.searchTrigger.addEventListener('click', openSearchModal);
+    if (el.mobileSearch) el.mobileSearch.addEventListener('click', openSearchModal);
     
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {

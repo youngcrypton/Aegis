@@ -32,7 +32,8 @@ Last updated: 2026-10-11
 - **Done:** 100% token-compliant styling using `brand/kit/tokens.css` with zero hard-coded hex colors; dual-theme support (Dark & Light mode) with persistent preference.
 - **Done:** Complete technical coverage across 8 parts: Protocol Overview, Problem of Forced Liquidation, Delta Hedging Approach, Core Principles & Security Invariants (INV-1 to INV-5), Glossary & FAQ, Position Health & Math ($H$), 14-Stage Hedge Lifecycle, Hedge Sizing ($\gamma$) & Trailing Unwind ($\tau$), Worked Numerical Quant Models, Smart Contract Specifications (`AegisVault.sol`, `AegisSentinelRegistry.sol`, `AegisFeeCollector.sol`), Precompile `0x0801` and Predeploy `0x0802`, Sentinel Node Operator Guide (25k $AEGIS bond, latency SLAs, slashing), and Developer SDK Quickstart.
 - **Done:** Interactive features including instantaneous full-text search (`Ctrl+K`), client-side hash routing, interactive code block copy, responsive table of contents (TOC) with scroll-spy, and mobile drawer navigation.
-- **Done:** Linked header, mobile menu, and footer links in `index.html` to `docs/index.html`.
+- **Done:** Connected Documentation and GitHub links in `index.html` across the topbar, mobile drawer, and footer Resources column with `target="_blank" rel="noopener"` to open in dedicated tabs.
+- **Done:** Optimized mobile responsive header for `docs/`: eliminated text overlap by relocating desktop-only links to the drawer, adding mobile search trigger icon, and verifying layout at 390px width.
 
 ## Next
 
