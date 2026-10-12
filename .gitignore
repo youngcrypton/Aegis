@@ -9,8 +9,8 @@ node_modules/
 # Build & Compilation Artifacts
 cache/
 broadcast/
-dist/
 out/
+keeper/dist/
 remotion/public/recordings/
 remotion/public/overlays/
 remotion/public/audio/*.wav

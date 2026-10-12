@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <defs>
+    <radialGradient id="aurA"><stop offset="0" stop-color="#07705F" stop-opacity="0.12"/><stop offset="1" stop-color="#07705F" stop-opacity="0"/></radialGradient>
+    <radialGradient id="aurB"><stop offset="0" stop-color="#1C2238" stop-opacity="0.06"/><stop offset="1" stop-color="#1C2238" stop-opacity="0"/></radialGradient>
+    
+    
+  </defs>
+  <rect width="1500" height="500" fill="#FFFFFF"/>
+  <circle cx="1300" cy="520" r="600" fill="url(#aurA)"/>
+  <circle cx="180" cy="40" r="620" fill="url(#aurB)"/>
+
+  <!-- Hedge motif: amber trigger line in a darker amber for white -->
+  <line x1="560" y1="432" x2="1500" y2="432" stroke="#A34A08" stroke-width="1" stroke-dasharray="5 6" opacity="0.6"/>
+  <text x="560" y="420" font-family="Poppins, sans-serif" font-weight="400" font-size="14" fill="#A34A08" opacity="0.9">Trigger 1.20</text>
+  <path d="M560 470 C760 470 880 478 1010 462 S1250 448 1500 452" fill="none" stroke="#07705F" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+
+  <!-- Mark -->
+  <defs><linearGradient id="aegis-grad" gradientUnits="userSpaceOnUse" x1="27.70" y1="-13.51" x2="103.30" y2="141.51"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><g transform="translate(1010 50) scale(3.1)"><polygon points="40.20,0.00 70.40,0.00 26.60,127.00 0.00,127.00" fill="url(#aegis-grad)"/><polygon points="73.00,36.00 101.10,36.00 68.70,127.00 42.60,127.00" fill="url(#aegis-grad)"/><polygon points="104.20,67.00 130.00,67.00 108.50,127.00 83.90,127.00" fill="url(#aegis-grad)"/></g>
+
+  <!-- Type block: one left edge (x=262), hairline rule above the tagline -->
+  <text x="262" y="252" font-family="Poppins, sans-serif" font-weight="700" font-size="104" letter-spacing="30" fill="#161230">AEGIS</text>
+  <line x1="266" y1="280" x2="386" y2="280" stroke="#07705F" stroke-width="1.5" opacity="0.8"/>
+  <text x="266" y="330" font-family="Poppins, sans-serif" font-weight="300" font-size="34" fill="#161230">Hedge drawdowns. Never get liquidated.</text>
+  <text x="266" y="372" font-family="Poppins, sans-serif" font-weight="500" font-size="20" letter-spacing="2.5" fill="#07705F">AUTONOMOUS DELTA HEDGING ON HYPERCORE</text>
+</svg>
