@@ -17,6 +17,7 @@
   </p>
 
   <p align="center">
+    <a href="#-live-product-demo-hackathon-submission"><b>Live Demo (02:44)</b></a> •
     <a href="#the-problem-the-liquidation-death-spiral">The Problem</a> •
     <a href="#the-aegis-approach">The AEGIS Approach</a> •
     <a href="#system-architecture">Architecture</a> •
@@ -28,6 +29,55 @@
   </p>
 
 </div>
+
+---
+
+## 🎬 Live Product Demo (Hackathon Submission)
+
+> **Watch the official 02:44 live product walkthrough of the AEGIS high-frequency risk engine running on Elysium L2 testnet and HyperCore CLOB.**
+
+<div align="center">
+
+  <a href="brand/x/aegis-product-demo-3min.mp4">
+    <img src="brand/x/aegis-demo-thumbnail-1200x675.png" alt="AEGIS Protocol 3-Minute Live Product Demo Walkthrough" width="100%" style="border-radius: 12px; border: 1px solid #1F293D;" />
+  </a>
+
+  <p align="center">
+    <a href="brand/x/aegis-product-demo-3min.mp4"><b>▶ Play Full Demo Video (MP4 &bull; 02:44 &bull; 22.9 MB)</b></a> &nbsp;|&nbsp;
+    <a href="brand/x/aegis-demo-thumbnail-1200x675.png"><b>🖼️ High-Res Thumbnail (2x Retina)</b></a> &nbsp;|&nbsp;
+    <a href="download.html"><b>📋 Narration Script &amp; Local Media Hub</b></a>
+  </p>
+
+</div>
+
+| Telemetry Dimension | Live Walkthrough Verification | Protocol Architecture Reference |
+| :--- | :--- | :--- |
+| **Duration** | **02:44** (164.0s) &bull; *Strictly under 3-min hackathon ceiling* | Hackathon Video Standard |
+| **Network & Consensus** | **Elysium L2** (Chain ID `99801`) &bull; **HyperCore L1 CLOB** | Precompiles `0x0801` &amp; `0x0802` |
+| **Audio Narration** | Continuous spoken voiceover &bull; **-13.97 dBFS RMS** loud | Broadcast Loudness Standard |
+| **Visual Telemetry** | Bold interactive presenter cursor with spotlight halo &amp; tags | Live DOM Telemetry Tracker |
+| **Position Protected** | **1,000.00 HYPE** Collateral ($48.5k) &bull; **$32,000.00 USDC** Debt | Radial Health Gauge ($H = 1.41$) |
+| **Simulated Crash** | **-18% Flash Crash** &bull; Sub-78ms atomic short hedge trigger | Predeploy `0x0802` Execution |
+| **Profit Recovery** | **+1.5% V-Bounce** trailing profit lock &bull; 90% debt payback | Invariant **INV-4** Fee Split (50/50) |
+| **Trader Sovereignty** | Atomic manual override killswitch &bull; Monotonic nonces | Invariant **INV-3** &amp; **INV-5** |
+
+<details>
+<summary><b>📜 Click to expand the full 6-Chapter Voiceover Script &amp; Walkthrough Transcript</b></summary>
+
+1. **Chapter 1 (0:00 – 0:31) &bull; Architecture &amp; Portfolio Telemetry**:
+   *"Welcome to the live product demonstration of AEGIS, the first autonomous, non-custodial risk engine engineered to eliminate forced liquidations in DeFi. We are live on the Elysium Layer 2 testnet on Chain ID 99801. Our terminal connects directly to HyperCore Precompile 0x0801, streaming mark prices in sub-78 milliseconds from L1 consensus. On screen, our vault holds 1,000 HYPE collateral and $32,000 USDC debt, maintaining a safe Health Factor of 1.41 on our dynamic radial gauge."*
+2. **Chapter 2 (0:31 – 0:59) &bull; 1-Click Lite Auto-Pilot**:
+   *"For everyday borrowers, AEGIS provides the 1-Click Lite Auto-Pilot. Users select from three mathematically modeled defense presets: Conservative at health factor 1.25, Aggressive at 1.08, or Balanced at 1.15. We pick the 0.05 HYPE micro-deposit chip, calibrated for the Elysium testnet faucet cap. Clicking Activate Shield delegates an ephemeral session key under Invariant INV-1, strictly restricted to trade-only hedging with zero permission to withdraw collateral."*
+3. **Chapter 3 (0:59 – 1:20) &bull; Pro Terminal &amp; Algorithmic Controls**:
+   *"For institutional quants, the Pro Terminal unlocks granular algorithmic parameters. Traders set exact collateral price triggers, health thresholds, delta coverage ratios from 10% to 100%, and trailing profit locks. Below, our terminal streams the live 10-level Central Limit Orderbook directly from HyperCore, showing sub-tick liquidity and execution depth."*
+4. **Chapter 4 (1:20 – 1:49) &bull; Real Flash Crash Simulation (-18%)**:
+   *"Now, let's witness AEGIS under extreme volatility. We trigger a live -18% flash crash simulation. As the price falls toward the $40 liquidation barrier, the Health Factor drops below our 1.15 threshold. In under 78 milliseconds, the Sentinel engine detects the breach and dispatches an atomic short hedge via Predeploy 0x0802. In the Active Hedge panel, our short position absorbs the drop dollar-for-dollar. Spot collateral remains 100% safe."*
+5. **Chapter 5 (1:49 – 2:18) &bull; V-Bounce &amp; Trailing Profit Unwind**:
+   *"Next, the market bottoms out at $34.50 and rebounds. The moment price bounces by our 1.5% trailing buffer, the take-profit trigger fires automatically. The short hedge buys back on the orderbook, locking in cash profits. 90% of net profits pay down debt, restoring the Health Factor comfortably above 1.25. The 10% performance fee splits under Invariant INV-4: 50% burned via Ascend Hook Pools, and 50% paid as real yield to bonded Sentinel stakers."*
+6. **Chapter 6 (2:19 – 2:44) &bull; Emergency Killswitch (INV-3) &amp; Wrap-Up**:
+   *"Finally, safety is non-negotiable. Under Invariant INV-3, borrowers retain an atomic single-transaction Manual Override killswitch to instantly revoke keys. In the audit terminal, every intent is signed via EIP-712 with strictly monotonic nonces under Invariant INV-5, preventing replay attacks. AEGIS eliminates liquidation loss forever. Explore the live terminal at aegis.trade."*
+
+</details>
 
 ---
 
