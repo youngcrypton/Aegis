@@ -116,7 +116,9 @@ Last updated: 2026-10-11
 
 - **Done:** Authored publication-ready launch article and social thread in `LAUNCH_POST.md`:
   - **Comprehensive Launch Article**: Detailed piece for Mirror / Medium / Substack titled *"Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2"*. Covers the forced liquidation trap ($10-15\%$ penalties, MEV liquidator cartels, cascading flash wicks), the core AEGIS delta-hedging solution via HyperCore Precompile `0x0801` and Predeploy `0x0802`, dynamic bottom-wick tracking with trailing take-profit unwinds back into the vault, Lite Auto-Pilot (retail/micro-capital) vs. Pro Terminal (quants/institutions), non-custodial Invariant INV-1 session keys, 700M $AEGIS tokenomics aligned with the Ascend ecosystem, and an explicit outlook on upcoming roadmap items.
-  - **10-Tweet Launch Thread (X / Twitter)**: Complete, high-impact thread formatted with tweet numbering (`1/10` to `10/10`), explicit image attachment tags, calm institutional voice, zero emojis, and complete feature coverage.
+- **Done:** Full Open Source Release: unignored and committed master architecture files (`PROMPT.md` and `web3-hackathon-architect/`), making 100% of the project specification, quant models, and planning documentation fully public and open source.
+- **Done:** Programmatic Motion & Video Engine in `remotion/` with official AEGIS Light Theme composition (`AegisLaunchLight`), synthesized stereo soundscape (`remotion/public/aegis-launch-sound.wav`), and rendered launch video in `brand/x/aegis-launch-video-light.mp4`.
+- **Done:** Single-click asset download and preview portal in `download.html` served locally on port 8000.
 
 ## Next
 
