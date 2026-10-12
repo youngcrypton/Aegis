@@ -3,12 +3,15 @@
 # AEGIS Protocol — Production & Testnet Edge Hosting
 # ==============================================================================
 
-name = "aegis-protocol"
+name = "aegis"
 compatibility_date = "2024-09-23"
-pages_build_output_dir = "."
+pages_build_output_dir = "./dist"
+
+[build]
+command = "node build.js"
 
 [assets]
-directory = "."
+directory = "./dist"
 
 [vars]
 ENVIRONMENT = "production"

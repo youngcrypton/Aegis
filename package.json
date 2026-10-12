@@ -1,0 +1,10 @@
+{
+  "name": "aegis",
+  "version": "1.0.0",
+  "description": "AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "author": "AEGIS Core",
+  "license": "MIT"
+}
