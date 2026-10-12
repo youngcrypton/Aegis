@@ -550,8 +550,9 @@
     </div>
   </main>
 
-  <!-- Load Access Codes Validation Module -->
+  <!-- Load Access Codes Validation & Supabase Modules -->
   <script src="access-codes.js"></script>
+  <script src="supabase-client.js"></script>
   <script>
     (function () {
       'use strict';
@@ -631,7 +632,7 @@
 
       // Handle Form Submit
       if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
           e.preventDefault();
           alertBox.className = 'gate-alert';
           alertBox.style.display = 'none';
@@ -644,27 +645,56 @@
             return;
           }
 
-          if (!window.AegisAccess) {
-            alertBox.className = 'gate-alert error';
-            alertBox.textContent = 'Access verification engine is unavailable.';
-            return;
-          }
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Verifying with Supabase...';
 
-          const res = window.AegisAccess.authorize(val);
+          try {
+            let isValid = false;
+            let tierLabel = 'Verified Beta Pass';
 
-          if (res.success) {
-            alertBox.className = 'gate-alert success';
-            alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.7';
+            // Query live Supabase database
+            if (window.AegisSupabase) {
+              const supaRes = await window.AegisSupabase.verifyAccessCode(val);
+              if (supaRes && supaRes.valid) {
+                isValid = true;
+                tierLabel = supaRes.label || supaRes.tier || 'Verified Beta Pass';
+              }
+            }
 
-            setTimeout(function () {
-              window.location.href = getTerminalUrl();
-            }, 800);
-          } else {
-            alertBox.className = 'gate-alert error';
-            alertBox.textContent = '✕ ' + (res.error || 'Invalid or unrecognized access code.');
-            input.select();
+            // Fallback to local access codes module
+            if (!isValid && window.AegisAccessCodes) {
+              isValid = window.AegisAccessCodes.isValid(val);
+            }
+
+            if (isValid) {
+              if (window.AegisAccess) window.AegisAccess.authorize(val);
+              alertBox.className = 'gate-alert success';
+              alertBox.textContent = `✓ Access Verified (${tierLabel})! Launching AEGIS Terminal...`;
+              setTimeout(function () {
+                window.location.href = getTerminalUrl();
+              }, 700);
+            } else {
+              alertBox.className = 'gate-alert error';
+              alertBox.textContent = '✕ Invalid or unrecognized access code.';
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<span>Unlock Terminal ↗</span>';
+              input.select();
+            }
+          } catch (err) {
+            console.warn('Verification exception:', err);
+            if (window.AegisAccess && window.AegisAccess.authorize(val).success) {
+              alertBox.className = 'gate-alert success';
+              alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
+              setTimeout(function () {
+                window.location.href = getTerminalUrl();
+              }, 700);
+            } else {
+              alertBox.className = 'gate-alert error';
+              alertBox.textContent = '✕ Invalid access code.';
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<span>Unlock Terminal ↗</span>';
+              input.select();
+            }
           }
         });
       }

@@ -5,9 +5,9 @@
 (function() {
   'use strict';
 
-  // Config: Read from window runtime configuration or fallback
-  const SUPABASE_URL = window.AEGIS_SUPABASE_URL || 'https://xwhqbyhrytxkdfkuzjvy.supabase.co';
-  const SUPABASE_ANON_KEY = window.AEGIS_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy-key';
+  // Config: Live Supabase Backend Project
+  const SUPABASE_URL = window.AEGIS_SUPABASE_URL || 'https://rdwkvdoqdytndgslrlis.supabase.co';
+  const SUPABASE_ANON_KEY = window.AEGIS_SUPABASE_ANON_KEY || 'sb_publishable_BYokzDha9EarnLaWyGO7EA_XSV1mpL7';
 
   class AegisSupabaseClient {
     constructor(url, anonKey) {

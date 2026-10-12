@@ -14,7 +14,8 @@ CHAIN_NAME = "Elysium L2 Testnet"
 ELYSIUM_RPC_URL = "https://testnet-rpc.elysium.kinetiq.xyz"
 VAULT_CONTRACT = "0x05Aa229Aec102f78CE0E852A812a388F076Aa555"
 HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
-SUPABASE_URL = "https://xwhqbyhrytxkdfkuzjvy.supabase.co"
+SUPABASE_URL = "https://rdwkvdoqdytndgslrlis.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_BYokzDha9EarnLaWyGO7EA_XSV1mpL7"
 
 # Cloudflare Edge Placement
 [placement]
