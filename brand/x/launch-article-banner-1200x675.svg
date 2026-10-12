@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <!-- Background Gradient (Brand Kit Blade Ground) -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2B2A33"/>
+      <stop offset="0.45" stop-color="#1C2238"/>
+      <stop offset="1" stop-color="#0F2C2C"/>
+    </linearGradient>
+
+    <!-- Aurora Glows -->
+    <radialGradient id="aurTeal" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5CF0D6" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#5CF0D6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aurViolet" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C9A6FF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#C9A6FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aurMarkGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#087E6D" stop-opacity="0.40"/>
+      <stop offset="50%" stop-color="#5A1FC9" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#1C2238" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Approved Master AEGIS Blade Gradient (brand/logo/aegis-mark.svg) -->
+    <linearGradient id="aegis-grad" gradientUnits="userSpaceOnUse" x1="27.70" y1="-13.51" x2="103.30" y2="141.51">
+      <stop offset="0.00" stop-color="#1F0E4C"/>
+      <stop offset="0.10" stop-color="#241056"/>
+      <stop offset="0.20" stop-color="#40178D"/>
+      <stop offset="0.30" stop-color="#5A1FC9"/>
+      <stop offset="0.40" stop-color="#6928ED"/>
+      <stop offset="0.50" stop-color="#642FEB"/>
+      <stop offset="0.60" stop-color="#4C44CB"/>
+      <stop offset="0.70" stop-color="#305EA5"/>
+      <stop offset="0.80" stop-color="#157286"/>
+      <stop offset="0.90" stop-color="#087B75"/>
+      <stop offset="1.00" stop-color="#087E6D"/>
+    </linearGradient>
+
+    <!-- Subtle Hairline Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(220, 230, 255, 0.035)" stroke-width="1"/>
+    </pattern>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Marcellus&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap');
+      .display { font-family: 'Marcellus', Georgia, serif; }
+      .sans { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+      .mono { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+    </style>
+  </defs>
+
+  <!-- Base Canvas -->
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+
+  <!-- Ambient Aurora Glows -->
+  <circle cx="1020" cy="380" r="460" fill="url(#aurTeal)"/>
+  <circle cx="160" cy="120" r="480" fill="url(#aurViolet)"/>
+  <circle cx="950" cy="330" r="280" fill="url(#aurMarkGlow)"/>
+
+  <!-- Border Frame (1px Rule per brand kit) -->
+  <rect x="24" y="24" width="1152" height="627" rx="16" fill="none" stroke="rgba(220, 230, 255, 0.12)" stroke-width="1"/>
+
+  <!-- Dynamic Technical Motif: Liquidation Floor & Trailing Unwind Arc -->
+  <!-- Liquidation Danger Line -->
+  <line x1="80" y1="520" x2="1120" y2="520" stroke="#FF8A9A" stroke-width="1" stroke-dasharray="4 6" opacity="0.35"/>
+  <text x="84" y="512" class="mono" font-size="11" fill="#FF8A9A" opacity="0.65">Liquidation Barrier (80% Maintenance)</text>
+
+  <!-- Sentinel Hedge Trigger Line -->
+  <line x1="80" y1="460" x2="1120" y2="460" stroke="#FFBE7A" stroke-width="1.2" stroke-dasharray="6 6" opacity="0.6"/>
+  <text x="84" y="452" class="mono" font-size="11" fill="#FFBE7A" opacity="0.85">Sentinel Trigger Line &bull; H = 1.15</text>
+
+  <!-- Market Volatility & Autonomous Short Recovery Trajectory -->
+  <path d="M 80 410 C 220 410, 310 430, 420 460 S 520 500, 600 505 S 710 480, 840 430 S 1000 390, 1120 395" fill="none" stroke="#5CF0D6" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+  
+  <!-- Hedge Trigger Event Point -->
+  <circle cx="420" cy="460" r="5" fill="#FFBE7A"/>
+  <circle cx="420" cy="460" r="10" fill="none" stroke="#FFBE7A" stroke-width="1" opacity="0.6"/>
+  <text x="432" y="464" class="mono" font-size="10" fill="#FFBE7A">Atomic Hedge Dispatched (0x0802)</text>
+
+  <!-- Bottom Wick Trailing TP Point -->
+  <circle cx="600" cy="505" r="4" fill="#5CF0D6"/>
+  <text x="612" y="515" class="mono" font-size="10" fill="#5CF0D6">Trailing TP Locked (+1.5% V-Bounce)</text>
+
+  <!-- Master Logo Mark (Right Side) -->
+  <g transform="translate(800, 135) scale(2.65)">
+    <!-- Master approved geometry from brand/logo/aegis-mark.svg -->
+    <polygon points="40.20,0.00 70.40,0.00 26.60,127.00 0.00,127.00" fill="url(#aegis-grad)"/>
+    <polygon points="73.00,36.00 101.10,36.00 68.70,127.00 42.60,127.00" fill="url(#aegis-grad)"/>
+    <polygon points="104.20,67.00 130.00,67.00 108.50,127.00 83.90,127.00" fill="url(#aegis-grad)"/>
+  </g>
+
+  <!-- Left Content Block -->
+  <!-- Top Badge Pill -->
+  <g transform="translate(80, 75)">
+    <rect width="320" height="28" rx="14" fill="#1C2238" stroke="rgba(92, 240, 214, 0.4)" stroke-width="1"/>
+    <circle cx="14" cy="14" r="4" fill="#5CF0D6"/>
+    <text x="26" y="18" class="sans" font-size="11" font-weight="600" fill="#5CF0D6" letter-spacing="1.5">ELYSIUM L2 &bull; HYPERCORE CLOB</text>
+  </g>
+
+  <!-- Brand Wordmark -->
+  <text x="80" y="185" class="display" font-size="82" fill="#E8ECF8" letter-spacing="4">Aegis</text>
+
+  <!-- Core Proposition -->
+  <text x="82" y="240" class="sans" font-size="34" font-weight="300" fill="#FFFFFF" letter-spacing="-0.2">Hedge drawdowns. Never get liquidated.</text>
+
+  <!-- Architecture Subtitle -->
+  <text x="84" y="278" class="sans" font-size="14.5" font-weight="600" fill="#5CF0D6" letter-spacing="2.2">AUTONOMOUS REAL-TIME RISK SENTINEL &amp; DELTA HEDGING</text>
+
+  <!-- Description paragraph -->
+  <text x="84" y="325" class="sans" font-size="15" font-weight="400" fill="#A7AFCB">
+    <tspan x="84" dy="0">The first non-custodial risk engine executing sub-second short perps</tspan>
+    <tspan x="84" dy="24">to protect loan collateral without liquidating your spot position.</tspan>
+  </text>
+
+  <!-- Institutional Feature Tags -->
+  <g transform="translate(84, 385)">
+    <!-- Tag 1 -->
+    <rect x="0" y="0" width="162" height="28" rx="14" fill="#22403F" stroke="rgba(92, 240, 214, 0.3)" stroke-width="1"/>
+    <text x="14" y="18" class="sans" font-size="11" font-weight="600" fill="#5CF0D6">Non-Custodial (INV-1)</text>
+
+    <!-- Tag 2 -->
+    <rect x="174" y="0" width="176" height="28" rx="14" fill="#22403F" stroke="rgba(92, 240, 214, 0.3)" stroke-width="1"/>
+    <text x="188" y="18" class="sans" font-size="11" font-weight="600" fill="#5CF0D6">0x0801 &amp; 0x0802 Precompiles</text>
+
+    <!-- Tag 3 -->
+    <rect x="362" y="0" width="186" height="28" rx="14" fill="#22403F" stroke="rgba(92, 240, 214, 0.3)" stroke-width="1"/>
+    <text x="376" y="18" class="sans" font-size="11" font-weight="600" fill="#5CF0D6">Lite Auto-Pilot &amp; Pro Terminal</text>
+  </g>
+
+  <!-- Bottom Footer Line inside frame -->
+  <g transform="translate(80, 608)">
+    <line x1="0" y1="0" x2="1040" y2="0" stroke="rgba(220, 230, 255, 0.12)" stroke-width="1"/>
+    <text x="0" y="24" class="sans" font-size="12" font-weight="600" fill="#E8ECF8" letter-spacing="1">PROTOCOL LAUNCH ANNOUNCEMENT</text>
+    <text x="1040" y="24" class="sans" font-size="12" font-weight="500" fill="#A7AFCB" text-anchor="end">MORE UPDATES ROLLING OUT SOON &bull; testnet.aegis.trade</text>
+  </g>
+</svg>

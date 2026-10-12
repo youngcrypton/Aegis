@@ -16,6 +16,7 @@ Last updated: 2026-10-11
 ## Brand
 
 - **Done:** brand kit (`brand/kit/aegis-brand-kit.html`), tokens (`brand/kit/tokens.css`), approved master mark, X and social assets in `brand/x/`.
+- **Done:** high-resolution launch visual assets rendered in `brand/x/` (`launch-article-banner-1200x675.svg`, `launch-article-banner-1200x675.png` [2400x1350 2x Retina], `launch-square-1080x1080.svg`, `launch-square-1080x1080.png` [2160x2160 2x Retina]) using official 3-blade mark geometry and `tokens.css` palette.
 - **Done:** aligned `DESIGN.md` to the AEGIS brand kit, replacing legacy cybernetic tokens/fonts with `tokens.css`, dual-theme tokens, and Marcellus/Inter typography.
 - **Open:** splash graphite and lavender colour stops are not yet in the kit's hex list.
 
@@ -110,6 +111,12 @@ Last updated: 2026-10-11
   - **Testnet Faucet Micro-Amounts**: Added dedicated deposit chips (`0.02 HYPE`, `0.05 HYPE`, `0.08 HYPE`) calibrated for the 0.10 HYPE Elysium testnet faucet cap, dynamically syncing collateral, borrow liability, and health factor displays.
   - **1-Click "Activate Shield" Action**: Built atomic one-click execution that verifies wallet connection, delegates trade-only ephemeral session key (`INV-1`), commits preset parameters to `AegisVault` via precompile `0x0802`, provides visual active state transition, and posts audit trail logs.
   - **Main Telemetry & Responsive Safeguards**: Added Auto-Pilot Sentinel Safeguards panel in the main column and verified zero horizontal overflow at 390px mobile viewport.
+
+## Launch Post & Community Announcements (`LAUNCH_POST.md`)
+
+- **Done:** Authored publication-ready launch article and social thread in `LAUNCH_POST.md`:
+  - **Comprehensive Launch Article**: Detailed piece for Mirror / Medium / Substack titled *"Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2"*. Covers the forced liquidation trap ($10-15\%$ penalties, MEV liquidator cartels, cascading flash wicks), the core AEGIS delta-hedging solution via HyperCore Precompile `0x0801` and Predeploy `0x0802`, dynamic bottom-wick tracking with trailing take-profit unwinds back into the vault, Lite Auto-Pilot (retail/micro-capital) vs. Pro Terminal (quants/institutions), non-custodial Invariant INV-1 session keys, 700M $AEGIS tokenomics aligned with the Ascend ecosystem, and an explicit outlook on upcoming roadmap items.
+  - **10-Tweet Launch Thread (X / Twitter)**: Complete, high-impact thread formatted with tweet numbering (`1/10` to `10/10`), explicit image attachment tags, calm institutional voice, zero emojis, and complete feature coverage.
 
 ## Next
 
