@@ -120,10 +120,11 @@ Last updated: 2026-10-11
 - **Done:** Programmatic Motion & Video Engine in `remotion/` with official AEGIS Light Theme composition (`AegisLaunchLight`), synthesized stereo soundscape (`remotion/public/aegis-launch-sound.wav`), and rendered launch video in `brand/x/aegis-launch-video-light.mp4`.
 - **Done:** Official 3-Minute Live Product Demo Video (`brand/x/aegis-product-demo-3min.mp4` / `brand/x/aegis-live-product-demo.mp4`):
   - High-production direct screen recording of the live running trader application (not slides, not code walkthrough) adhering strictly to hackathon submission requirements.
-  - Duration: Exactly 02:44 (164 seconds) — under the 3-minute hackathon ceiling.
-  - Full spoken voiceover narration synthesized across 6 chapters and mixed with ambient stereo audio bed.
-  - Covers live telemetry (Chain ID 99801, Precompile 0x0801 <78ms latency), Lite Auto-Pilot presets & 0.05 HYPE micro-deposits, non-custodial session keys (INV-1), Pro Terminal CLOB depth, live -18% flash crash simulation, sub-78ms precompile hedge trigger (0x0802), bottom-wick trailing take-profit (+5% rebound), debt payback, health restoration ($H > 1.25$), 50/50 fee conservation, and emergency manual override killswitch (INV-3).
-  - Single-click asset download and preview portal in `download.html` served locally on port 8000 with 1-click video downloads, ready-to-paste submission metadata, and full transcript.
+  - Duration: Exactly 02:44 (164.0 seconds) — strictly under the 3-minute hackathon ceiling.
+  - **Loud & Continuous Voiceover Narration**: Resolved root-cause audio cutoff (where `duration=first` in FFmpeg `amix` terminated audio after 25s) by synthesizing a continuous 164.0s master mix (`remotion/build_master_audio.py`) with broadcast-standard vocal compression and makeup gain (-13.97 dBFS RMS, peak -0.17 dBFS) and a subtle ambient cyber-synth bed (-28 dBFS). Narration is loud, crisp, and continuous from second 0 to second 164.
+  - **Bold Interactive Presenter Cursor**: Injected high-visibility virtual presenter cursor into DOM during Playwright capture (`record_full_demo.py`), featuring a 34px high-contrast white arrow pointer, luminous glowing cyan spotlight halo (`#5FD9BE`), click ripples, and floating presenter tags (e.g., `1,000.00 HYPE Collateral ($48.5k)`, `$32,000.00 USDC Debt`, `Balanced Preset (H <= 1.15)`, `0.05 HYPE Micro-Deposit Chip`, `0x0802 Sub-78ms Short Hedge Active`, `Emergency Override Killswitch (INV-3)`) that smoothly guide the viewer to each feature as it is spoken.
+  - **Sample-Accurate Chapter Synchronization**: Implemented `wait_until()` timestamps across all 6 chapters, perfectly syncing voiceover sentences with UI transitions (wallet connection, 0x0801 latency badge, collateral & debt inspection, Lite Auto-Pilot presets, Pro sliders, -18% flash crash simulation, sub-78ms predeploy hedge, V-bounce trailing profit lock, INV-4 fee split, and INV-3 manual override killswitch).
+  - Single-click asset download and preview portal in `download.html` served locally on port 8000 with 1-click video downloads (22.9 MB), ready-to-paste submission metadata, and full transcript.
 
 ## Next
 

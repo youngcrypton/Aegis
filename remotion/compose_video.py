@@ -9,67 +9,48 @@ def compose_final_demo():
     os.makedirs(os.path.join(root, "brand", "x"), exist_ok=True)
 
     video_in = os.path.join(remotion_dir, "public", "recordings", "live-product-demo.webm")
-    sound_in = os.path.join(remotion_dir, "public", "aegis-launch-sound.wav")
+    audio_in = os.path.join(remotion_dir, "public", "audio", "master-voiceover-mix.wav")
     out_mp4 = os.path.join(remotion_dir, "out", "aegis-live-product-demo.mp4")
     brand_out = os.path.join(root, "brand", "x", "aegis-live-product-demo.mp4")
+    brand_3min = os.path.join(root, "brand", "x", "aegis-product-demo-3min.mp4")
 
-    # Inputs:
-    # 0: video
-    # 1-6: ch1..ch6
-    # 7: ambient sound
-    inputs = [
-        "-i", video_in, # 0
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch1.wav"), # 1
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch2.wav"), # 2
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch3.wav"), # 3
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch4.wav"), # 4
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch5.wav"), # 5
-        "-i", os.path.join(remotion_dir, "public", "audio", "ch6.wav"), # 6
-        "-stream_loop", "-1", "-i", sound_in # 7
-    ]
-
-    # Audio Filter Graph using supported filters: adelay, volume, amix
-    af = [
-        "[1:a]adelay=0|0,volume=1.0[a1]",
-        "[2:a]adelay=31000|31000,volume=1.0[a2]",
-        "[3:a]adelay=59000|59000,volume=1.0[a3]",
-        "[4:a]adelay=80000|80000,volume=1.0[a4]",
-        "[5:a]adelay=108000|108000,volume=1.0[a5]",
-        "[6:a]adelay=137000|137000,volume=1.0[a6]",
-        "[7:a]volume=0.06[abg]",
-        "[a1][a2][a3][a4][a5][a6][abg]amix=inputs=7:duration=first:dropout_transition=2[aout]"
-    ]
-
-    filter_complex_content = ";\n".join(af)
-    filter_script_path = os.path.join(remotion_dir, "audio_graph.txt")
-    with open(filter_script_path, "w", encoding="utf-8") as f:
-        f.write(filter_complex_content)
+    if not os.path.exists(video_in):
+        raise FileNotFoundError(f"Video recording not found: {video_in}")
+    if not os.path.exists(audio_in):
+        raise FileNotFoundError(f"Master audio not found: {audio_in}")
 
     ffmpeg_exe = os.path.join(remotion_dir, "node_modules", "@remotion", "compositor-win32-x64-msvc", "ffmpeg.exe")
+
+    # Mux video and master synchronized audio
+    # -c:v libx264 -crf 18 ensures crystal clear 720p visual fidelity
+    # -c:a aac -b:a 192k ensures broadcast audio fidelity
+    # -t 164.0 ensures exact video duration under the 3-minute hackathon ceiling
     cmd = [
         ffmpeg_exe, "-y",
-        *inputs,
-        "-filter_complex_script", filter_script_path,
-        "-map", "0:v",
-        "-map", "[aout]",
+        "-i", video_in,
+        "-i", audio_in,
+        "-map", "0:v:0",
+        "-map", "1:a:0",
         "-c:v", "libx264",
         "-preset", "fast",
         "-crf", "18",
         "-pix_fmt", "yuv420p",
         "-c:a", "aac",
         "-b:a", "192k",
-        "-t", "164.16",
+        "-t", "164.0",
         out_mp4
     ]
 
-    print("Encoding master video with synchronized 6-chapter audio narration...")
+    print("Encoding master video with synchronized bold presenter cursor and loud continuous narration...")
     subprocess.run(cmd, cwd=remotion_dir, shell=False, check=True)
 
-    # Copy to brand/x
+    # Copy to brand/x locations
     shutil.copyfile(out_mp4, brand_out)
-    print(f"Master Video successfully created and copied to:")
-    print(f" - {out_mp4}")
-    print(f" - {brand_out}")
+    shutil.copyfile(out_mp4, brand_3min)
+    print("Master Demo Video successfully created and copied to:")
+    print(f"  - {out_mp4}")
+    print(f"  - {brand_out}")
+    print(f"  - {brand_3min}")
 
 if __name__ == "__main__":
     compose_final_demo()
