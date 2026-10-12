@@ -11,4 +11,5 @@ cache/
 broadcast/
 dist/
 out/
-
+remotion/public/recordings/
+remotion/public/audio/*.wav
