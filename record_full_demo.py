@@ -71,17 +71,12 @@ def record_aegis_demo():
 
         # Click 1-Click Activate Shield
         page.click("#btnLiteActivateShield")
-        page.wait_for_timeout(3000)
+        page.wait_for_timeout(5000)
 
-        # Confirm session key in modal (if modal opened)
-        try:
-            if page.is_visible("#sessionKeyModal"):
-                page.wait_for_timeout(1500)
-                page.click("#btnConfirmDelegateKey")
-                page.wait_for_timeout(2500)
-        except Exception as e:
-            print("Modal handled or skipped:", e)
-        page.wait_for_timeout(4000)
+        # Inspect Active shield badge
+        page.hover(".armed")
+        page.wait_for_timeout(3000)
+        page.wait_for_timeout(3000)
 
         # ----------------------------------------------------------------------
         # CHAPTER 3: Pro Terminal & Algorithmic Controls (0:59 - 1:20 / 21s)
@@ -92,17 +87,16 @@ def record_aegis_demo():
 
         # Scroll to Controls Form
         page.hover("#proConfigCard")
+        page.wait_for_timeout(2000)
+
+        # Adjust coverage and trailing TP sliders cleanly via evaluate
+        page.evaluate("""() => {
+            const cov = document.getElementById('hedgeCoverage');
+            if (cov) { cov.value = '70'; cov.dispatchEvent(new Event('input', {bubbles: true})); }
+            const tp = document.getElementById('trailingTp');
+            if (tp) { tp.value = '2.0'; tp.dispatchEvent(new Event('input', {bubbles: true})); }
+        }""")
         page.wait_for_timeout(3000)
-
-        # Adjust coverage slider to 75%
-        page.fill("#hedgeCoverage", "75")
-        page.dispatch_event("#hedgeCoverage", "input")
-        page.wait_for_timeout(2500)
-
-        # Adjust trailing TP slider to 2.0%
-        page.fill("#trailingTp", "2.0")
-        page.dispatch_event("#trailingTp", "input")
-        page.wait_for_timeout(2500)
 
         # Save config
         page.click("#btnSaveConfig")

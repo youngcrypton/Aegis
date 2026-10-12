@@ -22,6 +22,7 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "render:demo": "remotion render AegisLiveProductDemo out/aegis-live-product-demo.mp4 --concurrency=1 --disallow-parallel-encoding",
     "render:light": "remotion render AegisLaunchLight out/aegis-launch-video-light.mp4 --concurrency=1 --disallow-parallel-encoding",
     "render:teaser": "remotion render AegisLaunchTeaser out/aegis-teaser.mp4 --concurrency=1 --disallow-parallel-encoding",
     "render:square": "remotion render AegisSocialSquare out/aegis-square.mp4",
