@@ -17,7 +17,7 @@
  </p>
 
  <p align="center">
- <a href="#-live-product-demo-hackathon-submission"><b>Live Demo (02:44)</b></a> •
+ <a href="#-live-product-demo"><b>Live Demo (02:44)</b></a> •
  <a href="#the-problem-the-liquidation-death-spiral">The Problem</a> •
  <a href="#the-aegis-approach">The AEGIS Approach</a> •
  <a href="#system-architecture">Architecture</a> •
