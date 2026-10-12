@@ -177,9 +177,11 @@ Pro Traders configure their parameters via `AegisVault.sol::setProConfig()`:
 
 ---
 
-## 5. Tokenomics: The $AEGIS Flywheel
+## 5. Tokenomics: The $AEGIS Flywheel & Ascend Ecosystem
 
-The $AEGIS token has three non-negotiable economic sinks designed to prevent capital decay:
+The $AEGIS token has an immutable hard cap of **700,000,000 $AEGIS** on Elysium L2 (Chain ID `99801`) with zero inflationary minting capability.
+
+> **Non-Monetary Valuation Standard**: $AEGIS currently possesses zero established monetary value or public market price. All economic mechanisms and allocations represent structural token quantities, basis points ($\text{bps}$), and deterministic state transitions.
 
 ```
                   +----------------------------------------------+
@@ -205,24 +207,33 @@ The $AEGIS token has three non-negotiable economic sinks designed to prevent cap
             +------------------------+
 ```
 
-### 5.1 Slashable Sentinel Bonds
-- Operators must bond at least 25,000 $AEGIS to qualify as an active Sentinel node.
-- If a node fails to submit a hedge within 3 blocks of a trigger condition or causes slippage exceeding `maxSlippageBps`, the contract slashes 10% of their bond and routes it to the user as compensation.
+### 5.1 Supply Allocation (700,000,000 Hard Cap)
 
-### 5.2 Real Cash Flow: Buyback & Burn
-- Every averted liquidation charges a 10% fee on the avoided penalty.
-- 50% of this fee market-buys $AEGIS on Ascend Hook Pools and burns it permanently.
-- 50% is distributed to governance stakers as real yield in USDC and HYPE.
+| Category | Share | Token Count | TGE Unlock | Cliff | Vesting Schedule |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Ascend Ecosystem & Community** | **26.0%** | 182,000,000 | 10.0% (18.2M) | 0 mos | 24 mos linear (kHYPE stakers & Ascend LP incentives) |
+| **Community & Sentinel Incentives** | **26.0%** | 182,000,000 | 5.0% (9.1M) | 0 mos | 36 mos linear (Sentinel 24/7 uptime & telemetry relays) |
+| **Ascend Fair Launch (TGE)** | **13.0%** | 91,000,000 | 100.0% (91M) | 0 mos | Instant Day-1 liquidity via Ascend Closed Hook Pool |
+| **Protocol Security & Insurance** | **15.0%** | 105,000,000 | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan backstop) |
+| **Core Contributors & Team** | **12.0%** | 84,000,000 | **0.0%** | **24 mos** | **48 mos linear** (2-year hard cliff, 6-year total horizon) |
+| **Strategic Partners & Foundation** | **8.0%** | 56,000,000 | 0.0% | 18 mos | 36 mos linear (Audits, legal structuring, institutional risk) |
+| **TOTAL** | **100.0%** | **700,000,000** | **~16.9%** | — | **Zero inflationary minting** |
 
-### 5.3 Protected TVL Quota
-- Institutional users lock $AEGIS at a 1:50 ratio ($1 $AEGIS locked per $50 protected TVL).
-- Protecting $1,000,000 of TVL requires locking 20,000 $AEGIS in the protocol.
+### 5.2 Ascend Ecosystem Alignment & Symbiosis
+- **kHYPE Staker Integration**: Users staking HYPE into kHYPE on Kinetiq receive programmatic distributions from the 182M Ascend allocation without spending principal.
+- **Closed Hook Pool Exclusive Routing**: 100% of the 50% performance fee buyback swaps route via Ascend Closed Hook Pools (`IAscendHookPool.sol`), driving continuous organic volume and fees to Ascend LPs.
+- **1% Launchpad Fee Recycled to HYPE/KNTQ**: Swaps on Ascend trigger Ascend's built-in 50:50 buyback of HYPE and KNTQ (with 60% of purchased KNTQ burned), aligning AEGIS with the broader Elysium/Kinetiq economy.
+- **Protocol-Owned Liquidity (POL)**: 63,000,000 $AEGIS paired permanently in an Ascend Closed Hook Pool to prevent liquidity fragmentation.
+- **Ascension Graduation**: Qualifies for native Mirror Bridge deployment to HyperEVM for HyperCore spot and HIP-3 perpetual listings on Kinetiq.
 
-### 5.4 Ascend 4-Stage Lifecycle
-1. **Stage 1 (Launch)**: Fair-launch in an Ascend Closed Hook Pool paired with USDC.
-2. **Stage 2 (Ascension)**: Qualifies for Ascend protocol-sponsored buybacks and staker distributions.
-3. **Stage 3 (HyperCore Spot)**: Bridges via Mirror Bridge to HyperEVM, deploying `HyperCoreDepositWallet` for native CLOB listing.
-4. **Stage 4 (HIP-3 Perpetuals)**: Launches perpetual contract on Kinetiq's HIP-3 venue.
+### 5.3 Core Contributor 24-Month Hard Cliff
+Core contributors receive zero tokens at TGE and zero tokens during the entire first 24 months. At Month 25, tokens vest linearly over 48 months (1,750,000 $AEGIS per month), achieving full vesting at Month 72 (6 years).
+
+### 5.4 Four Core Value Accrual Pillars
+1. **Slashable Sentinel Bonds**: Operators bond at least 25,000 $AEGIS (`MIN_BOND`) in `AegisSentinelRegistry.sol`. Invariant INV-2 bounds slashing at $\le 10\%$, credited directly to affected users.
+2. **Deflationary Buyback & Burn**: Invariant INV-4 splits collected performance fees 50/50, burning $AEGIS permanently at `0x000000000000000000000000000000000000dEaD`.
+3. **Real Staker Yield**: 50% of fees distributed in native debt assets (USDC/HYPE) to stakers without token dilution.
+4. **Institutional TVL Quotas**: Users lock $AEGIS at a 1:50 debt ratio (1 $AEGIS locked per 50 units of protected debt) to access priority sub-second lanes and custom parameters.
 
 ---
 

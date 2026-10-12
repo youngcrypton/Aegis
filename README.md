@@ -209,9 +209,12 @@ Automated hedging introduces distinct financial and technical risks that users a
 
 ---
 
-## The $AEGIS Token Flywheel
+## The $AEGIS Token Flywheel & Ascend Ecosystem
 
-The $AEGIS token aligns network operators, protocol users, and liquidity providers through three economic mechanisms:
+The $AEGIS token aligns network operators, protocol users, liquidity providers, and the Ascend ecosystem with a fixed **700,000,000 $AEGIS** hard cap on Elysium L2 (Chain ID `99801`):
+
+> [!NOTE]
+> **Non-Monetary Valuation Notice**: $AEGIS currently possesses zero established monetary value or public market price. All economic parameters and allocations represent programmatic token quantities, basis points ($\text{bps}$), and deterministic on-chain state transitions.
 
 ```
                       ┌──────────────────────────────────────┐
@@ -222,21 +225,44 @@ The $AEGIS token aligns network operators, protocol users, and liquidity provide
                                          ▼
                       ┌──────────────────────────────────────┐
                       │        AegisFeeCollector.sol         │
+                      │   Invariant INV-4 (50/50 Split)      │
                       └──────────────┬───────────────────────┘
                                      │
                  ┌───────────────────┴───────────────────┐
                  │ 50% Net Fee                           │ 50% Net Fee
                  ▼                                       ▼
   ┌─────────────────────────────┐         ┌─────────────────────────────┐
-  │   Market Buyback & Burn     │         │      Real Staking Yield     │
-  │   Routes to Ascend Hook     │         │   Distributed in USDC/HYPE  │
-  │   Pool & burns to 0x...dEaD │         │   to Governance Stakers     │
-  └─────────────────────────────┘         └─────────────────────────────┘
+  │   Ascend Closed Hook Pool   │         │      Real Staking Yield     │
+  │   Continuous buyback volume │         │   Distributed in USDC/HYPE  │
+  │   burns to 0x000...dEaD     │         │   to Governance Stakers     │
+  └──────────────┬──────────────┘         └─────────────────────────────┘
+                 │
+                 ▼ (1% Ascend Platform Fee)
+  ┌─────────────────────────────┐
+  │    Ascend Ecosystem Loop    │
+  │    Triggers HYPE & KNTQ     │
+  │    buyback and KNTQ burn    │
+  └─────────────────────────────┘
 ```
 
-1. **Slashable Sentinel Bonds**: Operators must stake a minimum of 25,000 $AEGIS to run an active keeper. Misbehavior, latency violations, or unauthorized orders trigger up to a 10% slash credited directly to affected users.
-2. **Deflationary Buyback & Burn**: 50% of every collected performance fee routes directly to Ascend Closed Hook Pools to purchase $AEGIS on the open market and burn it permanently to `0x000000000000000000000000000000000000dEaD`.
-3. **Real Yield Distribution**: The remaining 50% of fee revenue is distributed as real cash-flow yield (USDC and HYPE) to $AEGIS governance stakers.
+### Complete 700M Supply Allocation
+
+| Allocation Category | % of Total | Token Amount | TGE Unlock | Cliff | Vesting Schedule |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Ascend Ecosystem & Community** | **26.0%** | 182,000,000 | 10.0% (18.2M) | 0 mos | 24 mos linear (kHYPE stakers & Ascend LP incentives) |
+| **Community & Sentinel Incentives** | **26.0%** | 182,000,000 | 5.0% (9.1M) | 0 mos | 36 mos linear (Sentinel 24/7 node uptime & relays) |
+| **Ascend Launchpad Fair Launch** | **13.0%** | 91,000,000 | 100.0% (91M) | 0 mos | Instant Day-1 liquidity via Ascend Closed Hook Pool |
+| **Protocol Security & Insurance** | **15.0%** | 105,000,000 | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan backstop) |
+| **Core Contributors & Team** | **12.0%** | 84,000,000 | **0.0%** | **24 mos** | **48 mos linear** (Strict 2-year cliff, 6-year horizon) |
+| **Strategic Partners & Foundation** | **8.0%** | 56,000,000 | 0.0% | 18 mos | 36 mos linear (Audits, legal structuring, institutional risk) |
+| **TOTAL** | **100.0%** | **700,000,000** | **~16.9%** | — | **Zero inflationary minting** |
+
+### Four Core Value Accrual Pillars
+
+1. **Slashable Sentinel Bonds**: Operators must stake a minimum of 25,000 $AEGIS to run an active keeper (`MIN_BOND`). Misbehavior, latency violations, or unauthorized orders trigger up to a 10% slash credited directly to affected users (INV-2).
+2. **Ascend Closed Hook Burn Engine**: 50% of every collected performance fee routes directly to Ascend Closed Hook Pools to purchase $AEGIS on the open market and burn it permanently to `0x000000000000000000000000000000000000dEaD` (INV-4).
+3. **Real Yield Cash Flow**: The remaining 50% of fee revenue is distributed as real cash-flow yield (USDC and HYPE) to $AEGIS governance stakers with zero inflationary token dilution.
+4. **Ascend Ecosystem Feedback Loop**: Swaps executed through Ascend generate the launchpad's native 1% transaction fee, triggering Ascend's built-in buybacks of **HYPE and KNTQ** (and burning 60% of purchased KNTQ), creating mutual value across Elysium.
 
 ---
 

@@ -98,6 +98,11 @@ Last updated: 2026-10-11
   - **Elysium Testnet Alignment**: Configured and verified against official Elysium specifications (`Chain ID 99801`, live RPC `https://testnet-rpc.elysium.kinetiq.xyz`, block explorer `https://elysium.kinetiq.xyz/testnet-explorer`).
 - **Done:** Smart contract test suite stands at **53 passed tests, 0 failed across 12 test suites** (`forge test`).
 - **Done:** Authored, verified, and published comprehensive, engineering-grade public `README.md` covering protocol problem scope, autonomous delta-hedging architecture, formal security invariants (INV-1 through INV-5), repository map, evidence status classification, tech stack, and developer quickstart.
+- **Done:** Authored, integrated, and published institutional-grade **$AEGIS Tokenomics Architecture (700M Hard Cap)** across documentation platform (`docs/index.html`, `docs/docs.js`, `docs/docs.css`), `DESIGN.md`, and `README.md`:
+  - 39.0% total direct Ascend allocation (26% Ascend Community & Ecosystem + 13% Ascend Fair Launch).
+  - Native integration with Ascend Closed Hook Pools, kHYPE liquid staking yield distribution, and Ascend's 1% platform fee recycling to HYPE & KNTQ buybacks.
+  - Ultra-strict Core Contributor lockup (24-month hard cliff with 0% at TGE, followed by 48-month linear vesting).
+  - Zero monetary value assumption; all quantitative mechanics expressed in fixed token units and parametric invariants.
 
 ## Next
 

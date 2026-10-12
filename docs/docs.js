@@ -791,7 +791,7 @@
       title: 'Precompile 0x0801 & Predeploy 0x0802',
       subtitle: 'Low-level specification of the HyperCore synchronous market reader and asynchronous intent writer.',
       prev: { id: 'contract-architecture', title: 'Smart Contract Architecture & Interfaces' },
-      next: { id: 'sentinel-operator-guide', title: 'Sentinel Node Operator Guide' },
+      next: { id: 'tokenomics', title: '$AEGIS Tokenomics & Economy' },
       content: `
         <div class="docs-section">
           <h2>1. Precompile 0x0801: HyperCore Market Data Reader</h2>
@@ -865,6 +865,361 @@
       `
     },
 
+    // PART V: TOKENOMICS & ECONOMY
+    {
+      id: 'tokenomics',
+      category: 'Tokenomics',
+      tag: '700M',
+      title: '$AEGIS Tokenomics & Economy',
+      subtitle: 'Hard-capped 700M supply allocation, Ascend ecosystem synergy, counter-cyclical burning, and strict 24-month team lock.',
+      prev: { id: 'precompiles', title: 'Precompile 0x0801 & Predeploy 0x0802' },
+      next: { id: 'sentinel-operator-guide', title: 'Sentinel Node Operator Guide' },
+      content: `
+        <div class="docs-section">
+          <h2>1. Executive Overview & Non-Monetary Disclaimer</h2>
+          <p>The <strong>$AEGIS</strong> token is the native governance, bonding, and fee-capture asset of the AEGIS protocol, deployed natively on Elysium L2 (Chain ID <code>99801</code>) with a strict, immutable hard cap of <strong>700,000,000 $AEGIS</strong> tokens. The protocol incorporates zero inflationary minting functions, enforcing a mathematically fixed total supply.</p>
+
+          <div class="callout callout-important">
+            <div class="callout-icon">⚖️</div>
+            <div class="callout-body">
+              <div class="callout-title">Non-Monetary Valuation Notice</div>
+              $AEGIS currently possesses zero established monetary value, secondary market pricing, or fiat exchange rate. All quantitative allocations, performance fee splits, and economic mechanisms detailed throughout this documentation represent programmatic token quantities, basis points (bps), and deterministic on-chain state transitions, not speculative financial forecasts.
+            </div>
+          </div>
+
+          <p>Unlike standard DeFi models that rely on inflationary emissions to subsidize temporary liquidity, AEGIS implements a <strong>counter-cyclical deflationary flywheel</strong>. During market crashes—when traditional protocols suffer liquidation cascades—AEGIS executes autonomous delta-hedges. The resulting 10% performance fee on averted liquidation losses generates programmatic open-market buy pressure through <strong>Ascend Closed Hook Pools</strong>, permanently destroying tokens at the <code>0x000...dEaD</code> address while distributing real cash-flow yield to governance stakers in native debt tokens.</p>
+
+          <h2>2. Key Token Metrics at a Glance</h2>
+          <div class="tokenomics-stats-grid">
+            <div class="stat-metric-card">
+              <div class="stat-metric-label">Total Fixed Supply</div>
+              <div class="stat-metric-value">700,000,000</div>
+              <div class="stat-metric-sub">Hard-capped $AEGIS tokens. Zero inflationary minting capability in smart contracts.</div>
+              <span class="stat-metric-badge stat-badge-teal">Fixed Hard Cap</span>
+            </div>
+
+            <div class="stat-metric-card">
+              <div class="stat-metric-label">Initial Day-1 Float (TGE)</div>
+              <div class="stat-metric-value">118,300,000</div>
+              <div class="stat-metric-sub">16.9% total float (91M Ascend Fair Launch + Initial Ascend/Keeper float).</div>
+              <span class="stat-metric-badge stat-badge-teal">Controlled Initial Float</span>
+            </div>
+
+            <div class="stat-metric-card">
+              <div class="stat-metric-label">Core Contributor Lock</div>
+              <div class="stat-metric-value">24-Month Cliff</div>
+              <div class="stat-metric-sub">0% at TGE. Zero tokens for 2 full years, followed by 48-month linear vesting.</div>
+              <span class="stat-metric-badge stat-badge-violet">6-Year Alignment</span>
+            </div>
+
+            <div class="stat-metric-card">
+              <div class="stat-metric-label">Direct Ascend Alignment</div>
+              <div class="stat-metric-value">39.0%</div>
+              <div class="stat-metric-sub">273,000,000 $AEGIS total (182M Ecosystem & Community + 91M Fair Launch).</div>
+              <span class="stat-metric-badge stat-badge-hedge">Ascend Ecosystem Focus</span>
+            </div>
+          </div>
+
+          <h2>3. Visual Token Allocation (700M Cap)</h2>
+          <div class="allocation-bar-wrap">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:600; font-size:13px; color:var(--ink);">Supply Distribution Across Strategic Pillars</span>
+              <span style="font-family:monospace; font-size:12px; color:var(--ink-2);">700,000,000 $AEGIS (100.0%)</span>
+            </div>
+            
+            <div class="allocation-progress-bar">
+              <div class="alloc-segment" style="width:26%; background:var(--accent);" title="Ascend Ecosystem & Community: 26.0% (182M)"></div>
+              <div class="alloc-segment" style="width:26%; background:var(--violet);" title="Sentinel & Community Incentives: 26.0% (182M)"></div>
+              <div class="alloc-segment" style="width:15%; background:var(--hedge);" title="Protocol Security & Insurance: 15.0% (105M)"></div>
+              <div class="alloc-segment" style="width:13%; background:#087E6D;" title="Ascend Fair Launch (TGE): 13.0% (91M)"></div>
+              <div class="alloc-segment" style="width:12%; background:#305EA5;" title="Core Contributors & Team: 12.0% (84M)"></div>
+              <div class="alloc-segment" style="width:8%; background:var(--danger);" title="Strategic Partners & Foundation: 8.0% (56M)"></div>
+            </div>
+
+            <div class="alloc-legend-grid">
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:var(--accent);"></span>
+                <span><strong>26.0%</strong> — Ascend Ecosystem (182M)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:var(--violet);"></span>
+                <span><strong>26.0%</strong> — Sentinel & Community (182M)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:var(--hedge);"></span>
+                <span><strong>15.0%</strong> — Protocol Security (105M)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:#087E6D;"></span>
+                <span><strong>13.0%</strong> — Ascend Fair Launch (91M)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:#305EA5;"></span>
+                <span><strong>12.0%</strong> — Core Contributors (84M)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-legend-dot" style="background:var(--danger);"></span>
+                <span><strong>8.0%</strong> — Strategic & Foundation (56M)</span>
+              </div>
+            </div>
+          </div>
+
+          <h2>4. Deep Ascend Ecosystem Symbiosis</h2>
+          <p>The tokenomics of AEGIS are architected to directly empower and expand the <strong>Ascend ecosystem</strong> on Elysium L2 and Kinetiq:</p>
+          
+          <div class="callout callout-note">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-body">
+              <div class="callout-title">Ascend's Architectural Alignment</div>
+              Ascend operates without a native token of its own, prioritizing value capture in <strong>HYPE</strong>, <strong>kHYPE</strong> (Kinetiq liquid-staked HYPE), and <strong>KNTQ</strong>. AEGIS's fee routing and staking integration directly fuel Ascend's core volume and buyback loops.
+            </div>
+          </div>
+
+          <ul>
+            <li><strong>Exclusive Buyback Routing on Ascend Closed Hook Pools</strong>: <code>AegisFeeCollector.sol</code> routes 100% of all market buybacks exclusively through <code>IAscendHookPool.sol</code>. Every time AEGIS averts liquidations during market drawdowns, programmatic buy volume flows directly into Ascend pools, boosting trading volume and liquidity provider fees.</li>
+            <li><strong>Automatic HYPE & KNTQ Protocol Buybacks</strong>: Ascend captures a 1% platform transaction fee on trading activity within its pools. A substantial portion of this revenue is routed into Ascend's native 50:50 buyback split of HYPE and KNTQ (with 60% of purchased KNTQ permanently burned). Thus, AEGIS fee volume automatically drives deflationary pressure across the broader Kinetiq ecosystem.</li>
+            <li><strong>kHYPE Staker Liquidity Distribution (70,000,000 $AEGIS)</strong>: Dedicated allocation integrated with Ascend's kHYPE yield mechanism. Users who stake native HYPE to receive kHYPE on Kinetiq receive periodic $AEGIS distributions without needing to sell their primary assets.</li>
+            <li><strong>Protocol-Owned Liquidity (POL) on Ascend (63,000,000 $AEGIS)</strong>: Permanently paired with USDC/HYPE in an Ascend Closed Hook Pool to anchor unbreakable, slippage-resistant day-1 liquidity.</li>
+            <li><strong>The Ascension Graduation Pipeline</strong>: Meeting Ascend's volume, liquidity, and Sentinel decentralization milestones triggers protocol graduation across the Mirror Bridge to HyperEVM, leading to native CLOB listing on HyperCore spot and HIP-3 perpetual markets on Kinetiq.</li>
+          </ul>
+
+          <h2>5. Comprehensive Token Allocation Matrix</h2>
+          <div class="table-wrapper">
+            <table class="tech-table">
+              <thead>
+                <tr>
+                  <th>Allocation Category</th>
+                  <th>Share (%)</th>
+                  <th>Token Amount</th>
+                  <th>TGE Unlock</th>
+                  <th>Cliff</th>
+                  <th>Vesting Schedule</th>
+                  <th>Operational Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Ascend Ecosystem & Community</strong></td>
+                  <td><code>26.0%</code></td>
+                  <td>182,000,000</td>
+                  <td>10.0% (18.2M)</td>
+                  <td>0 mos</td>
+                  <td>24 mos linear</td>
+                  <td>kHYPE stakers, Ascend LP incentives, and community rewards</td>
+                </tr>
+                <tr>
+                  <td><strong>Community & Sentinel Incentives</strong></td>
+                  <td><code>26.0%</code></td>
+                  <td>182,000,000</td>
+                  <td>5.0% (9.1M)</td>
+                  <td>0 mos</td>
+                  <td>36 mos linear</td>
+                  <td>Sentinel 24/7 node uptime, telemetry relays, bug bounties</td>
+                </tr>
+                <tr>
+                  <td><strong>Ascend Launchpad Fair Launch</strong></td>
+                  <td><code>13.0%</code></td>
+                  <td>91,000,000</td>
+                  <td>100.0% (91M)</td>
+                  <td>0 mos</td>
+                  <td>Instant (100%)</td>
+                  <td>Day-1 public liquidity via Ascend Closed Hook Pool</td>
+                </tr>
+                <tr>
+                  <td><strong>Protocol Security & Insurance</strong></td>
+                  <td><code>15.0%</code></td>
+                  <td>105,000,000</td>
+                  <td>0.0%</td>
+                  <td>12 mos</td>
+                  <td>36 mos linear</td>
+                  <td>DAO multi-sig emergency backstop reserve for black swan events</td>
+                </tr>
+                <tr>
+                  <td><strong>Core Contributors & Team</strong></td>
+                  <td><code>12.0%</code></td>
+                  <td>84,000,000</td>
+                  <td>0.0%</td>
+                  <td>24 mos</td>
+                  <td>48 mos linear</td>
+                  <td>Strict 2-year hard cliff; zero tokens until Month 25 (6-year horizon)</td>
+                </tr>
+                <tr>
+                  <td><strong>Strategic Partners & Foundation</strong></td>
+                  <td><code>8.0%</code></td>
+                  <td>56,000,000</td>
+                  <td>0.0%</td>
+                  <td>18 mos</td>
+                  <td>36 mos linear</td>
+                  <td>Audits, legal structuring, institutional risk models</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>6. Ultra-Strict Core Contributor Lockup</h2>
+          <p>To demonstrate absolute institutional commitment and eliminate any possibility of mercenary team dumping, Core Contributor tokens adhere to an industry-leading vesting standard:</p>
+          
+          <div class="callout callout-warning">
+            <div class="callout-icon">🔒</div>
+            <div class="callout-body">
+              <div class="callout-title">The 24-Month Hard Cliff Guarantee</div>
+              Core contributors receive <strong>0 tokens at TGE</strong> and <strong>0 tokens throughout the entire first 24 months</strong>. Not a single team token enters circulation until the protocol has been operational in production for two full years.
+            </div>
+          </div>
+
+          <ul>
+            <li><strong>Cliff Duration</strong>: 24 months (Months 1–24: 0 tokens unlocked).</li>
+            <li><strong>Vesting Schedule</strong>: 48 months linear block-by-block progression from Month 25 through Month 72.</li>
+            <li><strong>Monthly Emission</strong>: Exactly 1,750,000 $AEGIS per month (~0.25% of total supply).</li>
+            <li><strong>Full Maturity</strong>: Month 72 (6 years post-TGE).</li>
+          </ul>
+
+          <h2>7. The Four Core Value Accrual Pillars</h2>
+          <p>Every tokenomic mechanic is implemented directly in smart contract bytecode on Elysium L2:</p>
+
+          <div class="lifecycle-flow">
+            <div class="flow-step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-title">Sentinel Node Operator Bonding (PoS / Bonded Keepers)</div>
+                <div class="step-desc">
+                  Under <code>AegisSentinelRegistry.sol</code>, node operators must bond at least <strong>25,000 $AEGIS</strong> (<code>MIN_BOND</code>) to run an active keeper daemon. Slashed penalties (enforced strictly &le; 10% by Invariant <strong>INV-2</strong>) route directly to victim vault restitution. 400 active sentinel nodes permanently lock <strong>10,000,000 $AEGIS</strong> out of circulation.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-title">Counter-Cyclical Market Buyback & Permanent Burn</div>
+                <div class="step-desc">
+                  Under <code>AegisFeeCollector.sol</code>, every averted liquidation triggers a 10% performance fee on the saved penalty. Exactly 50% of this fee routes to the Ascend Closed Hook Pool to market-buy $AEGIS and permanently destroy it at <code>0x000000000000000000000000000000000000dEaD</code> (Invariant <strong>INV-4</strong>).
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-title">Real Yield Staker Cash Flow (Zero Inflation)</div>
+                <div class="step-desc">
+                  The remaining 50% of captured performance fees is distributed directly in <strong>USDC and native debt assets</strong> to governance stakers. Stakers earn sustainable cash flow without inflationary token dilution or mercenary farming mechanics.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-title">Institutional TVL Protection Quotas</div>
+                <div class="step-desc">
+                  Under <code>AegisVault.sol</code>, institutional traders lock $AEGIS at a 1:50 ratio (1 $AEGIS locked per 50 units of protected debt) to access sub-second execution lanes, customized trailing take-profit parameters (&tau;), and reduced fee tiers.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>8. Circulating Supply Emission Milestones</h2>
+          <div class="table-wrapper">
+            <table class="tech-table">
+              <thead>
+                <tr>
+                  <th>Milestone Timeline</th>
+                  <th>Gross Circulating Supply</th>
+                  <th>% of 700M Hard Cap</th>
+                  <th>Unlocking Components & Tranches</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>TGE (Day 1)</strong></td>
+                  <td>118,300,000</td>
+                  <td><code>16.9%</code></td>
+                  <td>91M Ascend Fair Launch + 18.2M Ascend initial float + 9.1M Keeper float</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 6</strong></td>
+                  <td>155,700,000</td>
+                  <td><code>22.2%</code></td>
+                  <td>Linear community emissions; zero team/investor unlocks</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 12</strong></td>
+                  <td>201,100,000</td>
+                  <td><code>28.7%</code></td>
+                  <td>Protocol Security Reserve cliff begins (governed by DAO multi-sig)</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 18</strong></td>
+                  <td>254,500,000</td>
+                  <td><code>36.4%</code></td>
+                  <td>Strategic Partner & Foundation cliff ends (1.55M/mo linear)</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 24</strong></td>
+                  <td>308,000,000</td>
+                  <td><code>44.0%</code></td>
+                  <td><strong>Core Team 24-Month Cliff ends</strong>; linear vesting begins</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 36</strong></td>
+                  <td>472,000,000</td>
+                  <td><code>67.4%</code></td>
+                  <td>Ascend community pool (24m) and Sentinel pool (36m) conclude</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 48</strong></td>
+                  <td>586,000,000</td>
+                  <td><code>83.7%</code></td>
+                  <td>Foundation pool fully vested; only team tail vesting remains</td>
+                </tr>
+                <tr>
+                  <td><strong>Month 72 (Year 6)</strong></td>
+                  <td>700,000,000</td>
+                  <td><code>100.0%</code></td>
+                  <td>Core Team 48-month linear vesting complete; 100% supply fully issued</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p><em>Notice: Gross circulating supply indicates theoretical maximums. Because <code>AegisFeeCollector.sol</code> continuously routes 50% of protocol performance fees to permanent burning at <code>0x...dEaD</code>, the net circulating supply will diverge progressively below these figures as adoption expands.</em></p>
+
+          <h2>9. Parametric Quant Lifecycle (Non-Monetary Model)</h2>
+          <p>The mathematical lifecycle of a risk event operates strictly across quantitative units and state variables:</p>
+
+          <div class="math-card">
+            <div class="math-title">Parametric Performance Fee Invariant</div>
+            <div class="math-formula">\\text{Fee}_{\\text{protocol}} = \\text{bps}_{\\text{fee}} \\times (D_{\\text{total}} \\times L_{\\text{penalty}}) = 0.10 \\times (D_{\\text{total}} \\times 0.10)</div>
+            <table class="math-legend">
+              <tr><td>D_{\\text{total}}</td><td>Total borrowed debt in the protected vault</td><td>Base units</td></tr>
+              <tr><td>L_{\\text{penalty}}</td><td>Avoided liquidation surcharge (e.g., 10%)</td><td>Dimensionless ratio</td></tr>
+              <tr><td>\\text{bps}_{\\text{fee}}</td><td>Protocol performance fee (1,000 bps = 10%)</td><td>Constant (AegisFeeCollector)</td></tr>
+            </table>
+          </div>
+
+          <div class="math-card">
+            <div class="math-title">Ascend Buyback & Permanent Burn Allocation</div>
+            <div class="math-formula">\\text{Fee}_{\\text{burn}} = 0.50 \\times \\text{Fee}_{\\text{protocol}} \\implies \\text{swap}(\\text{Debt}, \\text{\$AEGIS}) \\longrightarrow 0x000...\\text{dEaD}</div>
+            <div class="math-formula">\\text{Fee}_{\\text{yield}} = 0.50 \\times \\text{Fee}_{\\text{protocol}} \\implies \\text{distribute}(\\text{Debt}) \\longrightarrow \\text{Stakers}</div>
+            <table class="math-legend">
+              <tr><td>\\text{Fee}_{\\text{burn}}</td><td>50% routed to Ascend Closed Hook Pool</td><td>Burned permanently</td></tr>
+              <tr><td>\\text{Fee}_{\\text{yield}}</td><td>50% routed to Staking Vault</td><td>Real cash-flow yield</td></tr>
+              <tr><td>INV-4</td><td>Strict fee conservation (Fee_total = Fee_burn + Fee_yield)</td><td>Formally verified</td></tr>
+            </table>
+          </div>
+
+          <h2>10. Protocol Governance Administration</h2>
+          <p>$AEGIS holders participate in decentralized governance across protocol risk parameters:</p>
+          <ul>
+            <li><strong>Liquidation Threshold Multipliers ($T$)</strong>: Adjusting margin safety buffers across collateral types.</li>
+            <li><strong>Supported HyperCore Perpetual Markets</strong>: Approving new perpetual contract indices on HyperCore for hedging.</li>
+            <li><strong>Sentinel Slashing Boundaries</strong>: Tuning maximum slash percentages (bounded &le; 10%) and uptime SLA standards.</li>
+            <li><strong>Ascend Hook Pool Parameters</strong>: Adjusting liquidity distribution parameters and fee recycling ratios.</li>
+          </ul>
+        </div>
+      `
+    },
+
     // PART VI: SENTINEL NODE OPERATIONS & SECURITY
     {
       id: 'sentinel-operator-guide',
@@ -872,7 +1227,7 @@
       tag: 'NODE',
       title: 'Sentinel Node Operator Guide',
       subtitle: 'Requirements, bonding protocol, latency SLAs, and operational runbook for autonomous Sentinel keepers.',
-      prev: { id: 'precompiles', title: 'Precompile 0x0801 & Predeploy 0x0802' },
+      prev: { id: 'tokenomics', title: '$AEGIS Tokenomics & Economy' },
       next: { id: 'security-invariants', title: 'Formal Security Model & Verification' },
       content: `
         <div class="docs-section">
