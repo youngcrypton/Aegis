@@ -13,3 +13,7 @@ dist/
 out/
 remotion/public/recordings/
 remotion/public/audio/*.wav
+
+# Local agent instruction files (kept on this machine, not in the repo)
+CLAUDE.md
+GEMINI.md
