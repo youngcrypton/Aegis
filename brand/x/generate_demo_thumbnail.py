@@ -445,10 +445,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
           Live walkthrough of AEGIS: the autonomous non-custodial risk engine executing sub-second delta-hedges via HyperCore consensus and synchronous Elysium L2 precompiles.
         </p>
         <div class="pill-row">
-          <div class="pill-item">⚡ 0x0801 Synchronous Oracle</div>
-          <div class="pill-item">🛡️ 1-Click Lite Auto-Pilot</div>
-          <div class="pill-item">📉 -18% Flash Crash Defense</div>
-          <div class="pill-item">📈 Trailing Profit Lock</div>
+          <div class="pill-item">[0x0801] Synchronous Oracle</div>
+          <div class="pill-item">[Lite] 1-Click Auto-Pilot</div>
+          <div class="pill-item">[-18%] Flash Crash Defense</div>
+          <div class="pill-item">[Lock] Trailing Profit Lock</div>
         </div>
       </div>
 
@@ -496,7 +496,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       </div>
 
       <div class="duration-badge">
-        <span>▶ WATCH DEMO</span>
+        <span>WATCH DEMO</span>
         <span style="opacity: 0.7;">&bull;</span>
         <span>02:44</span>
       </div>

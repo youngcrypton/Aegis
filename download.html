@@ -1,388 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEGIS — Media & Launch Video Download Hub</title>
-  <link rel="stylesheet" href="/brand/kit/tokens.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background: var(--bg-base);
-      color: var(--ink);
-      font-family: var(--text);
-      min-height: 100vh;
-      padding: 40px 20px;
-      line-height: 1.5;
-    }
-    .container {
-      max-width: 1040px;
-      margin: 0 auto;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--rule);
-      background: rgba(7, 112, 95, 0.08);
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    h1 {
-      font-family: var(--display);
-      font-size: 44px;
-      font-weight: 500;
-      letter-spacing: 0.03em;
-      margin-bottom: 12px;
-      color: var(--ink);
-    }
-    .subhead {
-      color: var(--ink-2);
-      font-size: 18px;
-      max-width: 640px;
-      margin: 0 auto;
-    }
-    .folder-alert {
-      background: var(--raised);
-      border: 1px solid var(--rule);
-      box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
-      border-radius: 12px;
-      padding: 16px 24px;
-      margin-bottom: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .folder-path {
-      font-family: monospace;
-      background: rgba(22, 18, 48, 0.06);
-      padding: 4px 10px;
-      border-radius: 6px;
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 600;
-      word-break: break-all;
-    }
-    .featured-video-card {
-      background: var(--raised);
-      border: 1px solid var(--rule);
-      box-shadow: 0 10px 30px rgba(22, 18, 48, 0.08);
-      border-radius: 18px;
-      padding: 32px;
-      margin-bottom: 36px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 32px;
-      align-items: center;
-    }
-    @media (max-width: 840px) {
-      .featured-video-card {
-        grid-template-columns: 1fr;
-      }
-    }
-    .video-frame {
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--rule);
-      box-shadow: 0 6px 20px rgba(22, 18, 48, 0.08);
-      background: #000;
-      aspect-ratio: 16 / 9;
-    }
-    .video-frame video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 28px;
-      margin-bottom: 40px;
-    }
-    .card {
-      background: var(--raised);
-      border: 1px solid var(--rule);
-      box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
-      border-radius: 16px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justifyContent: space-between;
-    }
-    .card-preview {
-      width: 100%;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid var(--rule);
-      margin-bottom: 20px;
-      aspect-ratio: 16 / 9;
-    }
-    .card-preview.square {
-      aspect-ratio: 1 / 1;
-    }
-    .card-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .card-title {
-      font-family: var(--display);
-      font-size: 22px;
-      margin-bottom: 6px;
-      color: var(--ink);
-    }
-    .card-desc {
-      color: var(--ink-2);
-      font-size: 14px;
-      margin-bottom: 20px;
-      flex-grow: 1;
-    }
-    .card-meta {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      font-size: 12px;
-      color: var(--ink-2);
-    }
-    .meta-tag {
-      background: rgba(22, 18, 48, 0.05);
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: 500;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 14px 22px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 15px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: var(--on-accent);
-    }
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: rgba(22, 18, 48, 0.06);
-      color: var(--ink);
-      border: 1px solid var(--rule);
-    }
-    .btn-secondary:hover {
-      background: rgba(22, 18, 48, 0.1);
-    }
-    .copy-section {
-      background: var(--raised);
-      border: 1px solid var(--rule);
-      box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 40px;
-    }
-    .copy-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .copy-box {
-      background: rgba(22, 18, 48, 0.03);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      padding: 16px;
-      font-size: 14px;
-      color: var(--ink-2);
-      max-height: 260px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      font-family: inherit;
-    }
-  </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>AEGIS — Media & Launch Video Download Hub</title>
+ <link rel="stylesheet" href="/brand/kit/tokens.css">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+ <style>
+ * {
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ }
+ body {
+ background: var(--bg-base);
+ color: var(--ink);
+ font-family: var(--text);
+ min-height: 100vh;
+ padding: 40px 20px;
+ line-height: 1.5;
+ }
+ .container {
+ max-width: 1040px;
+ margin: 0 auto;
+ }
+ header {
+ text-align: center;
+ margin-bottom: 40px;
+ }
+ .badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ padding: 6px 18px;
+ border-radius: 999px;
+ border: 1px solid var(--rule);
+ background: rgba(7, 112, 95, 0.08);
+ color: var(--accent);
+ font-size: 13px;
+ font-weight: 700;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ margin-bottom: 16px;
+ }
+ h1 {
+ font-family: var(--display);
+ font-size: 44px;
+ font-weight: 500;
+ letter-spacing: 0.03em;
+ margin-bottom: 12px;
+ color: var(--ink);
+ }
+ .subhead {
+ color: var(--ink-2);
+ font-size: 18px;
+ max-width: 640px;
+ margin: 0 auto;
+ }
+ .folder-alert {
+ background: var(--raised);
+ border: 1px solid var(--rule);
+ box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
+ border-radius: 12px;
+ padding: 16px 24px;
+ margin-bottom: 36px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 16px;
+ flex-wrap: wrap;
+ }
+ .folder-path {
+ font-family: monospace;
+ background: rgba(22, 18, 48, 0.06);
+ padding: 4px 10px;
+ border-radius: 6px;
+ color: var(--accent);
+ font-size: 14px;
+ font-weight: 600;
+ word-break: break-all;
+ }
+ .featured-video-card {
+ background: var(--raised);
+ border: 1px solid var(--rule);
+ box-shadow: 0 10px 30px rgba(22, 18, 48, 0.08);
+ border-radius: 18px;
+ padding: 32px;
+ margin-bottom: 36px;
+ display: grid;
+ grid-template-columns: 1.2fr 1fr;
+ gap: 32px;
+ align-items: center;
+ }
+ @media (max-width: 840px) {
+ .featured-video-card {
+ grid-template-columns: 1fr;
+ }
+ }
+ .video-frame {
+ border-radius: 12px;
+ overflow: hidden;
+ border: 1px solid var(--rule);
+ box-shadow: 0 6px 20px rgba(22, 18, 48, 0.08);
+ background: #000;
+ aspect-ratio: 16 / 9;
+ }
+ .video-frame video {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ display: block;
+ }
+ .grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+ gap: 28px;
+ margin-bottom: 40px;
+ }
+ .card {
+ background: var(--raised);
+ border: 1px solid var(--rule);
+ box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
+ border-radius: 16px;
+ padding: 24px;
+ display: flex;
+ flex-direction: column;
+ justifyContent: space-between;
+ }
+ .card-preview {
+ width: 100%;
+ border-radius: 10px;
+ overflow: hidden;
+ background: #fff;
+ border: 1px solid var(--rule);
+ margin-bottom: 20px;
+ aspect-ratio: 16 / 9;
+ }
+ .card-preview.square {
+ aspect-ratio: 1 / 1;
+ }
+ .card-preview img {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ display: block;
+ }
+ .card-title {
+ font-family: var(--display);
+ font-size: 22px;
+ margin-bottom: 6px;
+ color: var(--ink);
+ }
+ .card-desc {
+ color: var(--ink-2);
+ font-size: 14px;
+ margin-bottom: 20px;
+ flex-grow: 1;
+ }
+ .card-meta {
+ display: flex;
+ gap: 10px;
+ margin-bottom: 16px;
+ font-size: 12px;
+ color: var(--ink-2);
+ }
+ .meta-tag {
+ background: rgba(22, 18, 48, 0.05);
+ padding: 4px 8px;
+ border-radius: 4px;
+ font-weight: 500;
+ }
+ .btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ width: 100%;
+ padding: 14px 22px;
+ border-radius: 10px;
+ font-weight: 600;
+ font-size: 15px;
+ text-decoration: none;
+ cursor: pointer;
+ transition: all 0.2s ease;
+ border: none;
+ }
+ .btn-primary {
+ background: var(--accent);
+ color: var(--on-accent);
+ }
+ .btn-primary:hover {
+ filter: brightness(1.1);
+ transform: translateY(-1px);
+ }
+ .btn-secondary {
+ background: rgba(22, 18, 48, 0.06);
+ color: var(--ink);
+ border: 1px solid var(--rule);
+ }
+ .btn-secondary:hover {
+ background: rgba(22, 18, 48, 0.1);
+ }
+ .copy-section {
+ background: var(--raised);
+ border: 1px solid var(--rule);
+ box-shadow: 0 4px 20px rgba(22, 18, 48, 0.05);
+ border-radius: 16px;
+ padding: 32px;
+ margin-bottom: 40px;
+ }
+ .copy-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 20px;
+ flex-wrap: wrap;
+ gap: 12px;
+ }
+ .copy-box {
+ background: rgba(22, 18, 48, 0.03);
+ border: 1px solid var(--rule);
+ border-radius: 8px;
+ padding: 16px;
+ font-size: 14px;
+ color: var(--ink-2);
+ max-height: 260px;
+ overflow-y: auto;
+ white-space: pre-wrap;
+ font-family: inherit;
+ }
+ </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="badge">Official Protocol Media</div>
-      <h1>AEGIS Demo Video &amp; Launch Hub</h1>
-      <p class="subhead">Official hackathon-ready live product demo video (02:44), 5-second teaser animation, graphics, and submission copy.</p>
-    </header>
+ <div class="container">
+ <header>
+ <div class="badge">Official Protocol Media</div>
+ <h1>AEGIS Demo Video &amp; Launch Hub</h1>
+ <p class="subhead">Official hackathon-ready live product demo video (02:44), 5-second teaser animation, graphics, and submission copy.</p>
+ </header>
 
-    <div class="folder-alert">
-      <div>
-        <strong style="color: var(--ink);">Saved locally on your computer in:</strong>
-        <div class="folder-path" id="pc-path">C:\Users\ascend X elysium\brand\x\aegis-product-demo-3min.mp4</div>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="width: auto;" onclick="copyFolder()">Copy Path</button>
-      </div>
-    </div>
+ <div class="folder-alert">
+ <div>
+ <strong style="color: var(--ink);">Saved locally on your computer in:</strong>
+ <div class="folder-path" id="pc-path">C:\Users\ascend X elysium\brand\x\aegis-product-demo-3min.mp4</div>
+ </div>
+ <div style="display:flex; gap:10px;">
+ <button class="btn btn-secondary" style="width: auto;" onclick="copyFolder()">Copy Path</button>
+ </div>
+ </div>
 
-    <!-- PRIMARY FEATURED: 3-MINUTE LIVE PRODUCT DEMO VIDEO -->
-    <div class="featured-video-card" style="border: 2px solid var(--accent); background: linear-gradient(180deg, var(--raised) 0%, rgba(7, 112, 95, 0.04) 100%);">
-      <div class="video-frame" style="aspect-ratio: 16 / 9; background: #07090e;">
-        <video controls playsinline preload="metadata" poster="/brand/x/aegis-demo-thumbnail-1200x675.png">
-          <source src="/brand/x/aegis-product-demo-3min.mp4" type="video/mp4">
-          Your browser does not support HTML5 video.
-        </video>
-      </div>
-      <div>
-        <div class="badge" style="background: rgba(7, 112, 95, 0.15); color: var(--accent);">Live Product Demo (02:44)</div>
-        <h2 style="font-family: var(--display); font-size: 30px; margin-bottom: 10px; color: var(--ink);">AEGIS 3-Min Live Product Demo</h2>
-        <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
-          Direct capture of the live running trader application on <strong>Elysium L2 &amp; HyperCore CLOB</strong>. Features loud, clear continuous voiceover narration throughout, ambient soundtrack, bold glowing presenter cursor directing the viewer to each feature in real time, live wallet connection, 1,000 HYPE collateral and $32k debt inspection, Lite Auto-Pilot 1-click micro-deposits (0.05 HYPE), Pro Terminal risk sliders, live -18% flash crash simulation, sub-78ms precompile hedge trigger (0x0801/0x0802), bottom-wick trailing take-profit, debt payback, and invariant audit logs.
-        </p>
-        <div class="card-meta" style="flex-wrap: wrap;">
-          <span class="meta-tag">⏱️ 02:44 (Under 3 mins)</span>
-          <span class="meta-tag">🎬 MP4 (H.264 / AAC)</span>
-          <span class="meta-tag">🎙️ Full Loud Narration</span>
-          <span class="meta-tag">🎯 Bold Presenter Cursor</span>
-          <span class="meta-tag">📦 22.9 MB (Upload Ready)</span>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-          <a href="/brand/x/aegis-product-demo-3min.mp4" download="aegis-product-demo-3min.mp4" class="btn btn-primary" style="padding: 14px 22px; font-size: 15px; flex: 1;">
-            📥 Download 3-Min Demo Video (22.9 MB)
-          </a>
-          <button class="btn btn-secondary" style="width: auto;" onclick="copyDemoScript(this)">
-            📋 Copy Voiceover Script
-          </button>
-        </div>
-      </div>
-    </div>
+ <!-- PRIMARY FEATURED: 3-MINUTE LIVE PRODUCT DEMO VIDEO -->
+ <div class="featured-video-card" style="border: 2px solid var(--accent); background: linear-gradient(180deg, var(--raised) 0%, rgba(7, 112, 95, 0.04) 100%);">
+ <div class="video-frame" style="aspect-ratio: 16 / 9; background: #07090e;">
+ <video controls playsinline preload="metadata" poster="/brand/x/aegis-demo-thumbnail-1200x675.png">
+ <source src="/brand/x/aegis-product-demo-3min.mp4" type="video/mp4">
+ Your browser does not support HTML5 video.
+ </video>
+ </div>
+ <div>
+ <div class="badge" style="background: rgba(7, 112, 95, 0.15); color: var(--accent);">Live Product Demo (02:44)</div>
+ <h2 style="font-family: var(--display); font-size: 30px; margin-bottom: 10px; color: var(--ink);">AEGIS 3-Min Live Product Demo</h2>
+ <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
+ Direct capture of the live running trader application on <strong>Elysium L2 &amp; HyperCore CLOB</strong>. Features loud, clear continuous voiceover narration throughout, ambient soundtrack, bold glowing presenter cursor directing the viewer to each feature in real time, live wallet connection, 1,000 HYPE collateral and $32k debt inspection, Lite Auto-Pilot 1-click micro-deposits (0.05 HYPE), Pro Terminal risk sliders, live -18% flash crash simulation, sub-78ms precompile hedge trigger (0x0801/0x0802), bottom-wick trailing take-profit, debt payback, and invariant audit logs.
+ </p>
+ <div class="card-meta" style="flex-wrap: wrap;">
+ <span class="meta-tag">02:44 (Under 3 mins)</span>
+ <span class="meta-tag">MP4 (H.264 / AAC)</span>
+ <span class="meta-tag">Full Loud Narration</span>
+ <span class="meta-tag">Bold Presenter Cursor</span>
+ <span class="meta-tag">8.7 MB (Fast Buffer / GitHub Ready)</span>
+ </div>
+ <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+ <a href="/brand/x/aegis-product-demo-3min.mp4" download="aegis-product-demo-3min.mp4" class="btn btn-primary" style="padding: 14px 22px; font-size: 15px; flex: 1;">
+ Download 3-Min Demo Video (8.7 MB MP4)
+ </a>
+ <button class="btn btn-secondary" style="width: auto;" onclick="copyDemoScript(this)">
+ Copy Voiceover Script
+ </button>
+ </div>
+ </div>
+ </div>
 
-    <!-- SECONDARY FEATURED: LIGHT MODE LAUNCH TEASER VIDEO -->
-    <div class="featured-video-card" style="margin-bottom: 36px;">
-      <div class="video-frame">
-        <video controls autoplay loop muted playsinline>
-          <source src="/brand/x/aegis-launch-video-light.mp4" type="video/mp4">
-          Your browser does not support HTML5 video.
-        </video>
-      </div>
-      <div>
-        <div class="badge" style="background: rgba(7, 112, 95, 0.1); color: var(--accent);">5-Second Teaser Video</div>
-        <h2 style="font-family: var(--display); font-size: 26px; margin-bottom: 10px; color: var(--ink);">AEGIS Launch Teaser (Light Mode)</h2>
-        <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
-          High-definition 5-second launch teaser animation rendered strictly in the official <strong>AEGIS Light Theme</strong> palette (cream-to-mint gradient, deep navy Marcellus typography, animated 3-blade mark, and sub-second precompile architecture cards).
-        </p>
-        <div class="card-meta">
-          <span class="meta-tag">MP4 (H.264)</span>
-          <span class="meta-tag">1280 × 720 (HD)</span>
-          <span class="meta-tag">30 FPS</span>
-          <span class="meta-tag">Light Theme</span>
-        </div>
-        <a href="/brand/x/aegis-launch-video-light.mp4" download="aegis-launch-video-light.mp4" class="btn btn-primary" style="padding: 12px 20px; font-size: 14px;">
-          Download Teaser Video (MP4)
-        </a>
-      </div>
-    </div>
+ <!-- SECONDARY FEATURED: LIGHT MODE LAUNCH TEASER VIDEO -->
+ <div class="featured-video-card" style="margin-bottom: 36px;">
+ <div class="video-frame">
+ <video controls autoplay loop muted playsinline>
+ <source src="/brand/x/aegis-launch-video-light.mp4" type="video/mp4">
+ Your browser does not support HTML5 video.
+ </video>
+ </div>
+ <div>
+ <div class="badge" style="background: rgba(7, 112, 95, 0.1); color: var(--accent);">5-Second Teaser Video</div>
+ <h2 style="font-family: var(--display); font-size: 26px; margin-bottom: 10px; color: var(--ink);">AEGIS Launch Teaser (Light Mode)</h2>
+ <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
+ High-definition 5-second launch teaser animation rendered strictly in the official <strong>AEGIS Light Theme</strong> palette (cream-to-mint gradient, deep navy Marcellus typography, animated 3-blade mark, and sub-second precompile architecture cards).
+ </p>
+ <div class="card-meta">
+ <span class="meta-tag">MP4 (H.264)</span>
+ <span class="meta-tag">1280 × 720 (HD)</span>
+ <span class="meta-tag">30 FPS</span>
+ <span class="meta-tag">Light Theme</span>
+ </div>
+ <a href="/brand/x/aegis-launch-video-light.mp4" download="aegis-launch-video-light.mp4" class="btn btn-primary" style="padding: 12px 20px; font-size: 14px;">
+ Download Teaser Video (MP4)
+ </a>
+ </div>
+ </div>
 
-    <div class="grid">
-      <!-- Item 1: Banner -->
-      <div class="card">
-        <div class="card-preview">
-          <img src="/brand/x/launch-article-banner-1200x675.png" alt="AEGIS Launch Banner">
-        </div>
-        <div class="card-title">16:9 Launch Banner</div>
-        <div class="card-desc">Landscape banner with 3-blade mark and liquidation defense trigger curve. Ideal for Article covers &amp; Tweet 1.</div>
-        <div class="card-meta">
-          <span class="meta-tag">PNG (2x Retina)</span>
-          <span class="meta-tag">2400 × 1350</span>
-          <span class="meta-tag">2.0 MB</span>
-        </div>
-        <a href="/brand/x/launch-article-banner-1200x675.png" download="aegis-launch-banner.png" class="btn btn-primary">
-          Download Banner (PNG)
-        </a>
-      </div>
+ <div class="grid">
+ <!-- Item 1: Banner -->
+ <div class="card">
+ <div class="card-preview">
+ <img src="/brand/x/launch-article-banner-1200x675.png" alt="AEGIS Launch Banner">
+ </div>
+ <div class="card-title">16:9 Launch Banner</div>
+ <div class="card-desc">Landscape banner with 3-blade mark and liquidation defense trigger curve. Ideal for Article covers &amp; Tweet 1.</div>
+ <div class="card-meta">
+ <span class="meta-tag">PNG (2x Retina)</span>
+ <span class="meta-tag">2400 × 1350</span>
+ <span class="meta-tag">2.0 MB</span>
+ </div>
+ <a href="/brand/x/launch-article-banner-1200x675.png" download="aegis-launch-banner.png" class="btn btn-primary">
+ Download Banner (PNG)
+ </a>
+ </div>
 
-      <!-- Item 2: Square Graphic -->
-      <div class="card">
-        <div class="card-preview square">
-          <img src="/brand/x/launch-square-1080x1080.png" alt="AEGIS Feature Square">
-        </div>
-        <div class="card-title">1:1 Feature Card</div>
-        <div class="card-desc">Square post graphic with 4 core feature cards (0x0801, 0x0802, Bottom-wick trailing, INV-1). Ideal for Twitter/X feeds.</div>
-        <div class="card-meta">
-          <span class="meta-tag">PNG (2x Retina)</span>
-          <span class="meta-tag">2160 × 2160</span>
-          <span class="meta-tag">1.8 MB</span>
-        </div>
-        <a href="/brand/x/launch-square-1080x1080.png" download="aegis-feature-square.png" class="btn btn-primary">
-          Download Square (PNG)
-        </a>
-      </div>
+ <!-- Item 2: Square Graphic -->
+ <div class="card">
+ <div class="card-preview square">
+ <img src="/brand/x/launch-square-1080x1080.png" alt="AEGIS Feature Square">
+ </div>
+ <div class="card-title">1:1 Feature Card</div>
+ <div class="card-desc">Square post graphic with 4 core feature cards (0x0801, 0x0802, Bottom-wick trailing, INV-1). Ideal for Twitter/X feeds.</div>
+ <div class="card-meta">
+ <span class="meta-tag">PNG (2x Retina)</span>
+ <span class="meta-tag">2160 × 2160</span>
+ <span class="meta-tag">1.8 MB</span>
+ </div>
+ <a href="/brand/x/launch-square-1080x1080.png" download="aegis-feature-square.png" class="btn btn-primary">
+ Download Square (PNG)
+ </a>
+ </div>
 
-      <!-- Item 3: Demo Video Thumbnail -->
-      <div class="card">
-        <div class="card-preview">
-          <img src="/brand/x/aegis-demo-thumbnail-1200x675.png" alt="AEGIS Demo Video Thumbnail">
-        </div>
-        <div class="card-title">16:9 Demo Video Thumbnail</div>
-        <div class="card-desc">High-production 16:9 thumbnail featuring the live terminal UI, bold presenter cursor, and frosted Play button. Ideal for YouTube, X video embeds, and README.</div>
-        <div class="card-meta">
-          <span class="meta-tag">PNG (2x Retina)</span>
-          <span class="meta-tag">2400 × 1350</span>
-          <span class="meta-tag">2.0 MB</span>
-        </div>
-        <a href="/brand/x/aegis-demo-thumbnail-1200x675.png" download="aegis-demo-thumbnail-1200x675.png" class="btn btn-primary">
-          Download Thumbnail (PNG)
-        </a>
-      </div>
-    </div>
+ <!-- Item 3: Demo Video Thumbnail -->
+ <div class="card">
+ <div class="card-preview">
+ <img src="/brand/x/aegis-demo-thumbnail-1200x675.png" alt="AEGIS Demo Video Thumbnail">
+ </div>
+ <div class="card-title">16:9 Demo Video Thumbnail</div>
+ <div class="card-desc">High-production 16:9 thumbnail featuring the live terminal UI, bold presenter cursor, and frosted Play button. Ideal for YouTube, X video embeds, and README.</div>
+ <div class="card-meta">
+ <span class="meta-tag">PNG (2x Retina)</span>
+ <span class="meta-tag">2400 × 1350</span>
+ <span class="meta-tag">2.0 MB</span>
+ </div>
+ <a href="/brand/x/aegis-demo-thumbnail-1200x675.png" download="aegis-demo-thumbnail-1200x675.png" class="btn btn-primary">
+ Download Thumbnail (PNG)
+ </a>
+ </div>
+ </div>
 
-    <!-- Quick Copy Tweet Section -->
-    <div class="copy-section">
-      <div class="copy-header">
-        <div>
-          <h2 style="font-family: var(--display); font-size: 24px; color: var(--ink);">Ready-to-Post Copy for X (Twitter)</h2>
-          <p style="color: var(--ink-2); font-size: 14px;">1-Click copy of the official launch thread for your X account.</p>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-primary" style="width: auto; background: var(--accent); color: #fff;" onclick="copyDemoScript(this)">Copy 3-Min Demo Script</button>
-          <button class="btn btn-primary" style="width: auto; background: #0e8388; color: #fff;" onclick="copySubmissionInfo(this)">Copy Submission Info</button>
-          <button class="btn btn-primary" style="width: auto; background: var(--violet); color: #fff;" onclick="copyViralVideoPost(this)">Copy Video Post (X)</button>
-          <button class="btn btn-primary" style="width: auto;" onclick="copyThread(this)">Copy 10-Tweet Thread</button>
-          <button class="btn btn-secondary" style="width: auto;" onclick="copyLongPost(this)">Copy Long Post</button>
-        </div>
-      </div>
-      <div class="copy-box" id="copy-preview">Loading text...</div>
-    </div>
-  </div>
+ <!-- Quick Copy Tweet Section -->
+ <div class="copy-section">
+ <div class="copy-header">
+ <div>
+ <h2 style="font-family: var(--display); font-size: 24px; color: var(--ink);">Ready-to-Post Copy for X (Twitter)</h2>
+ <p style="color: var(--ink-2); font-size: 14px;">1-Click copy of the official launch thread for your X account.</p>
+ </div>
+ <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+ <button class="btn btn-primary" style="width: auto; background: var(--accent); color: #fff;" onclick="copyDemoScript(this)">Copy 3-Min Demo Script</button>
+ <button class="btn btn-primary" style="width: auto; background: #0e8388; color: #fff;" onclick="copySubmissionInfo(this)">Copy Submission Info</button>
+ <button class="btn btn-primary" style="width: auto; background: var(--violet); color: #fff;" onclick="copyViralVideoPost(this)">Copy Video Post (X)</button>
+ <button class="btn btn-primary" style="width: auto;" onclick="copyThread(this)">Copy 10-Tweet Thread</button>
+ <button class="btn btn-secondary" style="width: auto;" onclick="copyLongPost(this)">Copy Long Post</button>
+ </div>
+ </div>
+ <div class="copy-box" id="copy-preview">Loading text...</div>
+ </div>
+ </div>
 
-  <script>
-    const demoScriptText = `AEGIS Live Product Demo — Video Script (Duration: 02:42)
+ <script>
+ const demoScriptText = `AEGIS Live Product Demo — Video Script (Duration: 02:42)
 
 [0:00 - 0:25] Chapter 1: Introduction & Live Telemetry
 "Welcome to the live demonstration of AEGIS — the autonomous sub-second liquidation protection protocol built for Elysium L2 and the HyperCore Central Limit Orderbook. Today, we are walking through the fully functioning, live trader terminal running on the Elysium testnet. Notice the live network status: Chain ID 99801, with direct synchronous reads from HyperCore precompile 0x0801 at sub-78-millisecond latency. In DeFi borrowing, traditional liquidation acts like a sledgehammer — slashing 10 to 15 percent of your principal on a momentary market wick. AEGIS replaces that destruction with autonomous delta hedging."
@@ -402,7 +402,7 @@
 [2:15 - 2:42] Chapter 6: Emergency Invariants, Monotonic Audit & Conclusion
 "Finally, AEGIS guarantees total trader sovereignty. In accordance with Invariant INV-3, borrowers can trigger an emergency manual override killswitch at any moment, terminating session keys and returning complete manual control. Every state transition is recorded in our tamper-proof monotonic audit log. AEGIS is live, open-source, and ready to protect borrowers across Elysium L2 and HyperCore. Never get liquidated again. Thank you."`;
 
-    const submissionInfoText = `Submission Video Title:
+ const submissionInfoText = `Submission Video Title:
 AEGIS — Autonomous Sub-Second Liquidation Protection on Elysium L2 & HyperCore (Live Product Demo)
 
 Submission Video Description:
@@ -419,7 +419,7 @@ Key Product Capabilities Demonstrated:
 Live App: http://localhost:3000
 GitHub Repository: https://github.com/youngcrypton/Aegis
 Documentation: https://docs.aegis.trade`;
-    const threadText = `Tweet 1 (Attach aegis-launch-video-light.mp4):
+ const threadText = `Tweet 1 (Attach aegis-launch-video-light.mp4):
 Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2.
 
 Hedge drawdowns. Never get liquidated.
@@ -515,7 +515,7 @@ Never get liquidated again.
 App: https://app.aegis.trade
 Docs: https://docs.aegis.trade (10/10)`;
 
-    const longPostText = `Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2
+ const longPostText = `Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2
 
 Hedge drawdowns. Never get liquidated.
 
@@ -573,7 +573,7 @@ GitHub: https://github.com/youngcrypton/Aegis
 
 #AEGIS #Elysium #HyperCore #DeFi`;
 
-    const viralVideoPostText = `What if a flash crash made you money instead of wiping out your account?
+ const viralVideoPostText = `What if a flash crash made you money instead of wiping out your account?
 
 In crypto, forced liquidation is the ultimate penalty tax:
 • A 90-second wick breaches your loan threshold.
@@ -602,57 +602,57 @@ Docs: https://docs.aegis.trade
 
 Hedge drawdowns. Never get liquidated.`;
 
-    document.getElementById("copy-preview").textContent = demoScriptText;
+ document.getElementById("copy-preview").textContent = demoScriptText;
 
-    function copyFolder() {
-      navigator.clipboard.writeText("C:\\\\Users\\\\ascend X elysium\\\\brand\\\\x\\\\aegis-product-demo-3min.mp4");
-      alert("File path copied to clipboard!");
-    }
+ function copyFolder() {
+ navigator.clipboard.writeText("C:\\\\Users\\\\ascend X elysium\\\\brand\\\\x\\\\aegis-product-demo-3min.mp4");
+ alert("File path copied to clipboard!");
+ }
 
-    function copyDemoScript(btn) {
-      document.getElementById("copy-preview").textContent = demoScriptText;
-      navigator.clipboard.writeText(demoScriptText).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied Script!";
-        setTimeout(() => btn.textContent = orig, 2000);
-      });
-    }
+ function copyDemoScript(btn) {
+ document.getElementById("copy-preview").textContent = demoScriptText;
+ navigator.clipboard.writeText(demoScriptText).then(() => {
+ const orig = btn.textContent;
+ btn.textContent = "Copied Script!";
+ setTimeout(() => btn.textContent = orig, 2000);
+ });
+ }
 
-    function copySubmissionInfo(btn) {
-      document.getElementById("copy-preview").textContent = submissionInfoText;
-      navigator.clipboard.writeText(submissionInfoText).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied Submission!";
-        setTimeout(() => btn.textContent = orig, 2000);
-      });
-    }
+ function copySubmissionInfo(btn) {
+ document.getElementById("copy-preview").textContent = submissionInfoText;
+ navigator.clipboard.writeText(submissionInfoText).then(() => {
+ const orig = btn.textContent;
+ btn.textContent = "Copied Submission!";
+ setTimeout(() => btn.textContent = orig, 2000);
+ });
+ }
 
-    function copyViralVideoPost(btn) {
-      document.getElementById("copy-preview").textContent = viralVideoPostText;
-      navigator.clipboard.writeText(viralVideoPostText).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied Video Post!";
-        setTimeout(() => btn.textContent = orig, 2000);
-      });
-    }
+ function copyViralVideoPost(btn) {
+ document.getElementById("copy-preview").textContent = viralVideoPostText;
+ navigator.clipboard.writeText(viralVideoPostText).then(() => {
+ const orig = btn.textContent;
+ btn.textContent = "Copied Video Post!";
+ setTimeout(() => btn.textContent = orig, 2000);
+ });
+ }
 
-    function copyThread(btn) {
-      document.getElementById("copy-preview").textContent = threadText;
-      navigator.clipboard.writeText(threadText).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied Thread!";
-        setTimeout(() => btn.textContent = orig, 2000);
-      });
-    }
+ function copyThread(btn) {
+ document.getElementById("copy-preview").textContent = threadText;
+ navigator.clipboard.writeText(threadText).then(() => {
+ const orig = btn.textContent;
+ btn.textContent = "Copied Thread!";
+ setTimeout(() => btn.textContent = orig, 2000);
+ });
+ }
 
-    function copyLongPost(btn) {
-      document.getElementById("copy-preview").textContent = longPostText;
-      navigator.clipboard.writeText(longPostText).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied Long Post!";
-        setTimeout(() => btn.textContent = orig, 2000);
-      });
-    }
-  </script>
+ function copyLongPost(btn) {
+ document.getElementById("copy-preview").textContent = longPostText;
+ navigator.clipboard.writeText(longPostText).then(() => {
+ const orig = btn.textContent;
+ btn.textContent = "Copied Long Post!";
+ setTimeout(() => btn.textContent = orig, 2000);
+ });
+ }
+ </script>
 </body>
 </html>

@@ -28,13 +28,13 @@ Here is what AEGIS is building, why traditional liquidation is broken, and how o
 Borrowing against digital assets is the backbone of decentralized finance. Yet, despite billions in total value locked across lending protocols and perpetual platforms, the liquidation mechanisms governing these positions remain fundamentally primitive:
 
 1. **The Punitive Penalty Tax ($10\% - 15\%$ Haircuts):**
-   When a borrower's Health Factor touches $1.00$, the protocol does not protect the borrower. Instead, it invites external liquidators to seize the borrower’s collateral at a steep $5\% - 15\%$ discount. Even if you are only temporarily undercollateralized by $\$50$, you lose thousands in principal.
+ When a borrower's Health Factor touches $1.00$, the protocol does not protect the borrower. Instead, it invites external liquidators to seize the borrower’s collateral at a steep $5\% - 15\%$ discount. Even if you are only temporarily undercollateralized by $\$50$, you lose thousands in principal.
 2. **Predatory MEV & Cascading Default Spirals:**
-   Liquidator searchers spam the mempool to extract liquidation value, creating gas wars and network congestion during market panics. In fast-moving crashes, these forced liquidations dump millions of dollars of collateral into thin liquidity, triggering cascading liquidations across the ecosystem.
+ Liquidator searchers spam the mempool to extract liquidation value, creating gas wars and network congestion during market panics. In fast-moving crashes, these forced liquidations dump millions of dollars of collateral into thin liquidity, triggering cascading liquidations across the ecosystem.
 3. **The "Liquidation Wick" Injustice:**
-   Crypto markets are notorious for volatile flash wicks—sudden downward spikes followed by rapid V-shape recoveries. Traditional protocols execute irreversible liquidations at the exact bottom tick of the wick. The borrower is wiped out, while external arbitrageurs capture the rebound.
+ Crypto markets are notorious for volatile flash wicks—sudden downward spikes followed by rapid V-shape recoveries. Traditional protocols execute irreversible liquidations at the exact bottom tick of the wick. The borrower is wiped out, while external arbitrageurs capture the rebound.
 4. **Latency Disconnect on L1 and L2:**
-   Existing keeper networks suffer from multi-second oracle latency, transaction reorg risk, and slippage on automated market makers (AMMs). By the time an external bot notices your health is falling, the block is already full and your collateral is gone.
+ Existing keeper networks suffer from multi-second oracle latency, transaction reorg risk, and slippage on automated market makers (AMMs). By the time an external bot notices your health is falling, the block is already full and your collateral is gone.
 
 Borrowers are forced into an impossible trade-off: either keep your leverage absurdly low ($20\% - 30\%$ LTV) and sacrifice capital efficiency, or stay glued to a screen $24/7$ terrified of an overnight flash crash.
 
@@ -75,7 +75,7 @@ Opening a hedge during a crash is only half the battle. What happens when the ma
 This is where AEGIS outclasses every manual trader:
 1. **Dynamic Trough Tracking:** Once the short hedge is open, the Sentinel continuously tracks the market's lowest wick ($P_{\text{lowest}}$).
 2. **Trailing Take-Profit Engine:** The vault maintains a trailing parameter $\tau$ (e.g. $1.5\%$). As the price reaches new lows, the exit threshold dynamically follows it:
-   $$P_{\text{exit}} = P_{\text{lowest}} \times (1 + \tau)$$
+ $$P_{\text{exit}} = P_{\text{lowest}} \times (1 + \tau)$$
 3. **Autonomous Unwind into the Vault:** The millisecond the market bounces by $\tau\%$ off the bottom tick, AEGIS buys back the short on the CLOB, capturing cash profits in USDC.
 4. **Health Factor Restoration:** $90\%$ of net realized profit is deposited directly into your vault, paying down borrowed liability and lifting your Health Factor comfortably back above $1.25$.
 
@@ -90,9 +90,9 @@ AEGIS is engineered for everyone—from testnet beginners with fractional capita
 #### 1. Lite Auto-Pilot (1-Click Retail Defense)
 - **Calibrated for Micro-Capital:** Tailored specifically for users testing with testnet faucets ($0.02$, $0.05$, $0.08$ HYPE).
 - **Curated Defense Presets:**
-  - 🛡️ **Conservative:** Triggers early at $H \le 1.25$ with $100\%$ delta coverage and $1.0\%$ trailing take-profit. Designed for maximum peace of mind.
-  - ⚖️ **Balanced (Recommended):** Triggers at $H \le 1.15$ with $75\%$ coverage and $1.5\%$ trailing take-profit. The optimal equilibrium between downside dampening and upside capture.
-  - ⚡ **Aggressive:** Triggers at $H \le 1.08$ with $50\%$ coverage and $2.5\%$ trailing take-profit. Maximizes leverage efficiency and captures large rebound swings.
+ - **Conservative:** Triggers early at $H \le 1.25$ with $100\%$ delta coverage and $1.0\%$ trailing take-profit. Designed for maximum peace of mind.
+ - **Balanced (Recommended):** Triggers at $H \le 1.15$ with $75\%$ coverage and $1.5\%$ trailing take-profit. The optimal equilibrium between downside dampening and upside capture.
+ - **Aggressive:** Triggers at $H \le 1.08$ with $50\%$ coverage and $2.5\%$ trailing take-profit. Maximizes leverage efficiency and captures large rebound swings.
 - **1-Click "Activate Shield":** A single transaction connects your wallet, authorizes an ephemeral session key, and commits the vault strategy in one seamless flow.
 
 #### 2. Pro Terminal (Quantitative Risk Suite)
@@ -108,8 +108,8 @@ The protocol is underpinned by a hard-capped supply of **700,000,000 $AEGIS** to
 
 - **Ascend Closed Hook Integration:** $100\%$ of protocol performance fee buybacks route through `IAscendHookPool.sol`, generating trading volume for the Ascend launchpad.
 - **$50/50$ Value Capture:** When a hedge unwinds with profit, a $10\%$ fee is captured:
-  - **$50\%$ Programmatic Burn:** Used to market-buy $AEGIS via Ascend Hook Pools and burned permanently to `0x...dead`.
-  - **$50\%$ Real Yield in USDC:** Distributed directly to bonded Sentinel node stakers as non-inflationary real yield.
+ - **$50\%$ Programmatic Burn:** Used to market-buy $AEGIS via Ascend Hook Pools and burned permanently to `0x...dead`.
+ - **$50\%$ Real Yield in USDC:** Distributed directly to bonded Sentinel node stakers as non-inflationary real yield.
 - **39% Ascend Alignment:** $273\text{M } \$AEGIS$ allocated directly across Ascend launchpad participants, kHYPE liquid stakers, and community rewards.
 - **Strict 24-Month Team Cliff:** Core contributor tokens feature an ultra-strict 2-year hard lockup followed by a 4-year linear release—a 6-year horizon demonstrating absolute long-term commitment.
 
@@ -141,9 +141,9 @@ The launch of the AEGIS architecture marks Day 1 of our roadmap. We are advancin
 **The era of waking up to liquidation notices is over.**
 
 Explore the protocol, inspect the verified smart contracts, and test the Auto-Pilot shield today:
-- 🌐 **App Terminal:** `https://app.aegis.trade` (Running locally at `http://localhost:3000`)
-- 📖 **Technical Documentation:** `https://docs.aegis.trade` (Running locally at `http://localhost:8000/docs`)
-- 💻 **GitHub Repository:** `https://github.com/youngcrypton/Aegis`
+- **App Terminal:** `https://app.aegis.trade` (Running locally at `http://localhost:3000`)
+- **Technical Documentation:** `https://docs.aegis.trade` (Running locally at `http://localhost:8000/docs`)
+- **GitHub Repository:** `https://github.com/youngcrypton/Aegis`
 
 *More updates are rolling out soon. Follow our channels and stay protected.*
 
@@ -156,13 +156,13 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 ---
 
 ### Tweet 1 (The Hook & Announcement)
-> 🚨 Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore & Elysium L2.
+> Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore & Elysium L2.
 >
 > Hedge drawdowns. Never get liquidated.
 >
 > Today, we are unveiling the first non-custodial risk engine that protects debt positions without liquidating your collateral.
 >
-> A thread on why DeFi liquidation is broken—and how we fixed it 🧵👇
+> A thread on why DeFi liquidation is broken—and how we fixed it 
 >
 > *(Attach Graphic: `launch-article-banner-1200x675.png`)*
 
@@ -172,9 +172,9 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 > 1/ In DeFi today, borrowing is a minefield.
 >
 > When market volatility causes a 90-second flash crash:
-> ❌ Your collateral is seized
-> ❌ Liquidator bots take a 10-15% penalty fee
-> ❌ The market bounces 2 minutes later, but you’re already wiped out
+> Your collateral is seized
+> Liquidator bots take a 10-15% penalty fee
+> The market bounces 2 minutes later, but you’re already wiped out
 >
 > You lose your principal. Liquidators get rich.
 
@@ -196,8 +196,8 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 >
 > AEGIS connects directly into HyperCore consensus via two breakthrough precompiles on Elysium L2:
 >
-> ⚡ Precompile 0x0801: Sub-78ms synchronous oracle reads (zero mempool delay, zero MEV)
-> ⚡ Precompile 0x0802: Atomic order dispatch directly to HyperCore's L1 orderbook
+> Precompile 0x0801: Sub-78ms synchronous oracle reads (zero mempool delay, zero MEV)
+> Precompile 0x0802: Atomic order dispatch directly to HyperCore's L1 orderbook
 
 ---
 
@@ -206,9 +206,9 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 >
 > AEGIS doesn’t just hedge—it profits.
 >
-> 🎯 Sentinel tracks the lowest bottom wick of the crash.
-> 🎯 On a 1.5% rebound, it buys back the short perp.
-> 🎯 Cash profits are deposited back into your vault!
+> Sentinel tracks the lowest bottom wick of the crash.
+> On a 1.5% rebound, it buys back the short perp.
+> Cash profits are deposited back into your vault!
 >
 > Health factor restored to >1.25. Zero collateral lost.
 
@@ -228,9 +228,9 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 ### Tweet 7 (Dual Experience: Lite Auto-Pilot & Pro Terminal)
 > 6/ Built for everyone:
 >
-> 🛡️ Lite Auto-Pilot: 1-Click presets (Conservative, Balanced, Aggressive) calibrated for micro-capital (0.02, 0.05, 0.08 HYPE testnet faucet cap). One click arms your shield.
+> ️ Lite Auto-Pilot: 1-Click presets (Conservative, Balanced, Aggressive) calibrated for micro-capital (0.02, 0.05, 0.08 HYPE testnet faucet cap). One click arms your shield.
 >
-> ⚙️ Pro Terminal: Granular price/health sliders, delta ratio, and CLOB depth orderbook for institutional quants.
+> ️ Pro Terminal: Granular price/health sliders, delta ratio, and CLOB depth orderbook for institutional quants.
 >
 > *(Attach Graphic: `launch-square-1080x1080.png`)*
 
@@ -239,10 +239,10 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 ### Tweet 8 ($AEGIS Tokenomics & Ascend Flywheel)
 > 7/ Powered by $AEGIS (700M hard cap) with zero speculative monetary assumptions:
 >
-> 🔥 50% of performance fees burned via Ascend Closed Hook Pools
-> 💰 50% paid as real yield in USDC to node stakers
-> 🤝 39% direct allocation aligning with the @Ascend ecosystem
-> 🔒 24-month hard team cliff (6-year horizon)
+> 50% of performance fees burned via Ascend Closed Hook Pools
+> 50% paid as real yield in USDC to node stakers
+> 39% direct allocation aligning with the @Ascend ecosystem
+> 24-month hard team cliff (6-year horizon)
 
 ---
 
@@ -258,15 +258,15 @@ Explore the protocol, inspect the verified smart contracts, and test the Auto-Pi
 ### Tweet 10 (What's Next & Call to Action)
 > 9/ This is just Day 1. More updates are rolling out soon:
 >
-> 🚀 Elysium L2 Public Testnet
-> 🛡️ Sentinel Node Operator Staking
-> 🔍 Formal Verification & Audits
-> 📱 Mobile App & Real-Time Alerts
+> Elysium L2 Public Testnet
+> ️ Sentinel Node Operator Staking
+> Formal Verification & Audits
+> Mobile App & Real-Time Alerts
 >
 > Never get liquidated again.
 >
-> 🌐 App: https://app.aegis.trade
-> 📖 Docs: https://docs.aegis.trade
-> 💻 GitHub: https://github.com/youngcrypton/Aegis
+> App: https://app.aegis.trade
+> Docs: https://docs.aegis.trade
+> GitHub: https://github.com/youngcrypton/Aegis
 >
-> Follow & turn on 🔔 for upcoming deployment alerts!
+> Follow & turn on for upcoming deployment alerts!

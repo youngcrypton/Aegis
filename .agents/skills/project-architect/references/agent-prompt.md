@@ -233,7 +233,7 @@ to make it pass."
 ### 7. Checkpoint Markers
 Include verification points throughout:
 ```markdown
-**🔍 Checkpoint:** At this point, `npm run build` should succeed and `npm test` should
+**Checkpoint:** At this point, `npm run build` should succeed and `npm test` should
 pass with [N] tests. If not, fix before proceeding.
 ```
 

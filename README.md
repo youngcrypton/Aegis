@@ -1,52 +1,52 @@
 <div align="center">
 
-  <img src="brand/logo/aegis-mark.svg" alt="AEGIS Protocol Logo" width="96" height="96" />
+ <img src="brand/logo/aegis-mark.svg" alt="AEGIS Protocol Logo" width="96" height="96" />
 
-  # AEGIS
-  ### Autonomous Risk Sentinel & Delta-Hedging Protocol
+ # AEGIS
+ ### Autonomous Risk Sentinel & Delta-Hedging Protocol
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-  [![Solidity: 0.8.24](https://img.shields.io/badge/Solidity-0.8.24-363636.svg)](foundry.toml)
-  [![Foundry: Passing](https://img.shields.io/badge/Foundry-53%2F53%20Passing-07705F.svg)](test/)
-  [![Invariants: INV--1_to_INV--5](https://img.shields.io/badge/Invariants-Verified%20(160k+%20Runs)-07705F.svg)](test/invariants/)
-  [![Network: Elysium L2](https://img.shields.io/badge/Elysium_L2-Chain_ID_99801-6930EA.svg)](https://elysium.kinetiq.xyz/testnet-explorer)
-  [![TypeScript: 5.4.5](https://img.shields.io/badge/TypeScript-5.4.5-3178C6.svg)](keeper/package.json)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+ [![Solidity: 0.8.24](https://img.shields.io/badge/Solidity-0.8.24-363636.svg)](foundry.toml)
+ [![Foundry: Passing](https://img.shields.io/badge/Foundry-53%2F53%20Passing-07705F.svg)](test/)
+ [![Invariants: INV--1_to_INV--5](https://img.shields.io/badge/Invariants-Verified%20(160k+%20Runs)-07705F.svg)](test/invariants/)
+ [![Network: Elysium L2](https://img.shields.io/badge/Elysium_L2-Chain_ID_99801-6930EA.svg)](https://elysium.kinetiq.xyz/testnet-explorer)
+ [![TypeScript: 5.4.5](https://img.shields.io/badge/TypeScript-5.4.5-3178C6.svg)](keeper/package.json)
 
-  <p align="center">
-    <strong>Autonomous, non-custodial risk sentinel and sub-second delta-hedging engine built natively for Elysium L2 and HyperCore.</strong>
-  </p>
+ <p align="center">
+ <strong>Autonomous, non-custodial risk sentinel and sub-second delta-hedging engine built natively for Elysium L2 and HyperCore.</strong>
+ </p>
 
-  <p align="center">
-    <a href="#-live-product-demo-hackathon-submission"><b>Live Demo (02:44)</b></a> •
-    <a href="#the-problem-the-liquidation-death-spiral">The Problem</a> •
-    <a href="#the-aegis-approach">The AEGIS Approach</a> •
-    <a href="#system-architecture">Architecture</a> •
-    <a href="#security-model--formal-invariants">Formal Invariants</a> •
-    <a href="#repository-structure">Repository Map</a> •
-    <a href="#current-implementation-status">Status</a> •
-    <a href="#developer-quickstart">Quickstart</a> •
-    <a href="docs/index.html">Documentation</a>
-  </p>
+ <p align="center">
+ <a href="#-live-product-demo-hackathon-submission"><b>Live Demo (02:44)</b></a> •
+ <a href="#the-problem-the-liquidation-death-spiral">The Problem</a> •
+ <a href="#the-aegis-approach">The AEGIS Approach</a> •
+ <a href="#system-architecture">Architecture</a> •
+ <a href="#security-model--formal-invariants">Formal Invariants</a> •
+ <a href="#repository-structure">Repository Map</a> •
+ <a href="#current-implementation-status">Status</a> •
+ <a href="#developer-quickstart">Quickstart</a> •
+ <a href="docs/index.html">Documentation</a>
+ </p>
 
 </div>
 
 ---
 
-## 🎬 Live Product Demo (Hackathon Submission)
+## Live Product Demo (Hackathon Submission)
 
-> **Watch the official 02:44 live product walkthrough of the AEGIS high-frequency risk engine running on Elysium L2 testnet and HyperCore CLOB.**
+> **Official 02:44 live product walkthrough of the AEGIS high-frequency risk engine running on Elysium L2 testnet and HyperCore CLOB.**
 
 <div align="center">
 
-  <a href="brand/x/aegis-product-demo-3min.mp4">
-    <img src="brand/x/aegis-demo-thumbnail-1200x675.png" alt="AEGIS Protocol 3-Minute Live Product Demo Walkthrough" width="100%" style="border-radius: 12px; border: 1px solid #1F293D;" />
-  </a>
+ <a href="https://raw.githubusercontent.com/youngcrypton/Aegis/main/brand/x/aegis-product-demo-3min.mp4">
+ <img src="brand/x/aegis-demo-preview.gif" alt="AEGIS Protocol Live Product Demo Walkthrough" width="100%" style="border-radius: 12px; border: 1px solid #1F293D;" />
+ </a>
 
-  <p align="center">
-    <a href="brand/x/aegis-product-demo-3min.mp4"><b>▶ Play Full Demo Video (MP4 &bull; 02:44 &bull; 22.9 MB)</b></a> &nbsp;|&nbsp;
-    <a href="brand/x/aegis-demo-thumbnail-1200x675.png"><b>🖼️ High-Res Thumbnail (2x Retina)</b></a> &nbsp;|&nbsp;
-    <a href="download.html"><b>📋 Narration Script &amp; Local Media Hub</b></a>
-  </p>
+ <p align="center">
+ <a href="https://raw.githubusercontent.com/youngcrypton/Aegis/main/brand/x/aegis-product-demo-3min.mp4"><b>[Play Full Audio Video &bull; 02:44 &bull; 8.7 MB MP4]</b></a> &nbsp;|&nbsp;
+ <a href="brand/x/aegis-demo-thumbnail-1200x675.png"><b>[High-Res Retina Thumbnail]</b></a> &nbsp;|&nbsp;
+ <a href="download.html"><b>[Local Media &amp; Download Hub]</b></a>
+ </p>
 
 </div>
 
@@ -62,20 +62,20 @@
 | **Trader Sovereignty** | Atomic manual override killswitch &bull; Monotonic nonces | Invariant **INV-3** &amp; **INV-5** |
 
 <details>
-<summary><b>📜 Click to expand the full 6-Chapter Voiceover Script &amp; Walkthrough Transcript</b></summary>
+<summary><b>[Transcript] Click to expand the full 6-Chapter Voiceover Script &amp; Walkthrough Transcript</b></summary>
 
 1. **Chapter 1 (0:00 – 0:31) &bull; Architecture &amp; Portfolio Telemetry**:
-   *"Welcome to the live product demonstration of AEGIS, the first autonomous, non-custodial risk engine engineered to eliminate forced liquidations in DeFi. We are live on the Elysium Layer 2 testnet on Chain ID 99801. Our terminal connects directly to HyperCore Precompile 0x0801, streaming mark prices in sub-78 milliseconds from L1 consensus. On screen, our vault holds 1,000 HYPE collateral and $32,000 USDC debt, maintaining a safe Health Factor of 1.41 on our dynamic radial gauge."*
+ *"Welcome to the live product demonstration of AEGIS, the first autonomous, non-custodial risk engine engineered to eliminate forced liquidations in DeFi. We are live on the Elysium Layer 2 testnet on Chain ID 99801. Our terminal connects directly to HyperCore Precompile 0x0801, streaming mark prices in sub-78 milliseconds from L1 consensus. On screen, our vault holds 1,000 HYPE collateral and $32,000 USDC debt, maintaining a safe Health Factor of 1.41 on our dynamic radial gauge."*
 2. **Chapter 2 (0:31 – 0:59) &bull; 1-Click Lite Auto-Pilot**:
-   *"For everyday borrowers, AEGIS provides the 1-Click Lite Auto-Pilot. Users select from three mathematically modeled defense presets: Conservative at health factor 1.25, Aggressive at 1.08, or Balanced at 1.15. We pick the 0.05 HYPE micro-deposit chip, calibrated for the Elysium testnet faucet cap. Clicking Activate Shield delegates an ephemeral session key under Invariant INV-1, strictly restricted to trade-only hedging with zero permission to withdraw collateral."*
+ *"For everyday borrowers, AEGIS provides the 1-Click Lite Auto-Pilot. Users select from three mathematically modeled defense presets: Conservative at health factor 1.25, Aggressive at 1.08, or Balanced at 1.15. We pick the 0.05 HYPE micro-deposit chip, calibrated for the Elysium testnet faucet cap. Clicking Activate Shield delegates an ephemeral session key under Invariant INV-1, strictly restricted to trade-only hedging with zero permission to withdraw collateral."*
 3. **Chapter 3 (0:59 – 1:20) &bull; Pro Terminal &amp; Algorithmic Controls**:
-   *"For institutional quants, the Pro Terminal unlocks granular algorithmic parameters. Traders set exact collateral price triggers, health thresholds, delta coverage ratios from 10% to 100%, and trailing profit locks. Below, our terminal streams the live 10-level Central Limit Orderbook directly from HyperCore, showing sub-tick liquidity and execution depth."*
+ *"For institutional quants, the Pro Terminal unlocks granular algorithmic parameters. Traders set exact collateral price triggers, health thresholds, delta coverage ratios from 10% to 100%, and trailing profit locks. Below, our terminal streams the live 10-level Central Limit Orderbook directly from HyperCore, showing sub-tick liquidity and execution depth."*
 4. **Chapter 4 (1:20 – 1:49) &bull; Real Flash Crash Simulation (-18%)**:
-   *"Now, let's witness AEGIS under extreme volatility. We trigger a live -18% flash crash simulation. As the price falls toward the $40 liquidation barrier, the Health Factor drops below our 1.15 threshold. In under 78 milliseconds, the Sentinel engine detects the breach and dispatches an atomic short hedge via Predeploy 0x0802. In the Active Hedge panel, our short position absorbs the drop dollar-for-dollar. Spot collateral remains 100% safe."*
+ *"Now, let's witness AEGIS under extreme volatility. We trigger a live -18% flash crash simulation. As the price falls toward the $40 liquidation barrier, the Health Factor drops below our 1.15 threshold. In under 78 milliseconds, the Sentinel engine detects the breach and dispatches an atomic short hedge via Predeploy 0x0802. In the Active Hedge panel, our short position absorbs the drop dollar-for-dollar. Spot collateral remains 100% safe."*
 5. **Chapter 5 (1:49 – 2:18) &bull; V-Bounce &amp; Trailing Profit Unwind**:
-   *"Next, the market bottoms out at $34.50 and rebounds. The moment price bounces by our 1.5% trailing buffer, the take-profit trigger fires automatically. The short hedge buys back on the orderbook, locking in cash profits. 90% of net profits pay down debt, restoring the Health Factor comfortably above 1.25. The 10% performance fee splits under Invariant INV-4: 50% burned via Ascend Hook Pools, and 50% paid as real yield to bonded Sentinel stakers."*
+ *"Next, the market bottoms out at $34.50 and rebounds. The moment price bounces by our 1.5% trailing buffer, the take-profit trigger fires automatically. The short hedge buys back on the orderbook, locking in cash profits. 90% of net profits pay down debt, restoring the Health Factor comfortably above 1.25. The 10% performance fee splits under Invariant INV-4: 50% burned via Ascend Hook Pools, and 50% paid as real yield to bonded Sentinel stakers."*
 6. **Chapter 6 (2:19 – 2:44) &bull; Emergency Killswitch (INV-3) &amp; Wrap-Up**:
-   *"Finally, safety is non-negotiable. Under Invariant INV-3, borrowers retain an atomic single-transaction Manual Override killswitch to instantly revoke keys. In the audit terminal, every intent is signed via EIP-712 with strictly monotonic nonces under Invariant INV-5, preventing replay attacks. AEGIS eliminates liquidation loss forever. Explore the live terminal at aegis.trade."*
+ *"Finally, safety is non-negotiable. Under Invariant INV-3, borrowers retain an atomic single-transaction Manual Override killswitch to instantly revoke keys. In the audit terminal, every intent is signed via EIP-712 with strictly monotonic nonces under Invariant INV-5, preventing replay attacks. AEGIS eliminates liquidation loss forever. Explore the live terminal at aegis.trade."*
 
 </details>
 
@@ -91,7 +91,7 @@ AEGIS introduces an alternative paradigm: **autonomous synthetic delta-hedging**
 
 ```
 Market Drawdown ──► Collateral Health Breaches Trigger ──► Sentinel Dispatches EIP-712 Short Hedge
-                                                                      │
+ │
 Collateral Preserved ◄── Trailing Take-Profit Unwinds Hedge ◄── HyperCore CLOB Execution
 ```
 
@@ -118,15 +118,15 @@ AEGIS decouples asset custody from trade execution. Users deposit collateral int
 
 ```
 [1. Telemetry Ingestion] ──► [2. Risk Evaluation] ──► [3. Intent Authorization]
-        │                             │                            │
-  Synchronous 0x0801            H <= H_trigger               EIP-712 Session Key
-  Precompile Read               or P <= P_trigger            Nonce Monotonicity
-        │                             │                            │
-        ▼                             ▼                            ▼
+ │ │ │
+ Synchronous 0x0801 H <= H_trigger EIP-712 Session Key
+ Precompile Read or P <= P_trigger Nonce Monotonicity
+ │ │ │
+ ▼ ▼ ▼
 [6. Unwind & Restoration] ◄── [5. Trailing Profit Lock] ◄── [4. CLOB Execution]
-        │                             │                            │
-  Fee Captured (10%)            P_exit = P_lowest*(1+τ)      0x0802 Predeploy
-  50/50 Flywheel Split          Bottom-Wick Tracking         Sub-Second Matching
+ │ │ │
+ Fee Captured (10%) P_exit = P_lowest*(1+τ) 0x0802 Predeploy
+ 50/50 Flywheel Split Bottom-Wick Tracking Sub-Second Matching
 ```
 
 1. **Market & Collateral Telemetry**: The Sentinel daemon polls mark prices and orderbook liquidity synchronously via HyperCore Precompile `0x0801` (~70ms latency, zero EVM gas).
@@ -134,8 +134,8 @@ AEGIS decouples asset custody from trade execution. Users deposit collateral int
 3. **Intent Authorization**: The Sentinel signs an EIP-712 structured `HedgeIntent` using a trade-only session key delegated by the user. The signature authorizes order dispatch but contains zero withdrawal permissions.
 4. **High-Speed Execution**: The signed intent is dispatched to Elysium Core Writer Predeploy `0x0802`, routing directly to HyperCore's perpetual CLOB matching engine within sub-second execution windows.
 5. **Dynamic Trailing Profit-Take**: While the short hedge is active, the engine monitors price movement, updating the lowest wick price ($P_{\text{lowest}}$). A dynamic exit price is established:
-   $$P_{\text{exit}} = P_{\text{lowest}} \cdot (1 + \tau)$$
-   where $\tau$ is the user-configured trailing tolerance (e.g., 1.5%).
+ $$P_{\text{exit}} = P_{\text{lowest}} \cdot (1 + \tau)$$
+ where $\tau$ is the user-configured trailing tolerance (e.g., 1.5%).
 6. **Recovery & Capital Restoration**: When the market rebounds and touches $P_{\text{exit}}$, the Sentinel buys to close the short. Perpetual trading profits are credited directly to the user's vault balance, restoring $H > 1.25$ without selling any spot collateral. A 10% performance fee on averted liquidation loss is routed to the fee flywheel.
 
 ---
@@ -175,62 +175,62 @@ $$P_{\text{current}} \ge P_{\text{lowest}} \cdot (1 + \tau)$$
 
 ```mermaid
 graph TB
-    subgraph Client["Trader Interface & Wallets"]
-        Trader["Vault Owner Wallet"]
-        Terminal["Pro-Trader Terminal (app/)"]
-        Session["Ephemeral Session Key"]
-    end
+ subgraph Client["Trader Interface & Wallets"]
+ Trader["Vault Owner Wallet"]
+ Terminal["Pro-Trader Terminal (app/)"]
+ Session["Ephemeral Session Key"]
+ end
 
-    subgraph ElysiumL2["Elysium L2 Smart Contracts (Chain ID: 99801)"]
-        Vault["AegisVault.sol<br/>• Position & Margin State<br/>• ProConfig Parameters<br/>• manualOverride() Killswitch"]
-        Executor["TradeIntentExecutor.sol<br/>• EIP-712 Verification<br/>• Monotonic Nonces (INV-5)<br/>• Non-Custodial Bounds (INV-1)"]
-        Registry["AegisSentinelRegistry.sol<br/>• 25,000 $AEGIS Bond<br/>• Slashing Bounds <= 10% (INV-2)<br/>• Victim Restitution"]
-        FeeCollector["AegisFeeCollector.sol<br/>• 10% Performance Fee<br/>• 50% Buyback-Burn (INV-4)<br/>• 50% Real Staking Yield"]
-    end
+ subgraph ElysiumL2["Elysium L2 Smart Contracts (Chain ID: 99801)"]
+ Vault["AegisVault.sol<br/>• Position & Margin State<br/>• ProConfig Parameters<br/>• manualOverride() Killswitch"]
+ Executor["TradeIntentExecutor.sol<br/>• EIP-712 Verification<br/>• Monotonic Nonces (INV-5)<br/>• Non-Custodial Bounds (INV-1)"]
+ Registry["AegisSentinelRegistry.sol<br/>• 25,000 $AEGIS Bond<br/>• Slashing Bounds <= 10% (INV-2)<br/>• Victim Restitution"]
+ FeeCollector["AegisFeeCollector.sol<br/>• 10% Performance Fee<br/>• 50% Buyback-Burn (INV-4)<br/>• 50% Real Staking Yield"]
+ end
 
-    subgraph Precompiles["Hyperliquid Edge Connectors"]
-        PrecompileRead["0x0801 Precompile<br/>Synchronous CLOB Read (~70ms)"]
-        PredeployWrite["0x0802 Predeploy<br/>Trade Intent Dispatch Lane"]
-    end
+ subgraph Precompiles["Hyperliquid Edge Connectors"]
+ PrecompileRead["0x0801 Precompile<br/>Synchronous CLOB Read (~70ms)"]
+ PredeployWrite["0x0802 Predeploy<br/>Trade Intent Dispatch Lane"]
+ end
 
-    subgraph SentinelService["Sentinel Keeper Daemon (@aegis/sentinel)"]
-        Poller["Telemetry Poller (ws/rpc)"]
-        RiskEng["Quant Risk Engine"]
-        WickTrack["Trailing Wick Tracker (τ)"]
-        Signer["EIP-712 Intent Signer"]
-        HealthServer["HTTP /health (Port 8080)"]
-    end
+ subgraph SentinelService["Sentinel Keeper Daemon (@aegis/sentinel)"]
+ Poller["Telemetry Poller (ws/rpc)"]
+ RiskEng["Quant Risk Engine"]
+ WickTrack["Trailing Wick Tracker (τ)"]
+ Signer["EIP-712 Intent Signer"]
+ HealthServer["HTTP /health (Port 8080)"]
+ end
 
-    subgraph HyperCoreL1["HyperCore L1 Matching Engine"]
-        CLOB["Perpetual CLOB Matching Engine"]
-    end
+ subgraph HyperCoreL1["HyperCore L1 Matching Engine"]
+ CLOB["Perpetual CLOB Matching Engine"]
+ end
 
-    subgraph Ecosystem["Ascend Ecosystem"]
-        HookPool["Ascend Closed Hook Pool<br/>Market Buy & Burn to 0x...dEaD"]
-        Stakers["Governance Stakers<br/>Real Yield (USDC/HYPE)"]
-    end
+ subgraph Ecosystem["Ascend Ecosystem"]
+ HookPool["Ascend Closed Hook Pool<br/>Market Buy & Burn to 0x...dEaD"]
+ Stakers["Governance Stakers<br/>Real Yield (USDC/HYPE)"]
+ end
 
-    Trader -->|Configures Risk / Delegates Key| Vault
-    Session -->|Signs Intents| Signer
-    Terminal -->|Monitors & Overrides| Vault
+ Trader -->|Configures Risk / Delegates Key| Vault
+ Session -->|Signs Intents| Signer
+ Terminal -->|Monitors & Overrides| Vault
 
-    Vault -->|Inherits & Delegates| Executor
-    Vault -->|Checks Node Status & Slashes| Registry
-    Vault -->|Routes Fees| FeeCollector
+ Vault -->|Inherits & Delegates| Executor
+ Vault -->|Checks Node Status & Slashes| Registry
+ Vault -->|Routes Fees| FeeCollector
 
-    Executor -->|Dispatches Orders| PredeployWrite
-    PrecompileRead -->|Provides Mark Prices| Vault
-    PrecompileRead -->|Provides Telemetry| Poller
+ Executor -->|Dispatches Orders| PredeployWrite
+ PrecompileRead -->|Provides Mark Prices| Vault
+ PrecompileRead -->|Provides Telemetry| Poller
 
-    Poller --> RiskEng
-    RiskEng --> WickTrack
-    WickTrack --> Signer
-    Signer -->|Submits Signed Intent| Vault
+ Poller --> RiskEng
+ RiskEng --> WickTrack
+ WickTrack --> Signer
+ Signer -->|Submits Signed Intent| Vault
 
-    PredeployWrite -->|Sub-second Matching| CLOB
+ PredeployWrite -->|Sub-second Matching| CLOB
 
-    FeeCollector -->|50% Buyback & Burn| HookPool
-    FeeCollector -->|50% Real Yield| Stakers
+ FeeCollector -->|50% Buyback & Burn| HookPool
+ FeeCollector -->|50% Real Yield| Stakers
 ```
 
 ---
@@ -267,32 +267,32 @@ The $AEGIS token aligns network operators, protocol users, liquidity providers, 
 > **Non-Monetary Valuation Notice**: $AEGIS currently possesses zero established monetary value or public market price. All economic parameters and allocations represent programmatic token quantities, basis points ($\text{bps}$), and deterministic on-chain state transitions.
 
 ```
-                      ┌──────────────────────────────────────┐
-                      │        Averted Liquidation Fee       │
-                      │       (10% of Saved Penalty)         │
-                      └──────────────────┬───────────────────┘
-                                         │
-                                         ▼
-                      ┌──────────────────────────────────────┐
-                      │        AegisFeeCollector.sol         │
-                      │   Invariant INV-4 (50/50 Split)      │
-                      └──────────────┬───────────────────────┘
-                                     │
-                 ┌───────────────────┴───────────────────┐
-                 │ 50% Net Fee                           │ 50% Net Fee
-                 ▼                                       ▼
-  ┌─────────────────────────────┐         ┌─────────────────────────────┐
-  │   Ascend Closed Hook Pool   │         │      Real Staking Yield     │
-  │   Continuous buyback volume │         │   Distributed in USDC/HYPE  │
-  │   burns to 0x000...dEaD     │         │   to Governance Stakers     │
-  └──────────────┬──────────────┘         └─────────────────────────────┘
-                 │
-                 ▼ (1% Ascend Platform Fee)
-  ┌─────────────────────────────┐
-  │    Ascend Ecosystem Loop    │
-  │    Triggers HYPE & KNTQ     │
-  │    buyback and KNTQ burn    │
-  └─────────────────────────────┘
+ ┌──────────────────────────────────────┐
+ │ Averted Liquidation Fee │
+ │ (10% of Saved Penalty) │
+ └──────────────────┬───────────────────┘
+ │
+ ▼
+ ┌──────────────────────────────────────┐
+ │ AegisFeeCollector.sol │
+ │ Invariant INV-4 (50/50 Split) │
+ └──────────────┬───────────────────────┘
+ │
+ ┌───────────────────┴───────────────────┐
+ │ 50% Net Fee │ 50% Net Fee
+ ▼ ▼
+ ┌─────────────────────────────┐ ┌─────────────────────────────┐
+ │ Ascend Closed Hook Pool │ │ Real Staking Yield │
+ │ Continuous buyback volume │ │ Distributed in USDC/HYPE │
+ │ burns to 0x000...dEaD │ │ to Governance Stakers │
+ └──────────────┬──────────────┘ └─────────────────────────────┘
+ │
+ ▼ (1% Ascend Platform Fee)
+ ┌─────────────────────────────┐
+ │ Ascend Ecosystem Loop │
+ │ Triggers HYPE & KNTQ │
+ │ buyback and KNTQ burn │
+ └─────────────────────────────┘
 ```
 
 ### Complete 700M Supply Allocation
@@ -320,71 +320,71 @@ The $AEGIS token aligns network operators, protocol users, liquidity providers, 
 
 ```
 .
-├── contracts/                     # Core Solidity protocol smart contracts (Solc 0.8.24)
-│   ├── AegisVault.sol             # Core vault, margin tracking, ProConfig, and manualOverride()
-│   ├── AegisSentinelRegistry.sol  # Operator bonding (25k $AEGIS), SLA tracking, and INV-2 slashing
-│   ├── AegisFeeCollector.sol      # 10% performance fee capture, 50/50 buyback-burn and real yield
-│   ├── AegisTypes.sol             # Packed storage structs, domain enums, and custom protocol errors
-│   ├── core/
-│   │   └── TradeIntentExecutor.sol# EIP-712 structured signer, monotonic nonces (INV-5), custody checks (INV-1)
-│   ├── adapters/
-│   │   └── HyperCoreOracleAdapter.sol # Synchronous staticcall adapter for Precompile 0x0801
-│   └── interfaces/                # Official protocol interfaces (IAegisVault, IAegisFeeCollector, etc.)
+├── contracts/ # Core Solidity protocol smart contracts (Solc 0.8.24)
+│ ├── AegisVault.sol # Core vault, margin tracking, ProConfig, and manualOverride()
+│ ├── AegisSentinelRegistry.sol # Operator bonding (25k $AEGIS), SLA tracking, and INV-2 slashing
+│ ├── AegisFeeCollector.sol # 10% performance fee capture, 50/50 buyback-burn and real yield
+│ ├── AegisTypes.sol # Packed storage structs, domain enums, and custom protocol errors
+│ ├── core/
+│ │ └── TradeIntentExecutor.sol# EIP-712 structured signer, monotonic nonces (INV-5), custody checks (INV-1)
+│ ├── adapters/
+│ │ └── HyperCoreOracleAdapter.sol # Synchronous staticcall adapter for Precompile 0x0801
+│ └── interfaces/ # Official protocol interfaces (IAegisVault, IAegisFeeCollector, etc.)
 │
-├── test/                          # Comprehensive Foundry test suite (53 tests, 12 suites)
-│   ├── fuzz/
-│   │   └── MarginMathFuzz.t.sol   # Quant margin math property fuzzing (4,000 runs)
-│   ├── invariants/                # Stateful invariant fuzzing suites (160k+ state transitions)
-│   │   ├── InvariantCustody.t.sol # INV-1: Non-custodial capital preservation
-│   │   ├── InvariantSlashing.t.sol# INV-2: Bounded operator slashing & deactivation
-│   │   ├── InvariantOverride.t.sol# INV-3: Atomic manual override killswitch
-│   │   ├── InvariantFeeSplit.t.sol# INV-4: Exact 50/50 fee split conservation
-│   │   ├── InvariantNonce.t.sol   # INV-5: Strictly monotonic replay protection
-│   │   └── handlers/
-│   │       └── VaultHandler.sol   # State transition generator for invariant fuzzer
-│   ├── integration/
-│   │   └── EndToEndFlow.t.sol     # Full 9-stage lifecycle test (-18% crash, hedge, trailing rebound)
-│   ├── unit/                      # Isolated contract unit test suites
-│   └── mocks/                     # Local mock contracts for HyperCore precompiles and Ascend pools
+├── test/ # Comprehensive Foundry test suite (53 tests, 12 suites)
+│ ├── fuzz/
+│ │ └── MarginMathFuzz.t.sol # Quant margin math property fuzzing (4,000 runs)
+│ ├── invariants/ # Stateful invariant fuzzing suites (160k+ state transitions)
+│ │ ├── InvariantCustody.t.sol # INV-1: Non-custodial capital preservation
+│ │ ├── InvariantSlashing.t.sol# INV-2: Bounded operator slashing & deactivation
+│ │ ├── InvariantOverride.t.sol# INV-3: Atomic manual override killswitch
+│ │ ├── InvariantFeeSplit.t.sol# INV-4: Exact 50/50 fee split conservation
+│ │ ├── InvariantNonce.t.sol # INV-5: Strictly monotonic replay protection
+│ │ └── handlers/
+│ │ └── VaultHandler.sol # State transition generator for invariant fuzzer
+│ ├── integration/
+│ │ └── EndToEndFlow.t.sol # Full 9-stage lifecycle test (-18% crash, hedge, trailing rebound)
+│ ├── unit/ # Isolated contract unit test suites
+│ └── mocks/ # Local mock contracts for HyperCore precompiles and Ascend pools
 │
-├── keeper/                        # High-frequency Sentinel keeper daemon (@aegis/sentinel)
-│   ├── src/
-│   │   ├── config.ts              # Zod environment schema validation
-│   │   ├── telemetry.ts           # WebSocket block listener & 0x0801 market data poller
-│   │   ├── risk_engine.ts         # Real-time health factor ($H$) and delta hedge sizing engine
-│   │   ├── trailing_tracker.ts    # Bottom-wick tracking and trailing profit exit calculator (τ)
-│   │   ├── order_signer.ts        # EIP-712 typed data signer for delegated session keys
-│   │   └── index.ts               # Continuous evaluation loop & HTTP /health server (port 8080)
-│   ├── Dockerfile                 # Multi-stage lightweight Alpine container definition
-│   ├── docker-compose.yml         # Container orchestration with healthchecks and log rotation
-│   └── package.json               # TypeScript 5.4, ethers v6, ws, zod
+├── keeper/ # High-frequency Sentinel keeper daemon (@aegis/sentinel)
+│ ├── src/
+│ │ ├── config.ts # Zod environment schema validation
+│ │ ├── telemetry.ts # WebSocket block listener & 0x0801 market data poller
+│ │ ├── risk_engine.ts # Real-time health factor ($H$) and delta hedge sizing engine
+│ │ ├── trailing_tracker.ts # Bottom-wick tracking and trailing profit exit calculator (τ)
+│ │ ├── order_signer.ts # EIP-712 typed data signer for delegated session keys
+│ │ └── index.ts # Continuous evaluation loop & HTTP /health server (port 8080)
+│ ├── Dockerfile # Multi-stage lightweight Alpine container definition
+│ ├── docker-compose.yml # Container orchestration with healthchecks and log rotation
+│ └── package.json # TypeScript 5.4, ethers v6, ws, zod
 │
-├── app/                           # Pro-Trader Terminal client application
-│   ├── index.html                 # Semantic HTML5 terminal interface with responsive panels
-│   ├── styles.css                 # Brand Kit compliant styling via CSS variables (Light/Dark)
-│   ├── app.js                     # EIP-1193 Web3 provider, dynamic SVG gauge, session modal, simulations
-│   └── serve.js                   # Zero-dependency local development server (port 3000)
+├── app/ # Pro-Trader Terminal client application
+│ ├── index.html # Semantic HTML5 terminal interface with responsive panels
+│ ├── styles.css # Brand Kit compliant styling via CSS variables (Light/Dark)
+│ ├── app.js # EIP-1193 Web3 provider, dynamic SVG gauge, session modal, simulations
+│ └── serve.js # Zero-dependency local development server (port 3000)
 │
-├── docs/                          # Production-grade technical documentation platform
-│   ├── index.html                 # 8-part documentation site (Ctrl+K search, mobile drawer)
-│   ├── docs.css                   # Tokenized documentation design system
-│   └── docs.js                    # Client-side routing, search index, and scroll-spy TOC
+├── docs/ # Production-grade technical documentation platform
+│ ├── index.html # 8-part documentation site (Ctrl+K search, mobile drawer)
+│ ├── docs.css # Tokenized documentation design system
+│ └── docs.js # Client-side routing, search index, and scroll-spy TOC
 │
-├── brand/                         # AEGIS Design System & Brand Assets
-│   ├── kit/
-│   │   ├── aegis-brand-kit.html   # Living brand kit reference (Light/Dark themes)
-│   │   └── tokens.css             # Sole source of truth for color, font, and surface tokens
-│   ├── logo/
-│   │   └── aegis-mark.svg         # Official 3-blade vector logo mark
-│   └── x/                         # Social media headers, banners, and profile avatars
+├── brand/ # AEGIS Design System & Brand Assets
+│ ├── kit/
+│ │ ├── aegis-brand-kit.html # Living brand kit reference (Light/Dark themes)
+│ │ └── tokens.css # Sole source of truth for color, font, and surface tokens
+│ ├── logo/
+│ │ └── aegis-mark.svg # Official 3-blade vector logo mark
+│ └── x/ # Social media headers, banners, and profile avatars
 │
-├── script/                        # Deployment & Seeding Automation
-│   ├── DeployAegis.s.sol          # Production deployment script emitting deployments.json
-│   └── SeedMockEnvironment.s.sol  # Devnet seeding script (mints mock tokens, sets demo positions)
+├── script/ # Deployment & Seeding Automation
+│ ├── DeployAegis.s.sol # Production deployment script emitting deployments.json
+│ └── SeedMockEnvironment.s.sol # Devnet seeding script (mints mock tokens, sets demo positions)
 │
-├── foundry.toml                   # Foundry profile (Cancun EVM, Solc 0.8.24, via_ir = true)
-├── remappings.txt                 # Solidity dependency remappings
-└── LICENSE                        # MIT Open Source License
+├── foundry.toml # Foundry profile (Cancun EVM, Solc 0.8.24, via_ir = true)
+├── remappings.txt # Solidity dependency remappings
+└── LICENSE # MIT Open Source License
 ```
 
 ---
@@ -588,5 +588,5 @@ This repository is licensed under the [MIT License](LICENSE).
 ---
 
 <div align="center">
-  <sub>Built for the Elysium L2 and Hyperliquid ecosystems. © 2026 AEGIS Protocol.</sub>
+ <sub>Built for the Elysium L2 and Hyperliquid ecosystems. © 2026 AEGIS Protocol.</sub>
 </div>

@@ -12,6 +12,7 @@ broadcast/
 dist/
 out/
 remotion/public/recordings/
+remotion/public/overlays/
 remotion/public/audio/*.wav
 
 # Local agent instruction files (kept on this machine, not in the repo)

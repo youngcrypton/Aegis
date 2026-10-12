@@ -6,7 +6,7 @@ Compatible with **40+ coding agents** including WrongStack, Claude Code, Cursor,
 
 ---
 
-## ⚡ Sponsored by WrongStack
+## Sponsored by WrongStack
 
 <div align="center">
 
@@ -22,18 +22,18 @@ Compatible with **40+ coding agents** including WrongStack, Claude Code, Cursor,
 
 | | What you get |
 |---|---|
-| 🧠 **~110 LLM providers** | Anthropic, OpenAI, Google, and any OpenAI-compatible endpoint |
-| 🛠️ **36 built-in tools** | Read, edit, search, test, and run shell — every call gated by per-tool permissions |
-| 🖥️ **3 surfaces** | Plain readline REPL · Ink/React TUI (`--tui`) · standalone web UI |
-| 🤖 **Fleet orchestration** | A **Director** coordinates subagents; `eternal` & `parallel` autonomous loops |
-| 📋 **Spec-Driven Development** | Hand it a `PROMPT.md` and let it build the whole project, single-shot |
-| 🔐 **Secure by default** | AES-256-GCM secret storage, per-tool policies, opt-in YOLO mode |
+| **~110 LLM providers** | Anthropic, OpenAI, Google, and any OpenAI-compatible endpoint |
+| ️ **36 built-in tools** | Read, edit, search, test, and run shell — every call gated by per-tool permissions |
+| ️ **3 surfaces** | Plain readline REPL · Ink/React TUI (`--tui`) · standalone web UI |
+| **Fleet orchestration** | A **Director** coordinates subagents; `eternal` & `parallel` autonomous loops |
+| **Spec-Driven Development** | Hand it a `PROMPT.md` and let it build the whole project, single-shot |
+| **Secure by default** | AES-256-GCM secret storage, per-tool policies, opt-in YOLO mode |
 
-> **🧩 The perfect pairing:** Plan with **Project Architect**, then hand the generated `PROMPT.md` to **WrongStack** for spec-driven, single-shot execution. Architect the *what* and the *how* — WrongStack ships it.
+> ** The perfect pairing:** Plan with **Project Architect**, then hand the generated `PROMPT.md` to **WrongStack** for spec-driven, single-shot execution. Architect the *what* and the *how* — WrongStack ships it.
 
 <div align="center">
 
-🔗 **[wrongstack.com](https://wrongstack.com)** &nbsp;·&nbsp; **[github.com/wrongstack/wrongstack](https://github.com/wrongstack/wrongstack)**
+ **[wrongstack.com](https://wrongstack.com)** &nbsp;·&nbsp; **[github.com/wrongstack/wrongstack](https://github.com/wrongstack/wrongstack)**
 
 </div>
 
@@ -45,12 +45,12 @@ Given a project idea, Project Architect walks you through an interactive discove
 
 ```
 [Discovery] -> SPECIFICATION.md -> IMPLEMENTATION.md -> TASKS.md -> BRANDING.md
-                 (The What)          (The How)          (The Work)   (Identity)
-                      |                   |                  |
-                      +-------------------+------------------+
-                                          |
-                                     PROMPT.md
-                               (Single-Shot Agent Prompt)
+ (The What) (The How) (The Work) (Identity)
+ | | |
+ +-------------------+------------------+
+ |
+ PROMPT.md
+ (Single-Shot Agent Prompt)
 ```
 
 | Document | Purpose |
@@ -104,9 +104,9 @@ Add to your project's `.claude/settings.json`:
 
 ```json
 {
-  "plugins": [
-    "/absolute/path/to/project-architect"
-  ]
+ "plugins": [
+ "/absolute/path/to/project-architect"
+ ]
 }
 ```
 
@@ -200,19 +200,19 @@ The skill includes detailed guides that inform each generation phase:
 
 ```
 project-architect/
-├── SKILL.md                             # Skill definition (agentskills.io format)
-├── plugin.json                          # Claude Code plugin manifest
-├── LICENSE                              # MIT License
-├── README.md                            # This file
+├── SKILL.md # Skill definition (agentskills.io format)
+├── plugin.json # Claude Code plugin manifest
+├── LICENSE # MIT License
+├── README.md # This file
 └── references/
-    ├── elicitation-guide.md             # Discovery question framework
-    ├── tech-stacks.md                   # Tech stack advisor
-    ├── design-patterns.md               # Pattern catalog
-    ├── specification-guide.md           # Spec template
-    ├── implementation-guide.md          # Implementation template
-    ├── tasks-guide.md                   # Tasks template
-    ├── branding-guide.md                # Branding template
-    └── agent-prompt.md                  # Prompt template
+ ├── elicitation-guide.md # Discovery question framework
+ ├── tech-stacks.md # Tech stack advisor
+ ├── design-patterns.md # Pattern catalog
+ ├── specification-guide.md # Spec template
+ ├── implementation-guide.md # Implementation template
+ ├── tasks-guide.md # Tasks template
+ ├── branding-guide.md # Branding template
+ └── agent-prompt.md # Prompt template
 ```
 
 ## Compatibility

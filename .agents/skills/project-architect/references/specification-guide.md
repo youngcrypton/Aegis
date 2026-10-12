@@ -47,7 +47,7 @@ Table format works well:]
 
 | Feature | This Project | Alternative A | Alternative B |
 |---------|-------------|---------------|---------------|
-| [feature] | ✅ | ✅ | ❌ |
+| [feature] | [YES] | [YES] | [NO] |
 
 ## 2. Core Concepts
 
