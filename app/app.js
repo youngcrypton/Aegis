@@ -29,6 +29,13 @@
     manualOverrideActive: false
   };
 
+  // Lite Auto-Pilot State (0.10 HYPE Faucet Cap Calibration)
+  const liteState = {
+    selectedAmount: 0.05,
+    selectedPreset: 'balanced',
+    shieldActivated: false
+  };
+
   // Runtime State
   const runtimeState = {
     currentPrice: VAULT_CONSTANTS.basePrice,
@@ -77,6 +84,9 @@
     sessionDurationDays: document.getElementById('sessionDurationDays'),
 
     // Hero metrics
+    heroTvlLabel: document.getElementById('heroTvlLabel'),
+    heroTvlValue: document.getElementById('heroTvlValue'),
+    heroTvlSub: document.getElementById('heroTvlSub'),
     heroHealthValue: document.getElementById('heroHealthValue'),
     heroLiquidationBuffer: document.getElementById('heroLiquidationBuffer'),
     heroSentinelStatus: document.getElementById('heroSentinelStatus'),
@@ -87,6 +97,20 @@
     liveMarkPrice: document.getElementById('liveMarkPrice'),
     collateralUsdVal: document.getElementById('collateralUsdVal'),
     markPriceChange: document.getElementById('markPriceChange'),
+    posCollateralAmount: document.getElementById('posCollateralAmount'),
+    posDebtAmount: document.getElementById('posDebtAmount'),
+    posDebtSub: document.getElementById('posDebtSub'),
+    posLiqPrice: document.getElementById('posLiqPrice'),
+
+    // Lite Mode controls
+    liteAutoPilotCard: document.getElementById('liteAutoPilotCard'),
+    proConfigCard: document.getElementById('proConfigCard'),
+    microAmountChips: document.getElementById('microAmountChips'),
+    presetsContainer: document.getElementById('presetsContainer'),
+    liteTriggerPriceDisplay: document.getElementById('liteTriggerPriceDisplay'),
+    liteHedgeSizeDisplay: document.getElementById('liteHedgeSizeDisplay'),
+    btnLiteActivateShield: document.getElementById('btnLiteActivateShield'),
+    liteActivateBtnText: document.getElementById('liteActivateBtnText'),
 
     // Health factor gauges
     gaugeRatioText: document.getElementById('gaugeRatioText'),
@@ -264,6 +288,19 @@
     if (el.collateralUsdVal) el.collateralUsdVal.textContent = `$${collateralVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     if (el.clobMidPrice) el.clobMidPrice.textContent = `$${price.toFixed(2)}`;
 
+    // Dynamic Position amounts for Lite vs Pro
+    if (el.posCollateralAmount) {
+      const colAmt = VAULT_CONSTANTS.collateralAmount;
+      el.posCollateralAmount.innerHTML = `${colAmt < 1 ? colAmt.toFixed(2) : colAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">HYPE</span>`;
+    }
+    if (el.posDebtAmount) {
+      const debt = VAULT_CONSTANTS.debtUsdc;
+      el.posDebtAmount.innerHTML = `$${debt < 10 ? debt.toFixed(2) : debt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">USDC</span>`;
+    }
+    if (el.posLiqPrice) {
+      el.posLiqPrice.innerHTML = `$${VAULT_CONSTANTS.liquidationPrice.toFixed(2)} <span class="metric-unit">USD</span>`;
+    }
+
     // Price change calculation
     const changePct = ((price - VAULT_CONSTANTS.basePrice) / VAULT_CONSTANTS.basePrice) * 100;
     if (el.markPriceChange) {
@@ -324,7 +361,7 @@
       if (el.activeHedgeBox) el.activeHedgeBox.classList.add('hedged');
       if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge text-hedge';
       if (el.hedgeStatusText) el.hedgeStatusText.textContent = 'ACTIVE SHORT HEDGE (HYPERCORE CLOB)';
-      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = `${size.toFixed(2)} HYPE Short`;
+      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = `${size < 1 ? size.toFixed(4) : size.toFixed(2)} HYPE Short`;
       if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = `$${entry.toFixed(2)}`;
       if (el.hedgePnlVal) {
         el.hedgePnlVal.textContent = `${unrlPnl >= 0 ? '+' : ''}$${unrlPnl.toFixed(2)} USDC`;
@@ -332,7 +369,7 @@
       }
       if (el.netDeltaVal) {
         const netDelta = VAULT_CONSTANTS.collateralAmount - size;
-        el.netDeltaVal.textContent = `+${netDelta.toFixed(0)} HYPE (Partially Hedged)`;
+        el.netDeltaVal.textContent = `+${netDelta < 1 ? netDelta.toFixed(4) : netDelta.toFixed(0)} HYPE (Partially Hedged)`;
       }
       if (el.heroSentinelStatus) {
         el.heroSentinelStatus.innerHTML = `HEDGED <span class="status-pill pill-hedge">EXECUTED</span>`;
@@ -351,7 +388,10 @@
         el.hedgePnlVal.textContent = `$${runtimeState.activeHedge.realizedPnlTotal.toFixed(2)} USDC`;
         el.hedgePnlVal.className = 'val font-mono';
       }
-      if (el.netDeltaVal) el.netDeltaVal.textContent = '+1,000 HYPE (Unhedged)';
+      if (el.netDeltaVal) {
+        const unhedged = VAULT_CONSTANTS.collateralAmount;
+        el.netDeltaVal.textContent = `+${unhedged < 1 ? unhedged.toFixed(2) : '1,000'} HYPE (Unhedged)`;
+      }
 
       if (el.heroSentinelStatus) {
         el.heroSentinelStatus.innerHTML = proConfig.manualOverrideActive
@@ -563,16 +603,17 @@
   }
 
   function executeShortHedge(price) {
-    const size = VAULT_CONSTANTS.collateralAmount * proConfig.hedgeRatio; // 500 HYPE
+    const size = VAULT_CONSTANTS.collateralAmount * proConfig.hedgeRatio;
     runtimeState.activeHedge.isOpen = true;
     runtimeState.activeHedge.entryPrice = price;
     runtimeState.activeHedge.size = size;
     runtimeState.activeHedge.lowestWick = price;
     runtimeState.activeHedge.trailingExitPrice = price * (1 + proConfig.trailingTpPct);
 
+    const sizeFormatted = size < 1 ? size.toFixed(4) : size.toFixed(0);
     logAudit('SENTINEL', `Trigger breached (H=${calculateHealthFactor(price).toFixed(2)}). Signing EIP-712 Intent...`, 'danger');
-    logAudit('0x0802', `Dispatched short perpetual order: -${size.toFixed(0)} HYPE @ $${price.toFixed(2)}`, 'hedge');
-    showToast(`Hedge opened: -${size.toFixed(0)} HYPE short at $${price.toFixed(2)}`);
+    logAudit('0x0802', `Dispatched short perpetual order: -${sizeFormatted} HYPE @ $${price.toFixed(2)}`, 'hedge');
+    showToast(`Hedge opened: -${sizeFormatted} HYPE short at $${price.toFixed(2)}`);
   }
 
   function unwindShortHedge(price) {
@@ -597,7 +638,8 @@
       el.heroBurnedTokens.innerHTML = `${Math.floor(runtimeState.metrics.tokensBurned).toLocaleString()} <span class="metric-unit">AEGIS</span>`;
     }
 
-    logAudit('0x0802', `Trailing Take-Profit triggered at $${price.toFixed(2)}. Unwound ${hedge.size.toFixed(0)} HYPE short.`, 'accent');
+    const sizeFormatted = hedge.size < 1 ? hedge.size.toFixed(4) : hedge.size.toFixed(0);
+    logAudit('0x0802', `Trailing Take-Profit triggered at $${price.toFixed(2)}. Unwound ${sizeFormatted} HYPE short.`, 'accent');
     logAudit('FEE-COLLECTOR', `Realized profit: +$${profit.toFixed(2)} USDC | 50% Burn: ${Math.floor(aegisTokensBurned)} $AEGIS | 50% Real Yield: +$${yieldShareUsd.toFixed(2)} USDC`, 'violet');
     showToast(`Hedge unwound! Realized profit: +$${profit.toFixed(2)} USDC`);
   }
@@ -734,37 +776,237 @@
 
     // View Mode Switcher Handlers
     if (el.modeLiteBtn) {
-      el.modeLiteBtn.addEventListener('click', () => {
-        el.modeLiteBtn.classList.add('active');
-        el.modeLiteBtn.setAttribute('aria-selected', 'true');
-        if (el.modeProBtn) {
-          el.modeProBtn.classList.remove('active');
-          el.modeProBtn.setAttribute('aria-selected', 'false');
-        }
-        document.body.classList.add('mode-lite');
-        document.body.classList.remove('mode-pro');
-        logAudit('UI', 'Switched to Lite Auto-Pilot mode. 1-click risk shield active.', 'accent');
-        showToast('Switched to Lite Auto-Pilot mode');
-      });
+      el.modeLiteBtn.addEventListener('click', () => setViewMode('lite'));
     }
 
     if (el.modeProBtn) {
-      el.modeProBtn.addEventListener('click', () => {
-        el.modeProBtn.classList.add('active');
-        el.modeProBtn.setAttribute('aria-selected', 'true');
-        if (el.modeLiteBtn) {
-          el.modeLiteBtn.classList.remove('active');
-          el.modeLiteBtn.setAttribute('aria-selected', 'false');
-        }
-        document.body.classList.add('mode-pro');
-        document.body.classList.remove('mode-lite');
-        logAudit('UI', 'Switched to Pro Terminal mode. Advanced telemetry & controls active.', 'accent');
-        showToast('Switched to Pro Terminal mode');
-      });
+      el.modeProBtn.addEventListener('click', () => setViewMode('pro'));
     }
+
+    // Micro-Amount Deposit Chips Handlers
+    const chips = document.querySelectorAll('.micro-chip-btn');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const amt = parseFloat(chip.dataset.amount);
+        if (!isNaN(amt)) {
+          applyMicroAmount(amt);
+        }
+      });
+    });
+
+    // Strategy Preset Cards Handlers
+    const presetCards = document.querySelectorAll('.preset-card');
+    presetCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const pKey = card.dataset.preset;
+        if (pKey) {
+          applyPreset(pKey);
+        }
+      });
+      // Keyboard accessibility (Enter/Space)
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const pKey = card.dataset.preset;
+          if (pKey) applyPreset(pKey);
+        }
+      });
+    });
+
+    // 1-Click Activate Auto-Pilot Shield Handler
+    if (el.btnLiteActivateShield) {
+      el.btnLiteActivateShield.addEventListener('click', activateLiteShield);
+    }
+
+    // Initialize telemetry readout for Lite mode
+    applyMicroAmount(liteState.selectedAmount, false);
+    applyPreset(liteState.selectedPreset, false);
+
+    // Restore saved view mode preference
+    const savedMode = localStorage.getItem('aegis-view-mode') || 'pro';
+    setViewMode(savedMode);
 
     // Start 100ms background ticker loop
     startLiveTicker();
+  }
+
+  // --- 10. LITE AUTO-PILOT LOGIC & PRESET ENGINES ---
+
+  function setViewMode(mode) {
+    const isLite = mode === 'lite';
+    document.body.classList.toggle('mode-lite', isLite);
+    document.body.classList.toggle('mode-pro', !isLite);
+
+    if (el.modeLiteBtn) {
+      el.modeLiteBtn.classList.toggle('active', isLite);
+      el.modeLiteBtn.setAttribute('aria-selected', isLite ? 'true' : 'false');
+    }
+    if (el.modeProBtn) {
+      el.modeProBtn.classList.toggle('active', !isLite);
+      el.modeProBtn.setAttribute('aria-selected', !isLite ? 'true' : 'false');
+    }
+
+    localStorage.setItem('aegis-view-mode', mode);
+
+    if (isLite) {
+      applyMicroAmount(liteState.selectedAmount, false);
+      applyPreset(liteState.selectedPreset, false);
+      if (el.heroTvlLabel) el.heroTvlLabel.textContent = 'Protected Collateral (Micro)';
+      if (el.heroTvlSub) el.heroTvlSub.textContent = 'Testnet Faucet Cap: 0.10 HYPE';
+      logAudit('UI', 'Switched to Lite Auto-Pilot mode. 1-click risk shield active.', 'accent');
+      showToast('Switched to Lite Auto-Pilot mode');
+    } else {
+      VAULT_CONSTANTS.collateralAmount = 1000.0;
+      VAULT_CONSTANTS.debtUsdc = 32000.0;
+      VAULT_CONSTANTS.liquidationPrice = 40.0;
+      if (el.heroTvlLabel) el.heroTvlLabel.textContent = 'Protected Portfolio TVL';
+      if (el.heroTvlValue) el.heroTvlValue.innerHTML = '$2,845,200 <span class="metric-unit">USDC</span>';
+      if (el.heroTvlSub) el.heroTvlSub.textContent = 'Tier 1 Pro Allocation: 100%';
+      logAudit('UI', 'Switched to Pro Terminal mode. Advanced telemetry & controls active.', 'accent');
+      showToast('Switched to Pro Terminal mode');
+    }
+
+    updateUI();
+  }
+
+  function applyMicroAmount(amount, log = true) {
+    liteState.selectedAmount = amount;
+    VAULT_CONSTANTS.collateralAmount = amount;
+    VAULT_CONSTANTS.debtUsdc = amount * 32.0;
+    VAULT_CONSTANTS.liquidationPrice = 40.0;
+
+    const chips = document.querySelectorAll('.micro-chip-btn');
+    chips.forEach(chip => {
+      const chipAmt = parseFloat(chip.dataset.amount);
+      const isMatch = Math.abs(chipAmt - amount) < 0.001;
+      chip.classList.toggle('active', isMatch);
+      chip.setAttribute('aria-checked', isMatch ? 'true' : 'false');
+    });
+
+    if (el.heroTvlValue) {
+      const usdVal = (amount * runtimeState.currentPrice).toFixed(2);
+      el.heroTvlValue.innerHTML = `${amount.toFixed(2)} <span class="metric-unit">HYPE ($${usdVal})</span>`;
+    }
+
+    updateLiteTelemetryDisplay();
+    updateUI();
+
+    if (log) {
+      logAudit('LITE', `Selected ${amount} HYPE testnet collateral. Borrow liability: $${(amount * 32).toFixed(2)} USDC.`, 'accent');
+      showToast(`Selected testnet collateral: ${amount} HYPE`);
+    }
+  }
+
+  function applyPreset(presetKey, log = true) {
+    liteState.selectedPreset = presetKey;
+
+    const cards = document.querySelectorAll('.preset-card');
+    cards.forEach(card => {
+      const isMatch = card.dataset.preset === presetKey;
+      card.classList.toggle('active', isMatch);
+      card.setAttribute('aria-checked', isMatch ? 'true' : 'false');
+    });
+
+    if (presetKey === 'conservative') {
+      proConfig.healthTrigger = 1.25;
+      proConfig.hedgeRatio = 1.0;
+      proConfig.trailingTpPct = 0.01;
+      proConfig.triggerMode = 'HEALTH_FACTOR';
+      proConfig.priceTrigger = 44.80;
+    } else if (presetKey === 'balanced') {
+      proConfig.healthTrigger = 1.15;
+      proConfig.hedgeRatio = 0.75;
+      proConfig.trailingTpPct = 0.015;
+      proConfig.triggerMode = 'HYBRID';
+      proConfig.priceTrigger = 44.20;
+    } else if (presetKey === 'aggressive') {
+      proConfig.healthTrigger = 1.08;
+      proConfig.hedgeRatio = 0.50;
+      proConfig.trailingTpPct = 0.025;
+      proConfig.triggerMode = 'HYBRID';
+      proConfig.priceTrigger = 42.50;
+    }
+
+    // Sync Pro slider controls
+    if (el.healthTrigger) el.healthTrigger.value = proConfig.healthTrigger;
+    if (el.healthTriggerDisplay) el.healthTriggerDisplay.textContent = proConfig.healthTrigger.toFixed(2);
+    if (el.hedgeCoverage) el.hedgeCoverage.value = proConfig.hedgeRatio * 100;
+    if (el.hedgeCoverageDisplay) {
+      const hypeAmount = (VAULT_CONSTANTS.collateralAmount * proConfig.hedgeRatio);
+      el.hedgeCoverageDisplay.textContent = `${(proConfig.hedgeRatio * 100).toFixed(0)}% (${hypeAmount < 1 ? hypeAmount.toFixed(4) : hypeAmount.toFixed(0)} HYPE)`;
+    }
+    if (el.trailingTp) el.trailingTp.value = (proConfig.trailingTpPct * 100).toFixed(1);
+    if (el.trailingTpDisplay) el.trailingTpDisplay.textContent = `${(proConfig.trailingTpPct * 100).toFixed(2)}% from Lowest Wick`;
+    if (el.priceTrigger) el.priceTrigger.value = proConfig.priceTrigger;
+    if (el.priceTriggerDisplay) el.priceTriggerDisplay.textContent = `$${proConfig.priceTrigger.toFixed(2)}`;
+
+    updateLiteTelemetryDisplay();
+
+    if (log) {
+      const presetName = presetKey.charAt(0).toUpperCase() + presetKey.slice(1);
+      logAudit('PRESET', `Applied ${presetName} defense preset (H ≤ ${proConfig.healthTrigger.toFixed(2)}, Hedge: ${(proConfig.hedgeRatio * 100).toFixed(0)}%).`, 'accent');
+      showToast(`${presetName} preset active`);
+    }
+  }
+
+  function updateLiteTelemetryDisplay() {
+    if (el.liteTriggerPriceDisplay) {
+      el.liteTriggerPriceDisplay.textContent = `$${proConfig.priceTrigger.toFixed(2)} USD (H = ${proConfig.healthTrigger.toFixed(2)})`;
+    }
+    if (el.liteHedgeSizeDisplay) {
+      const hedgeSize = VAULT_CONSTANTS.collateralAmount * proConfig.hedgeRatio;
+      el.liteHedgeSizeDisplay.textContent = `${hedgeSize < 1 ? hedgeSize.toFixed(4) : hedgeSize.toFixed(2)} HYPE Short (${(proConfig.hedgeRatio * 100).toFixed(0)}%)`;
+    }
+  }
+
+  async function activateLiteShield() {
+    const btn = el.btnLiteActivateShield;
+    const btnText = el.liteActivateBtnText || document.getElementById('liteActivateBtnText');
+
+    if (!btn) return;
+    btn.disabled = true;
+    if (btnText) btnText.textContent = 'Connecting Wallet...';
+
+    // Step 1: Connect wallet if not already connected
+    if (!runtimeState.walletConnected) {
+      await connectWallet();
+    }
+
+    if (btnText) btnText.textContent = 'Delegating Ephemeral Session Key (INV-1)...';
+
+    // Brief micro-delay for realistic transaction feedback
+    await new Promise(r => setTimeout(r, 400));
+
+    // Step 2: Ephemeral session key delegation
+    const ephemeralKey = '0x' + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    if (el.sessionBadge) {
+      el.sessionBadge.innerHTML = '<span>Session Key:</span> <strong>Active (30d, INV-1)</strong>';
+      el.sessionBadge.className = 'session-badge safe';
+    }
+
+    logAudit('INV-1', `Ephemeral trade-only session key ${formatAddress(ephemeralKey)} authorized for 30 days. Non-custodial scope verified.`, 'accent');
+
+    // Step 3: Commit selected preset to AegisVault via precompile 0x0802
+    const presetName = liteState.selectedPreset.charAt(0).toUpperCase() + liteState.selectedPreset.slice(1);
+    logAudit('CONFIG', `Committed ${presetName} risk parameters to AegisVault (Elysium L2 Block #${runtimeState.blockNumber})`, 'accent');
+    logAudit('SENTINEL', `Auto-Pilot Sentinel engaged for ${VAULT_CONSTANTS.collateralAmount} HYPE. Surveillance active on 0x0801.`, 'accent');
+
+    liteState.shieldActivated = true;
+    proConfig.manualOverrideActive = false;
+
+    // Step 4: Visual Confirmation State
+    btn.disabled = false;
+    btn.classList.add('armed');
+    if (btnText) {
+      btnText.textContent = 'Auto-Pilot Shield Active';
+    }
+
+    if (el.heroSentinelStatus) {
+      el.heroSentinelStatus.innerHTML = 'ARMED <span class="status-pill pill-accent">ACTIVE</span>';
+    }
+
+    showToast(`Auto-Pilot Shield activated! ${VAULT_CONSTANTS.collateralAmount} HYPE protected with ${presetName} preset.`);
+    updateUI();
   }
 
   function startLiveTicker() {

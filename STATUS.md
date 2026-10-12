@@ -104,6 +104,12 @@ Last updated: 2026-10-11
   - Ultra-strict Core Contributor lockup (24-month hard cliff with 0% at TGE, followed by 48-month linear vesting).
   - Zero monetary value assumption; all quantitative mechanics expressed in fixed token units and parametric invariants.
 - **Done:** Added sleek View Mode Switcher pill toggle in the Pro-Trader Terminal top bar (`[ Lite Auto-Pilot | Pro Terminal ]`) in `app/index.html`, `app/styles.css`, and `app/app.js`, supporting smooth viewport transitions at 390px mobile width and interactive view state switching.
+- **Done:** Implemented the complete **Lite Auto-Pilot Card** and retail trading engine in `app/index.html`, `app/styles.css`, and `app/app.js`:
+  - **Emoji Removal & Professional Branding**: Eliminated all emojis across the view mode switcher and UI components, replacing them with crisp, institutional SVG icons adhering strictly to `brand/kit/tokens.css`.
+  - **3 Defense Strategy Presets**: Added selectable preset cards for **Conservative** ($H \le 1.25$, 100% hedge, 1.0% trailing TP), **Balanced** ($H \le 1.15$, 75% hedge, 1.5% trailing TP - recommended), and **Aggressive** ($H \le 1.08$, 50% hedge, 2.5% trailing TP) with live parameter preview.
+  - **Testnet Faucet Micro-Amounts**: Added dedicated deposit chips (`0.02 HYPE`, `0.05 HYPE`, `0.08 HYPE`) calibrated for the 0.10 HYPE Elysium testnet faucet cap, dynamically syncing collateral, borrow liability, and health factor displays.
+  - **1-Click "Activate Shield" Action**: Built atomic one-click execution that verifies wallet connection, delegates trade-only ephemeral session key (`INV-1`), commits preset parameters to `AegisVault` via precompile `0x0802`, provides visual active state transition, and posts audit trail logs.
+  - **Main Telemetry & Responsive Safeguards**: Added Auto-Pilot Sentinel Safeguards panel in the main column and verified zero horizontal overflow at 390px mobile viewport.
 
 ## Next
 

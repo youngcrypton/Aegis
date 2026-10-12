@@ -60,11 +60,11 @@
     <div class="header-center">
       <div class="view-mode-switcher" id="viewModeSwitcher" role="tablist" aria-label="Terminal View Mode">
         <button class="mode-pill-btn" id="modeLiteBtn" type="button" role="tab" aria-selected="false" data-mode="lite">
-          <span class="mode-pill-icon">🛡️</span>
+          <svg class="mode-pill-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           <span>Lite Auto-Pilot</span>
         </button>
         <button class="mode-pill-btn active" id="modeProBtn" type="button" role="tab" aria-selected="true" data-mode="pro">
-          <span class="mode-pill-icon">⚙️</span>
+          <svg class="mode-pill-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
           <span>Pro Terminal</span>
         </button>
       </div>
@@ -92,10 +92,10 @@
 
     <!-- Top Bento: Hero Stats Bar -->
     <section class="hero-metrics">
-      <div class="metric-card">
-        <div class="metric-label">Protected Portfolio TVL</div>
-        <div class="metric-value font-mono">$2,845,200 <span class="metric-unit">USDC</span></div>
-        <div class="metric-sub text-accent">Tier 1 Pro Allocation: 100%</div>
+      <div class="metric-card" id="heroTvlCard">
+        <div class="metric-label" id="heroTvlLabel">Protected Portfolio TVL</div>
+        <div class="metric-value font-mono" id="heroTvlValue">$2,845,200 <span class="metric-unit">USDC</span></div>
+        <div class="metric-sub text-accent" id="heroTvlSub">Tier 1 Pro Allocation: 100%</div>
       </div>
 
       <div class="metric-card">
@@ -167,17 +167,17 @@
           <div class="position-stats-grid">
             <div class="stat-box">
               <span class="stat-name">Collateral Asset</span>
-              <span class="stat-val font-mono">1,000.00 <span class="metric-unit">HYPE</span></span>
+              <span class="stat-val font-mono" id="posCollateralAmount">1,000.00 <span class="metric-unit">HYPE</span></span>
               <span class="stat-sub font-mono" id="collateralUsdVal">$48,500.00 USD</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Borrowed Debt</span>
-              <span class="stat-val font-mono">$32,000.00 <span class="metric-unit">USDC</span></span>
-              <span class="stat-sub">Stable Liability</span>
+              <span class="stat-val font-mono" id="posDebtAmount">$32,000.00 <span class="metric-unit">USDC</span></span>
+              <span class="stat-sub" id="posDebtSub">Stable Liability</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Liquidation Price</span>
-              <span class="stat-val font-mono text-danger">$40.00 <span class="metric-unit">USD</span></span>
+              <span class="stat-val font-mono text-danger" id="posLiqPrice">$40.00 <span class="metric-unit">USD</span></span>
               <span class="stat-sub">80% Maintenance Line</span>
             </div>
             <div class="stat-box">
@@ -267,8 +267,8 @@
           </div>
         </div>
 
-        <!-- HyperCore Live Orderbook & Depth Card -->
-        <div class="card orderbook-card">
+        <!-- HyperCore Live Orderbook & Depth Card (Pro Only) -->
+        <div class="card orderbook-card pro-only" id="proOrderbookCard">
           <div class="card-header">
             <h2 class="header-title">HyperCore L1 CLOB Depth (Synchronous 0x0801)</h2>
             <div class="header-extra font-mono">
@@ -301,13 +301,220 @@
           </div>
         </div>
 
+        <!-- Auto-Pilot Sentinel Safeguards Card (Lite Only) -->
+        <div class="card lite-telemetry-card lite-only" id="liteTelemetryCard">
+          <div class="card-header">
+            <h2 class="header-title">
+              <svg class="header-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span>Auto-Pilot Sentinel Architecture</span>
+            </h2>
+            <div class="header-extra font-mono">
+              <span class="status-pill pill-accent">Sub-Second Execution</span>
+            </div>
+          </div>
+
+          <div class="lite-telemetry-grid">
+            <div class="lite-feature-box">
+              <div class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div class="feat-content">
+                <span class="feat-title">Strict Non-Custodial Bounds (INV-1)</span>
+                <p class="feat-desc">The delegated ephemeral session key has zero permission to withdraw, transfer, or move collateral. It is mathematically restricted to predeploy <code>0x0802</code> hedging calls.</p>
+              </div>
+            </div>
+
+            <div class="lite-feature-box">
+              <div class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="feat-content">
+                <span class="feat-title">Precompile 0x0801 Synchronous Oracle</span>
+                <p class="feat-desc">Surveils Hyperliquid L1 consensus state in sub-second ticks. Zero oracle latency, zero mempool frontrunning, and zero MEV extractable value.</p>
+              </div>
+            </div>
+
+            <div class="lite-feature-box">
+              <div class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div class="feat-content">
+                <span class="feat-title">Autonomous Trailing Profit Lock</span>
+                <p class="feat-desc">When market wicks trigger a defensive hedge, the Auto-Pilot sentinel tracks the lowest bottom and automatically buys back the short on the first bounce, depositing gains to your vault.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Column 9-12: Pro Trader Risk Parameters Panel & Token Flywheel -->
       <div class="workspace-sidebar">
 
-        <!-- Pro Configuration Card -->
-        <div class="card config-card">
+        <!-- Lite Auto-Pilot Risk Engine Card (Lite Only) -->
+        <div class="card lite-card lite-only" id="liteAutoPilotCard">
+          <div class="card-header">
+            <h2 class="header-title">
+              <svg class="header-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Lite Auto-Pilot</span>
+            </h2>
+            <span class="status-pill pill-accent">1-CLICK SHIELD</span>
+          </div>
+
+          <p class="lite-card-desc">
+            Automated non-custodial downside protection for retail positions. Calibrated for Elysium L2 testnet faucet balances (0.10 HYPE allowance).
+          </p>
+
+          <!-- Step 1: Micro-Amount Testnet Faucet Selection -->
+          <div class="lite-section">
+            <div class="lite-section-header">
+              <span class="lite-step-badge">1</span>
+              <span class="lite-section-title">Testnet Collateral Deposit</span>
+              <span class="lite-faucet-note font-mono">Faucet Cap: 0.10 HYPE</span>
+            </div>
+
+            <div class="micro-amount-chips" id="microAmountChips" role="radiogroup" aria-label="Micro Testnet Deposit Amount">
+              <button class="micro-chip-btn" id="chip002" type="button" data-amount="0.02" role="radio" aria-checked="false">
+                <span class="chip-val font-mono">0.02 HYPE</span>
+                <span class="chip-usd font-mono">&approx; $0.97 USD</span>
+              </button>
+              <button class="micro-chip-btn active" id="chip005" type="button" data-amount="0.05" role="radio" aria-checked="true">
+                <span class="chip-val font-mono">0.05 HYPE</span>
+                <span class="chip-usd font-mono">&approx; $2.43 USD</span>
+              </button>
+              <button class="micro-chip-btn" id="chip008" type="button" data-amount="0.08" role="radio" aria-checked="false">
+                <span class="chip-val font-mono">0.08 HYPE</span>
+                <span class="chip-usd font-mono">&approx; $3.88 USD</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: 3 Preset Strategy Cards -->
+          <div class="lite-section">
+            <div class="lite-section-header">
+              <span class="lite-step-badge">2</span>
+              <span class="lite-section-title">Select Defense Preset</span>
+            </div>
+
+            <div class="presets-container" id="presetsContainer" role="radiogroup" aria-label="Risk Defense Preset">
+              
+              <!-- Preset 1: Conservative -->
+              <div class="preset-card" id="presetConservative" data-preset="conservative" role="radio" aria-checked="false" tabindex="0">
+                <div class="preset-card-top">
+                  <div class="preset-name-wrap">
+                    <span class="preset-name">Conservative</span>
+                    <span class="preset-pill pill-accent">Max Shield</span>
+                  </div>
+                  <span class="preset-radio-indicator"></span>
+                </div>
+                <div class="preset-specs-grid font-mono">
+                  <div class="preset-spec">
+                    <span class="spec-k">Trigger:</span>
+                    <span class="spec-v text-accent">H &le; 1.25</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Coverage:</span>
+                    <span class="spec-v">100% Delta</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Profit Lock:</span>
+                    <span class="spec-v">1.0% Wick</span>
+                  </div>
+                </div>
+                <p class="preset-desc">
+                  Early defensive hedge at first market tremor. Fully delta-neutral; guarantees zero liquidation risk for passive holders.
+                </p>
+              </div>
+
+              <!-- Preset 2: Balanced (Recommended) -->
+              <div class="preset-card active" id="presetBalanced" data-preset="balanced" role="radio" aria-checked="true" tabindex="0">
+                <div class="preset-card-top">
+                  <div class="preset-name-wrap">
+                    <span class="preset-name">Balanced</span>
+                    <span class="preset-pill pill-accent">Recommended</span>
+                  </div>
+                  <span class="preset-radio-indicator"></span>
+                </div>
+                <div class="preset-specs-grid font-mono">
+                  <div class="preset-spec">
+                    <span class="spec-k">Trigger:</span>
+                    <span class="spec-v text-accent">H &le; 1.15</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Coverage:</span>
+                    <span class="spec-v">75% Delta</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Profit Lock:</span>
+                    <span class="spec-v">1.5% Wick</span>
+                  </div>
+                </div>
+                <p class="preset-desc">
+                  Standard institutional equilibrium. Dampens 75% downside while preserving 25% upside capture during sudden market bounces.
+                </p>
+              </div>
+
+              <!-- Preset 3: Aggressive -->
+              <div class="preset-card" id="presetAggressive" data-preset="aggressive" role="radio" aria-checked="false" tabindex="0">
+                <div class="preset-card-top">
+                  <div class="preset-name-wrap">
+                    <span class="preset-name">Aggressive</span>
+                    <span class="preset-pill pill-hedge">Deep Buffer</span>
+                  </div>
+                  <span class="preset-radio-indicator"></span>
+                </div>
+                <div class="preset-specs-grid font-mono">
+                  <div class="preset-spec">
+                    <span class="spec-k">Trigger:</span>
+                    <span class="spec-v text-hedge">H &le; 1.08</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Coverage:</span>
+                    <span class="spec-v">50% Delta</span>
+                  </div>
+                  <div class="preset-spec">
+                    <span class="spec-k">Profit Lock:</span>
+                    <span class="spec-v">2.5% Wick</span>
+                  </div>
+                </div>
+                <p class="preset-desc">
+                  High-leverage leeway. Only triggers immediately before the 80% liquidation barrier, minimizing fees and maximizing rebound gain.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Step 3: Parameter Telemetry Readout -->
+          <div class="lite-summary-box font-mono">
+            <div class="summary-row">
+              <span class="s-k">Assigned Trigger Price:</span>
+              <span class="s-v text-accent" id="liteTriggerPriceDisplay">$44.20 USD (H = 1.15)</span>
+            </div>
+            <div class="summary-row">
+              <span class="s-k">Auto Hedge Size:</span>
+              <span class="s-v font-mono" id="liteHedgeSizeDisplay">0.0375 HYPE Short (75%)</span>
+            </div>
+            <div class="summary-row">
+              <span class="s-k">Non-Custodial Scope:</span>
+              <span class="s-v">INV-1 Trade-Only (0x0802 Predeploy)</span>
+            </div>
+          </div>
+
+          <!-- Step 4: 1-Click Action Button -->
+          <div class="lite-action-area">
+            <button class="btn-primary lite-activate-btn" id="btnLiteActivateShield" type="button">
+              <svg class="btn-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span id="liteActivateBtnText">Activate Auto-Pilot Shield</span>
+            </button>
+            <div class="lite-guarantee-note">
+              <span>Atomic 1-Click Flow: Connects wallet &bull; Delegates ephemeral session key &bull; Commits AegisVault preset</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pro Configuration Card (Pro Only) -->
+        <div class="card config-card pro-only" id="proConfigCard">
           <div class="card-header">
             <h2 class="header-title">Pro Trader Risk Controls</h2>
             <span class="status-pill pill-accent">TIER 1 PRO</span>

@@ -119,9 +119,11 @@ h1, h2, h3, .display-font {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.mode-pill-icon {
-  font-size: 13px;
-  line-height: 1;
+.mode-pill-svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  stroke: currentColor;
 }
 
 .brand-badge {
@@ -1130,4 +1132,437 @@ h1, h2, h3, .display-font {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 8px;
+}
+
+/* ==========================================================================
+   VIEW MODE SWITCHING & LITE AUTO-PILOT INTERFACE
+   ========================================================================== */
+
+/* View Mode Visibility Rules */
+body.mode-pro .lite-only,
+body:not(.mode-lite) .lite-only {
+  display: none !important;
+}
+
+body.mode-pro .pro-only,
+body:not(.mode-lite) .pro-only {
+  display: block;
+}
+
+body.mode-lite .pro-only {
+  display: none !important;
+}
+
+body.mode-lite .lite-only {
+  display: flex !important;
+}
+
+body.mode-lite .lite-card {
+  display: flex !important;
+  flex-direction: column;
+}
+
+body.mode-lite .lite-telemetry-card {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* --- Lite Auto-Pilot Card --- */
+.lite-card {
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lite-card-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin-top: -8px;
+}
+
+.header-icon-svg {
+  flex-shrink: 0;
+  stroke: var(--accent);
+}
+
+.lite-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lite-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  flex-wrap: wrap;
+}
+
+.lite-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lite-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.lite-faucet-note {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+/* Micro-amount testnet deposit chips */
+.micro-amount-chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.micro-chip-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  background: var(--ground);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 150ms ease;
+  min-width: 0;
+  font-family: inherit;
+}
+
+.micro-chip-btn:hover {
+  background: var(--raised);
+  border-color: var(--ink-2);
+}
+
+.micro-chip-btn.active {
+  background: var(--raised);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.micro-chip-btn .chip-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.micro-chip-btn.active .chip-val {
+  color: var(--accent);
+}
+
+.micro-chip-btn .chip-usd {
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/* Strategy Preset Cards */
+.presets-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.preset-card {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 180ms ease;
+  user-select: none;
+  min-width: 0;
+}
+
+.preset-card:hover {
+  background: var(--raised);
+  border-color: var(--ink-2);
+}
+
+.preset-card.active {
+  background: var(--raised);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.preset-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.preset-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-name {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.preset-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+}
+
+.preset-radio-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  position: relative;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+
+.preset-card.active .preset-radio-indicator {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.preset-card.active .preset-radio-indicator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--on-accent);
+}
+
+.preset-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--ground);
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  font-size: 11px;
+}
+
+.preset-card.active .preset-specs-grid {
+  background: var(--ground);
+}
+
+.preset-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.preset-spec .spec-k {
+  color: var(--ink-2);
+  font-size: 10.5px;
+}
+
+.preset-spec .spec-v {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.preset-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* Lite Telemetry Readout Box */
+.lite-summary-box {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  min-width: 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.summary-row .s-k {
+  color: var(--ink-2);
+}
+
+.summary-row .s-v {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Lite Action Button Area */
+.lite-action-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.lite-activate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  width: 100%;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.lite-activate-btn.armed {
+  background: var(--ground);
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+
+.btn-icon-svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.lite-guarantee-note {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  text-align: center;
+}
+
+/* Lite Telemetry Safeguards Card in Main Column */
+.lite-telemetry-card {
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 24px;
+  gap: 16px;
+  min-width: 0;
+}
+
+.lite-telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.lite-feature-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.feat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.feat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.feat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.feat-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.feat-desc code {
+  font-family: inherit;
+  font-size: 11px;
+  background: var(--raised);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+}
+
+@media (max-width: 768px) {
+  .micro-amount-chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .preset-specs-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    font-size: 10.5px;
+  }
+  .lite-card {
+    padding: 18px 16px;
+  }
 }
