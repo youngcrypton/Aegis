@@ -97,6 +97,7 @@ Last updated: 2026-10-11
     - `test/integration/EndToEndFlow.t.sol`: Full 9-stage lifecycle integration test covering collateral deposit, -18% flash crash, autonomous short hedge execution via `0x0802`, bottom-wick trailing, take-profit unwind on bounce, 10% fee capture, 50% Ascend buyback-and-burn, 50% real yield distribution, post-rebound health restoration ($H > 1.25$), and formal verification of Invariants INV-1 through INV-5. Passed with 100% success (`test_EndToEnd_LifecycleFlow()`).
   - **Elysium Testnet Alignment**: Configured and verified against official Elysium specifications (`Chain ID 99801`, live RPC `https://testnet-rpc.elysium.kinetiq.xyz`, block explorer `https://elysium.kinetiq.xyz/testnet-explorer`).
 - **Done:** Smart contract test suite stands at **53 passed tests, 0 failed across 12 test suites** (`forge test`).
+- **Done:** Authored, verified, and published comprehensive, engineering-grade public `README.md` covering protocol problem scope, autonomous delta-hedging architecture, formal security invariants (INV-1 through INV-5), repository map, evidence status classification, tech stack, and developer quickstart.
 
 ## Next
 
