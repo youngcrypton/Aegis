@@ -1,6 +1,6 @@
 # ==============================================================================
-# Cloudflare Pages / Workers Configuration
-# AEGIS Protocol — Production & Testnet Edge Hosting
+# Cloudflare Pages / Workers Configuration — Production Live Build
+# AEGIS Protocol — Risk Sentinel & Pro-Trader Terminal
 # ==============================================================================
 
 name = "aegis"
