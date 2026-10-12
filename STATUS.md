@@ -52,7 +52,7 @@ Last updated: 2026-10-11
 - **Done:** generated `TASKS.md` breaking down the entire protocol into 22 single-session, dependency-ordered tasks across 6 phases with verifiable acceptance criteria.
 - **Done:** generated `BRANDING.md` formalizing brand identity, 3-blade master mark, semantic token palette, WCAG AA contrast table, Marcellus/Inter type scale, voice guidelines, and surface rules.
 - **Done:** generated and finalized `PROMPT.md` — the master single-shot coding agent prompt with inlined configurations (`foundry.toml`, `remappings.txt`, `keeper/.env.example`, `keeper/package.json`, `keeper/tsconfig.json`, `Dockerfile`, `docker-compose.yml`), verified facts vs development assumptions protocol, 11-step execution sequence with exact verification commands, quant math formulas, formal invariant verification matrix (INV-1 to INV-5), and strict AEGIS Brand Kit compliance rules.
-- **Done:** established local `.gitignore` privacy boundary protecting `PROMPT.md` from Git tracking and public exposure (verified via `git check-ignore`).
+- **Done:** `PROMPT.md` is public: tracked in the repo and open source, with no ignore rule covering it.
 
 ## Smart Contracts (`contracts/`, `test/`)
 

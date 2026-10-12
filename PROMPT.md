@@ -170,7 +170,7 @@ aegis/
 │
 ├── foundry.toml                      # Foundry compiler & RPC configuration
 ├── remappings.txt                    # OpenZeppelin & Forge Std remappings
-├── .gitignore                        # Git ignore rules (protects PROMPT.md, build outputs)
+├── .gitignore                        # Git ignore rules (local agent files, build outputs)
 └── README.md                         # Protocol documentation
 ```
 
@@ -756,8 +756,8 @@ When executing the steps above, the autonomous coding agent must follow this pro
    - Report the exact CLI command executed and its output.
    - Never fabricate test passes or mock success. If a test fails, state the exact error message and file line.
    - Distinguish verified local assertions from external network assumptions.
-4. **Git Privacy Boundary**:
-   - `PROMPT.md` must remain in `.gitignore`.
+4. **Git Publication**:
+   - `PROMPT.md` is public and tracked in the repo.
    - Never commit, push, or publish sensitive prompt files or environment files (`.env`).
    - Do not publish code to public remotes without explicit authorization.
 

@@ -66,8 +66,8 @@
   - Created [`TASKS.md`](file:///c:/Users/ascend%20X%20elysium/TASKS.md) breaking down the entire protocol into 22 sequential, single-session work units across 6 phases (Foundation, Contracts, Invariant Fuzzing, Keeper Daemon, Terminal Refactor, Integration/Release).
 - **Project Architect Phase 4: BRANDING.md Generated**:
   - Authored [`BRANDING.md`](file:///c:/Users/ascend%20X%20elysium/BRANDING.md) formalizing the AEGIS identity, 3-blade master mark geometry with multi-stop gradient, semantic color roles (Teal, Amber, Rose, Violet), WCAG AA contrast matrix, Marcellus/Inter type scale, voice and copy guide, surface rules, and asset checklist.
-- **Project Architect Phase 5: PROMPT.md Finalized & Privacy Locked**:
-  - Implemented root [`.gitignore`](file:///c:/Users/ascend%20X%20elysium/.gitignore) explicitly locking down `PROMPT.md` so that it is permanently ignored by Git and protected from GitHub tracking.
+- **Project Architect Phase 5: PROMPT.md Finalized**:
+  - Initially locked `PROMPT.md` out of Git. That lock was removed when `PROMPT.md` was made public.
   - Authored and audited master single-shot coding agent prompt in [`PROMPT.md`](file:///c:/Users/ascend%20X%20elysium/PROMPT.md) containing inlined tech stacks, verified facts vs development assumptions protocol, exact configuration files (`foundry.toml`, `remappings.txt`, `keeper/.env.example`, `keeper/package.json`, `keeper/tsconfig.json`, `Dockerfile`, `docker-compose.yml`), packed storage layouts, mathematical specifications, 11-step execution sequence with verification checkpoints, formal invariant verification matrix (INV-1 through INV-5), Brand Kit compliance rules, and autonomous agent reporting protocols.
   - Strictly respected user privacy boundaries: zero commits, zero pushes, zero remote uploads. All Phase 5 materials reside strictly on the local drive.
 - **Execution of PROMPT.md Steps 1–2 (Scaffolding & Core Types / Adapters)**:
