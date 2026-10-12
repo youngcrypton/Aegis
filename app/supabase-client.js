@@ -26,14 +26,18 @@
      */
     async verifyAccessCode(code) {
       if (!code) return { valid: false, error: 'Empty code' };
-      const cleanCode = code.trim().toUpperCase();
+      const cleanCode = code.replace(/\s+/g, '').toUpperCase();
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
         const endpoint = `${this.url}/rest/v1/beta_access_codes?code=eq.${encodeURIComponent(cleanCode)}&is_active=eq.true&select=*`;
         const res = await fetch(endpoint, {
           method: 'GET',
-          headers: this.headers
+          headers: this.headers,
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (res.ok) {
           const rows = await res.json();
@@ -51,9 +55,10 @@
         console.debug('Supabase code verification fallback to local dataset:', err.message);
       }
 
-      // Local offline fallback using window.AegisAccessCodes
-      if (window.AegisAccessCodes && typeof window.AegisAccessCodes.isValid === 'function') {
-        const isLocalValid = window.AegisAccessCodes.isValid(cleanCode);
+      // Local offline fallback using window.AegisAccess or window.AegisAccessCodes
+      const checker = window.AegisAccess || window.AegisAccessCodes;
+      if (checker && (typeof checker.isValid === 'function' || typeof checker.isValidCode === 'function')) {
+        const isLocalValid = Boolean((checker.isValid && checker.isValid(cleanCode)) || (checker.isValidCode && checker.isValidCode(cleanCode)));
         return {
           valid: isLocalValid,
           tier: 'TRADER_PASS',

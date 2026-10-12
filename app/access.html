@@ -599,10 +599,11 @@
       const revokeBtn = document.getElementById('btnRevokeSession');
 
       function checkSession() {
-        if (!window.AegisAccess) return;
+        const checker = window.AegisAccess || window.AegisAccessCodes;
+        if (!checker) return;
 
-        if (window.AegisAccess.isAuthorized()) {
-          const code = window.AegisAccess.getAuthorizedCode() || 'AUTHORIZED-BETA-PASS';
+        if (checker.isAuthorized()) {
+          const code = checker.getAuthorizedCode() || 'AUTHORIZED-BETA-PASS';
           if (activeCodeText) activeCodeText.textContent = code;
           if (activeCard) activeCard.style.display = 'flex';
           if (form) form.style.display = 'none';
@@ -623,9 +624,8 @@
 
       if (revokeBtn) {
         revokeBtn.addEventListener('click', function () {
-          if (window.AegisAccess) {
-            window.AegisAccess.revoke();
-          }
+          const checker = window.AegisAccess || window.AegisAccessCodes;
+          if (checker) checker.revoke();
           checkSession();
         });
       }
@@ -637,7 +637,7 @@
           alertBox.className = 'gate-alert';
           alertBox.style.display = 'none';
 
-          const val = input.value.trim().toUpperCase();
+          const val = (input.value || '').replace(/\s+/g, '').toUpperCase();
 
           if (!val) {
             alertBox.className = 'gate-alert error';
@@ -646,33 +646,37 @@
           }
 
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Verifying with Supabase...';
+          submitBtn.innerHTML = '<span>Verifying Access...</span>';
 
           try {
             let isValid = false;
-            let tierLabel = 'Verified Beta Pass';
 
-            // Query live Supabase database
-            if (window.AegisSupabase) {
-              const supaRes = await window.AegisSupabase.verifyAccessCode(val);
-              if (supaRes && supaRes.valid) {
-                isValid = true;
-                tierLabel = supaRes.label || supaRes.tier || 'Verified Beta Pass';
+            // 1. Instant check against local access codes module (0ms)
+            const localChecker = window.AegisAccess || window.AegisAccessCodes;
+            if (localChecker && (localChecker.isValid(val) || localChecker.isValidCode(val))) {
+              isValid = true;
+            }
+
+            // 2. Also check remote Supabase instance if not found locally
+            if (!isValid && window.AegisSupabase) {
+              try {
+                const supaRes = await window.AegisSupabase.verifyAccessCode(val);
+                if (supaRes && supaRes.valid) {
+                  isValid = true;
+                }
+              } catch (e) {
+                console.debug('Supabase verify notice:', e);
               }
             }
 
-            // Fallback to local access codes module
-            if (!isValid && window.AegisAccessCodes) {
-              isValid = window.AegisAccessCodes.isValid(val);
-            }
-
             if (isValid) {
-              if (window.AegisAccess) window.AegisAccess.authorize(val);
+              if (localChecker) localChecker.authorize(val);
               alertBox.className = 'gate-alert success';
-              alertBox.textContent = `✓ Access Verified (${tierLabel})! Launching AEGIS Terminal...`;
+              alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
+              submitBtn.innerHTML = '<span>Access Granted ↗</span>';
               setTimeout(function () {
                 window.location.href = getTerminalUrl();
-              }, 700);
+              }, 500);
             } else {
               alertBox.className = 'gate-alert error';
               alertBox.textContent = '✕ Invalid or unrecognized access code.';
@@ -682,15 +686,17 @@
             }
           } catch (err) {
             console.warn('Verification exception:', err);
-            if (window.AegisAccess && window.AegisAccess.authorize(val).success) {
+            const localChecker = window.AegisAccess || window.AegisAccessCodes;
+            if (localChecker && localChecker.authorize(val).success) {
               alertBox.className = 'gate-alert success';
               alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
+              submitBtn.innerHTML = '<span>Access Granted ↗</span>';
               setTimeout(function () {
                 window.location.href = getTerminalUrl();
-              }, 700);
+              }, 500);
             } else {
               alertBox.className = 'gate-alert error';
-              alertBox.textContent = '✕ Invalid access code.';
+              alertBox.textContent = '✕ Invalid access code. Please check and try again.';
               submitBtn.disabled = false;
               submitBtn.innerHTML = '<span>Unlock Terminal ↗</span>';
               input.select();

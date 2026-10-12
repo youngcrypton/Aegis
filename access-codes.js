@@ -78,14 +78,25 @@
     "AEGIS-TESTNET-78BK-LMX5",
     "AEGIS-TESTNET-LV8D-CD9M",
     "AEGIS-TESTNET-PX22-8G2U",
-    "AEGIS-TESTNET-R9GD-E2YQ"
+    "AEGIS-TESTNET-R9GD-E2YQ",
+    "AEGIS-ALPHA-701",
+    "AEGIS-ALPHA-702",
+    "AEGIS-ALPHA-703",
+    "AEGIS-ALPHA-704",
+    "AEGIS-ALPHA-705",
+    "AEGIS-ALPHA-706",
+    "AEGIS-ALPHA-707",
+    "AEGIS-ALPHA-708",
+    "AEGIS-ALPHA-709",
+    "AEGIS-ALPHA-710"
   ];
 
   var VALID_CODES_SET = new Set(CODES_LIST);
 
   function normalizeCode(raw) {
     if (!raw || typeof raw !== 'string') return '';
-    return raw.trim().toUpperCase();
+    // Strip all whitespace: "AEGIS - TESTNET - 9TMR - FCRZ" -> "AEGIS-TESTNET-9TMR-FCRZ"
+    return raw.replace(/\s+/g, '').toUpperCase();
   }
 
   function isGateEnabled() {
@@ -141,13 +152,21 @@
     }
   }
 
-  return {
+  var api = {
     isGateEnabled: isGateEnabled,
     isValidCode: isValidCode,
+    isValid: isValidCode,
     isAuthorized: isAuthorized,
     getAuthorizedCode: getAuthorizedCode,
     authorize: authorize,
     revoke: revoke,
     codesCount: CODES_LIST.length
   };
+
+  if (typeof window !== 'undefined') {
+    window.AegisAccess = api;
+    window.AegisAccessCodes = api;
+  }
+
+  return api;
 }));
