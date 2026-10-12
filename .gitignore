@@ -1,0 +1,15 @@
+# Private Master Agent Prompt (Protected from Git)
+PROMPT.md
+
+# Local Environment & Secrets
+.env
+.env.local
+*.pem
+
+# Build Artifacts & Dependencies
+node_modules/
+out/
+cache/
+broadcast/
+dist/
+web3-hackathon-architect/

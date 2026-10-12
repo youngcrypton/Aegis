@@ -1,0 +1,25 @@
+[profile.default]
+src = "contracts"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+solc_version = "0.8.24"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+via_ir = true
+fs_permissions = [{ access = "read-write", path = "./" }]
+
+[fuzz]
+runs = 1000
+max_test_rejects = 65536
+
+[invariant]
+runs = 256
+depth = 128
+fail_on_revert = false
+
+[rpc_endpoints]
+elysium_testnet = "https://testnet-rpc.elysium.kinetiq.xyz"
+hypercore_l1 = "https://rpc.hyperliquid.xyz"

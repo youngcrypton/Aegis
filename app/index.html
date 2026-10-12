@@ -6,55 +6,69 @@
   <title>AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Background Glow Gradients -->
-  <div class="ambient-glow glow-cyan"></div>
-  <div class="ambient-glow glow-purple"></div>
+
+  <!-- Shared Global SVGs for 3-Blade Master Logo Mark -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="aegis-blade-grad" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+        <stop offset="0.00" stop-color="#1F0E4C"/>
+        <stop offset="0.10" stop-color="#241056"/>
+        <stop offset="0.20" stop-color="#40178D"/>
+        <stop offset="0.30" stop-color="#5A1FC9"/>
+        <stop offset="0.40" stop-color="#6928ED"/>
+        <stop offset="0.50" stop-color="#642FEB"/>
+        <stop offset="0.60" stop-color="#4C44CB"/>
+        <stop offset="0.70" stop-color="#305EA5"/>
+        <stop offset="0.80" stop-color="#157286"/>
+        <stop offset="0.90" stop-color="#087B75"/>
+        <stop offset="1.00" stop-color="#087E6D"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
   <!-- Header Navigation -->
   <header class="app-header">
     <div class="header-left">
       <div class="brand-badge">
-        <div class="brand-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M12 8v4"/>
-            <path d="M12 16h.01"/>
-          </svg>
-        </div>
+        <svg class="brand-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
+          <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
+          <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
+          <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#aegis-blade-grad)"/>
+        </svg>
         <div class="brand-text">
-          <span class="brand-title">AEGIS</span>
-          <span class="brand-sub">PROTOCOL</span>
+          <span class="brand-title">Aegis</span>
+          <span class="brand-sub">TERMINAL</span>
         </div>
       </div>
       <div class="header-separator"></div>
       <div class="network-badge">
         <span class="pulse-indicator"></span>
-        <span class="network-name">Elysium L2</span>
-        <span class="network-id">99801</span>
+        <span>Elysium L2</span>
+        <strong>99801</strong>
       </div>
       <div class="latency-badge" id="latencyBadge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-        <span>0x0801 Precompile: <strong>68ms</strong></span>
+        <span>0x0801 Precompile:</span>
+        <strong id="latencyVal">68ms</strong>
       </div>
     </div>
 
     <div class="header-right">
       <div class="session-badge safe" id="sessionBadge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-        <span>Session Key: <strong>Trade-Only (Non-Custodial)</strong></span>
+        <span>Session Key:</span>
+        <strong>Trade-Only (INV-1)</strong>
       </div>
-      <button class="wallet-btn" id="walletBtn">
+
+      <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
+        <span id="themeToggleText">Dark mode</span>
+      </button>
+
+      <button class="wallet-btn" id="walletBtn" type="button">
         <span class="wallet-dot"></span>
-        <span class="wallet-addr">0x71C...a89F</span>
+        <span class="wallet-addr" id="walletAddrText">Connect Wallet</span>
       </button>
     </div>
   </header>
@@ -63,34 +77,34 @@
   <main class="app-container">
 
     <!-- Top Bento: Hero Stats Bar -->
-    <section class="bento-row hero-metrics">
+    <section class="hero-metrics">
       <div class="metric-card">
         <div class="metric-label">Protected Portfolio TVL</div>
         <div class="metric-value font-mono">$2,845,200 <span class="metric-unit">USDC</span></div>
-        <div class="metric-sub text-cyan">Tier 1 Pro Allocation: 100%</div>
+        <div class="metric-sub text-accent">Tier 1 Pro Allocation: 100%</div>
       </div>
 
       <div class="metric-card">
         <div class="metric-label">Health Factor (H)</div>
-        <div class="metric-value font-mono text-emerald" id="heroHealthValue">1.41 <span class="status-pill pill-emerald">SAFE</span></div>
+        <div class="metric-value font-mono text-accent" id="heroHealthValue">1.41 <span class="status-pill pill-accent">SAFE</span></div>
         <div class="metric-sub" id="heroLiquidationBuffer">Distance to Liquidation: +21.3%</div>
       </div>
 
       <div class="metric-card">
         <div class="metric-label">Sentinel Defense Status</div>
-        <div class="metric-value font-mono text-cyan" id="heroSentinelStatus">ARMED <span class="status-pill pill-cyan">ACTIVE</span></div>
+        <div class="metric-value font-mono text-accent" id="heroSentinelStatus">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
         <div class="metric-sub">Trigger: $44.20 / H &le; 1.10</div>
       </div>
 
       <div class="metric-card">
         <div class="metric-label">Liquidations Averted</div>
-        <div class="metric-value font-mono text-emerald">$48,250 <span class="metric-unit">SAVED</span></div>
+        <div class="metric-value font-mono text-accent" id="heroLiquidationsSaved">$48,250 <span class="metric-unit">SAVED</span></div>
         <div class="metric-sub">Penalties Spared: 100% Non-Custodial</div>
       </div>
 
       <div class="metric-card">
         <div class="metric-label">$AEGIS Burned (Flywheel)</div>
-        <div class="metric-value font-mono text-purple" id="heroBurnedTokens">164,820 <span class="metric-unit">AEGIS</span></div>
+        <div class="metric-value font-mono text-violet" id="heroBurnedTokens">164,820 <span class="metric-unit">AEGIS</span></div>
         <div class="metric-sub">Real Yield APR: 18.4% USDC</div>
       </div>
     </section>
@@ -99,19 +113,15 @@
     <section class="simulation-bar">
       <div class="sim-left">
         <span class="sim-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polygon points="10 8 16 12 10 16 10 8"/>
-          </svg>
-          Stress Test Simulation:
+          Quant Stress Test:
         </span>
-        <button class="sim-btn btn-danger" id="btnCrashTest">
+        <button class="sim-btn btn-danger" id="btnCrashTest" type="button">
           Simulate Flash Crash (-18%)
         </button>
-        <button class="sim-btn btn-warning" id="btnRetraceTest">
+        <button class="sim-btn btn-hedge" id="btnRetraceTest" type="button">
           Simulate Retracement (-8% then V-Bounce)
         </button>
-        <button class="sim-btn btn-secondary" id="btnResetMarket">
+        <button class="sim-btn" id="btnResetMarket" type="button">
           Reset Market ($48.50)
         </button>
       </div>
@@ -133,48 +143,69 @@
         <!-- Position Card -->
         <div class="card position-card">
           <div class="card-header">
-            <div class="header-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-              </svg>
-              <span>Protected Vault Position</span>
-            </div>
+            <h2 class="header-title">Protected Vault Position</h2>
             <div class="header-extra">
-              <span class="tag">Vault ID: #0482</span>
-              <span class="tag tag-cyan">Elysium L2</span>
+              <span>Vault ID: #0482</span>
+              <span class="status-pill pill-accent">Elysium L2</span>
             </div>
           </div>
 
           <div class="position-stats-grid">
             <div class="stat-box">
               <span class="stat-name">Collateral Asset</span>
-              <span class="stat-val font-mono">1,000.00 <span class="unit">HYPE</span></span>
+              <span class="stat-val font-mono">1,000.00 <span class="metric-unit">HYPE</span></span>
               <span class="stat-sub font-mono" id="collateralUsdVal">$48,500.00 USD</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Borrowed Debt</span>
-              <span class="stat-val font-mono">$32,000.00 <span class="unit">USDC</span></span>
+              <span class="stat-val font-mono">$32,000.00 <span class="metric-unit">USDC</span></span>
               <span class="stat-sub">Stable Liability</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Liquidation Price</span>
-              <span class="stat-val font-mono text-danger">$40.00 <span class="unit">USD</span></span>
+              <span class="stat-val font-mono text-danger">$40.00 <span class="metric-unit">USD</span></span>
               <span class="stat-sub">80% Maintenance Line</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Live Mark Price</span>
-              <span class="stat-val font-mono text-cyan" id="liveMarkPrice">$48.50 <span class="unit">USD</span></span>
+              <span class="stat-val font-mono text-accent" id="liveMarkPrice">$48.50 <span class="metric-unit">USD</span></span>
               <span class="stat-sub font-mono" id="markPriceChange">+0.42% (24h)</span>
             </div>
           </div>
 
-          <!-- Dynamic Health Factor Gauge & Buffer Bar -->
+          <!-- Dynamic SVG Health Factor Gauge & Buffer Bar -->
           <div class="health-gauge-section">
             <div class="gauge-header">
-              <span>Position Health Factor Gauge</span>
-              <span class="font-mono text-emerald" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
+              <span>Dynamic Health Factor Gauge (0x0801 Synced)</span>
+              <span class="font-mono text-accent" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
             </div>
+
+            <!-- Responsive SVG Radial Gauge -->
+            <div class="gauge-svg-wrapper" id="gaugeSvgContainer">
+              <svg class="gauge-svg" viewBox="0 0 300 165" id="healthFactorGaugeSvg">
+                <!-- Base Background Arc -->
+                <path d="M 30 145 A 120 120 0 0 1 270 145" fill="none" stroke="var(--rule)" stroke-width="20" stroke-linecap="round"/>
+                <!-- Danger Arc Zone (1.00 to 1.05) -->
+                <path d="M 30 145 A 120 120 0 0 1 75 65" fill="none" stroke="var(--danger)" stroke-width="20" stroke-linecap="round"/>
+                <!-- Warning / Hedge Arc Zone (1.05 to 1.15) -->
+                <path d="M 75 65 A 120 120 0 0 1 140 27" fill="none" stroke="var(--hedge)" stroke-width="20"/>
+                <!-- Safe Arc Zone (1.15 to 2.00) -->
+                <path d="M 140 27 A 120 120 0 0 1 270 145" fill="none" stroke="var(--accent)" stroke-width="20" stroke-linecap="round"/>
+
+                <!-- Gauge Pivot & Needle -->
+                <g id="gaugeNeedleGroup" transform="rotate(55, 150, 145)" style="transition: transform 300ms ease;">
+                  <line x1="150" y1="145" x2="150" y2="35" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+                  <circle cx="150" cy="145" r="9" fill="var(--ink)"/>
+                  <circle cx="150" cy="145" r="4" fill="var(--raised)"/>
+                </g>
+
+                <!-- Value Center Readout -->
+                <text x="150" y="132" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="24" fill="var(--ink)" id="gaugeSvgReadout">1.41</text>
+                <text x="150" y="148" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="var(--ink-2)">HEALTH FACTOR</text>
+              </svg>
+            </div>
+
+            <!-- Linear Buffer Track -->
             <div class="gauge-track">
               <div class="gauge-zone zone-danger" style="width: 25%;"></div>
               <div class="gauge-zone zone-warning" style="width: 20%;"></div>
@@ -225,22 +256,15 @@
         <!-- HyperCore Live Orderbook & Depth Card -->
         <div class="card orderbook-card">
           <div class="card-header">
-            <div class="header-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="20" x2="12" y2="10"/>
-                <line x1="18" y1="20" x2="18" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="16"/>
-              </svg>
-              <span>HyperCore L1 CLOB Depth (Synchronous 0x0801 Precompile)</span>
-            </div>
+            <h2 class="header-title">HyperCore L1 CLOB Depth (Synchronous 0x0801)</h2>
             <div class="header-extra font-mono">
-              <span>Spread: <strong class="text-cyan" id="clobSpread">0.02 USD (0.04%)</strong></span>
-              <span>Depth: <strong class="text-emerald">$1,840,000</strong></span>
+              <span>Spread: <strong class="text-accent" id="clobSpread">0.02 USD (0.04%)</strong></span>
+              <span>Depth: <strong class="text-accent">$1,840,000</strong></span>
             </div>
           </div>
 
           <div class="orderbook-container">
-            <!-- Asks (Red) -->
+            <!-- Asks (Danger / Red) -->
             <div class="clob-table clob-asks" id="clobAsks">
               <div class="clob-row clob-head font-mono">
                 <span>PRICE (USDC)</span>
@@ -256,7 +280,7 @@
               <span class="mid-source">0x0801 Direct Oracle Feed</span>
             </div>
 
-            <!-- Bids (Green) -->
+            <!-- Bids (Accent / Green) -->
             <div class="clob-table clob-bids" id="clobBids">
               <!-- Injected by JS -->
             </div>
@@ -271,14 +295,8 @@
         <!-- Pro Configuration Card -->
         <div class="card config-card">
           <div class="card-header">
-            <div class="header-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-              <span>Pro Trader Risk Controls</span>
-            </div>
-            <span class="mode-pill">TIER 1 PRO</span>
+            <h2 class="header-title">Pro Trader Risk Controls</h2>
+            <span class="status-pill pill-accent">TIER 1 PRO</span>
           </div>
 
           <form id="proConfigForm" class="config-form" onsubmit="return false;">
@@ -296,7 +314,7 @@
             <div class="form-group">
               <div class="label-row">
                 <label for="priceTrigger">Price Trigger ($)</label>
-                <span class="font-mono text-cyan" id="priceTriggerDisplay">$44.20</span>
+                <span class="font-mono text-accent" id="priceTriggerDisplay">$44.20</span>
               </div>
               <input type="range" id="priceTrigger" min="41.00" max="47.00" step="0.10" value="44.20" class="form-range">
               <div class="range-bounds font-mono">
@@ -309,7 +327,7 @@
             <div class="form-group">
               <div class="label-row">
                 <label for="healthTrigger">Health Factor Trigger (H)</label>
-                <span class="font-mono text-cyan" id="healthTriggerDisplay">1.10</span>
+                <span class="font-mono text-accent" id="healthTriggerDisplay">1.10</span>
               </div>
               <input type="range" id="healthTrigger" min="1.02" max="1.25" step="0.01" value="1.10" class="form-range">
               <div class="range-bounds font-mono">
@@ -322,7 +340,7 @@
             <div class="form-group">
               <div class="label-row">
                 <label for="hedgeCoverage">Delta Coverage Ratio</label>
-                <span class="font-mono text-cyan" id="hedgeCoverageDisplay">50% (500 HYPE)</span>
+                <span class="font-mono text-accent" id="hedgeCoverageDisplay">50% (500 HYPE)</span>
               </div>
               <input type="range" id="hedgeCoverage" min="10" max="100" step="10" value="50" class="form-range">
               <div class="range-bounds font-mono">
@@ -335,7 +353,7 @@
             <div class="form-group">
               <div class="label-row">
                 <label for="trailingTp">Trailing Profit Lock (&tau;)</label>
-                <span class="font-mono text-emerald" id="trailingTpDisplay">1.50% from Lowest Wick</span>
+                <span class="font-mono text-accent" id="trailingTpDisplay">1.50% from Lowest Wick</span>
               </div>
               <input type="range" id="trailingTp" min="0.5" max="4.0" step="0.1" value="1.5" class="form-range">
               <div class="range-bounds font-mono">
@@ -364,18 +382,18 @@
             </div>
 
             <!-- Submit Button -->
-            <button class="btn btn-primary" id="btnSaveConfig">
+            <button class="btn-primary" id="btnSaveConfig" type="button">
               Update Pro Parameters on Elysium L2
             </button>
 
+            <!-- Session Key Delegation Button (INV-1) -->
+            <button class="sim-btn" id="btnOpenSessionKeyModal" type="button" style="height: 38px; width: 100%;">
+              Delegate Trade-Only Session Key (INV-1)
+            </button>
+
             <!-- Emergency Killswitch -->
-            <button class="btn btn-killswitch" id="btnManualOverride">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              <span>EMERGENCY MANUAL OVERRIDE (CLOSE HEDGES)</span>
+            <button class="btn-killswitch" id="btnManualOverride" type="button">
+              EMERGENCY MANUAL OVERRIDE (REVOKE KEYS)
             </button>
           </form>
         </div>
@@ -383,37 +401,29 @@
         <!-- $AEGIS Token Flywheel Widget -->
         <div class="card token-card">
           <div class="card-header">
-            <div class="header-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
-                <path d="M12 6V4"/>
-                <path d="M12 20v-2"/>
-              </svg>
-              <span>$AEGIS Economic Engine</span>
-            </div>
-            <span class="tag tag-purple">Ascend Hook Pool</span>
+            <h2 class="header-title">$AEGIS Economic Engine</h2>
+            <span class="status-pill pill-accent">Ascend Hook Pool</span>
           </div>
 
           <div class="token-metrics-list">
             <div class="token-metric-item">
               <span class="t-lbl">Bonded Sentinel Stake</span>
               <span class="t-val font-mono">125,000 $AEGIS</span>
-              <span class="t-sub text-emerald">Skin in the Game (5 Active Nodes)</span>
+              <span class="t-sub text-accent">Skin in the Game (5 Active Nodes)</span>
             </div>
             <div class="token-metric-item">
               <span class="t-lbl">Programmatic Burn</span>
-              <span class="t-val font-mono text-purple" id="tokenBurnDisplay">164,820 $AEGIS</span>
-              <span class="t-sub">50% Net Fees Burned to 0x0000...dead</span>
+              <span class="t-val font-mono text-violet" id="tokenBurnDisplay">164,820 $AEGIS</span>
+              <span class="t-sub">50% Net Fees Burned to 0x...dead</span>
             </div>
             <div class="token-metric-item">
               <span class="t-lbl">Staker Real Yield (USDC)</span>
-              <span class="t-val font-mono text-emerald">18.42% APR</span>
+              <span class="t-val font-mono text-accent">18.42% APR</span>
               <span class="t-sub">50% Net Fees Paid in USDC</span>
             </div>
             <div class="token-metric-item">
               <span class="t-lbl">Ascend Stage Progression</span>
-              <span class="t-val font-mono text-cyan">Stage 2: Ascended (74%)</span>
+              <span class="t-val font-mono text-violet">Stage 2: Ascended (74%)</span>
               <div class="progress-bar">
                 <div class="progress-fill" style="width: 74%;"></div>
               </div>
@@ -427,16 +437,10 @@
     <!-- Bottom Row: Real-Time Audit Trail & Sentinel Event Stream -->
     <section class="card audit-card">
       <div class="card-header">
-        <div class="header-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="4 17 10 11 4 5"/>
-            <line x1="12" y1="19" x2="20" y2="19"/>
-          </svg>
-          <span>Real-Time Sentinel Event Stream & Execution Audit Trail</span>
-        </div>
+        <h2 class="header-title">Real-Time Sentinel Event Stream & Execution Audit Trail</h2>
         <div class="header-extra">
           <span class="pulse-indicator"></span>
-          <span class="font-mono text-cyan">Sub-Second ElysiumCoreWriter (0x0802)</span>
+          <span class="font-mono text-accent">Sub-Second ElysiumCoreWriter (0x0802)</span>
         </div>
       </div>
       <div class="terminal-body font-mono" id="auditTerminal">
@@ -445,6 +449,35 @@
     </section>
 
   </main>
+
+  <!-- Session Key Delegation Modal (INV-1) -->
+  <div class="modal-overlay" id="sessionKeyModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <h3>Delegate Session Key (INV-1)</h3>
+        <button class="modal-close-icon" id="btnCloseSessionKeyModal" type="button" aria-label="Close modal">&times;</button>
+      </div>
+      <p class="modal-desc">
+        <strong>Strict Non-Custodial Guarantee (INV-1):</strong> This session key is authorized solely to dispatch atomic hedging and unwind intents to HyperCore CLOB via predeploy <code>0x0802</code>. It is mathematically incapable of withdrawing or transferring collateral.
+      </p>
+      <div class="modal-field">
+        <label for="ephemeralKeyAddress">Generated Ephemeral Session Key</label>
+        <input class="modal-input font-mono" id="ephemeralKeyAddress" type="text" readonly value="0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf">
+      </div>
+      <div class="modal-field">
+        <label for="sessionDurationDays">Authorized Duration</label>
+        <select class="form-select" id="sessionDurationDays">
+          <option value="7">7 Days</option>
+          <option value="30" selected>30 Days</option>
+          <option value="90">90 Days</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="sim-btn" id="btnCancelSessionKey" type="button">Cancel</button>
+        <button class="btn-primary" id="btnConfirmDelegateKey" type="button" style="padding: 0 16px;">Sign & Delegate on Elysium L2</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Notification Toast Container -->
   <div class="toast-container" id="toastContainer"></div>

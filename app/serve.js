@@ -7,7 +7,8 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = path.join(__dirname);
+const PUBLIC_DIR = path.resolve(__dirname);
+const REPO_ROOT = path.resolve(__dirname, '..');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -26,13 +27,24 @@ const server = http.createServer((req, res) => {
     reqUrl = '/index.html';
   }
 
-  const filePath = path.join(PUBLIC_DIR, reqUrl);
-
-  // Security: prevent path traversal outside PUBLIC_DIR
-  if (!filePath.startsWith(PUBLIC_DIR)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-    res.end('403 Forbidden');
-    return;
+  let filePath;
+  if (reqUrl.startsWith('/brand/')) {
+    filePath = path.join(REPO_ROOT, reqUrl);
+    // Security check: must remain within REPO_ROOT/brand
+    const brandDir = path.join(REPO_ROOT, 'brand');
+    if (!filePath.startsWith(brandDir)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('403 Forbidden');
+      return;
+    }
+  } else {
+    filePath = path.join(PUBLIC_DIR, reqUrl);
+    // Security check: must remain within PUBLIC_DIR
+    if (!filePath.startsWith(PUBLIC_DIR)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('403 Forbidden');
+      return;
+    }
   }
 
   fs.stat(filePath, (err, stats) => {
