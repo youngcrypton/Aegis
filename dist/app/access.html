@@ -4,10 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS Protocol — Private Beta Terminal Access</title>
+  <!-- Favicon & Brand Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#1C2238">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/brand/kit/tokens.css">
+  <link rel="stylesheet" href="brand/kit/tokens.css">
   <style>
     :root {
       --bg-base: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%);
@@ -454,7 +463,7 @@
 
   <!-- Header -->
   <header class="gate-header">
-    <a href="/" class="brand-lockup" aria-label="AEGIS Home">
+    <a href="index.html" class="brand-lockup" aria-label="AEGIS Home">
       <svg class="brand-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
         <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
         <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
@@ -543,8 +552,8 @@
           <strong>Mainnet Transition Notice:</strong> Once Elysium & Ascend reach Mainnet, access will automatically open to all public traders without invitation codes.
         </p>
         <div class="gate-footer-links">
-          <a href="/">← Return to Landing Page</a>
-          <a href="http://localhost:8000/docs/index.html" target="_blank" rel="noopener">Protocol Documentation ↗</a>
+          <a href="index.html">← Back to Overview</a>
+          <a href="docs/index.html" target="_blank" rel="noopener">Protocol Documentation ↗</a>
         </div>
       </div>
     </div>
@@ -585,7 +594,10 @@
 
       // Destination resolver
       function getTerminalUrl() {
-        return 'index.html#simulator';
+        if (window.location.pathname.indexOf('/app') !== -1) {
+          return 'index.html#simulator';
+        }
+        return 'app/index.html#simulator';
       }
 
       // Check current session state
@@ -708,6 +720,7 @@
       // Auto-format input as user types
       if (input) {
         input.addEventListener('input', function () {
+          // Normalize uppercase
           this.value = this.value.toUpperCase();
         });
       }

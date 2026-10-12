@@ -27,7 +27,7 @@
     GRANTED_AT: 'aegis_access_granted_at'
   };
 
-  // 50 Exclusive Testnet Beta Invitation Codes + 10 Alpha Pass Codes
+  // 50 Exclusive Testnet Beta Invitation Codes
   var CODES_LIST = [
     "AEGIS-TESTNET-SP9Y-MTKP",
     "AEGIS-TESTNET-9TMR-FCRZ",
