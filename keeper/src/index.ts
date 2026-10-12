@@ -46,14 +46,17 @@ export class SentinelKeeperDaemon {
     );
 
     const provider = this.telemetry.getProvider();
+    const relayerKey = config.SENTINEL_OPERATOR_PRIVATE_KEY || config.SENTINEL_SESSION_PRIVATE_KEY;
+    const relayerWallet = new ethers.Wallet(relayerKey, provider);
+
     if (config.AEGIS_VAULT_ADDRESS !== ethers.ZeroAddress) {
-      this.vaultContract = new ethers.Contract(config.AEGIS_VAULT_ADDRESS, VAULT_ABI, provider);
+      this.vaultContract = new ethers.Contract(config.AEGIS_VAULT_ADDRESS, VAULT_ABI, relayerWallet);
     }
     if (config.AEGIS_REGISTRY_ADDRESS !== ethers.ZeroAddress) {
       this.registryContract = new ethers.Contract(
         config.AEGIS_REGISTRY_ADDRESS,
         REGISTRY_ABI,
-        provider
+        relayerWallet
       );
     }
   }
@@ -72,6 +75,15 @@ export class SentinelKeeperDaemon {
     console.log(`[Init] Vault Contract:     ${config.AEGIS_VAULT_ADDRESS}`);
     console.log(`[Init] Registry Contract:  ${config.AEGIS_REGISTRY_ADDRESS}`);
     console.log(`[Init] Dry Run:            ${config.DRY_RUN}`);
+
+    const defaultMonitored = process.env.MONITORED_VAULTS || "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC";
+    for (const v of defaultMonitored.split(",")) {
+      const addr = v.trim();
+      if (addr && ethers.isAddress(addr)) {
+        this.addMonitoredVault(addr);
+        console.log(`[Init] Registered Monitored Vault: ${addr}`);
+      }
+    }
 
     await this.verifySentinelStatus();
     this.startHealthServer(parseInt(process.env.HEALTH_PORT || "8080", 10));

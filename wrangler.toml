@@ -1,0 +1,21 @@
+# ==============================================================================
+# Cloudflare Pages / Workers Configuration
+# AEGIS Protocol — Production & Testnet Edge Hosting
+# ==============================================================================
+
+name = "aegis-protocol"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+[vars]
+ENVIRONMENT = "production"
+CHAIN_ID = "99801"
+CHAIN_NAME = "Elysium L2 Testnet"
+ELYSIUM_RPC_URL = "https://testnet-rpc.elysium.kinetiq.xyz"
+VAULT_CONTRACT = "0x05Aa229Aec102f78CE0E852A812a388F076Aa555"
+HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
+SUPABASE_URL = "https://xwhqbyhrytxkdfkuzjvy.supabase.co"
+
+# Cloudflare Edge Placement
+[placement]
+mode = "smart"

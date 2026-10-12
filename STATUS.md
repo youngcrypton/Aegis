@@ -8,9 +8,10 @@ Last updated: 2026-10-11
 
 - **Done:** kit-aligned landing page with the approved logo mark, kit tokens, and light and dark themes. Hero, protocol metrics, mechanics, comparison, security, footer.
 - **Done:** "Built on" strip with Elysium and Ascend logos, drifting in a straight line.
-- **Done:** mobile top bar with a menu button. It opens How it works, Why AEGIS and Security.
-- **Open:** footer links (About, Contact, Changelog, Privacy Policy, Terms of Service, Documentation) are placeholders (`href="#"`). They need real URLs.
-- **Open:** "Launch app" links point to `http://localhost:3000/#simulator`. They need the live app URL.
+- **Done:** mobile top bar with a menu button. It opens How it works, Why AEGIS, Security, and Enter terminal.
+- **Done:** Private Testnet Beta Access Gate (`access.html`, `app/access.html`): "Launch app" and "Launch app terminal" CTAs route to the access verification page.
+- **Done:** 50 Institutional Beta Access Codes generated and tracked in `ACCESS_CODES.md` with client-side verification via `access-codes.js`. Direct access to `app/index.html` is gated until Mainnet launch.
+- **Open:** footer links (About, Contact, Privacy Policy, Terms of Service) are placeholders (`href="#"`). They need real URLs.
 - **Open:** the brand kit's open items (wordmark case "Aegis" vs "AEGIS", navy on white) are unresolved. Follow the kit as written and flag them.
 
 ## Brand
@@ -32,6 +33,18 @@ Last updated: 2026-10-11
  - Ephemeral Session Key Delegation modal & handler enforcing Invariant INV-1 non-custodial scope.
  - Interactive stress test simulations: Flash crash (-18%), Retracement (-8% + V-bounce with trailing take-profit), market reset, and Invariant INV-3 emergency manual override killswitch.
  - Verified layout responsiveness with zero horizontal overflow at 390px mobile width. Running locally at `http://localhost:3000/`.
+ - **Done:** Top-right 3-line Session Drawer (`#appDrawerBtn` / `#appDrawer`): sleek slide-out menu with active testnet session badge, direct view switching between Vault Risk Sentinel and Pro Trading Terminal, documentation links, and session lock.
+ - **Done:** Full 237-Pair HyperCore & Hyperliquid L1 Market Universe (`app/hypercore-universe.js`): complete listing of all 234+ perpetuals and spot ecosystem pairs fetched from official `metaAndAssetCtxs` API, categorised into HyperCore, Majors, DeFi, Memes, AI & Infra, and Alts.
+ - **Done:** Token Logos & Fallback Badges: every market item displays its authentic token logo (with local Hyperliquid mark for HYPE, and verified multi-source icon feeds) with styled initial fallbacks and leverage tags (e.g., 10x, 40x).
+ - **Done:** Dual-Engine Charting Suite (`#btnEngineHyperCore` / `#btnEngineTV`):
+   1. **HyperCore Direct (Official)**: High-performance HTML5 Canvas candlestick and volume histogram engine fetching live OHLCV data from Hyperliquid L1 REST/WebSocket (`candleSnapshot`), complete with interactive crosshair, price/time tags, live OHLC readout bar, and seamless fallback simulation.
+   2. **TradingView Advanced Indicators**: Integrated embed with smart CEX symbol resolution ensuring 100% of tokens load without "Invalid symbol" errors.
+ - **Done:** Real-Time Hyperliquid L1 API Feed (`https://api.hyperliquid.xyz/info` `allMids`): continuous 2.5s polling across all 237 pairs, animating prices in real-time with green/red flash ticks and updating active candlestick bars synchronously.
+ - **Done:** Connected Account & Balances Modal (`#walletAccountModal`): tapping the wallet button opens a clean modal showing connected address, explorer link, address copy button, live Elysium L2 balances (HYPE, USDC, AEGIS, KNTQ), and a functioning "Disconnect Wallet" button to disconnect anytime.
+ - **Done:** Real On-Chain RPC Integration: queries Elysium L2 testnet contracts (`0x05Aa...` Vault, `0xcA03...` HYPE, `0x7125...` USDC, `0xbCF2...` AEGIS) and native gas token (KNTQ) to display real balances on the terminal.
+ - **Done:** Brand Color Uniformity: matched landing page ambient background gradient (`var(--bg-base)`) across `html` and `body` in `app/styles.css` for both dark and light modes with seamless token transition.
+ - **Done:** Supabase Backend Architecture (`supabase/schema.sql`, `supabase/config.toml`, `app/supabase-client.js`): tables for `beta_access_codes`, `vault_sessions`, and `sentinel_alerts` with RLS policies and client bridge.
+ - **Done:** Cloudflare Deployment Suite (`wrangler.toml`, `_headers`, `_routes.json`, `.env.example`): production and staging Cloudflare Pages / Workers hosting configuration with strict security headers and smart edge placement.
 
 ## Archive
 
@@ -134,11 +147,33 @@ Last updated: 2026-10-11
   - Removed all generic emojis from `README.md`, `download.html`, `docs/docs.js`, `LAUNCH_POST.md`, `MEMORY.md`, `brand/kit/aegis-brand-kit.html`, `web3-hackathon-architect/`, and `.agents/skills/`.
   - Re-rendered demo thumbnails and scripts with standard, institutional typographic markers and crisp geometric badges.
 
+- **Done:** Official On-Chain Deployment & Seeding on **Elysium L2 Testnet (Chain ID 99801)**:
+  - Broadcasted [`script/DeployAegis.s.sol`](file:///c:/Users/ascend%20X%20elysium/script/DeployAegis.s.sol) and [`script/SeedElysiumLive.s.sol`](file:///c:/Users/ascend%20X%20elysium/script/SeedElysiumLive.s.sol) to live network via RPC `https://testnet-rpc.elysium.kinetiq.xyz`.
+  - Deployed Contracts & Live Addresses recorded in [`deployments.json`](file:///c:/Users/ascend%20X%20elysium/deployments.json):
+    - `AegisVault`: `0x05Aa229Aec102f78CE0E852A812a388F076Aa555`
+    - `AegisSentinelRegistry`: `0x1275D096B9DBf2347bD2a131Fb6BDaB0B4882487`
+    - `AegisFeeCollector`: `0xC6bA8C3233eCF65B761049ef63466945c362EdD2`
+    - `MockERC20 (USDC)`: `0x712516e61C8B383dF4A63CFe83d7701Bce54B03e`
+    - `MockERC20 (AEGIS)`: `0xbCF26943C0197d2eE0E5D05c716Be60cc2761508`
+    - `MockERC20 (HYPE)`: `0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44`
+    - `AscendHookPool`: `0x59F2f1fCfE2474fD5F0b9BA1E73ca90b143Eb8d0`
+  - Live On-Chain Seeding Verified via `cast call`:
+    - Sentinel Operator (`0x7099...79C8`) bonded 25,000 $AEGIS (`isActive: true`).
+    - Trader (`0x3C44...93BC`) registered 1,000 HYPE collateral / $32,000 USDC debt (80% LTV).
+    - ProConfig calibrated ($H \le 1.10$, 50% hedge ratio, 1.5% trailing take-profit).
+    - Active trade-only session key (`0x15d3...6A65`) delegated and confirmed on-chain.
+
+- **Done:** Protocol Ownership Migration & Administration Transfer to User Wallet:
+  - Executed [`script/TransferOwnership.s.sol`](file:///c:/Users/ascend%20X%20elysium/script/TransferOwnership.s.sol) on Elysium L2 Testnet (`Chain ID 99801`).
+  - Transferred `owner()` of `AegisVault`, `AegisSentinelRegistry`, and `AegisFeeCollector` to `0xf0e721C996e76a0Cd5805975464CbE3E98839D64`.
+  - Re-routed `yieldDistributionTarget` on `AegisFeeCollector` to `0xf0e721C996e76a0Cd5805975464CbE3E98839D64`.
+  - Funded user wallet with 0.015 KNTQ native testnet gas and minted test assets (50,000 $AEGIS, 10,000 $HYPE, 100,000 $USDC).
+  - Verified on-chain via `cast call` that `0x7099...` has 0 remaining administrative control; `0xf0e721...` is the sole confirmed owner.
+
 ## Next
 
-- Awaiting user instructions on additional roadmap items.
+- Awaiting user instructions on additional roadmap items or testnet keeper connection.
 - Community governance resolution on open brand items (wordmark case "Aegis" vs "AEGIS", and navy on white token nuances).
-- Live deployment to Elysium L2 testnet upon community multisig schedule.
 
 
 

@@ -26,6 +26,10 @@ export const configSchema = z.object({
     .string()
     .regex(privateKeyRegex, "Invalid 32-byte hex private key")
     .default("0x0000000000000000000000000000000000000000000000000000000000000001"),
+  SENTINEL_OPERATOR_PRIVATE_KEY: z
+    .string()
+    .regex(privateKeyRegex, "Invalid 32-byte hex private key")
+    .optional(),
   SENTINEL_OPERATOR_ADDRESS: z
     .string()
     .regex(ethereumAddressRegex, "Invalid Ethereum address")

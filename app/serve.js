@@ -28,11 +28,10 @@ const server = http.createServer((req, res) => {
   }
 
   let filePath;
-  if (reqUrl.startsWith('/brand/')) {
+  if (reqUrl.startsWith('/brand/') || reqUrl.startsWith('/assets/')) {
     filePath = path.join(REPO_ROOT, reqUrl);
-    // Security check: must remain within REPO_ROOT/brand
-    const brandDir = path.join(REPO_ROOT, 'brand');
-    if (!filePath.startsWith(brandDir)) {
+    // Security check: must remain within REPO_ROOT
+    if (!filePath.startsWith(REPO_ROOT)) {
       res.writeHead(403, { 'Content-Type': 'text/plain' });
       res.end('403 Forbidden');
       return;

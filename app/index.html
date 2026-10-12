@@ -8,6 +8,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script src="access-codes.js"></script>
+  <script>
+    if (window.AegisAccess && !window.AegisAccess.isAuthorized()) {
+      window.location.replace('access.html');
+    }
+  </script>
 </head>
 <body>
 
@@ -50,7 +57,7 @@
         <span>Elysium L2</span>
         <strong>99801</strong>
       </div>
-      <div class="latency-badge" id="latencyBadge">
+      <div class="latency-badge hide-compact" id="latencyBadge">
         <span>0x0801 Precompile:</span>
         <strong id="latencyVal">68ms</strong>
       </div>
@@ -61,67 +68,224 @@
       <div class="view-mode-switcher" id="viewModeSwitcher" role="tablist" aria-label="Terminal View Mode">
         <button class="mode-pill-btn" id="modeLiteBtn" type="button" role="tab" aria-selected="false" data-mode="lite">
           <svg class="mode-pill-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Lite Auto-Pilot</span>
+          <span class="mode-label">Lite Auto-Pilot</span>
         </button>
         <button class="mode-pill-btn active" id="modeProBtn" type="button" role="tab" aria-selected="true" data-mode="pro">
           <svg class="mode-pill-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-          <span>Pro Terminal</span>
+          <span class="mode-label">Pro Terminal</span>
         </button>
       </div>
     </div>
 
     <div class="header-right">
-      <div class="session-badge safe" id="sessionBadge">
+      <div class="beta-badge hide-compact" id="betaAccessBadge" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:0.75rem; color:var(--accent);">
+        <span class="pulse-indicator"></span>
+        <span>Beta:</span>
+        <strong id="betaAccessCodeText" class="font-mono">Authorized</strong>
+        <button id="btnLockTerminal" type="button" title="Lock Terminal" style="background:none; border:none; color:var(--ink-2); cursor:pointer; font-size:0.75rem; padding:0 2px; margin-left:4px; line-height:1;">✕</button>
+      </div>
+
+      <div class="session-badge safe hide-laptop" id="sessionBadge">
         <span>Session Key:</span>
         <strong>Trade-Only (INV-1)</strong>
       </div>
 
       <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
-        <span id="themeToggleText">Dark mode</span>
+        <span id="themeToggleText" class="hide-sm">Dark mode</span>
       </button>
+
+      <a class="faucet-pill-btn" id="faucetHeaderBtn" href="https://elysium.kinetiq.xyz/faucet" target="_blank" rel="noopener noreferrer" title="Get Free Testnet HYPE from Elysium Faucet">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span>Faucet ↗</span>
+      </a>
 
       <button class="wallet-btn" id="walletBtn" type="button">
         <span class="wallet-dot"></span>
         <span class="wallet-addr" id="walletAddrText">Connect Wallet</span>
       </button>
+
+      <button class="app-drawer-btn" id="appDrawerBtn" type="button" aria-expanded="false" aria-controls="appDrawer" aria-label="Open Navigation & Session Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+
+  <!-- Navigation & Session Drawer Backdrop -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- Slide-out Navigation & Session Drawer -->
+  <aside class="app-drawer" id="appDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <svg class="drawer-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
+          <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
+          <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
+          <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#aegis-blade-grad)"/>
+        </svg>
+        <span class="drawer-title">Aegis</span>
+      </div>
+      <button class="drawer-close-btn" id="drawerCloseBtn" type="button" aria-label="Close menu">&times;</button>
+    </div>
+
+    <!-- Session Badge Card -->
+    <div class="drawer-session-card">
+      <div class="session-card-top">
+        <span class="pulse-indicator"></span>
+        <span class="session-net">Elysium L2 Testnet (99801)</span>
+      </div>
+      <div class="session-card-mid font-mono">
+        <span class="session-label">Active Beta Pass:</span>
+        <strong id="drawerBetaCodeText">AEGIS-TESTNET</strong>
+      </div>
+      <div class="session-card-bot" style="flex-direction: column; gap: 8px; align-items: stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Wallet Session:</span>
+          <strong class="text-accent font-mono" id="drawerWalletAddrText">Connect Wallet</strong>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:2px;">
+          <button class="wallet-action-btn" id="drawerManageWalletBtn" type="button" style="flex:1; justify-content:center; font-size:11px; padding:5px 8px;">
+            <span>Live Balances</span>
+          </button>
+          <button class="wallet-action-btn" id="drawerDisconnectWalletBtn" type="button" style="color:var(--danger); border-color:var(--danger); font-size:11px; padding:5px 8px;">
+            <span>Disconnect</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Options -->
+    <nav class="drawer-nav">
+      <span class="drawer-section-label">Terminal Navigation</span>
+
+      <button class="drawer-nav-item active" id="drawerNavVault" type="button">
+        <div class="nav-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="nav-item-text">
+          <span class="nav-item-title">Vault Risk Sentinel</span>
+          <span class="nav-item-sub">Health factor, buffer & liquidation defense</span>
+        </div>
+      </button>
+
+      <button class="drawer-nav-item" id="drawerNavTrading" type="button">
+        <div class="nav-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="nav-item-text">
+          <div class="nav-item-title-row">
+            <span class="nav-item-title">Trading Terminal & Charts</span>
+            <span class="status-pill pill-accent">HyperCore</span>
+          </div>
+          <span class="nav-item-sub">All Hyperliquid coins, technicals & execution</span>
+        </div>
+      </button>
+
+      <div class="drawer-divider"></div>
+      <span class="drawer-section-label">Resources & Network</span>
+
+      <a class="drawer-nav-link" href="http://localhost:8000/docs/index.html" target="_blank" rel="noopener">
+        <div class="nav-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="nav-item-text">
+          <span class="nav-item-title">Protocol Documentation ↗</span>
+          <span class="nav-item-sub">Specifications, quant math & contract audit</span>
+        </div>
+      </a>
+
+      <a class="drawer-nav-link" href="https://elysium.kinetiq.xyz/testnet-explorer" target="_blank" rel="noopener">
+        <div class="nav-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="nav-item-text">
+          <span class="nav-item-title">Elysium Explorer ↗</span>
+          <span class="nav-item-sub">Chain ID 99801 contract verification</span>
+        </div>
+      </a>
+
+      <div class="drawer-divider"></div>
+
+      <button class="drawer-lock-btn" id="drawerLockBtn" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Lock Session & Exit Terminal</span>
+      </button>
+    </nav>
+  </aside>
 
   <!-- Main Container -->
   <main class="app-container">
 
-    <!-- Top Bento: Hero Stats Bar -->
-    <section class="hero-metrics">
-      <div class="metric-card" id="heroTvlCard">
-        <div class="metric-label" id="heroTvlLabel">Protected Portfolio TVL</div>
-        <div class="metric-value font-mono" id="heroTvlValue">$2,845,200 <span class="metric-unit">USDC</span></div>
-        <div class="metric-sub text-accent" id="heroTvlSub">Tier 1 Pro Allocation: 100%</div>
-      </div>
+    <!-- View 1: Main Vault Risk Sentinel Dashboard (Uncluttered) -->
+    <div id="vaultDashboardView">
 
-      <div class="metric-card">
-        <div class="metric-label">Health Factor (H)</div>
-        <div class="metric-value font-mono text-accent" id="heroHealthValue">1.41 <span class="status-pill pill-accent">SAFE</span></div>
-        <div class="metric-sub" id="heroLiquidationBuffer">Distance to Liquidation: +21.3%</div>
-      </div>
+      <!-- Progressive Horizontal Metrics Ticker (Seamless Infinite Loop matching Landing Page Ecosystem Marquee) -->
+      <section class="hero-metrics-ticker" aria-label="Live Protocol Metrics Ticker">
+        <div class="hero-metrics-viewport">
+          <div class="hero-metrics-track">
+            <!-- Track Set A (Primary) -->
+            <div class="metric-card" id="heroTvlCard">
+              <div class="metric-label" id="heroTvlLabel">Protected Collateral (Micro)</div>
+              <div class="metric-value font-mono" id="heroTvlValue">0.10 <span class="metric-unit">HYPE ($8.35)</span></div>
+              <div class="metric-sub text-accent" id="heroTvlSub">Testnet Faucet Cap: 0.10 HYPE</div>
+            </div>
 
-      <div class="metric-card">
-        <div class="metric-label">Sentinel Defense Status</div>
-        <div class="metric-value font-mono text-accent" id="heroSentinelStatus">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
-        <div class="metric-sub">Trigger: $44.20 / H &le; 1.10</div>
-      </div>
+            <div class="metric-card">
+              <div class="metric-label">Health Factor (H)</div>
+              <div class="metric-value font-mono text-accent" id="heroHealthValue">1.41 <span class="status-pill pill-accent">SAFE</span></div>
+              <div class="metric-sub" id="heroLiquidationBuffer">Distance to Liquidation: +21.3%</div>
+            </div>
 
-      <div class="metric-card">
-        <div class="metric-label">Liquidations Averted</div>
-        <div class="metric-value font-mono text-accent" id="heroLiquidationsSaved">$48,250 <span class="metric-unit">SAVED</span></div>
-        <div class="metric-sub">Penalties Spared: 100% Non-Custodial</div>
-      </div>
+            <div class="metric-card">
+              <div class="metric-label">Sentinel Defense Status</div>
+              <div class="metric-value font-mono text-accent" id="heroSentinelStatus">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
+              <div class="metric-sub" id="heroSentinelSub">Trigger: $44.20 / H &le; 1.10</div>
+            </div>
 
-      <div class="metric-card">
-        <div class="metric-label">$AEGIS Burned (Flywheel)</div>
-        <div class="metric-value font-mono text-violet" id="heroBurnedTokens">164,820 <span class="metric-unit">AEGIS</span></div>
-        <div class="metric-sub">Real Yield APR: 18.4% USDC</div>
-      </div>
-    </section>
+            <div class="metric-card">
+              <div class="metric-label">Liquidations Averted</div>
+              <div class="metric-value font-mono text-accent" id="heroLiquidationsSaved">$48,250 <span class="metric-unit">SAVED</span></div>
+              <div class="metric-sub">Penalties Spared: 100% Non-Custodial</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">$AEGIS Burned (Flywheel)</div>
+              <div class="metric-value font-mono text-violet" id="heroBurnedTokens">164,820 <span class="metric-unit">AEGIS</span></div>
+              <div class="metric-sub">Real Yield APR: 18.4% USDC</div>
+            </div>
+
+            <!-- Track Set B (Mirrored for Continuous Seamless Loop) -->
+            <div class="metric-card metric-card-mirror" aria-hidden="true">
+              <div class="metric-label heroTvlLabel-mirror">Protected Collateral (Micro)</div>
+              <div class="metric-value font-mono heroTvlValue-mirror">0.10 <span class="metric-unit">HYPE ($8.35)</span></div>
+              <div class="metric-sub text-accent heroTvlSub-mirror">Testnet Faucet Cap: 0.10 HYPE</div>
+            </div>
+
+            <div class="metric-card metric-card-mirror" aria-hidden="true">
+              <div class="metric-label">Health Factor (H)</div>
+              <div class="metric-value font-mono text-accent heroHealthValue-mirror">1.41 <span class="status-pill pill-accent">SAFE</span></div>
+              <div class="metric-sub heroLiquidationBuffer-mirror">Distance to Liquidation: +21.3%</div>
+            </div>
+
+            <div class="metric-card metric-card-mirror" aria-hidden="true">
+              <div class="metric-label">Sentinel Defense Status</div>
+              <div class="metric-value font-mono text-accent heroSentinelStatus-mirror">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
+              <div class="metric-sub heroSentinelSub-mirror">Trigger: $44.20 / H &le; 1.10</div>
+            </div>
+
+            <div class="metric-card metric-card-mirror" aria-hidden="true">
+              <div class="metric-label">Liquidations Averted</div>
+              <div class="metric-value font-mono text-accent heroLiquidationsSaved-mirror">$48,250 <span class="metric-unit">SAVED</span></div>
+              <div class="metric-sub">Penalties Spared: 100% Non-Custodial</div>
+            </div>
+
+            <div class="metric-card metric-card-mirror" aria-hidden="true">
+              <div class="metric-label">$AEGIS Burned (Flywheel)</div>
+              <div class="metric-value font-mono text-violet heroBurnedTokens-mirror">164,820 <span class="metric-unit">AEGIS</span></div>
+              <div class="metric-sub">Real Yield APR: 18.4% USDC</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
     <!-- Simulation Bar: Interactive Test Engine -->
     <section class="simulation-bar">
@@ -669,6 +833,171 @@
       </div>
     </section>
 
+    </div> <!-- /#vaultDashboardView -->
+
+    <!-- View 2: Dedicated Pro Trading Terminal & HyperCore Markets View -->
+    <div id="tradingTerminalView" style="display: none;">
+
+      <!-- Trading Terminal Top Navigation & Ticker Banner -->
+      <section class="tt-topbar">
+        <div class="tt-topbar-left">
+          <button class="tt-back-btn" id="btnBackToVault" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Back to Vault Defense</span>
+          </button>
+          <div class="tt-separator"></div>
+          <div class="tt-coin-profile">
+            <div class="tt-coin-icon-wrap" id="activeCoinIconWrap">
+              <span class="tt-coin-badge font-mono" id="activeCoinSymbolBadge">HYPE</span>
+            </div>
+            <div class="tt-coin-titles">
+              <div class="tt-coin-title-row">
+                <span class="tt-coin-pair" id="activeCoinPairTitle">HYPE / USDT</span>
+                <span class="status-pill pill-accent">HyperCore L1</span>
+                <span class="status-pill pill-accent">0x0802 Hedged</span>
+                <span class="status-pill pill-accent" id="ttLiveApiBadge" style="display:inline-flex; align-items:center; gap:5px;">
+                  <span class="live-pulse-dot"></span> Live Hyperliquid API
+                </span>
+              </div>
+              <span class="tt-coin-fullname" id="activeCoinFullname">Hyperliquid Flagship L1 Native Perp</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tt-topbar-right font-mono">
+          <div class="tt-stat-item">
+            <span class="tt-stat-lbl">Index Mark</span>
+            <span class="tt-stat-val text-accent" id="activeCoinMarkPrice">$48.50</span>
+          </div>
+          <div class="tt-stat-item">
+            <span class="tt-stat-lbl">24h Change</span>
+            <span class="tt-stat-val text-accent" id="activeCoinChange">+3.42%</span>
+          </div>
+          <div class="tt-stat-item">
+            <span class="tt-stat-lbl">Liquidation Line</span>
+            <span class="tt-stat-val text-danger">$40.00</span>
+          </div>
+          <div class="tt-stat-item">
+            <span class="tt-stat-lbl">Hedge Trigger</span>
+            <span class="tt-stat-val text-hedge">$44.20</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trading Terminal Main Workspace Grid -->
+      <div class="tt-workspace-grid">
+
+        <!-- Column 1: HyperCore Markets Browser (Search & All Supported Tokens) -->
+        <aside class="tt-market-sidebar card">
+          <div class="market-sidebar-header">
+            <div class="market-header-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V9"/></svg>
+              <span>HyperCore Markets</span>
+              <span class="live-pulse-dot" id="marketApiPulse" title="Hyperliquid L1 Live API Synced" style="margin-left: 4px;"></span>
+            </div>
+            <span class="market-count-pill font-mono" id="marketCountPill">26 Pairs</span>
+          </div>
+
+          <!-- Market Search Input -->
+          <div class="market-search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="marketSearchInput" class="market-search-input" placeholder="Search Hyperliquid coins (e.g. PURR, HYPE, SUI)..." autocomplete="off" spellcheck="false">
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="market-cat-tabs" id="marketCatTabs" role="tablist">
+            <button class="market-cat-btn active" data-cat="all" type="button">All</button>
+            <button class="market-cat-btn" data-cat="hypercore" type="button">HyperCore</button>
+            <button class="market-cat-btn" data-cat="majors" type="button">Majors</button>
+            <button class="market-cat-btn" data-cat="defi" type="button">DeFi</button>
+            <button class="market-cat-btn" data-cat="memes" type="button">Memes</button>
+            <button class="market-cat-btn" data-cat="ai" type="button">AI & Infra</button>
+          </div>
+
+          <!-- Markets Scroll List -->
+          <div class="markets-scroll-list" id="marketsScrollList" role="listbox">
+            <!-- Market items injected or initialized by JS -->
+          </div>
+
+          <!-- Custom Ticker Input Box -->
+          <div class="custom-ticker-box">
+            <span class="custom-ticker-lbl">Custom Token / Contract:</span>
+            <div class="custom-ticker-input-row">
+              <input type="text" id="customTickerInput" class="custom-ticker-input font-mono" placeholder="e.g. BINANCE:SOLUSDT">
+              <button class="custom-ticker-btn" id="btnLoadCustomTicker" type="button">Load</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Column 2: Full-Height Pro TradingView Chart Suite with AEGIS Watermark -->
+        <section class="tt-chart-main card">
+          <div class="tt-chart-toolbar">
+            <div class="tt-chart-toolbar-left">
+              <div class="tt-engine-pills" role="tablist" aria-label="Chart Engine Selection">
+                <button class="tt-engine-btn active" id="btnEngineHyperCore" type="button" role="tab" aria-selected="true" title="Official Hyperliquid L1 WebSocket / REST Candlestick Feed (100% Reliable For All Pairs)">
+                  <span class="live-pulse-dot" style="margin-right:4px;"></span>
+                  <span>HyperCore Direct (Official)</span>
+                </button>
+                <button class="tt-engine-btn" id="btnEngineTV" type="button" role="tab" aria-selected="false" title="TradingView Advanced Indicators & Charting Engine">
+                  <span>TradingView</span>
+                </button>
+              </div>
+
+              <!-- Live OHLC Readout Bar -->
+              <div class="tt-ohlc-bar font-mono" id="ttOhlcBar">
+                <span>O: <strong id="ohlcOpen">--</strong></span>
+                <span>H: <strong id="ohlcHigh">--</strong></span>
+                <span>L: <strong id="ohlcLow">--</strong></span>
+                <span>C: <strong id="ohlcClose">--</strong></span>
+                <span>Vol: <strong id="ohlcVol">--</strong></span>
+              </div>
+            </div>
+
+            <!-- Timeframe Resolution Pills -->
+            <div class="tt-intervals" id="ttIntervals" role="tablist" aria-label="Timeframe">
+              <button class="tt-interval-btn" data-interval="1m" type="button">1m</button>
+              <button class="tt-interval-btn" data-interval="5m" type="button">5m</button>
+              <button class="tt-interval-btn active" data-interval="15m" type="button">15m</button>
+              <button class="tt-interval-btn" data-interval="1h" type="button">1h</button>
+              <button class="tt-interval-btn" data-interval="4h" type="button">4h</button>
+              <button class="tt-interval-btn" data-interval="1d" type="button">1D</button>
+            </div>
+          </div>
+
+          <!-- Chart Viewport Container with AEGIS Floating Watermark -->
+          <div class="tt-chart-container" id="ttChartContainer">
+            <!-- 1. Native HyperCore Candlestick Canvas Engine (Hyperliquid Direct) -->
+            <div id="hypercore_chart_wrap" class="tt-hypercore-canvas-wrap">
+              <canvas id="hypercore_canvas_chart"></canvas>
+            </div>
+
+            <!-- 2. TradingView Embed Engine -->
+            <div id="tradingview_chart_embed" class="tt-tv-embed" style="display:none;"></div>
+
+            <!-- Loading Spinner Overlay -->
+            <div id="chart_loading_overlay" class="chart-loading-overlay" style="display:none;">
+              <span class="chart-spinner"></span>
+              <span>Streaming Hyperliquid L1 orderbook candles...</span>
+            </div>
+
+            <!-- Floating AEGIS Master Brand Watermark -->
+            <div class="aegis-chart-watermark" aria-hidden="true">
+              <svg class="watermark-logo-svg" viewBox="0 0 40 40">
+                <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
+                <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
+                <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#aegis-blade-grad)"/>
+              </svg>
+              <div class="watermark-text">
+                <span class="watermark-title">AEGIS</span>
+                <span class="watermark-sub">PROTECTED RISK SENTINEL</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
   </main>
 
   <!-- Session Key Delegation Modal (INV-1) -->
@@ -700,9 +1029,144 @@
     </div>
   </div>
 
+  <!-- Elysium L2 Cryptographic Session Signing Modal -->
+  <div class="modal-overlay" id="elysiumSignModal" style="display: none;">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header-row">
+        <h3>Elysium L2 Signature Request</h3>
+        <button class="modal-close-icon" id="btnCloseSignModal" type="button" aria-label="Close modal">&times;</button>
+      </div>
+      <p class="modal-desc">
+        Authorize your non-custodial trading session on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. This cryptographic signature authenticates account ownership and binds your wallet to AEGIS Sentinel Precompiles (INV-1). No gas fee is consumed.
+      </p>
+
+      <div class="modal-field">
+        <label>Network & RPC Endpoint</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:8px 12px; font-size:12px;">
+          <span style="color:var(--ink); font-weight:600;">Elysium L2 Testnet</span>
+          <span class="font-mono text-accent">Chain ID: 99801</span>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label>Account Address</label>
+        <input class="modal-input font-mono" id="signModalAccountInput" type="text" readonly value="0x...">
+      </div>
+
+      <div class="modal-field">
+        <label>Signature Payload (EIP-191 personal_sign)</label>
+        <textarea class="modal-input font-mono" id="signModalPayloadText" rows="4" readonly style="resize:none; font-size:11px; line-height:1.4; color:var(--ink-2);"></textarea>
+      </div>
+
+      <div class="modal-actions" style="margin-top:10px;">
+        <button class="sim-btn" id="btnRejectSign" type="button">Reject</button>
+        <button class="btn-primary" id="btnConfirmSign" type="button" style="padding: 0 18px;">
+          Sign & Connect to Elysium L2
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Wallet Account & Live Balances Modal -->
+  <div class="modal-overlay" id="walletAccountModal" style="display: none;">
+    <div class="modal-card wallet-account-card">
+      <div class="modal-header-row">
+        <h3>Connected Elysium Account</h3>
+        <button class="modal-close-icon" id="btnCloseWalletModal" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Address & Network bar -->
+      <div class="wallet-address-bar">
+        <div class="wallet-address-left">
+          <div class="wallet-avatar-badge" id="walletAvatarBadge">0x</div>
+          <div class="wallet-address-details">
+            <span class="wallet-full-addr font-mono" id="walletFullAddrText">0x0000...0000</span>
+            <span class="wallet-network-label">
+              <span class="live-pulse-dot"></span>
+              <span>Elysium L2 Testnet (Chain ID 99801)</span>
+              <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 6px; margin-left:4px;">Signed</span>
+            </span>
+          </div>
+        </div>
+        <div class="wallet-address-actions">
+          <button class="wallet-action-btn" id="btnCopyWalletAddr" type="button" title="Copy Address">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span id="copyAddrBtnText">Copy</span>
+          </button>
+          <a class="wallet-action-btn" id="linkExplorerWallet" href="https://elysium.kinetiq.xyz/testnet-explorer" target="_blank" rel="noopener noreferrer" title="View on Explorer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Explorer</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Elysium Faucet Balances & Actions -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-2);">Live Elysium Testnet Balances</span>
+          <span id="balRefreshIndicator" style="font-size:11px; color:var(--accent); display:flex; align-items:center; gap:4px;">
+            <span class="live-pulse-dot"></span> Live RPC Sync
+          </span>
+        </div>
+
+        <!-- Primary Live HYPE Card -->
+        <div style="background:var(--ground); border:1px solid var(--rule); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="token-badge-icon" style="width:22px; height:22px; font-size:11px;">H</span>
+              <div>
+                <div style="font-weight:600; color:var(--ink); font-size:13px;">Elysium HYPE (Collateral & Gas)</div>
+                <div style="font-size:11px; color:var(--ink-2);">Live On-Chain Balance from Elysium Testnet Faucet</div>
+              </div>
+            </div>
+            <a class="faucet-pill-btn" href="https://elysium.kinetiq.xyz/faucet" target="_blank" rel="noopener noreferrer">
+              <span>Claim Faucet ↗</span>
+            </a>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:4px;">
+            <div>
+              <div class="font-mono" id="modalHypeBal" style="font-size:24px; font-weight:700; color:var(--ink); letter-spacing:-0.02em;">0.0000</div>
+              <div class="font-mono" id="modalHypeUsd" style="font-size:12px; color:var(--ink-2);">≈ $0.00 USD</div>
+            </div>
+            <div id="modalFaucetStatusBadge">
+              <span class="status-pill pill-accent" id="modalHypeStatusPill">Faucet Synced</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- On-Chain Vault Position State -->
+      <div class="wallet-vault-card">
+        <div class="wallet-vault-header">
+          <span>AegisVault On-Chain Status (0x05Aa...a555)</span>
+          <span class="status-pill pill-accent" id="modalVaultActivePill">SYNCHRONIZED</span>
+        </div>
+        <div class="wallet-vault-stats">
+          <div>Vault Collateral: <strong class="font-mono text-accent" id="modalVaultCol">0.0000 HYPE</strong></div>
+          <div>Protected Debt: <strong class="font-mono" id="modalVaultDebt">$0.00 USD</strong></div>
+          <div>Health Factor: <strong class="font-mono text-accent" id="modalVaultHf">SAFE</strong></div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="modal-actions" style="justify-content: space-between; align-items: center; margin-top: 4px;">
+        <button class="wallet-action-btn" id="btnRefreshBalances" type="button">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          <span>Refresh Balances</span>
+        </button>
+        <button class="btn-danger-outline" id="btnDisconnectWallet" type="button">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+          <span>Disconnect Wallet</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Notification Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="hypercore-universe.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

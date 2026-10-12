@@ -18,3 +18,7 @@ remotion/public/audio/*.wav
 # Local agent instruction files (kept on this machine, not in the repo)
 CLAUDE.md
 GEMINI.md
+
+# Private Beta Access Codes (confidential, do not commit or push)
+ACCESS_CODES.md
+ACCESS_CODE.md

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS Protocol — Private Beta Terminal Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/brand/kit/tokens.css">
+  <style>
+    :root {
+      --bg-base: linear-gradient(135deg, #FFF6EC 0%, #D6F5EC 45%, #DCCBFF 100%);
+      --ground: #F7F1FA;
+      --raised: #FFFFFF;
+      --ink: #161230;
+      --ink-2: #5C5778;
+      --rule: rgba(22, 18, 48, 0.13);
+      --accent: #07705F;
+      --on-accent: #FFFFFF;
+      --hedge: #A34A08;
+      --danger: #B8254F;
+      --violet: #6930EA;
+      --display: "Marcellus", Georgia, serif;
+      --text: "Inter", system-ui, sans-serif;
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+        --ground: #1C2238;
+        --raised: #22403F;
+        --ink: #E8ECF8;
+        --ink-2: #A7AFCB;
+        --rule: rgba(220, 230, 255, 0.12);
+        --accent: #5FD9BE;
+        --on-accent: #04110E;
+        --hedge: #FFBE7A;
+        --danger: #FF8A9A;
+        --violet: #C9A6FF;
+        color-scheme: dark;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-base: linear-gradient(135deg, #2B2A33 0%, #1C2238 45%, #0F2C2C 100%);
+      --ground: #1C2238;
+      --raised: #22403F;
+      --ink: #E8ECF8;
+      --ink-2: #A7AFCB;
+      --rule: rgba(220, 230, 255, 0.12);
+      --accent: #5FD9BE;
+      --on-accent: #04110E;
+      --hedge: #FFBE7A;
+      --danger: #FF8A9A;
+      --violet: #C9A6FF;
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background: var(--bg-base);
+      background-attachment: fixed;
+      transition: background 500ms ease;
+      scroll-behavior: smooth;
+      min-height: 100%;
+    }
+
+    body {
+      background: var(--bg-base) fixed;
+      background-color: var(--ground);
+      color: var(--ink);
+      font-family: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding: 0;
+      line-height: 1.6;
+      transition: color 500ms ease;
+    }
+
+    /* Top Navigation */
+    .gate-header {
+      height: 68px;
+      background: color-mix(in srgb, var(--ground) 80%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 clamp(16px, 4vw, 36px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .brand-logo-svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .brand-wordmark {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .header-pills {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .network-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--rule);
+      background: var(--ground);
+      font-size: 0.8rem;
+      color: var(--ink-2);
+    }
+
+    .network-pill strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--raised);
+      animation: pulse-ring 2s infinite ease-out;
+    }
+
+    @keyframes pulse-ring {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    .btn-theme-toggle {
+      background: var(--ground);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      font-family: var(--text);
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-theme-toggle:hover {
+      border-color: var(--ink-2);
+    }
+
+    /* Main Container */
+    .gate-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 24px);
+      min-width: 0;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 520px;
+      background: color-mix(in srgb, var(--raised) 75%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 40px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .gate-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .gate-phase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ground);
+      color: var(--accent);
+      border: 1px solid var(--rule);
+    }
+
+    .gate-count-badge {
+      font-size: 0.75rem;
+      color: var(--ink-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gate-title {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+      line-height: 1.2;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+
+    .gate-desc {
+      color: var(--ink-2);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .gate-desc strong {
+      color: var(--ink);
+    }
+
+    /* Form & Input */
+    .gate-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-2);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .gate-input {
+      width: 100%;
+      height: 48px;
+      background: var(--ground);
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      padding: 0 16px;
+      font-family: var(--text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gate-input::placeholder {
+      color: var(--ink-2);
+      opacity: 0.6;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .gate-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(7, 112, 95, 0.15);
+    }
+
+    .gate-btn-submit {
+      width: 100%;
+      height: 48px;
+      background: var(--accent);
+      color: var(--on-accent);
+      border: none;
+      border-radius: 16px;
+      font-family: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.2s ease, transform 0.1s ease;
+    }
+
+    .gate-btn-submit:hover {
+      opacity: 0.92;
+    }
+
+    .gate-btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .gate-btn-ghost {
+      width: 100%;
+      height: 44px;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      font-family: var(--text);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .gate-btn-ghost:hover {
+      background: var(--ground);
+      border-color: var(--ink-2);
+    }
+
+    /* Notice & Alert States */
+    .gate-alert {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .gate-alert.error {
+      display: block;
+      background: rgba(184, 37, 79, 0.12);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .gate-alert.success {
+      display: block;
+      background: rgba(7, 112, 95, 0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .gate-notice {
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--ink-2);
+    }
+
+    .gate-notice p {
+      line-height: 1.5;
+    }
+
+    .gate-footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+    }
+
+    .gate-footer-links a {
+      color: var(--ink-2);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .gate-footer-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Active Session Card state */
+    .session-active-card {
+      display: none;
+      background: var(--ground);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 16px;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .session-code-display {
+      font-family: var(--text);
+      font-weight: 600;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Global SVGs for 3-Blade Master Logo Mark -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="aegis-blade-grad" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+        <stop offset="0.00" stop-color="#1F0E4C"/>
+        <stop offset="0.10" stop-color="#241056"/>
+        <stop offset="0.20" stop-color="#40178D"/>
+        <stop offset="0.30" stop-color="#5A1FC9"/>
+        <stop offset="0.40" stop-color="#6928ED"/>
+        <stop offset="0.50" stop-color="#642FEB"/>
+        <stop offset="0.60" stop-color="#4C44CB"/>
+        <stop offset="0.70" stop-color="#305EA5"/>
+        <stop offset="0.80" stop-color="#157286"/>
+        <stop offset="0.90" stop-color="#087B75"/>
+        <stop offset="1.00" stop-color="#087E6D"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Header -->
+  <header class="gate-header">
+    <a href="/" class="brand-lockup" aria-label="AEGIS Home">
+      <svg class="brand-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
+        <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
+        <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
+        <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#aegis-blade-grad)"/>
+      </svg>
+      <span class="brand-wordmark">Aegis</span>
+    </a>
+
+    <div class="header-pills">
+      <div class="network-pill">
+        <span class="pulse-dot"></span>
+        <span>Elysium Testnet</span>
+        <strong>99801</strong>
+      </div>
+      <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle theme">
+        <span id="themeLabel">Light mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Gate Container -->
+  <main class="gate-main">
+    <div class="gate-card">
+      <div class="gate-badge-row">
+        <span class="gate-phase-badge">
+          <span class="pulse-dot"></span>
+          Ascend & Elysium Testnet
+        </span>
+        <span class="gate-count-badge">50 Private Seats</span>
+      </div>
+
+      <h1 class="gate-title">Enter Terminal Access Code</h1>
+
+      <p class="gate-desc">
+        AEGIS is currently operating in <strong>private testnet phase</strong> on Ascend and Elysium L2. Direct access to the Pro-Trader Risk Terminal is restricted to authorized partners and beta testers until Mainnet deployment.
+      </p>
+
+      <!-- Active Session Notice (Shown if user already authorized) -->
+      <div class="session-active-card" id="sessionActiveCard">
+        <div>
+          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); display:block; margin-bottom:4px;">Verified Beta Session</span>
+          <div class="session-code-display" id="sessionActiveCode">AEGIS-TESTNET-XXXX-XXXX</div>
+        </div>
+        <p style="font-size:0.85rem; color:var(--ink-2); line-height:1.4;">
+          Your device holds an authorized beta access session. You may enter the terminal directly.
+        </p>
+        <button class="gate-btn-submit" id="btnEnterAuthorized" type="button">
+          Enter Terminal ↗
+        </button>
+        <button class="gate-btn-ghost" id="btnRevokeSession" type="button">
+          Use a different code
+        </button>
+      </div>
+
+      <!-- Access Form -->
+      <form class="gate-form" id="gateForm">
+        <div class="input-group">
+          <label class="input-label" for="accessCodeInput">
+            <span>Invite Code</span>
+            <span style="font-weight:400; text-transform:none;">16 Alphanumeric</span>
+          </label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="accessCodeInput"
+              class="gate-input"
+              placeholder="AEGIS-TESTNET-XXXX-XXXX"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="gate-alert" id="gateAlert" role="alert"></div>
+
+        <button type="submit" class="gate-btn-submit" id="btnSubmitCode">
+          <span>Unlock Terminal ↗</span>
+        </button>
+      </form>
+
+      <div class="gate-notice">
+        <p>
+          <strong>Mainnet Transition Notice:</strong> Once Elysium & Ascend reach Mainnet, access will automatically open to all public traders without invitation codes.
+        </p>
+        <div class="gate-footer-links">
+          <a href="/">← Return to Landing Page</a>
+          <a href="http://localhost:8000/docs/index.html" target="_blank" rel="noopener">Protocol Documentation ↗</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Load Access Codes Validation Module -->
+  <script src="access-codes.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Theme Management
+      const themeBtn = document.getElementById('themeBtn');
+      const themeLabel = document.getElementById('themeLabel');
+
+      function initTheme() {
+        const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (themeLabel) {
+          themeLabel.textContent = savedTheme === 'dark' ? 'Light mode' : 'Dark mode';
+        }
+      }
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('aegis-theme', next);
+          if (themeLabel) {
+            themeLabel.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+          }
+        });
+      }
+
+      initTheme();
+
+      // Destination resolver
+      function getTerminalUrl() {
+        return 'index.html#simulator';
+      }
+
+      // Check current session state
+      const form = document.getElementById('gateForm');
+      const input = document.getElementById('accessCodeInput');
+      const alertBox = document.getElementById('gateAlert');
+      const submitBtn = document.getElementById('btnSubmitCode');
+      const activeCard = document.getElementById('sessionActiveCard');
+      const activeCodeText = document.getElementById('sessionActiveCode');
+      const enterAuthorizedBtn = document.getElementById('btnEnterAuthorized');
+      const revokeBtn = document.getElementById('btnRevokeSession');
+
+      function checkSession() {
+        if (!window.AegisAccess) return;
+
+        if (window.AegisAccess.isAuthorized()) {
+          const code = window.AegisAccess.getAuthorizedCode() || 'AUTHORIZED-BETA-PASS';
+          if (activeCodeText) activeCodeText.textContent = code;
+          if (activeCard) activeCard.style.display = 'flex';
+          if (form) form.style.display = 'none';
+        } else {
+          if (activeCard) activeCard.style.display = 'none';
+          if (form) form.style.display = 'flex';
+          if (input) input.focus();
+        }
+      }
+
+      checkSession();
+
+      if (enterAuthorizedBtn) {
+        enterAuthorizedBtn.addEventListener('click', function () {
+          window.location.href = getTerminalUrl();
+        });
+      }
+
+      if (revokeBtn) {
+        revokeBtn.addEventListener('click', function () {
+          if (window.AegisAccess) {
+            window.AegisAccess.revoke();
+          }
+          checkSession();
+        });
+      }
+
+      // Handle Form Submit
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          alertBox.className = 'gate-alert';
+          alertBox.style.display = 'none';
+
+          const val = input.value.trim().toUpperCase();
+
+          if (!val) {
+            alertBox.className = 'gate-alert error';
+            alertBox.textContent = 'Please enter an access code.';
+            return;
+          }
+
+          if (!window.AegisAccess) {
+            alertBox.className = 'gate-alert error';
+            alertBox.textContent = 'Access verification engine is unavailable.';
+            return;
+          }
+
+          const res = window.AegisAccess.authorize(val);
+
+          if (res.success) {
+            alertBox.className = 'gate-alert success';
+            alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+
+            setTimeout(function () {
+              window.location.href = getTerminalUrl();
+            }, 800);
+          } else {
+            alertBox.className = 'gate-alert error';
+            alertBox.textContent = '✕ ' + (res.error || 'Invalid or unrecognized access code.');
+            input.select();
+          }
+        });
+      }
+
+      // Auto-format input as user types
+      if (input) {
+        input.addEventListener('input', function () {
+          this.value = this.value.toUpperCase();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
