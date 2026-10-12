@@ -103,6 +103,7 @@ Last updated: 2026-10-11
   - Native integration with Ascend Closed Hook Pools, kHYPE liquid staking yield distribution, and Ascend's 1% platform fee recycling to HYPE & KNTQ buybacks.
   - Ultra-strict Core Contributor lockup (24-month hard cliff with 0% at TGE, followed by 48-month linear vesting).
   - Zero monetary value assumption; all quantitative mechanics expressed in fixed token units and parametric invariants.
+- **Done:** Added sleek View Mode Switcher pill toggle in the Pro-Trader Terminal top bar (`[ Lite Auto-Pilot | Pro Terminal ]`) in `app/index.html`, `app/styles.css`, and `app/app.js`, supporting smooth viewport transitions at 390px mobile width and interactive view state switching.
 
 ## Next
 

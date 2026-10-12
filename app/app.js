@@ -64,6 +64,8 @@
     walletAddrText: document.getElementById('walletAddrText'),
     latencyVal: document.getElementById('latencyVal'),
     sessionBadge: document.getElementById('sessionBadge'),
+    modeLiteBtn: document.getElementById('modeLiteBtn'),
+    modeProBtn: document.getElementById('modeProBtn'),
 
     // Session Key Modal
     btnOpenSessionKeyModal: document.getElementById('btnOpenSessionKeyModal'),
@@ -727,6 +729,37 @@
         logAudit('INV-3', 'MANUAL OVERRIDE INVOKED. Session key revoked atomically. All keeper permissions terminated.', 'danger');
         showToast('EMERGENCY OVERRIDE: Session key revoked. Invariant INV-3 enforced.');
         updateUI();
+      });
+    }
+
+    // View Mode Switcher Handlers
+    if (el.modeLiteBtn) {
+      el.modeLiteBtn.addEventListener('click', () => {
+        el.modeLiteBtn.classList.add('active');
+        el.modeLiteBtn.setAttribute('aria-selected', 'true');
+        if (el.modeProBtn) {
+          el.modeProBtn.classList.remove('active');
+          el.modeProBtn.setAttribute('aria-selected', 'false');
+        }
+        document.body.classList.add('mode-lite');
+        document.body.classList.remove('mode-pro');
+        logAudit('UI', 'Switched to Lite Auto-Pilot mode. 1-click risk shield active.', 'accent');
+        showToast('Switched to Lite Auto-Pilot mode');
+      });
+    }
+
+    if (el.modeProBtn) {
+      el.modeProBtn.addEventListener('click', () => {
+        el.modeProBtn.classList.add('active');
+        el.modeProBtn.setAttribute('aria-selected', 'true');
+        if (el.modeLiteBtn) {
+          el.modeLiteBtn.classList.remove('active');
+          el.modeLiteBtn.setAttribute('aria-selected', 'false');
+        }
+        document.body.classList.add('mode-pro');
+        document.body.classList.remove('mode-lite');
+        logAudit('UI', 'Switched to Pro Terminal mode. Advanced telemetry & controls active.', 'accent');
+        showToast('Switched to Pro Terminal mode');
       });
     }
 

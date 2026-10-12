@@ -73,6 +73,57 @@ h1, h2, h3, .display-font {
   min-width: 0;
 }
 
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.view-mode-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.mode-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+
+.mode-pill-btn:hover {
+  color: var(--ink);
+}
+
+.mode-pill-btn.active {
+  background: var(--raised);
+  color: var(--ink);
+  border-color: var(--rule);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mode-pill-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
 .brand-badge {
   display: flex;
   align-items: center;
@@ -955,11 +1006,23 @@ h1, h2, h3, .display-font {
     padding: 12px 16px;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
   .header-left, .header-right {
     justify-content: space-between;
     width: 100%;
+  }
+  .header-center {
+    width: 100%;
+  }
+  .view-mode-switcher {
+    width: 100%;
+  }
+  .mode-pill-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0 10px;
+    font-size: 12px;
   }
   .header-separator, .latency-badge, .session-badge {
     display: none;
