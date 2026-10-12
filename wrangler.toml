@@ -7,6 +7,9 @@ name = "aegis-protocol"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "."
 
+[assets]
+directory = "."
+
 [vars]
 ENVIRONMENT = "production"
 CHAIN_ID = "99801"
