@@ -281,18 +281,54 @@ async function run() {
           description: 'Always bookmark and verify these links to protect yourself from impersonation scams.',
           color: BRAND_COLORS.TEAL,
           fields: [
-            { name: '🌐 Pro-Trader Terminal', value: '[Open AEGIS Terminal](https://aegis.goodyemegbue.workers.dev/access) (or `app/index.html`)', inline: false },
+            { name: '𝕏 (Official Twitter)', value: '[x.com/aegis_hedge](https://x.com/aegis_hedge?s=20)', inline: false },
+            { name: '🌐 Official Website', value: '[aegis.terminall.workers.dev](https://aegis.terminall.workers.dev/)', inline: false },
+            { name: '⚡ Pro-Trader Terminal', value: '[Terminal Access Gate](https://aegis.terminall.workers.dev/access)', inline: false },
+            { name: '📜 Protocol Documentation', value: '[Official Technical Docs](https://aegis.terminall.workers.dev/docs/)', inline: false },
             { name: '💻 GitHub Open Source', value: '[youngcrypton/Aegis](https://github.com/youngcrypton/Aegis)', inline: false },
             { name: '💧 Elysium Testnet Faucet', value: '[Claim Testnet HYPE](https://elysium.kinetiq.xyz/testnet-faucet)', inline: false },
-            { name: '🔍 Elysium L2 Explorer', value: '[Kinetiq Testnet Explorer](https://elysium.kinetiq.xyz/testnet-explorer)', inline: false },
-            { name: '📜 Protocol Documentation', value: 'Hosted in repository at `/docs/index.html`', inline: false }
+            { name: '🔍 Elysium L2 Explorer', value: '[Kinetiq Testnet Explorer](https://elysium.kinetiq.xyz/testnet-explorer)', inline: false }
           ],
-          footer: { text: 'Chain ID 99801 | Elysium L2 native settlement' }
+          footer: { text: 'AEGIS Protocol Invariant INV-1 | Elysium L2 (Chain ID 99801) & HyperCore' }
         }]
       })
     });
     console.log('  ✓ Posted verified links to #official-links');
     await sleep(400);
+  }
+
+  // 7. Enforce Read-Only Channel Permissions for @everyone
+  console.log('\n🔒 Enforcing Read-Only Permissions for @everyone on Information & Feeds...');
+  const denyBitmask = (
+    BigInt(2048) | 
+    (BigInt(1) << 35n) | 
+    (BigInt(1) << 36n) | 
+    (BigInt(1) << 38n)
+  ).toString();
+
+  const readOnlyChannels = [
+    'rules-and-security',
+    'official-links',
+    'announcements',
+    'sentinel-alerts',
+    'market-telemetry'
+  ];
+
+  for (const nameFrag of readOnlyChannels) {
+    const ch = existingChannels.find(c => c.name.includes(nameFrag));
+    if (ch) {
+      await discordFetch(`/channels/${ch.id}/permissions/${guild.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          id: guild.id,
+          type: 0,
+          allow: '0',
+          deny: denyBitmask
+        })
+      });
+      console.log(`  🔒 Set read-only: #${ch.name}`);
+      await sleep(300);
+    }
   }
 
   // Sentinel Alerts Starter Embed via Webhook
