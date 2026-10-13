@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "discord:setup": "node script/setup_discord.js",
+    "discord:bot": "node script/discord_sentinel_bot.js"
   },
   "author": "AEGIS Core",
   "license": "MIT"
