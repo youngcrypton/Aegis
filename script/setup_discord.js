@@ -100,11 +100,14 @@ async function run() {
   // 3. Create Brand Roles
   console.log('🛠️ Creating Brand-Coded Roles...');
   const rolesToCreate = [
-    { name: '🛡️ AEGIS Core Team', color: BRAND_COLORS.VIOLET, hoist: true, mentionable: true },
-    { name: '🤖 Keeper Sentinel', color: BRAND_COLORS.TEAL, hoist: true, mentionable: false },
-    { name: '⚡ Alpha Trader', color: BRAND_COLORS.AMBER, hoist: true, mentionable: false },
-    { name: '🔬 Elysium Explorer', color: BRAND_COLORS.MINT, hoist: true, mentionable: false },
-    { name: '👤 Verified Member', color: 0xE8ECF8, hoist: false, mentionable: false }
+    { name: 'Founder', color: BRAND_COLORS.VIOLET, hoist: true, mentionable: true, permissions: '8' },
+    { name: 'Admin', color: BRAND_COLORS.TEAL, hoist: true, mentionable: true, permissions: '8' },
+    { name: 'Moderator', color: BRAND_COLORS.AMBER, hoist: true, mentionable: true, permissions: '1099511627776' },
+    { name: 'AEGIS Core Team', color: BRAND_COLORS.VIOLET, hoist: true, mentionable: true },
+    { name: 'Keeper Sentinel', color: BRAND_COLORS.TEAL, hoist: true, mentionable: false },
+    { name: 'Alpha Trader', color: BRAND_COLORS.AMBER, hoist: true, mentionable: false },
+    { name: 'Elysium Explorer', color: BRAND_COLORS.MINT, hoist: true, mentionable: false },
+    { name: 'Verified Member', color: 0xE8ECF8, hoist: false, mentionable: false }
   ];
 
   const existingRoles = await discordFetch(`/guilds/${guild.id}/roles`);
