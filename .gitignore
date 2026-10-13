@@ -2,6 +2,8 @@
 .env
 .env.local
 *.pem
+keeper/discord_webhook.json
+*webhook.json
 
 # Dependencies
 node_modules/
