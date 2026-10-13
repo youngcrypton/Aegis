@@ -29,7 +29,9 @@ const server = http.createServer((req, res) => {
   }
 
   let filePath;
-  if (reqUrl.startsWith('/brand/') || reqUrl.startsWith('/assets/')) {
+  if (reqUrl === '/landing' || reqUrl === '/overview') {
+    filePath = path.join(REPO_ROOT, 'index.html');
+  } else if (reqUrl.startsWith('/brand/') || reqUrl.startsWith('/assets/')) {
     filePath = path.join(REPO_ROOT, reqUrl);
     // Security check: must remain within REPO_ROOT
     if (!filePath.startsWith(REPO_ROOT)) {
