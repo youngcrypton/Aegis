@@ -49,7 +49,10 @@ const rootFiles = [
   'apple-touch-icon.png',
   'icon-192x192.png',
   'icon-512x512.png',
-  'site.webmanifest'
+  'site.webmanifest',
+  'LIGHTPAPER.md',
+  'SUMMARY.md',
+  '.gitbook.yaml'
 ];
 
 rootFiles.forEach(file => {
@@ -61,7 +64,7 @@ rootFiles.forEach(file => {
 });
 
 // 3. Static directories
-const dirsToCopy = ['brand', 'assets', 'docs', 'app'];
+const dirsToCopy = ['brand', 'assets', 'docs', 'app', 'gitbook'];
 
 dirsToCopy.forEach(dir => {
   const src = path.join(ROOT, dir);

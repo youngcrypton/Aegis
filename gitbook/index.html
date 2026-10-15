@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AEGIS Protocol — Official Lightpaper & GitBook</title>
+  <meta name="description" content="Official Lightpaper and GitBook documentation for AEGIS: The Autonomous Risk Sentinel & Delta-Hedging Engine for Elysium L2 and HyperCore." />
+
+  <!-- Preconnect to Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Marcellus&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="gitbook.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="gb-header">
+    <div class="gb-header-left">
+      <button class="gb-mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <a href="#abstract" class="gb-brand" onclick="window.gbNavigate('abstract')">
+        <img src="../brand/logo/aegis-mark.svg" alt="AEGIS Mark" class="gb-brand-logo" width="28" height="28" />
+        <span class="gb-brand-title">Aegis</span>
+        <span class="gb-brand-badge">LIGHTPAPER</span>
+      </a>
+    </div>
+
+    <!-- Center Search Bar -->
+    <div class="gb-header-center">
+      <div class="gb-search-trigger" id="searchTrigger">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span class="gb-search-placeholder">Search the Lightpaper...</span>
+        <kbd class="gb-kbd">⌘K</kbd>
+      </div>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="gb-header-right">
+      <a href="../app/index.html" class="gb-header-link" target="_blank" rel="noopener">
+        <span>Terminal</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+      <a href="https://elysium.kinetiq.xyz/testnet-faucet" class="gb-header-link" target="_blank" rel="noopener">
+        <span>Faucet</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+      <a href="https://github.com/youngcrypton/Aegis" class="gb-header-link" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+
+      <!-- Theme Switcher -->
+      <button class="gb-theme-btn" id="themeToggleBtn" aria-label="Toggle light/dark theme">
+        <svg class="gb-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="gb-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="gb-backdrop" id="mobileBackdrop"></div>
+
+  <!-- Main GitBook Layout -->
+  <div class="gb-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="gb-sidebar" id="sidebarNav">
+      <div class="gb-sidebar-inner" id="sidebarLinks">
+        <!-- Rendered dynamically by gitbook.js -->
+      </div>
+    </aside>
+
+    <!-- Center Article Reading Area -->
+    <main class="gb-main">
+      <div class="gb-content-wrapper">
+        
+        <!-- Breadcrumb Bar -->
+        <nav class="gb-breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs">
+          <!-- Rendered dynamically by gitbook.js -->
+        </nav>
+
+        <!-- Dynamic Chapter Header -->
+        <header class="gb-page-header">
+          <h1 class="gb-page-title" id="pageTitle">AEGIS Lightpaper</h1>
+          <p class="gb-page-subtitle" id="pageSubtitle">Autonomous Risk Sentinel & Delta-Hedging Engine for Elysium L2 and HyperCore.</p>
+          <div class="gb-page-meta" id="pageMeta">
+            <span class="gb-meta-badge">Verified Spec</span>
+            <span>Version: <strong>1.0.0</strong></span>
+            <span>Network: <strong>Elysium L2 (99801)</strong></span>
+            <span>Test Suites: <strong>157/157 Passing</strong></span>
+          </div>
+        </header>
+
+        <!-- Chapter Content Injected Here -->
+        <article class="gb-article" id="chapterContent">
+          <!-- Populated by gitbook.js -->
+        </article>
+
+        <!-- Previous / Next Navigation Cards -->
+        <nav class="gb-page-nav" id="pageNav" aria-label="Chapter navigation">
+          <!-- Populated by gitbook.js -->
+        </nav>
+
+        <!-- GitBook Footer -->
+        <footer class="gb-footer">
+          <div>© 2026 AEGIS Protocol Research Group. All rights reserved.</div>
+          <div class="gb-footer-links">
+            <a href="https://github.com/youngcrypton/Aegis/blob/main/LIGHTPAPER.md" target="_blank" rel="noopener">Edit Lightpaper on GitHub ↗</a>
+            <span>•</span>
+            <a href="../docs/index.html">Protocol Docs ↗</a>
+          </div>
+        </footer>
+
+      </div>
+    </main>
+
+    <!-- Right Table of Contents (On this page) -->
+    <aside class="gb-toc" id="rightToc">
+      <div class="gb-toc-title">ON THIS PAGE</div>
+      <ul class="gb-toc-list" id="tocList">
+        <!-- Populated dynamically by gitbook.js -->
+      </ul>
+    </aside>
+
+  </div>
+
+  <!-- Global Instant Search Modal -->
+  <div class="gb-modal-backdrop" id="searchModalBackdrop" role="dialog" aria-modal="true" aria-label="Search Lightpaper">
+    <div class="gb-search-modal">
+      <div class="gb-search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ink-2);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input class="gb-modal-input" id="searchModalInput" type="text" placeholder="Search chapters, formulas, contracts, or invariants..." autocomplete="off" spellcheck="false">
+        <kbd class="gb-modal-esc" id="closeSearchBtn">ESC</kbd>
+      </div>
+      <ul class="gb-search-results" id="searchResults">
+        <!-- Populated by search engine -->
+      </ul>
+      <div class="gb-search-modal-footer">
+        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+        <span>Press <kbd>ESC</kbd> to exit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core GitBook Engine Script -->
+  <script src="gitbook.js"></script>
+</body>
+</html>

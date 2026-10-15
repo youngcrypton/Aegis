@@ -19,15 +19,14 @@
  </p>
 
  <p align="center">
- <a href="LIGHTPAPER.md"><b>📄 Official Lightpaper</b></a> •
+ <a href="gitbook/index.html"><b>📖 GitBook Lightpaper</b></a> •
+ <a href="LIGHTPAPER.md"><b>📄 Raw Lightpaper</b></a> •
  <a href="docs/INTRODUCING_AEGIS.md"><b>📖 Introduction Article</b></a> •
  <a href="docs/FACT_CHECK_AND_VERIFICATION_DOSSIER.md"><b>🔍 Fact-Check Dossier</b></a> •
  <a href="docs/index.html"><b>📚 Interactive Docs</b></a> •
  <a href="#-elysium-testnet-onboarding--live-faucet-guide"><b>💧 Testnet Faucet</b></a> •
  <a href="#-official-pitch-demo-120s"><b>Pitch Demo (01:54)</b></a> •
- <a href="#the-aegis-approach">The Approach</a> •
- <a href="#system-architecture">Architecture</a> •
- <a href="#security-model--formal-invariants">Formal Invariants</a>
+ <a href="#system-architecture">Architecture</a>
  </p>
 
 </div>
