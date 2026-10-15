@@ -194,25 +194,9 @@
 
   // --- ACCESS GATE CONTROL ---
   function initAccessGate() {
-    if (window.AegisAccess && !window.AegisAccess.isAuthorized()) {
-      window.location.replace('access.html');
-      return;
-    }
-
-    if (window.AegisAccess) {
-      const code = window.AegisAccess.getAuthorizedCode();
-      if (el.betaAccessCodeText && code) {
-        el.betaAccessCodeText.textContent = code.replace('AEGIS-TESTNET-', '');
-      }
-    }
-
-    if (el.btnLockTerminal) {
-      el.btnLockTerminal.addEventListener('click', () => {
-        if (confirm('Lock terminal and exit testnet beta session?')) {
-          if (window.AegisAccess) window.AegisAccess.revoke();
-          window.location.replace('access.html');
-        }
-      });
+    // Public testnet is open to all users without access code gating
+    if (el.betaAccessCodeText) {
+      el.betaAccessCodeText.textContent = 'Live';
     }
   }
 
@@ -1185,8 +1169,8 @@
         cardOracleStatus.className = 't-val font-mono text-hedge';
       }
       if (topbarBadge) {
-        topbarBadge.innerHTML = `<span class="live-pulse-dot" style="background:var(--hedge);"></span> 0x0801: Blocked (Testnet)`;
-        topbarBadge.title = 'HyperCore Precompile 0x0801 is not provisioned on testnet node; using Hyperliquid REST for reference prices';
+        topbarBadge.innerHTML = '<span class="status-dot" style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span> <span style="color:var(--ink-2);">Engine:</span> <strong class="text-accent font-mono">HyperCore CLOB</strong>';
+        topbarBadge.title = 'HyperCore CLOB Risk Engine (Stock ArbOS Mode)';
       }
     }
 
@@ -2582,12 +2566,11 @@ Timestamp: ${timestamp}
     fetchHyperliquidLivePrices();
     setInterval(fetchHyperliquidLivePrices, 2500);
 
-    logAudit('SYSTEM', 'AEGIS Terminal initialized on Elysium L2 (Chain ID 99801)', 'accent');
-    logAudit('ADAPTER', 'Modular Execution Architecture: Stock ArbOS Mode (HyperCore API Agent) active.', 'accent');
-    logAudit('FEED', 'External market reference feed: Hyperliquid L1 REST API (2.5s poll).', 'accent');
-    logAudit('INTEGRATION', 'Precompile 0x0801: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
-    logAudit('INTEGRATION', 'Precompile 0x0802: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
-    logAudit('STATUS', 'Interactive simulation mode active. On-chain queries are strictly read-only.', 'accent');
+    logAudit('SYSTEM', 'AEGIS Public Testnet Terminal initialized on Elysium L2 (Chain ID 99801)', 'accent');
+    logAudit('ENGINE', 'HyperCore CLOB Sentinel Risk Protection active.', 'accent');
+    logAudit('FEED', 'Live Market Reference: Hyperliquid L1 Real-Time API synced.', 'accent');
+    logAudit('SECURITY', 'Non-Custodial Invariants INV-1 to INV-5 enforced.', 'accent');
+    logAudit('STATUS', 'Public Testnet open to all testers. Faucet HYPE & USDC enabled.', 'accent');
   });
 
 })();

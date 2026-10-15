@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 80" width="340" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Marcellus&amp;display=swap');
+      .wordmark {
+        font-family: 'Marcellus', Georgia, serif;
+        font-size: 38px;
+        fill: #E8ECF8;
+        letter-spacing: 0.08em;
+      }
+      .tagline {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        fill: #5FD9BE;
+        letter-spacing: 0.18em;
+      }
+    </style>
+    <linearGradient id="mk-dark" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+      <stop offset="0.00" stop-color="#1F0E4C"/>
+      <stop offset="0.10" stop-color="#241056"/>
+      <stop offset="0.20" stop-color="#40178D"/>
+      <stop offset="0.30" stop-color="#5A1FC9"/>
+      <stop offset="0.40" stop-color="#6928ED"/>
+      <stop offset="0.50" stop-color="#642FEB"/>
+      <stop offset="0.60" stop-color="#4C44CB"/>
+      <stop offset="0.70" stop-color="#305EA5"/>
+      <stop offset="0.80" stop-color="#157286"/>
+      <stop offset="0.90" stop-color="#087B75"/>
+      <stop offset="1.00" stop-color="#087E6D"/>
+    </linearGradient>
+  </defs>
+  <!-- Approved AEGIS Mark (48px tall, centered vertically in 80px container) -->
+  <g transform="translate(10, 14) scale(1.3)">
+    <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/>
+    <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/>
+    <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/>
+  </g>
+  <!-- Primary Lockup Wordmark -->
+  <text x="74" y="47" class="wordmark">Aegis</text>
+  <text x="76" y="63" class="tagline">PROTOCOL</text>
+</svg>

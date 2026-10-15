@@ -1,0 +1,42 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+version: 1
+site:
+  title: Aegis
+  structure:
+    - type: section
+      key: section-lightpaper
+      title: Lightpaper
+      path: lightpaper
+      default: true
+      children:
+        - type: space
+          key: space-lightpaper
+          title: Aegis Lightpaper
+          path: overview
+          default: true
+          content:
+            directory: ./gitbook
+    - type: section
+      key: section-docs
+      title: Documentation
+      path: docs
+      children:
+        - type: space
+          key: space-research
+          title: Protocol Research & Articles
+          path: research
+          default: true
+          content:
+            directory: ./docs
+        - type: space
+          key: space-audits
+          title: Security Audits & Verification
+          path: audits
+          content:
+            directory: ./docs/audits
+        - type: space
+          key: space-specs
+          title: Technical Specifications
+          path: specs
+          content:
+            directory: ./docs/specs

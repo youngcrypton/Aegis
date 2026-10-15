@@ -491,66 +491,34 @@
       <div class="gate-badge-row">
         <span class="gate-phase-badge">
           <span class="pulse-dot"></span>
-          Ascend & Elysium Testnet
+          Ascend & Elysium Public Testnet
         </span>
-        <span class="gate-count-badge">50 Private Seats</span>
+        <span class="gate-count-badge" style="color:var(--accent); border-color:var(--accent);">Public &bull; Open Access</span>
       </div>
 
-      <h1 class="gate-title">Enter Terminal Access Code</h1>
+      <h1 class="gate-title">AEGIS Public Testnet is Live</h1>
 
       <p class="gate-desc">
-        AEGIS is currently operating in <strong>private testnet phase</strong> on Ascend and Elysium L2. Direct access to the Pro-Trader Risk Terminal is restricted to authorized partners and beta testers until Mainnet deployment.
+        AEGIS is now open to the public on <strong>Elysium L2 (Chain ID 99801)</strong>. No invite code is required. Connect any EVM wallet, claim free testnet HYPE and USDC from the faucet, and experience autonomous liquidation defense.
       </p>
 
-      <!-- Active Session Notice (Shown if user already authorized) -->
-      <div class="session-active-card" id="sessionActiveCard">
+      <!-- Active Session Notice -->
+      <div class="session-active-card" id="sessionActiveCard" style="display:flex;">
         <div>
-          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); display:block; margin-bottom:4px;">Verified Beta Session</span>
-          <div class="session-code-display" id="sessionActiveCode">AEGIS-TESTNET-XXXX-XXXX</div>
+          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); display:block; margin-bottom:4px;">Testnet Status</span>
+          <div class="session-code-display" id="sessionActiveCode" style="color:var(--accent);">PUBLIC TESTNET OPEN</div>
         </div>
         <p style="font-size:0.85rem; color:var(--ink-2); line-height:1.4;">
-          Your device holds an authorized beta access session. You may enter the terminal directly.
+          All traders, borrowers, and liquidators can enter the terminal directly.
         </p>
-        <button class="gate-btn-submit" id="btnEnterAuthorized" type="button">
-          Enter Terminal ↗
-        </button>
-        <button class="gate-btn-ghost" id="btnRevokeSession" type="button">
-          Use a different code
-        </button>
+        <a class="gate-btn-submit" id="btnEnterAuthorized" href="app/index.html" style="text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">
+          Launch Public Terminal ↗
+        </a>
       </div>
-
-      <!-- Access Form -->
-      <form class="gate-form" id="gateForm">
-        <div class="input-group">
-          <label class="input-label" for="accessCodeInput">
-            <span>Invite Code</span>
-            <span style="font-weight:400; text-transform:none;">16 Alphanumeric</span>
-          </label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              id="accessCodeInput"
-              class="gate-input"
-              placeholder="AEGIS-TESTNET-XXXX-XXXX"
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="characters"
-              spellcheck="false"
-              required
-            >
-          </div>
-        </div>
-
-        <div class="gate-alert" id="gateAlert" role="alert"></div>
-
-        <button type="submit" class="gate-btn-submit" id="btnSubmitCode">
-          <span>Unlock Terminal ↗</span>
-        </button>
-      </form>
 
       <div class="gate-notice">
         <p>
-          <strong>Mainnet Transition Notice:</strong> Once Elysium & Ascend reach Mainnet, access will automatically open to all public traders without invitation codes.
+          <strong>Public Testing Guidelines:</strong> Testnet faucet funds can be claimed at <code>https://elysium.kinetiq.xyz/testnet-faucet</code>. Use canonical testnet USDC (<code>0x7D29...47b2</code>) to fund your protected position.
         </p>
         <p style="font-size:0.75rem; color:var(--ink-2); margin-top:2px;">
           Reviewer & Partner Access: Use evaluation pass <code>AEGIS-ALPHA-701</code> or claim access in Discord.

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg-grad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2B2A33"/>
+      <stop offset="45%" stop-color="#1C2238"/>
+      <stop offset="100%" stop-color="#0F2C2C"/>
+    </linearGradient>
+    <linearGradient id="mk-dark" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse">
+      <stop offset="0.00" stop-color="#1F0E4C"/>
+      <stop offset="0.10" stop-color="#241056"/>
+      <stop offset="0.20" stop-color="#40178D"/>
+      <stop offset="0.30" stop-color="#5A1FC9"/>
+      <stop offset="0.40" stop-color="#6928ED"/>
+      <stop offset="0.50" stop-color="#642FEB"/>
+      <stop offset="0.60" stop-color="#4C44CB"/>
+      <stop offset="0.70" stop-color="#305EA5"/>
+      <stop offset="0.80" stop-color="#157286"/>
+      <stop offset="0.90" stop-color="#087B75"/>
+      <stop offset="1.00" stop-color="#087E6D"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112.64" fill="url(#bg-grad-dark)"/>
+  <rect width="499.712" height="499.712" x="6.144" y="6.144" rx="106.496" fill="none" stroke="rgba(220, 230, 255, 0.16)" stroke-width="6.144"/>
+  <g transform="translate(97.28, 97.28) scale(7.936)">
+    <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#mk-dark)"/>
+    <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#mk-dark)"/>
+    <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#mk-dark)"/>
+  </g>
+</svg>

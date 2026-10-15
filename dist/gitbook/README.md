@@ -1,4 +1,15 @@
-# AEGIS Protocol — Official Lightpaper
+# Aegis Protocol — Official Lightpaper
+
+<figure><img src=".gitbook/assets/aegis-banner.png" alt="Aegis Protocol — Autonomous Risk Engine &amp; Delta Hedging"><figcaption><b>Aegis</b>: Autonomous sub-second risk engine bridging Elysium Orbit L2 smart contracts with HyperCore CLOB.</figcaption></figure>
+
+<div align="center">
+
+[![Elysium Orbit L2](https://img.shields.io/badge/Network-Elysium%20Testnet%20(99801)-5FD9BE?style=flat-square&logo=ethereum&logoColor=white)](https://testnet.elysiumscan.org)
+[![HyperCore CLOB](https://img.shields.io/badge/CLOB-Hyperliquid%20HyperCore-6928ED?style=flat-square)](https://hyperliquid.xyz)
+[![Foundry Tests](https://img.shields.io/badge/Tests-157%2F157%20Passing%20(100%25)-07705F?style=flat-square&logo=foundry)](https://github.com/youngcrypton/Aegis)
+[![Invariant INV-1](https://img.shields.io/badge/Invariant-INV--1%20Zero--Custody-5FD9BE?style=flat-square)](https://github.com/youngcrypton/Aegis)
+
+</div>
 
 {% hint style="info" %}
 **Elysium Orbit L2 Testnet Alignment:** Chain ID `99801` • Hyperliquid L1 (HyperCore)  

@@ -18,8 +18,8 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Toggle this flag to false upon Mainnet launch to unlock the terminal for all users.
-  var IS_TESTNET_GATE_ENABLED = true;
+  // Public Testnet: Access gate disabled so anyone can test openly
+  var IS_TESTNET_GATE_ENABLED = false;
 
   var STORAGE_KEYS = {
     AUTHORIZED: 'aegis_access_authorized',

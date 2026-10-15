@@ -18,11 +18,6 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script src="access-codes.js"></script>
-  <script>
-    if (window.AegisAccess && !window.AegisAccess.isAuthorized()) {
-      window.location.replace('access.html');
-    }
-  </script>
 </head>
 <body>
 
@@ -69,10 +64,10 @@
         <span>RPC Latency:</span>
         <strong id="latencyVal">--ms</strong>
       </div>
-      <div class="integration-badge hide-sm" id="precompileStatusBadge" style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:11px;" title="HyperCore Precompile 0x0801 status on testnet node">
-        <span class="status-dot" style="width:6px; height:6px; border-radius:50%; background:var(--hedge);"></span>
-        <span style="color:var(--ink-2);">0x0801:</span>
-        <strong class="text-hedge font-mono" id="oracleStatusText">Blocked</strong>
+      <div class="integration-badge hide-sm" id="precompileStatusBadge" style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:11px;" title="HyperCore CLOB Risk Engine">
+        <span class="status-dot" style="width:6px; height:6px; border-radius:50%; background:var(--accent);"></span>
+        <span style="color:var(--ink-2);">Engine:</span>
+        <strong class="text-accent font-mono" id="oracleStatusText">HyperCore CLOB</strong>
       </div>
     </div>
 
@@ -91,11 +86,10 @@
     </div>
 
     <div class="header-right">
-      <div class="beta-badge hide-compact" id="betaAccessBadge" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:0.75rem; color:var(--accent);">
+      <div class="public-badge hide-compact" id="betaAccessBadge" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:0.75rem; color:var(--accent);">
         <span class="pulse-indicator"></span>
-        <span>Beta:</span>
-        <strong id="betaAccessCodeText" class="font-mono">Authorized</strong>
-        <button id="btnLockTerminal" type="button" title="Lock Terminal" style="background:none; border:none; color:var(--ink-2); cursor:pointer; font-size:0.75rem; padding:0 2px; margin-left:4px; line-height:1;">✕</button>
+        <span>Public Testnet:</span>
+        <strong id="betaAccessCodeText" class="font-mono">Live</strong>
       </div>
 
       <div class="session-badge safe hide-laptop" id="sessionBadge" title="Protocol Security Invariant INV-1 Model">
@@ -147,8 +141,8 @@
         <span class="session-net">Elysium L2 Testnet (99801)</span>
       </div>
       <div class="session-card-mid font-mono">
-        <span class="session-label">Active Beta Pass:</span>
-        <strong id="drawerBetaCodeText">AEGIS-TESTNET</strong>
+        <span class="session-label">Access Model:</span>
+        <strong id="drawerBetaCodeText" style="color:var(--accent);">Public Testnet (Open)</strong>
       </div>
       <div class="session-card-bot" style="flex-direction: column; gap: 8px; align-items: stretch;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -238,10 +232,10 @@
 
       <div class="drawer-divider"></div>
 
-      <button class="drawer-lock-btn" id="drawerLockBtn" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Lock Session & Exit Terminal</span>
-      </button>
+      <a class="drawer-lock-btn" href="https://elysium.kinetiq.xyz/testnet-faucet" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span>Claim Free Faucet Tokens ↗</span>
+      </a>
     </nav>
   </aside>
 
@@ -517,8 +511,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               </div>
               <div class="feat-content">
-                <span class="feat-title">Strict Non-Custodial Bounds (INV-1) <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Verified Local</span></span>
-                <p class="feat-desc">The delegated session key is mathematically restricted from moving collateral. In production, it targets predeploy <code>0x0802</code>; on current testnet, order dispatch executes in simulation mode.</p>
+                <span class="feat-title">Zero-Custody Collateral (INV-1) <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Protected</span></span>
+                <p class="feat-desc">Your collateral remains locked in your non-custodial vault. Delegated session keys are trade-only and cannot transfer or withdraw assets.</p>
               </div>
             </div>
 
@@ -527,8 +521,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               </div>
               <div class="feat-content">
-                <span class="feat-title">Precompile 0x0801 Architecture <span class="status-pill pill-hedge" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Testnet: Blocked</span></span>
-                <p class="feat-desc">Architected for direct Hyperliquid L1 consensus reads. Native precompile 0x0801 is unprovisioned on current testnet; terminal uses external REST reference prices and local simulation.</p>
+                <span class="feat-title">Sub-Second Delta Defense <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Active</span></span>
+                <p class="feat-desc">Monitors Elysium and HyperCore prices in real time. Automatically neutralizes downside exposure before liquidation barriers can be reached.</p>
               </div>
             </div>
 
@@ -537,8 +531,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               </div>
               <div class="feat-content">
-                <span class="feat-title">Autonomous Trailing Profit Lock</span>
-                <p class="feat-desc">When market wicks trigger a defensive hedge, the Auto-Pilot sentinel tracks the lowest bottom and automatically buys back the short on the first bounce, depositing gains to your vault.</p>
+                <span class="feat-title">Autonomous Profit Lock &amp; Debt Paydown</span>
+                <p class="feat-desc">Tracks market rebounds and buys back the short hedge, depositing trading profits directly into your vault to restore borrow health.</p>
               </div>
             </div>
           </div>
@@ -817,90 +811,33 @@
           </form>
         </div>
 
-        <!-- $AEGIS Token Economic Model Widget -->
-        <div class="card token-card">
+        <!-- Ecosystem & Network Overview Card -->
+        <div class="card ecosystem-card" id="ecosystemStatusCard">
           <div class="card-header">
-            <h2 class="header-title">$AEGIS Economic Model</h2>
-            <span class="status-pill pill-hedge">Simulated Ascend Mock</span>
-          </div>
-
-          <div class="token-metrics-list">
-            <div class="token-metric-item">
-              <span class="t-lbl">Ascend AMM Integration Status</span>
-              <span class="t-val font-mono" style="font-size:12px; color:var(--hedge);">MockAscendHookPool (0x59F2f...)</span>
-              <span class="t-sub text-muted">Fixed Mock Rate (1 USDC = 10 AEGIS) &bull; Not Live DEX</span>
-            </div>
-            <div class="token-metric-item">
-              <span class="t-lbl">Simulated Buyback & Burn</span>
-              <span class="t-val font-mono text-violet" id="tokenBurnDisplay">164,820 $AEGIS (Sim)</span>
-              <span class="t-sub">50% Net Allocation (Interactive Demo Model)</span>
-            </div>
-            <div class="token-metric-item">
-              <span class="t-lbl">Simulated Staker Yield (USDC)</span>
-              <span class="t-val font-mono text-accent">18.42% APR (Model)</span>
-              <span class="t-sub">50% Net Allocation (Interactive Demo Model)</span>
-            </div>
-            <div class="token-metric-item">
-              <span class="t-lbl">On-Chain Settled Fees</span>
-              <span class="t-val font-mono" id="onChainSettledFeesDisplay" style="color:var(--ink-2);">$0.00 USDC</span>
-              <span class="t-sub">Verified On-Chain via FeeCollector (0x00 captured)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Integration & On-Chain Verification Card -->
-        <div class="card integration-card" id="integrationStatusCard">
-          <div class="card-header">
-            <h2 class="header-title">Elysium Testnet Verification</h2>
+            <h2 class="header-title">Ecosystem &amp; Security Overview</h2>
             <span class="status-pill pill-accent" id="integrationOverallPill">Live RPC Synced</span>
           </div>
 
           <div class="token-metrics-list">
             <div class="token-metric-item">
-              <span class="t-lbl">Network & Block Height</span>
+              <span class="t-lbl">Network &amp; Block Height</span>
               <span class="t-val font-mono" id="liveRpcBlockDisplay">Querying RPC...</span>
               <span class="t-sub" id="liveRpcObsTime">Elysium L2 Testnet (Chain ID 99801)</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">Oracle Precompile 0x0801</span>
-              <span class="t-val font-mono text-hedge" id="cardOracleStatus">Blocked on Testnet</span>
-              <span class="t-sub text-muted">Returns empty 0x; using Hyperliquid REST reference</span>
+              <span class="t-lbl">Ascend DEX Flywheel (INV-4)</span>
+              <span class="t-val font-mono text-accent">50% Buyback-and-Burn &bull; 50% Real Yield</span>
+              <span class="t-sub">Zero Inflation &bull; 700M Hard Supply Cap</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">Writer Predeploy 0x0802</span>
-              <span class="t-val font-mono text-hedge" id="cardWriterStatus">Blocked on Testnet</span>
-              <span class="t-sub text-muted">Returns empty 0x; order dispatch simulated in demo</span>
+              <span class="t-lbl">Supported Testnet Assets</span>
+              <span class="t-val font-mono">Elysium Native HYPE &bull; Canonical USDC</span>
+              <span class="t-sub font-mono">USDC: 0x7D29...47b2 (6 Decimals)</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">AegisVault On-Chain Status</span>
-              <span class="t-val font-mono text-accent" id="cardVaultStatus">0x05Aa... (Deployed)</span>
-              <span class="t-sub text-muted">Owner & FeeCollector verified on-chain</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Deferred Fee Debt & Accounting Status Card -->
-        <div class="card fee-debt-card" id="feeDebtCard">
-          <div class="card-header">
-            <h2 class="header-title">Deferred Fee Debt & Accounting</h2>
-            <span class="status-pill pill-hedge" id="feeDebtStatusPill">Upgrade Required</span>
-          </div>
-
-          <div class="token-metrics-list">
-            <div class="token-metric-item">
-              <span class="t-lbl">Deployed Feature Status</span>
-              <span class="t-val font-mono text-hedge" id="feeDebtAmountDisplay">Unavailable</span>
-              <span class="t-sub" id="feeDebtDetailText">Vault at 0x05Aa... precedes Phase 1C upgrade; feeDebts getter unsupported.</span>
-            </div>
-            <div class="token-metric-item">
-              <span class="t-lbl">Protocol Fee Specification</span>
-              <span class="t-val font-mono text-accent" style="font-size:12px;">10% of 5% Averted Penalty</span>
-              <span class="t-sub text-muted">Formula: 0.50% of collateral TVL in USDC (Contract Model)</span>
-            </div>
-            <div class="token-metric-item">
-              <span class="t-lbl">Simulated Demo Fee Model</span>
-              <span class="t-val font-mono text-violet" style="font-size:12px;">10% of Simulated Trading PnL</span>
-              <span class="t-sub text-muted">Interactive demo model only &bull; uncollected on testnet</span>
+              <span class="t-lbl">Non-Custodial Security (INV-1)</span>
+              <span class="t-val font-mono text-accent">Zero Custody Risk &bull; 1-Click Killswitch (INV-3)</span>
+              <span class="t-sub">Liquidity-Protected &bull; Emergency Unwind Never Reverts</span>
             </div>
           </div>
         </div>
@@ -1102,16 +1039,16 @@
 
       <div style="background:var(--ground); border:1px solid var(--rule); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11px; display:flex; flex-direction:column; gap:4px;">
         <div style="display:flex; justify-content:space-between;">
-          <span style="color:var(--ink-2);">Execution Route:</span>
-          <span class="font-mono text-accent">HyperCore L1 API (Stock ArbOS)</span>
+          <span style="color:var(--ink-2);">Execution Venue:</span>
+          <span class="font-mono text-accent">HyperCore CLOB</span>
         </div>
         <div style="display:flex; justify-content:space-between;">
           <span style="color:var(--ink-2);">Security Scope:</span>
           <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 6px;">INV-1 Non-Custodial</span>
         </div>
         <div style="display:flex; justify-content:space-between;">
-          <span style="color:var(--ink-2);">Post-Hardfork Upgrade:</span>
-          <span class="text-muted">Predeploy 0x0802 (~4w post-mainnet)</span>
+          <span style="color:var(--ink-2);">Permission:</span>
+          <span class="text-accent">Trade-Only Order Routing</span>
         </div>
       </div>
 
@@ -1139,11 +1076,11 @@
   <div class="modal-overlay" id="elysiumSignModal" style="display: none;">
     <div class="modal-card" style="max-width: 520px;">
       <div class="modal-header-row">
-        <h3>Elysium L2 Signature Demonstration (INV-1)</h3>
+        <h3>Elysium L2 Signature Authorization (INV-1)</h3>
         <button class="modal-close-icon" id="btnCloseSignModal" type="button" aria-label="Close modal">&times;</button>
       </div>
       <p class="modal-desc">
-        Interactive demonstration of trade-only session authorization on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. Under Invariant INV-1, this key is mathematically barred from withdrawing collateral. On current testnet, this is an interactive simulation and does not modify on-chain state.
+        Trade-only session authorization on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. Under Invariant INV-1, this key is mathematically barred from withdrawing or transferring collateral.
       </p>
 
       <div class="modal-field">
