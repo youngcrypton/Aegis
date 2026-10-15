@@ -18,12 +18,16 @@ const MIME_TYPES = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/x-icon',
-  '.webmanifest': 'application/manifest+json'
+  '.webmanifest': 'application/manifest+json',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.vtt': 'text/vtt',
+  '.srt': 'text/plain; charset=utf-8'
 };
 
 const server = http.createServer((req, res) => {
   // Strip query strings
-  let reqUrl = req.url.split('?')[0];
+  let reqUrl = decodeURIComponent(req.url.split('?')[0]);
   if (reqUrl === '/' || reqUrl === '/app') {
     reqUrl = '/index.html';
   }
@@ -31,7 +35,12 @@ const server = http.createServer((req, res) => {
   let filePath;
   if (reqUrl === '/landing' || reqUrl === '/overview') {
     filePath = path.join(REPO_ROOT, 'index.html');
-  } else if (reqUrl.startsWith('/brand/') || reqUrl.startsWith('/assets/')) {
+  } else if (
+    reqUrl.startsWith('/brand/') ||
+    reqUrl.startsWith('/assets/') ||
+    reqUrl.startsWith('/remotion/') ||
+    reqUrl.startsWith('/docs/')
+  ) {
     filePath = path.join(REPO_ROOT, reqUrl);
     // Security check: must remain within REPO_ROOT
     if (!filePath.startsWith(REPO_ROOT)) {
@@ -59,8 +68,31 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
+    // Support HTTP Range requests for video seeking/scrubbing
+    const range = req.headers.range;
+    if (range && (ext === '.mp4' || ext === '.webm')) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = end - start + 1;
+
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache'
+      });
+
+      const fileStream = fs.createReadStream(filePath, { start, end });
+      fileStream.pipe(res);
+      return;
+    }
+
     res.writeHead(200, {
       'Content-Type': contentType,
+      'Content-Length': stats.size,
+      'Accept-Ranges': 'bytes',
       'Cache-Control': 'no-cache, no-store, must-revalidate'
     });
 

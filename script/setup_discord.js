@@ -271,6 +271,46 @@ async function run() {
     }
   }
 
+  // 4b. Sync Category Permission Overwrites (Lock private channels from unverified users)
+  console.log('\n🔒 Securing Categories & Setting Verification Gate Overwrites...');
+  const verifiedRole = createdRoles['Verified Member'];
+  if (verifiedRole) {
+    const lockedCategories = [
+      { name: '🛡️ ︱ PROTOCOL & TRADING', verifiedAllow: '3072' },
+      { name: '🤖 ︱ LIVE SENTINEL FEEDS', verifiedAllow: '1024' },
+      { name: '💬 ︱ COMMUNITY', verifiedAllow: '3072' },
+      { name: '🔊 ︱ VOICE LOUNGES', verifiedAllow: '3146752' }
+    ];
+
+    const currentCats = await discordFetch(`/guilds/${guild.id}/channels`);
+    for (const group of channelStructure) {
+      const cat = currentCats.find(c => c.type === 4 && c.name.toLowerCase() === group.category.toLowerCase());
+      if (!cat) continue;
+
+      const lockConfig = lockedCategories.find(lc => lc.name.toLowerCase() === group.category.toLowerCase());
+      if (lockConfig) {
+        // Deny @everyone View Channel (1024)
+        await discordFetch(`/channels/${cat.id}/permissions/${guild.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ id: guild.id, type: 0, allow: '0', deny: '1024' })
+        });
+        // Allow Verified Member
+        await discordFetch(`/channels/${cat.id}/permissions/${verifiedRole.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ id: verifiedRole.id, type: 0, allow: lockConfig.verifiedAllow, deny: '0' })
+        });
+        console.log(`  ✓ Secured category: ${group.category} (requires Verified Member)`);
+      } else {
+        // Public info categories: @everyone can VIEW (66560), but cannot SEND (2048)
+        await discordFetch(`/channels/${cat.id}/permissions/${guild.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ id: guild.id, type: 0, allow: '66560', deny: '2048' })
+        });
+        console.log(`  ✓ Read-only category for @everyone: ${group.category}`);
+      }
+    }
+  }
+
   // 5. Create Webhook in #sentinel-alerts for Automated Keeper Alerts
   let webhookUrl = null;
   if (alertChannelId) {
@@ -375,6 +415,72 @@ async function run() {
         })
       });
       console.log('  ✓ Posted onboarding session embed to #👋︱start-here');
+      await sleep(350);
+    }
+
+    // Human Verification Gate Embed in #👋︱start-here
+    const verifyGateMsg = existingMsgs && existingMsgs.find(m => 
+      m.embeds?.some(e => e.title && e.title.includes('Human Verification Gate')) ||
+      m.components?.some(row => row.components?.some(btn => btn.custom_id === 'btn_start_verification'))
+    );
+    if (!verifyGateMsg) {
+      const gateMsg = await discordFetch(`/channels/${startHereChannelId}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({
+          embeds: [{
+            title: `${AEGIS_EMOJI} AEGIS Protocol — Human Verification Gate`,
+            description: `Welcome to **AEGIS Protocol** — Autonomous Risk Sentinel on Elysium L2.\n\nTo safeguard our community against sybil bots, automated scrapers, and malicious spam, all incoming members must complete a quick anti-bot verification challenge to unlock server channels.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n### 🛡️ How to Verify:\n1️⃣ Click the **\`🛡️ Verify Humanity\`** button below.\n2️⃣ Solve the security arithmetic prompt (e.g. *What is 2 + 2?*).\n3️⃣ Enter your numeric answer and click **Submit**.\n\nUpon passing, the **\`👤 Verified Member\`** role will be granted instantly, unlocking all discussion lounges, live keeper feeds, and alpha channels.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            color: BRAND_COLORS.VIOLET,
+            fields: [
+              {
+                name: '🔒 Anti-Bot Protection',
+                value: 'Random arithmetic challenge generated per-user. Zero cookies or external trackers required.',
+                inline: true
+              },
+              {
+                name: '⚡ Instant Access',
+                value: 'Full member permissions granted immediately upon correct submission.',
+                inline: true
+              }
+            ],
+            footer: {
+              text: 'AEGIS Protocol Invariant INV-1 • Autonomous Liquidation Defense'
+            }
+          }],
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  type: 2,
+                  style: 3,
+                  label: 'Verify Humanity',
+                  custom_id: 'btn_start_verification',
+                  emoji: { name: '🛡️' }
+                },
+                {
+                  type: 2,
+                  style: 2,
+                  label: 'Check Status',
+                  custom_id: 'btn_verification_status',
+                  emoji: { name: 'ℹ️' }
+                },
+                {
+                  type: 2,
+                  style: 5,
+                  label: 'Helpdesk Ticket',
+                  url: `https://discord.com/channels/${guild.id}/${ticketChannelId}`,
+                  emoji: { name: '🎫' }
+                }
+              ]
+            }
+          ]
+        })
+      });
+      console.log('  ✓ Posted Human Verification Gate embed to #👋︱start-here');
+      try {
+        await discordFetch(`/channels/${startHereChannelId}/pins/${gateMsg.id}`, { method: 'PUT' });
+      } catch (e) {}
       await sleep(350);
     }
   }

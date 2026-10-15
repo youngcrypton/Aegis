@@ -24,6 +24,16 @@ GEMINI.md
 # Private Beta Access Codes (confidential, do not commit or push)
 ACCESS_CODES.md
 ACCESS_CODE.md
+
+# Temporary push scripts & scratch
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
+
+# Test & Coverage Artifacts
+keeper/coverage/
+.nyc_output/
+*.lcov
+
+# Temporary / Scratch Audio
+remotion/public/audio_pitch/*.wav

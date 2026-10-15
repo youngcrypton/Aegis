@@ -14,10 +14,17 @@ import {
     SlippageExceeded,
     SessionKeyExpired,
     OverrideActive,
-    ZeroAddress
+    ZeroAddress,
+    HedgeAlreadyActive,
+    TrailingExitNotReached,
+    InvalidPrice,
+    MismatchedMarketIndex,
+    NoOutstandingDebt,
+    ZeroRepaymentAmount
 } from "./AegisTypes.sol";
 import {IAegisVault} from "./interfaces/IAegisVault.sol";
 import {IAegisFeeCollector} from "./interfaces/IAegisFeeCollector.sol";
+import {IHyperCoreOracle} from "./interfaces/IHyperCoreOracle.sol";
 import {TradeIntentExecutor} from "./core/TradeIntentExecutor.sol";
 import {HyperCoreOracleAdapter} from "./adapters/HyperCoreOracleAdapter.sol";
 
@@ -30,6 +37,9 @@ import {HyperCoreOracleAdapter} from "./adapters/HyperCoreOracleAdapter.sol";
 contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownable {
     using HyperCoreOracleAdapter for uint32;
 
+    /// @notice Protocol fee in basis points (10% = 1000 bps)
+    uint256 public constant PROTOCOL_FEE_BPS = 1000;
+
     /// @notice Vault positions mapped by borrower address
     mapping(address => VaultPosition) public positions;
 
@@ -39,8 +49,14 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
     /// @notice Active hedge positions mapped by borrower address
     mapping(address => ActiveHedge) public activeHedges;
 
+    /// @notice Deferred fee debt mapped by borrower address (USDC scaled 1e6)
+    mapping(address => uint256) public feeDebts;
+
     /// @notice Optional fee collector contract
     address public feeCollector;
+
+    /// @notice Modular price oracle feed adapter
+    IHyperCoreOracle public oracleAdapter;
 
     constructor(address initialOwner) Ownable(initialOwner) TradeIntentExecutor() {}
 
@@ -50,6 +66,35 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
     function setFeeCollector(address _feeCollector) external onlyOwner {
         if (_feeCollector == address(0)) revert ZeroAddress();
         feeCollector = _feeCollector;
+    }
+
+    /**
+     * @notice Set the price oracle feed adapter.
+     */
+    function setOracleAdapter(address _oracle) external override onlyOwner {
+        if (_oracle == address(0)) revert ZeroAddress();
+        address oldOracle = address(oracleAdapter);
+        oracleAdapter = IHyperCoreOracle(_oracle);
+        emit OracleAdapterUpdated(oldOracle, _oracle);
+    }
+
+    /**
+     * @notice Set the trade intent writer adapter.
+     */
+    function setHyperCoreWriter(address _writer) external override onlyOwner {
+        address oldWriter = hyperCoreWriter;
+        _setHyperCoreWriter(_writer);
+        emit HyperCoreWriterUpdated(oldWriter, _writer);
+    }
+
+    /**
+     * @dev Internal price resolver querying modular oracleAdapter or fallback 0x0801 precompile.
+     */
+    function _getPerpPrice(uint32 perpIndex) internal view returns (uint256) {
+        if (address(oracleAdapter) != address(0)) {
+            return oracleAdapter.getPerpPrice(perpIndex);
+        }
+        return HyperCoreOracleAdapter.getPerpPrice(perpIndex);
     }
 
     /**
@@ -161,7 +206,7 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         override
         returns (uint256 healthFactor, bool isTriggered, uint256 markPrice)
     {
-        markPrice = HyperCoreOracleAdapter.getPerpPrice(perpIndex);
+        markPrice = _getPerpPrice(perpIndex);
         VaultPosition storage pos = positions[vaultOwner];
         ProConfig storage cfg = configs[vaultOwner];
 
@@ -210,6 +255,9 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         if (cfg.manualOverrideActive) revert OverrideActive();
         if (block.timestamp > cfg.sessionKeyExpiry) revert SessionKeyExpired();
 
+        // Security Guard: Prevent double-hedge overwrites while an active hedge is open
+        if (activeHedges[vaultOwner].isOpen) revert HedgeAlreadyActive();
+
         // Telemetry verification: verify health factor breached trigger
         (, bool isTriggered, uint256 markPrice) = getVaultHealth(vaultOwner, perpIndex);
         if (!isTriggered) revert InvalidHealthTrigger();
@@ -244,10 +292,28 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
     }
 
     /**
+     * @notice Updates the lowest observed wick price for an active hedge, ratcheting down trailingExitPrice.
+     * @param vaultOwner Address of the hedged vault owner.
+     */
+    function updateLowestWick(address vaultOwner) public override {
+        ActiveHedge storage hedge = activeHedges[vaultOwner];
+        if (!hedge.isOpen) return;
+
+        uint256 liveMarkPrice = _getPerpPrice(hedge.perpMarketIndex);
+        if (liveMarkPrice > 0 && liveMarkPrice < hedge.lowestWickPrice) {
+            ProConfig storage cfg = configs[vaultOwner];
+            hedge.lowestWickPrice = liveMarkPrice;
+            hedge.trailingExitPrice = (liveMarkPrice * (10000 + cfg.trailingTakeProfitBps)) / 10000;
+            emit LowestWickUpdated(vaultOwner, liveMarkPrice, hedge.trailingExitPrice);
+        }
+    }
+
+    /**
      * @notice Unwinds an active hedge upon market rebound and processes protocol performance fees.
+     * @dev Validates trusted oracle price, enforces trailing exit target, and guards against caller fee inflation.
      * @param vaultOwner Address of the vault owner.
      * @param perpIndex HyperCore perpetual market index.
-     * @param exitPrice Execution exit price.
+     * @param exitPrice Execution exit limit price.
      * @param deadline Signature expiry timestamp.
      * @param signature EIP-712 signature from the authorized session key.
      */
@@ -260,8 +326,31 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
     ) external override nonReentrant {
         ActiveHedge storage hedge = activeHedges[vaultOwner];
         VaultPosition storage pos = positions[vaultOwner];
+        ProConfig storage cfg = configs[vaultOwner];
 
         if (!hedge.isOpen) revert InvalidHealthTrigger();
+        if (perpIndex != hedge.perpMarketIndex) revert MismatchedMarketIndex();
+        if (exitPrice == 0) revert InvalidPrice();
+
+        // Query trusted live oracle price
+        uint256 liveMarkPrice = _getPerpPrice(perpIndex);
+        if (liveMarkPrice == 0) revert InvalidPrice();
+
+        // Ratchet lowest wick if price dipped lower before rebounding
+        if (liveMarkPrice < hedge.lowestWickPrice) {
+            hedge.lowestWickPrice = liveMarkPrice;
+            hedge.trailingExitPrice = (liveMarkPrice * (10000 + cfg.trailingTakeProfitBps)) / 10000;
+            emit LowestWickUpdated(vaultOwner, liveMarkPrice, hedge.trailingExitPrice);
+        }
+
+        // Validate trailing take-profit target has been reached on market rebound
+        if (liveMarkPrice < hedge.trailingExitPrice) {
+            revert TrailingExitNotReached(liveMarkPrice, hedge.trailingExitPrice);
+        }
+
+        // Validate exitPrice (buy-to-close limit price) does not exceed max slippage from live mark price
+        uint256 maxAllowedExitPrice = (liveMarkPrice * (10000 + cfg.maxSlippageBps)) / 10000;
+        if (exitPrice > maxAllowedExitPrice) revert SlippageExceeded();
 
         // Dispatch buy-to-close intent
         _verifyAndDispatch(
@@ -277,17 +366,84 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         hedge.isOpen = false;
 
         // Process averted liquidation penalty fee if FeeCollector is set
+        // Anchored to live oracle mark price, completely eliminating caller-controlled fee manipulation
         if (feeCollector != address(0)) {
             // Averted liquidation penalty = 5% of collateral valuation
-            uint256 colValUsdc = (uint256(pos.collateralAmount) * exitPrice) / 1e20;
+            uint256 valuationPrice = liveMarkPrice < exitPrice ? liveMarkPrice : exitPrice;
+            uint256 colValUsdc = (uint256(pos.collateralAmount) * valuationPrice) / 1e20;
             uint256 savedPenalty = (colValUsdc * 500) / 10000;
             if (savedPenalty > 0) {
                 try IAegisFeeCollector(feeCollector).processAvertedFee(vaultOwner, savedPenalty) {}
-                catch {}
+                catch (bytes memory reason) {
+                    emit FeeCollectionFailed(vaultOwner, savedPenalty, reason);
+                    uint256 protocolFee = (savedPenalty * PROTOCOL_FEE_BPS) / 10000;
+                    if (protocolFee > 0) {
+                        feeDebts[vaultOwner] += protocolFee;
+                        emit FeeDebtAccrued(vaultOwner, protocolFee, feeDebts[vaultOwner]);
+                    }
+                }
             }
         }
 
         emit HedgeUnwound(vaultOwner, perpIndex, exitPrice);
+    }
+
+    /**
+     * @notice Repays outstanding fee debt for the caller.
+     * @param amount The maximum amount of USDC to repay.
+     * @return repaid The actual amount of USDC repaid and deducted from fee debt.
+     */
+    function repayFeeDebt(uint256 amount) external override returns (uint256 repaid) {
+        return _repayFeeDebt(msg.sender, msg.sender, amount);
+    }
+
+    /**
+     * @notice Repays outstanding fee debt for a specific borrower (third-party repayment).
+     * @param borrower The borrower whose fee debt is being repaid.
+     * @param amount The maximum amount of USDC to repay.
+     * @return repaid The actual amount of USDC repaid and deducted from fee debt.
+     */
+    function repayFeeDebtFor(address borrower, uint256 amount) external override returns (uint256 repaid) {
+        return _repayFeeDebt(msg.sender, borrower, amount);
+    }
+
+    /**
+     * @notice Internal handler for fee debt repayment.
+     * @param payer The address providing the USDC funds.
+     * @param borrower The borrower whose debt is being reduced.
+     * @param amount The maximum amount requested for repayment.
+     * @return repaid The actual amount repaid.
+     */
+    function _repayFeeDebt(
+        address payer,
+        address borrower,
+        uint256 amount
+    ) internal nonReentrant returns (uint256 repaid) {
+        if (amount == 0) revert ZeroRepaymentAmount();
+        if (borrower == address(0)) revert ZeroAddress();
+
+        uint256 currentDebt = feeDebts[borrower];
+        if (currentDebt == 0) revert NoOutstandingDebt();
+
+        if (feeCollector == address(0)) revert ZeroAddress();
+
+        repaid = amount > currentDebt ? currentDebt : amount;
+
+        // Collect payment via fee collector
+        IAegisFeeCollector(feeCollector).processFeeDebtPayment(payer, borrower, repaid);
+
+        // Update accounting after external call succeeds
+        uint256 remainingDebt = currentDebt - repaid;
+        feeDebts[borrower] = remainingDebt;
+
+        emit FeeDebtRepaid(borrower, payer, repaid, remainingDebt);
+    }
+
+    /**
+     * @notice Returns the outstanding fee debt in USDC (scaled 1e6) for a given borrower.
+     */
+    function getFeeDebt(address borrower) external view override returns (uint256) {
+        return feeDebts[borrower];
     }
 
     // View Getters

@@ -5,6 +5,7 @@ import { TelemetryService, MarkPriceData } from "./telemetry.js";
 import { RiskEngine, VaultPositionData, ProConfigData } from "./risk_engine.js";
 import { TrailingTracker } from "./trailing_tracker.js";
 import { OrderSigner } from "./order_signer.js";
+import { HyperCoreAgentClient } from "./hypercore_agent.js";
 
 // Minimal ABIs for interacting with AEGIS contracts
 const VAULT_ABI = [
@@ -22,14 +23,30 @@ const REGISTRY_ABI = [
   "function MIN_BOND() view returns (uint256)"
 ];
 
+const AGENT_DISPATCH_ABI = [
+  "event AgentHedgeIntentDispatched(address indexed vault, uint32 indexed perpIndex, int256 size, uint256 limitPrice, uint256 timestamp)",
+  "event AgentHedgeIntentCancelled(address indexed vault, uint32 indexed perpIndex, uint256 timestamp)"
+];
+
+const RELAYED_ORACLE_ABI = [
+  "function getPerpPrice(uint32 perpIndex) view returns (uint256)",
+  "function getPerpPriceWithTimestamp(uint32 perpIndex) view returns (uint256 markPrice, uint256 timestamp)",
+  "function updatePrice(uint32 perpIndex, uint256 price)",
+  "function maxStaleness() view returns (uint256)"
+];
+
 export class SentinelKeeperDaemon {
   private telemetry: TelemetryService;
   private riskEngine: RiskEngine;
   private trailingTracker: TrailingTracker;
   private orderSigner: OrderSigner;
+  private hyperCoreAgent: HyperCoreAgentClient;
   private vaultContract: ethers.Contract | null = null;
   private registryContract: ethers.Contract | null = null;
+  private agentDispatchContract: ethers.Contract | null = null;
+  private relayedOracleContract: ethers.Contract | null = null;
   private monitoredVaults: Set<string> = new Set();
+  private processedIntents: Set<string> = new Set();
   private isProcessingBlock: boolean = false;
   private healthServer: http.Server | null = null;
   private lastProcessedBlock: number = 0;
@@ -43,6 +60,10 @@ export class SentinelKeeperDaemon {
       config.SENTINEL_SESSION_PRIVATE_KEY,
       config.AEGIS_VAULT_ADDRESS,
       config.CHAIN_ID
+    );
+    this.hyperCoreAgent = new HyperCoreAgentClient(
+      config.SENTINEL_SESSION_PRIVATE_KEY,
+      config.HYPERCORE_API_URL
     );
 
     const provider = this.telemetry.getProvider();
@@ -59,6 +80,20 @@ export class SentinelKeeperDaemon {
         relayerWallet
       );
     }
+    if (config.AGENT_DISPATCH_ADAPTER_ADDRESS !== ethers.ZeroAddress) {
+      this.agentDispatchContract = new ethers.Contract(
+        config.AGENT_DISPATCH_ADAPTER_ADDRESS,
+        AGENT_DISPATCH_ABI,
+        provider
+      );
+    }
+    if (config.RELAYED_ORACLE_ADAPTER_ADDRESS !== ethers.ZeroAddress) {
+      this.relayedOracleContract = new ethers.Contract(
+        config.RELAYED_ORACLE_ADAPTER_ADDRESS,
+        RELAYED_ORACLE_ABI,
+        relayerWallet
+      );
+    }
   }
 
   public addMonitoredVault(vaultAddress: string): void {
@@ -70,10 +105,15 @@ export class SentinelKeeperDaemon {
     console.log("     AEGIS PROTOCOL — AUTONOMOUS SENTINEL RISK KEEPER DAEMON     ");
     console.log("=================================================================");
     console.log(`[Init] Chain ID:           ${config.CHAIN_ID}`);
+    console.log(`[Init] Execution Mode:     ${config.KEEPER_EXECUTION_MODE}`);
     console.log(`[Init] Operator Address:   ${config.SENTINEL_OPERATOR_ADDRESS}`);
     console.log(`[Init] Session Key Signer: ${this.orderSigner.getSignerAddress()}`);
+    console.log(`[Init] HyperCore Agent:    ${this.hyperCoreAgent.getAgentAddress()}`);
     console.log(`[Init] Vault Contract:     ${config.AEGIS_VAULT_ADDRESS}`);
     console.log(`[Init] Registry Contract:  ${config.AEGIS_REGISTRY_ADDRESS}`);
+    console.log(`[Init] Agent Dispatch:     ${config.AGENT_DISPATCH_ADAPTER_ADDRESS}`);
+    console.log(`[Init] Relayed Oracle:     ${config.RELAYED_ORACLE_ADAPTER_ADDRESS}`);
+    console.log(`[Init] Canonical USDC:     ${config.USDC_ADDRESS}`);
     console.log(`[Init] Dry Run:            ${config.DRY_RUN}`);
 
     const defaultMonitored = process.env.MONITORED_VAULTS || "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC";
@@ -87,6 +127,8 @@ export class SentinelKeeperDaemon {
 
     await this.verifySentinelStatus();
     this.startHealthServer(parseInt(process.env.HEALTH_PORT || "8080", 10));
+
+    this.listenToAgentDispatchEvents();
 
     this.telemetry.onBlock(async (blockNumber: number, timestamp: number) => {
       await this.handleBlock(blockNumber, timestamp);
@@ -132,7 +174,25 @@ export class SentinelKeeperDaemon {
 
     try {
       const defaultPerpIndex = 0; // HYPE/USDC perp market
-      const markPriceData: MarkPriceData = await this.telemetry.getMarkPrice(defaultPerpIndex);
+      let markPriceData: MarkPriceData;
+
+      try {
+        markPriceData = await this.telemetry.getMarkPrice(defaultPerpIndex);
+      } catch (oracleErr: any) {
+        if (config.USE_HYPERCORE_L1_ORACLE) {
+          const l1Price = await this.hyperCoreAgent.getL1MarkPrice("HYPE");
+          markPriceData = {
+            perpIndex: defaultPerpIndex,
+            markPrice: l1Price,
+            indexPrice: l1Price,
+            depthBid: ethers.parseUnits("50000", 18),
+            depthAsk: ethers.parseUnits("50000", 18),
+            timestamp
+          };
+        } else {
+          throw oracleErr;
+        }
+      }
 
       const priceFormatted = (Number(markPriceData.markPrice) / 1e8).toFixed(2);
       console.log(
@@ -226,6 +286,7 @@ export class SentinelKeeperDaemon {
             vaultOwner,
             markData.perpIndex,
             markData.markPrice,
+            BigInt(hedgeData.size),
             BigInt(currentNonce),
             timestamp
           );
@@ -288,6 +349,18 @@ export class SentinelKeeperDaemon {
 
     console.log(`[OrderSigner] Signed EIP-712 hedge intent for vault ${vaultOwner}`);
 
+    // Off-Chain Execution Loop: Submit trade-only order directly to HyperCore L1 matching engine
+    const orderResult = await this.hyperCoreAgent.submitTradeOnlyOrder({
+      vaultOwner,
+      perpIndex,
+      size: shortSize,
+      limitPrice,
+      reduceOnly: false
+    });
+    console.log(
+      `[HyperCore CLOB] Trade-only order dispatched: OID=${orderResult.orderId} (Latency: ${orderResult.latencyMs}ms)`
+    );
+
     if (this.vaultContract && !config.DRY_RUN) {
       const tx = await this.vaultContract.executeHedgeIntent(
         vaultOwner,
@@ -308,6 +381,14 @@ export class SentinelKeeperDaemon {
         markPrice,
         trailingTakeProfitBps
       );
+    } else {
+      this.trailingTracker.registerHedge(
+        vaultOwner,
+        perpIndex,
+        size,
+        markPrice,
+        trailingTakeProfitBps
+      );
     }
   }
 
@@ -315,6 +396,7 @@ export class SentinelKeeperDaemon {
     vaultOwner: string,
     perpIndex: number,
     exitPrice: bigint,
+    unwindSize: bigint,
     nonce: bigint,
     timestamp: number
   ): Promise<void> {
@@ -323,11 +405,23 @@ export class SentinelKeeperDaemon {
     const signature = await this.orderSigner.signHedgeIntent({
       vault: vaultOwner,
       perpIndex,
-      size: 0n, // Unwind uses dedicated executeUnwindIntent
+      size: unwindSize, // Invariant: must match on-chain ActiveHedge.size for buy-to-close
       limitPrice: exitPrice,
       nonce,
       deadline
     });
+
+    // Off-Chain Execution Loop: Submit buy-to-close unwind to HyperCore L1 CLOB
+    const unwindResult = await this.hyperCoreAgent.submitTradeOnlyOrder({
+      vaultOwner,
+      perpIndex,
+      size: unwindSize,
+      limitPrice: exitPrice,
+      reduceOnly: true
+    });
+    console.log(
+      `[HyperCore CLOB] Trade-only unwind dispatched: OID=${unwindResult.orderId} (Latency: ${unwindResult.latencyMs}ms)`
+    );
 
     if (this.vaultContract && !config.DRY_RUN) {
       const tx = await this.vaultContract.executeUnwindIntent(
@@ -341,7 +435,67 @@ export class SentinelKeeperDaemon {
       await tx.wait(1);
 
       this.trailingTracker.closeHedge(vaultOwner);
+    } else {
+      console.log(
+        `[DRY_RUN] Signed unwind intent for ${vaultOwner}: size=${unwindSize.toString()}, exitPrice=${exitPrice.toString()}, nonce=${nonce.toString()}`
+      );
+      this.trailingTracker.closeHedge(vaultOwner);
     }
+  }
+
+  private listenToAgentDispatchEvents(): void {
+    if (!this.agentDispatchContract) return;
+
+    console.log(
+      `[Keeper] Subscribed to AgentHedgeIntentDispatched on ${config.AGENT_DISPATCH_ADAPTER_ADDRESS}...`
+    );
+
+    this.agentDispatchContract.on(
+      "AgentHedgeIntentDispatched",
+      async (vault: string, perpIndex: any, size: any, limitPrice: any, timestamp: any) => {
+        const intentKey = `${vault.toLowerCase()}-${perpIndex.toString()}-${timestamp.toString()}-${size.toString()}`;
+        if (this.processedIntents.has(intentKey)) return;
+        this.processedIntents.add(intentKey);
+
+        console.log(
+          `[Event:AgentDispatch] Captured AgentHedgeIntentDispatched for ${vault} (Perp: ${perpIndex}, Size: ${size.toString()}, Price: ${limitPrice.toString()})`
+        );
+
+        const orderResult = await this.hyperCoreAgent.submitTradeOnlyOrder({
+          vaultOwner: vault,
+          perpIndex: Number(perpIndex),
+          size: BigInt(size),
+          limitPrice: BigInt(limitPrice),
+          reduceOnly: false
+        });
+
+        if (orderResult.success) {
+          console.log(
+            `[Off-Chain Execution Loop] Order successfully submitted to HyperCore L1! OID: ${orderResult.orderId} in ${orderResult.latencyMs}ms`
+          );
+          const absSize = BigInt(size) < 0n ? -BigInt(size) : BigInt(size);
+          this.trailingTracker.registerHedge(
+            vault,
+            Number(perpIndex),
+            absSize,
+            BigInt(limitPrice),
+            150
+          );
+        } else {
+          console.error(
+            `[Off-Chain Execution Loop] Failed to submit order to HyperCore: ${orderResult.error}`
+          );
+        }
+      }
+    );
+
+    this.agentDispatchContract.on(
+      "AgentHedgeIntentCancelled",
+      async (vault: string, perpIndex: any) => {
+        console.log(`[Event:AgentDispatch] Captured AgentHedgeIntentCancelled for ${vault}`);
+        this.trailingTracker.closeHedge(vault);
+      }
+    );
   }
 
   public startHealthServer(port: number = 8080): void {
@@ -351,7 +505,11 @@ export class SentinelKeeperDaemon {
           status: "healthy",
           uptimeSeconds: Math.floor(process.uptime()),
           chainId: config.CHAIN_ID,
+          executionMode: config.KEEPER_EXECUTION_MODE,
           rpcUrl: config.ELYSIUM_RPC_URL,
+          usdcAddress: config.USDC_ADDRESS,
+          agentDispatchAddress: config.AGENT_DISPATCH_ADAPTER_ADDRESS,
+          relayedOracleAddress: config.RELAYED_ORACLE_ADAPTER_ADDRESS,
           lastProcessedBlock: this.lastProcessedBlock,
           lastBlockTimestamp: this.lastBlockTimestamp,
           monitoredVaultsCount: this.monitoredVaults.size,

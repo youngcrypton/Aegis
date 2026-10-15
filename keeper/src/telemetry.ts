@@ -135,39 +135,92 @@ export class TelemetryService {
   }
 
   public async getMarkPrice(perpIndex: number): Promise<MarkPriceData> {
-    try {
-      const callData = ethers.AbiCoder.defaultAbiCoder().encode(["uint32"], [perpIndex]);
-      const result = await this.provider.call({
-        to: "0x0000000000000000000000000000000000000801",
-        data: callData
-      });
+    const selector = "0x3a4b9c1d";
+    const encodedIndex = ethers.AbiCoder.defaultAbiCoder().encode(["uint32"], [perpIndex]);
+    const callData = ethers.concat([selector, encodedIndex]);
 
-      if (result && result !== "0x") {
-        const [markPrice, indexPrice, depthBid, depthAsk, timestamp] =
-          ethers.AbiCoder.defaultAbiCoder().decode(
-            ["uint256", "uint256", "uint256", "uint256", "uint256"],
-            result
-          );
-        return {
-          perpIndex,
-          markPrice: BigInt(markPrice),
-          indexPrice: BigInt(indexPrice),
-          depthBid: BigInt(depthBid),
-          depthAsk: BigInt(depthAsk),
-          timestamp: Number(timestamp)
-        };
+    const result = await this.provider.call({
+      to: "0x0000000000000000000000000000000000000801",
+      data: callData
+    });
+
+    if (!result || result === "0x") {
+      // Stock ArbOS testnet/day 1 mainnet: Fallback to RelayedOracleAdapter if configured
+      if (config.RELAYED_ORACLE_ADAPTER_ADDRESS !== ethers.ZeroAddress) {
+        try {
+          const adapterSelector = "0xc65e1eb4"; // getPerpPriceWithTimestamp(uint32)
+          const adapterCalldata = ethers.concat([adapterSelector, encodedIndex]);
+          const adapterResult = await this.provider.call({
+            to: config.RELAYED_ORACLE_ADAPTER_ADDRESS,
+            data: adapterCalldata
+          });
+          if (adapterResult && adapterResult !== "0x" && adapterResult.length >= 130) {
+            const [relayedPrice, relayedTs] = ethers.AbiCoder.defaultAbiCoder().decode(
+              ["uint256", "uint256"],
+              adapterResult
+            );
+            const relayedPriceBigInt = BigInt(relayedPrice);
+            if (relayedPriceBigInt > 0n) {
+              return {
+                perpIndex,
+                markPrice: relayedPriceBigInt,
+                indexPrice: relayedPriceBigInt,
+                depthBid: ethers.parseUnits("50000", 18),
+                depthAsk: ethers.parseUnits("50000", 18),
+                timestamp: Number(relayedTs)
+              };
+            }
+          }
+        } catch {
+          // Fall through to throw
+        }
       }
-    } catch {
-      // In offline / dry-run mode, provide fallback simulation pricing
+      throw new Error(`Oracle read failed: Precompile 0x0801 returned empty data for perp ${perpIndex}`);
     }
 
-    return {
-      perpIndex,
-      markPrice: 25_00000000n, // $25.00 scaled 1e8
-      indexPrice: 25_00000000n,
-      depthBid: ethers.parseUnits("50000", 18),
-      depthAsk: ethers.parseUnits("50000", 18),
-      timestamp: Math.floor(Date.now() / 1000)
-    };
+    // Must be at least 32 bytes (66 hex characters including 0x prefix)
+    if (result.length < 66) {
+      throw new Error(
+        `Oracle read failed: Precompile 0x0801 returned malformed data (length ${result.length}) for perp ${perpIndex}`
+      );
+    }
+
+    if (result.length >= 322) {
+      const [markPrice, indexPrice, depthBid, depthAsk, timestamp] =
+        ethers.AbiCoder.defaultAbiCoder().decode(
+          ["uint256", "uint256", "uint256", "uint256", "uint256"],
+          result
+        );
+      const markPriceBigInt = BigInt(markPrice);
+      if (markPriceBigInt <= 0n) {
+        throw new Error(
+          `Oracle read failed: Precompile 0x0801 returned non-positive price (${markPriceBigInt.toString()}) for perp ${perpIndex}`
+        );
+      }
+      return {
+        perpIndex,
+        markPrice: markPriceBigInt,
+        indexPrice: BigInt(indexPrice),
+        depthBid: BigInt(depthBid),
+        depthAsk: BigInt(depthAsk),
+        timestamp: Number(timestamp)
+      };
+    } else {
+      const [markPrice] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
+      const markPriceBigInt = BigInt(markPrice);
+      if (markPriceBigInt <= 0n) {
+        throw new Error(
+          `Oracle read failed: Precompile 0x0801 returned non-positive price (${markPriceBigInt.toString()}) for perp ${perpIndex}`
+        );
+      }
+      return {
+        perpIndex,
+        markPrice: markPriceBigInt,
+        indexPrice: markPriceBigInt,
+        depthBid: 0n,
+        depthAsk: 0n,
+        timestamp: Math.floor(Date.now() / 1000)
+      };
+    }
   }
 }

@@ -13,12 +13,20 @@ interface IAegisFeeCollector {
         uint256 buybackBudget,
         uint256 yieldBudget
     );
+    event FeeDebtPaymentProcessed(
+        address indexed payer,
+        address indexed vaultOwner,
+        uint256 feeAmountUsdc,
+        uint256 buybackBudget,
+        uint256 yieldBudget
+    );
     event BuybackAndBurnExecuted(uint256 usdcSpent, uint256 aegisBurned);
     event YieldDistributed(address indexed recipient, uint256 yieldAmount);
     event TargetUpdated(address indexed newTarget);
     event PoolUpdated(address indexed newPool);
 
     function processAvertedFee(address vaultOwner, uint256 savedPenaltyAmount) external;
+    function processFeeDebtPayment(address payer, address vaultOwner, uint256 feeAmount) external;
     function executeBuybackAndBurn() external;
     function executeBuybackAndBurn(uint256 minAegisOut) external;
     function distributeYield() external;

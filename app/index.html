@@ -65,9 +65,14 @@
         <span>Elysium L2</span>
         <strong>99801</strong>
       </div>
-      <div class="latency-badge hide-compact" id="latencyBadge">
-        <span>0x0801 Precompile:</span>
-        <strong id="latencyVal">68ms</strong>
+      <div class="latency-badge hide-compact" id="latencyBadge" title="Measured round-trip latency to configured Elysium L2 RPC node">
+        <span>RPC Latency:</span>
+        <strong id="latencyVal">--ms</strong>
+      </div>
+      <div class="integration-badge hide-sm" id="precompileStatusBadge" style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; border:1px solid var(--rule); background:var(--ground); font-size:11px;" title="HyperCore Precompile 0x0801 status on testnet node">
+        <span class="status-dot" style="width:6px; height:6px; border-radius:50%; background:var(--hedge);"></span>
+        <span style="color:var(--ink-2);">0x0801:</span>
+        <strong class="text-hedge font-mono" id="oracleStatusText">Blocked</strong>
       </div>
     </div>
 
@@ -93,9 +98,9 @@
         <button id="btnLockTerminal" type="button" title="Lock Terminal" style="background:none; border:none; color:var(--ink-2); cursor:pointer; font-size:0.75rem; padding:0 2px; margin-left:4px; line-height:1;">✕</button>
       </div>
 
-      <div class="session-badge safe hide-laptop" id="sessionBadge">
-        <span>Session Key:</span>
-        <strong>Trade-Only (INV-1)</strong>
+      <div class="session-badge safe hide-laptop" id="sessionBadge" title="Protocol Security Invariant INV-1 Model">
+        <span>Session Model:</span>
+        <strong>Non-Custodial (INV-1)</strong>
       </div>
 
       <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
@@ -316,19 +321,20 @@
       </section>
 
     <!-- Simulation Bar: Interactive Test Engine -->
-    <section class="simulation-bar">
+    <section class="simulation-bar" style="border-left: 3px solid var(--hedge);">
       <div class="sim-left">
-        <span class="sim-title">
-          Quant Stress Test:
+        <span class="sim-title" style="display:inline-flex; align-items:center; gap:6px;">
+          <span class="status-pill pill-hedge" style="font-size:10px; padding:1px 6px;">Simulation Mode</span>
+          <span>Quant Stress Test:</span>
         </span>
-        <button class="sim-btn btn-danger" id="btnCrashTest" type="button">
+        <button class="sim-btn btn-danger" id="btnCrashTest" type="button" title="Interactive simulation of an 18% market drop (client-side simulation)">
           Simulate Flash Crash (-18%)
         </button>
-        <button class="sim-btn btn-hedge" id="btnRetraceTest" type="button">
-          Simulate Retracement (-8% then V-Bounce)
+        <button class="sim-btn btn-hedge" id="btnRetraceTest" type="button" title="Interactive simulation of an 8% dip and V-bounce with trailing unwind">
+          Simulate Retracement (-8% V-Bounce)
         </button>
         <button class="sim-btn" id="btnResetMarket" type="button">
-          Reset Market ($48.50)
+          Reset Simulation ($48.50)
         </button>
       </div>
       <div class="sim-right">
@@ -336,7 +342,7 @@
           <input type="checkbox" id="liveTickerToggle" checked>
           <span class="slider"></span>
         </label>
-        <span class="toggle-label">Live 100ms Ticker Feed (0x0801 Precompile)</span>
+        <span class="toggle-label">Simulated Price Micro-Ticker (Demo)</span>
       </div>
     </section>
 
@@ -382,7 +388,7 @@
           <!-- Dynamic SVG Health Factor Gauge & Buffer Bar -->
           <div class="health-gauge-section">
             <div class="gauge-header">
-              <span>Dynamic Health Factor Gauge (0x0801 Synced)</span>
+              <span>Dynamic Health Factor Gauge <span class="status-pill pill-hedge" style="font-size:10px; padding:1px 6px; margin-left:4px;">Simulated Model</span></span>
               <span class="font-mono text-accent" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
             </div>
 
@@ -459,13 +465,13 @@
           </div>
         </div>
 
-        <!-- HyperCore Live Orderbook & Depth Card (Pro Only) -->
+        <!-- HyperCore Orderbook Depth Card (Pro Only) -->
         <div class="card orderbook-card pro-only" id="proOrderbookCard">
           <div class="card-header">
-            <h2 class="header-title">HyperCore L1 CLOB Depth (Synchronous 0x0801)</h2>
+            <h2 class="header-title">HyperCore L1 CLOB Depth <span class="status-pill pill-hedge" style="font-size:10px; padding:1px 6px; margin-left:4px;">Simulated Model</span></h2>
             <div class="header-extra font-mono">
               <span>Spread: <strong class="text-accent" id="clobSpread">0.02 USD (0.04%)</strong></span>
-              <span>Depth: <strong class="text-accent">$1,840,000</strong></span>
+              <span>Depth: <strong class="text-accent">$1,840,000 (Model)</strong></span>
             </div>
           </div>
 
@@ -483,7 +489,7 @@
             <!-- Mid Price Bar -->
             <div class="clob-mid-bar">
               <span class="font-mono mid-price" id="clobMidPrice">$48.50</span>
-              <span class="mid-source">0x0801 Direct Oracle Feed</span>
+              <span class="mid-source" id="orderbookMidSource">Ref Mid: Hyperliquid L1 REST</span>
             </div>
 
             <!-- Bids (Accent / Green) -->
@@ -511,8 +517,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               </div>
               <div class="feat-content">
-                <span class="feat-title">Strict Non-Custodial Bounds (INV-1)</span>
-                <p class="feat-desc">The delegated ephemeral session key has zero permission to withdraw, transfer, or move collateral. It is mathematically restricted to predeploy <code>0x0802</code> hedging calls.</p>
+                <span class="feat-title">Strict Non-Custodial Bounds (INV-1) <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Verified Local</span></span>
+                <p class="feat-desc">The delegated session key is mathematically restricted from moving collateral. In production, it targets predeploy <code>0x0802</code>; on current testnet, order dispatch executes in simulation mode.</p>
               </div>
             </div>
 
@@ -521,8 +527,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               </div>
               <div class="feat-content">
-                <span class="feat-title">Precompile 0x0801 Synchronous Oracle</span>
-                <p class="feat-desc">Surveils Hyperliquid L1 consensus state in sub-second ticks. Zero oracle latency, zero mempool frontrunning, and zero MEV extractable value.</p>
+                <span class="feat-title">Precompile 0x0801 Architecture <span class="status-pill pill-hedge" style="font-size:9.5px; padding:1px 5px; margin-left:4px;">Testnet: Blocked</span></span>
+                <p class="feat-desc">Architected for direct Hyperliquid L1 consensus reads. Native precompile 0x0801 is unprovisioned on current testnet; terminal uses external REST reference prices and local simulation.</p>
               </div>
             </div>
 
@@ -811,35 +817,90 @@
           </form>
         </div>
 
-        <!-- $AEGIS Token Flywheel Widget -->
+        <!-- $AEGIS Token Economic Model Widget -->
         <div class="card token-card">
           <div class="card-header">
-            <h2 class="header-title">$AEGIS Economic Engine</h2>
-            <span class="status-pill pill-accent">Ascend Hook Pool</span>
+            <h2 class="header-title">$AEGIS Economic Model</h2>
+            <span class="status-pill pill-hedge">Simulated Ascend Mock</span>
           </div>
 
           <div class="token-metrics-list">
             <div class="token-metric-item">
-              <span class="t-lbl">Bonded Sentinel Stake</span>
-              <span class="t-val font-mono">125,000 $AEGIS</span>
-              <span class="t-sub text-accent">Skin in the Game (5 Active Nodes)</span>
+              <span class="t-lbl">Ascend AMM Integration Status</span>
+              <span class="t-val font-mono" style="font-size:12px; color:var(--hedge);">MockAscendHookPool (0x59F2f...)</span>
+              <span class="t-sub text-muted">Fixed Mock Rate (1 USDC = 10 AEGIS) &bull; Not Live DEX</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">Programmatic Burn</span>
-              <span class="t-val font-mono text-violet" id="tokenBurnDisplay">164,820 $AEGIS</span>
-              <span class="t-sub">50% Net Fees Burned to 0x...dead</span>
+              <span class="t-lbl">Simulated Buyback & Burn</span>
+              <span class="t-val font-mono text-violet" id="tokenBurnDisplay">164,820 $AEGIS (Sim)</span>
+              <span class="t-sub">50% Net Allocation (Interactive Demo Model)</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">Staker Real Yield (USDC)</span>
-              <span class="t-val font-mono text-accent">18.42% APR</span>
-              <span class="t-sub">50% Net Fees Paid in USDC</span>
+              <span class="t-lbl">Simulated Staker Yield (USDC)</span>
+              <span class="t-val font-mono text-accent">18.42% APR (Model)</span>
+              <span class="t-sub">50% Net Allocation (Interactive Demo Model)</span>
             </div>
             <div class="token-metric-item">
-              <span class="t-lbl">Ascend Stage Progression</span>
-              <span class="t-val font-mono text-violet">Stage 2: Ascended (74%)</span>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 74%;"></div>
-              </div>
+              <span class="t-lbl">On-Chain Settled Fees</span>
+              <span class="t-val font-mono" id="onChainSettledFeesDisplay" style="color:var(--ink-2);">$0.00 USDC</span>
+              <span class="t-sub">Verified On-Chain via FeeCollector (0x00 captured)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Integration & On-Chain Verification Card -->
+        <div class="card integration-card" id="integrationStatusCard">
+          <div class="card-header">
+            <h2 class="header-title">Elysium Testnet Verification</h2>
+            <span class="status-pill pill-accent" id="integrationOverallPill">Live RPC Synced</span>
+          </div>
+
+          <div class="token-metrics-list">
+            <div class="token-metric-item">
+              <span class="t-lbl">Network & Block Height</span>
+              <span class="t-val font-mono" id="liveRpcBlockDisplay">Querying RPC...</span>
+              <span class="t-sub" id="liveRpcObsTime">Elysium L2 Testnet (Chain ID 99801)</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Oracle Precompile 0x0801</span>
+              <span class="t-val font-mono text-hedge" id="cardOracleStatus">Blocked on Testnet</span>
+              <span class="t-sub text-muted">Returns empty 0x; using Hyperliquid REST reference</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Writer Predeploy 0x0802</span>
+              <span class="t-val font-mono text-hedge" id="cardWriterStatus">Blocked on Testnet</span>
+              <span class="t-sub text-muted">Returns empty 0x; order dispatch simulated in demo</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">AegisVault On-Chain Status</span>
+              <span class="t-val font-mono text-accent" id="cardVaultStatus">0x05Aa... (Deployed)</span>
+              <span class="t-sub text-muted">Owner & FeeCollector verified on-chain</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deferred Fee Debt & Accounting Status Card -->
+        <div class="card fee-debt-card" id="feeDebtCard">
+          <div class="card-header">
+            <h2 class="header-title">Deferred Fee Debt & Accounting</h2>
+            <span class="status-pill pill-hedge" id="feeDebtStatusPill">Upgrade Required</span>
+          </div>
+
+          <div class="token-metrics-list">
+            <div class="token-metric-item">
+              <span class="t-lbl">Deployed Feature Status</span>
+              <span class="t-val font-mono text-hedge" id="feeDebtAmountDisplay">Unavailable</span>
+              <span class="t-sub" id="feeDebtDetailText">Vault at 0x05Aa... precedes Phase 1C upgrade; feeDebts getter unsupported.</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Protocol Fee Specification</span>
+              <span class="t-val font-mono text-accent" style="font-size:12px;">10% of 5% Averted Penalty</span>
+              <span class="t-sub text-muted">Formula: 0.50% of collateral TVL in USDC (Contract Model)</span>
+            </div>
+            <div class="token-metric-item">
+              <span class="t-lbl">Simulated Demo Fee Model</span>
+              <span class="t-val font-mono text-violet" style="font-size:12px;">10% of Simulated Trading PnL</span>
+              <span class="t-sub text-muted">Interactive demo model only &bull; uncollected on testnet</span>
             </div>
           </div>
         </div>
@@ -853,7 +914,7 @@
         <h2 class="header-title">Real-Time Sentinel Event Stream & Execution Audit Trail</h2>
         <div class="header-extra">
           <span class="pulse-indicator"></span>
-          <span class="font-mono text-accent">Sub-Second ElysiumCoreWriter (0x0802)</span>
+          <span class="font-mono text-accent">Sentinel Event Stream (Simulation Mode)</span>
         </div>
       </div>
       <div class="terminal-body font-mono" id="auditTerminal">
@@ -881,10 +942,10 @@
             <div class="tt-coin-titles">
               <div class="tt-coin-title-row">
                 <span class="tt-coin-pair" id="activeCoinPairTitle">HYPE / USDT</span>
-                <span class="status-pill pill-accent">HyperCore L1</span>
-                <span class="status-pill pill-accent">0x0802 Hedged</span>
+                <span class="status-pill pill-accent">Reference Market</span>
+                <span class="status-pill pill-hedge">Simulated Hedge</span>
                 <span class="status-pill pill-accent" id="ttLiveApiBadge" style="display:inline-flex; align-items:center; gap:5px;">
-                  <span class="live-pulse-dot"></span> Live Hyperliquid API
+                  <span class="live-pulse-dot"></span> Hyperliquid L1 REST API
                 </span>
               </div>
               <span class="tt-coin-fullname" id="activeCoinFullname">Hyperliquid Flagship L1 Native Perp</span>
@@ -1032,27 +1093,44 @@
   <div class="modal-overlay" id="sessionKeyModal" style="display: none;">
     <div class="modal-card">
       <div class="modal-header-row">
-        <h3>Delegate Session Key (INV-1)</h3>
+        <h3>Approve Trade-Only API Agent (INV-1)</h3>
         <button class="modal-close-icon" id="btnCloseSessionKeyModal" type="button" aria-label="Close modal">&times;</button>
       </div>
       <p class="modal-desc">
-        <strong>Strict Non-Custodial Guarantee (INV-1):</strong> This session key is authorized solely to dispatch atomic hedging and unwind intents to HyperCore CLOB via predeploy <code>0x0802</code>. It is mathematically incapable of withdrawing or transferring collateral.
+        <strong>Strict Non-Custodial Guarantee (INV-1):</strong> Authorize the AEGIS Sentinel Keeper as a trade-only agent. The agent can only submit hedging and unwind limit orders to HyperCore L1 via <code>AgentDispatchAdapter</code>. It is mathematically incapable of withdrawing or transferring collateral.
       </p>
+
+      <div style="background:var(--ground); border:1px solid var(--rule); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11px; display:flex; flex-direction:column; gap:4px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--ink-2);">Execution Route:</span>
+          <span class="font-mono text-accent">HyperCore L1 API (Stock ArbOS)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--ink-2);">Security Scope:</span>
+          <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 6px;">INV-1 Non-Custodial</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--ink-2);">Post-Hardfork Upgrade:</span>
+          <span class="text-muted">Predeploy 0x0802 (~4w post-mainnet)</span>
+        </div>
+      </div>
+
       <div class="modal-field">
-        <label for="ephemeralKeyAddress">Generated Ephemeral Session Key</label>
-        <input class="modal-input font-mono" id="ephemeralKeyAddress" type="text" readonly value="0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf">
+        <label for="ephemeralKeyAddress">Sentinel Keeper Agent Address</label>
+        <input class="modal-input font-mono" id="ephemeralKeyAddress" type="text" value="0x70997970C51812dc3A010C7d01b50e0d17dc79C8">
       </div>
       <div class="modal-field">
         <label for="sessionDurationDays">Authorized Duration</label>
         <select class="form-select" id="sessionDurationDays">
           <option value="7">7 Days</option>
-          <option value="30" selected>30 Days</option>
+          <option value="30" selected>30 Days (Recommended)</option>
           <option value="90">90 Days</option>
+          <option value="365">365 Days</option>
         </select>
       </div>
       <div class="modal-actions">
         <button class="sim-btn" id="btnCancelSessionKey" type="button">Cancel</button>
-        <button class="btn-primary" id="btnConfirmDelegateKey" type="button" style="padding: 0 16px;">Sign & Delegate on Elysium L2</button>
+        <button class="btn-primary" id="btnConfirmDelegateKey" type="button" style="padding: 0 16px;">Approve Trade-Only Agent</button>
       </div>
     </div>
   </div>
@@ -1061,11 +1139,11 @@
   <div class="modal-overlay" id="elysiumSignModal" style="display: none;">
     <div class="modal-card" style="max-width: 520px;">
       <div class="modal-header-row">
-        <h3>Elysium L2 Signature Request</h3>
+        <h3>Elysium L2 Signature Demonstration (INV-1)</h3>
         <button class="modal-close-icon" id="btnCloseSignModal" type="button" aria-label="Close modal">&times;</button>
       </div>
       <p class="modal-desc">
-        Authorize your non-custodial trading session on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. This cryptographic signature authenticates account ownership and binds your wallet to AEGIS Sentinel Precompiles (INV-1). No gas fee is consumed.
+        Interactive demonstration of trade-only session authorization on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. Under Invariant INV-1, this key is mathematically barred from withdrawing collateral. On current testnet, this is an interactive simulation and does not modify on-chain state.
       </p>
 
       <div class="modal-field">
@@ -1082,14 +1160,14 @@
       </div>
 
       <div class="modal-field">
-        <label>Signature Payload (EIP-191 personal_sign)</label>
+        <label>Demonstration Signature Payload (EIP-191 personal_sign)</label>
         <textarea class="modal-input font-mono" id="signModalPayloadText" rows="4" readonly style="resize:none; font-size:11px; line-height:1.4; color:var(--ink-2);"></textarea>
       </div>
 
       <div class="modal-actions" style="margin-top:10px;">
-        <button class="sim-btn" id="btnRejectSign" type="button">Reject</button>
+        <button class="sim-btn" id="btnRejectSign" type="button">Cancel</button>
         <button class="btn-primary" id="btnConfirmSign" type="button" style="padding: 0 18px;">
-          Sign & Connect to Elysium L2
+          Sign Demo Session (INV-1)
         </button>
       </div>
     </div>
@@ -1159,6 +1237,50 @@
             </div>
             <div id="modalFaucetStatusBadge">
               <span class="status-pill pill-accent" id="modalHypeStatusPill">Faucet Synced</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canonical Bridged Testnet USDC Card -->
+        <div style="background:var(--ground); border:1px solid var(--rule); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="token-badge-icon" style="width:22px; height:22px; font-size:11px; background:var(--raised); border:1px solid var(--rule); color:var(--accent);">U</span>
+              <div>
+                <div style="font-weight:600; color:var(--ink); font-size:13px;">Canonical Testnet USDC (0x7D29...47b2)</div>
+                <div style="font-size:11px; color:var(--ink-2);">Canonical Bridged Collateral & Debt Asset (6 Decimals)</div>
+              </div>
+            </div>
+            <a class="faucet-pill-btn" href="https://elysium.kinetiq.xyz/testnet-faucet" target="_blank" rel="noopener noreferrer">
+              <span>Claim Faucet ↗</span>
+            </a>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:4px;">
+            <div>
+              <div class="font-mono" id="modalUsdcBal" style="font-size:24px; font-weight:700; color:var(--ink); letter-spacing:-0.02em;">0.00</div>
+              <div class="font-mono" id="modalUsdcUsd" style="font-size:12px; color:var(--ink-2);">≈ $0.00 USD</div>
+            </div>
+            <div id="modalUsdcStatusBadge">
+              <span class="status-pill pill-accent" id="modalUsdcStatusPill">Faucet Synced</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Faucet Notice / Mandatory Claim Banner -->
+        <div id="modalFaucetWarningBanner" style="display:none; background:color-mix(in srgb, var(--hedge) 10%, var(--ground)); border:1px solid var(--hedge); border-radius:12px; padding:14px; margin-top:10px;">
+          <div style="display:flex; align-items:flex-start; gap:10px;">
+            <div style="color:var(--hedge); font-size:16px; line-height:1; flex-shrink:0; margin-top:2px;">⚠️</div>
+            <div style="flex:1;">
+              <div style="font-weight:600; color:var(--ink); font-size:12px; margin-bottom:2px;">Elysium Testnet Faucet Required</div>
+              <div style="font-size:11px; color:var(--ink-2); line-height:1.4;">
+                To test AEGIS, your wallet must have native <strong>HYPE</strong> to pay transaction gas and canonical <strong>USDC</strong> (<code>0x7D29...47b2</code>) for vault collateral. Claim testnet tokens before depositing.
+              </div>
+              <div style="margin-top:8px;">
+                <a class="faucet-pill-btn" href="https://elysium.kinetiq.xyz/testnet-faucet" target="_blank" rel="noopener noreferrer" style="background:var(--hedge); color:var(--ground); border-color:var(--hedge); font-weight:700;">
+                  <span>Claim Free Elysium Testnet HYPE & USDC ↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>

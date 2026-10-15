@@ -30,6 +30,29 @@ interface IAegisVault {
         uint32 indexed perpIndex,
         uint256 exitPrice
     );
+    event LowestWickUpdated(
+        address indexed vaultOwner,
+        uint256 lowestWickPrice,
+        uint256 trailingExitPrice
+    );
+    event FeeCollectionFailed(
+        address indexed vaultOwner,
+        uint256 savedPenaltyAmount,
+        bytes reason
+    );
+    event FeeDebtAccrued(
+        address indexed vaultOwner,
+        uint256 feeDebtAccrued,
+        uint256 totalFeeDebt
+    );
+    event FeeDebtRepaid(
+        address indexed vaultOwner,
+        address indexed payer,
+        uint256 amountRepaid,
+        uint256 remainingDebt
+    );
+    event OracleAdapterUpdated(address indexed oldOracle, address indexed newOracle);
+    event HyperCoreWriterUpdated(address indexed oldWriter, address indexed newWriter);
 
     function registerPosition(
         address collateralToken,
@@ -63,6 +86,14 @@ interface IAegisVault {
         bytes calldata signature
     ) external;
 
+    function updateLowestWick(address vaultOwner) external;
+
+    function repayFeeDebt(uint256 amount) external returns (uint256 repaid);
+
+    function repayFeeDebtFor(address borrower, uint256 amount) external returns (uint256 repaid);
+
+    function getFeeDebt(address borrower) external view returns (uint256);
+
     function getVaultHealth(address vaultOwner, uint32 perpIndex)
         external
         view
@@ -73,4 +104,8 @@ interface IAegisVault {
     function getProConfig(address vaultOwner) external view returns (ProConfig memory);
 
     function getActiveHedge(address vaultOwner) external view returns (ActiveHedge memory);
+ 
+    function setOracleAdapter(address newOracle) external;
+
+    function setHyperCoreWriter(address newWriter) external;
 }

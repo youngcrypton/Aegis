@@ -87,8 +87,9 @@ h1, h2, h3, .display-font {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 20;
 }
 
 .view-mode-switcher {
@@ -415,6 +416,8 @@ h1, h2, h3, .display-font {
 .pill-accent { background: var(--ground); color: var(--accent); border-color: var(--accent); }
 .pill-hedge { background: var(--ground); color: var(--hedge); border-color: var(--hedge); }
 .pill-danger { background: var(--ground); color: var(--danger); border-color: var(--danger); }
+.pill-muted { background: var(--ground); color: var(--ink-2); border-color: var(--rule); }
+.pill-violet { background: var(--ground); color: var(--violet); border-color: var(--violet); }
 
 /* Simulation Bar */
 .simulation-bar {
@@ -3017,11 +3020,11 @@ body.mode-lite .lite-telemetry-card {
   display: inline-flex;
 }
 
-@media (max-width: 1260px) {
+@media (max-width: 1350px) {
   .hide-compact { display: none !important; }
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1180px) {
   .hide-laptop { display: none !important; }
 }
 

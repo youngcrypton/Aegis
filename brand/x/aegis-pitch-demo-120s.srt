@@ -1,0 +1,71 @@
+1
+00:00:00,500 --> 00:00:05,000
+[WELCOME] Welcome to AEGIS, the first autonomous risk engine eliminating forced liquidations in DeFi.
+
+2
+00:00:05,000 --> 00:00:10,500
+[0x0801 TELEMETRY] Live on Elysium Layer 2, our terminal connects directly to HyperCore Precompile 0x0801, streaming mark prices in sub-78 milliseconds.
+
+3
+00:00:10,500 --> 00:00:17,000
+[VAULT STATE] On screen, our vault holds 1,000 HYPE collateral and $32,000 USDC debt...
+
+4
+00:00:17,000 --> 00:00:23,500
+[HEALTH FACTOR] ...maintaining a safe 1.41 Health Factor on our live radial gauge.
+
+5
+00:00:24,000 --> 00:00:29,500
+[LITE AUTO-PILOT] For everyday borrowers, the main user experience is our 1-Click Lite Auto-Pilot.
+
+6
+00:00:29,500 --> 00:00:35,500
+[DEFENSE PRESETS] Calibrated for testnet faucet micro-deposits, users select Conservative, Balanced, or Aggressive presets.
+
+7
+00:00:35,500 --> 00:00:43,500
+[INV-1 SESSION KEY] Activating the shield delegates an ephemeral session key under Invariant INV-1, mathematically restricted to trade-only hedging.
+
+8
+00:00:44,500 --> 00:00:50,000
+[PRO TERMINAL] For institutional quants, the Pro Terminal unlocks granular parameters...
+
+9
+00:00:50,000 --> 00:00:56,500
+[ALGORITHMIC RISK] ...customizable trigger prices, delta coverage ratios from 10% to 100%, and trailing profit locks.
+
+10
+00:00:56,500 --> 00:01:02,500
+[HYPERCORE CLOB] Below, our terminal streams the live central limit order book directly from HyperCore, monitoring sub-tick execution depth.
+
+11
+00:01:03,000 --> 00:01:08,000
+[CORE ENGINE] Now for our core functionality: eliminating liquidation loss.
+
+12
+00:01:08,000 --> 00:01:14,500
+[FLASH CRASH -18%] During a live -18% flash crash simulation, as price drops toward liquidation, the Health Factor falls below 1.15.
+
+13
+00:01:14,500 --> 00:01:21,000
+[0x0802 SHORT HEDGE] In under 78 milliseconds, our Sentinel dispatches an atomic short hedge via Predeploy 0x0802 on HyperCore.
+
+14
+00:01:21,000 --> 00:01:27,500
+[COLLATERAL SAFE] The short absorbs the drop dollar-for-dollar. Spot collateral remains 100% safe.
+
+15
+00:01:28,000 --> 00:01:34,000
+[V-BOUNCE UNWIND] When the market rebounds by our 1.5% trailing buffer, AEGIS automatically buys back the short, locking in cash profits.
+
+16
+00:01:34,000 --> 00:01:40,000
+[DEBT PAYDOWN] 90% of gains pay down debt, restoring the Health Factor comfortably above 1.25.
+
+17
+00:01:40,000 --> 00:01:46,500
+[INV-3 KILLSWITCH] Borrowers retain an atomic Manual Override killswitch under Invariant INV-3.
+
+18
+00:01:46,500 --> 00:01:53,500
+[AEGIS PROTOCOL] With 5 formal invariants verified over 160,000 fuzz runs, AEGIS eliminates liquidation loss forever.

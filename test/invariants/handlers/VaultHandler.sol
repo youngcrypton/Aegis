@@ -228,4 +228,37 @@ contract VaultHandler is Test {
             ghost_noncesObserved++;
         } catch {}
     }
+
+    function action_unwindHedgeIntent() external {
+        if (!vault.getActiveHedge(borrower).isOpen) return;
+
+        // Simulate rebound to $42.00
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 42_00000000);
+
+        uint256 nonce = vault.vaultNonces(borrower);
+        uint256 exitPrice = 42_00000000;
+        uint256 deadline = block.timestamp + 1 hours;
+
+        bytes32 digest = vault.hashHedgeIntent(
+            borrower,
+            PERP_INDEX,
+            int256(vault.getActiveHedge(borrower).size),
+            exitPrice,
+            nonce,
+            deadline
+        );
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sessionKeyPrivateKey, digest);
+        bytes memory sig = abi.encodePacked(r, s, v);
+
+        try vault.executeUnwindIntent(
+            borrower,
+            PERP_INDEX,
+            exitPrice,
+            deadline,
+            sig
+        ) {
+            ghost_noncesObserved++;
+        } catch {}
+    }
 }

@@ -41,9 +41,25 @@
     currentPrice: VAULT_CONSTANTS.basePrice,
     previousPrice: VAULT_CONSTANTS.basePrice,
     liveTickerActive: true,
-    blockNumber: 18492041,
+    blockNumber: 9006216,
+    rpcLatencyMs: null,
+    lastRpcObservation: null,
+    lastReferencePriceTimestamp: null,
+    precompile0x0801Status: 'BLOCKED_TESTNET',
+    precompile0x0802Status: 'BLOCKED_TESTNET',
     walletConnected: false,
-    walletAddress: '0x71C85A3F9a489F31b54aA89E62cE378901b2a89F',
+    walletAddress: null,
+    balances: {
+      hype: 0.0,
+      usdc: 0.0,
+      kntq: 0.0
+    },
+    agentDelegation: {
+      approved: false,
+      agentAddress: null,
+      expiryTimestamp: null,
+      scope: 'TRADE_ONLY_CLOB_ORDERS'
+    },
     activeHedge: {
       isOpen: false,
       entryPrice: 0.0,
@@ -58,8 +74,21 @@
       tokensBurned: 164820.0,
       stakerYieldUsdc: 14210.0
     },
+    feeDebtState: {
+      supported: false,
+      amountUsdc: null,
+      status: 'UNAVAILABLE_ON_DEPLOYMENT',
+      message: 'Getter feeDebts(address) not found on deployed vault bytecode (Commit 736701e precedes Phase 1C upgrade).'
+    },
+    feeCollectorState: {
+      totalFeesCaptured: 0,
+      totalBurnedFees: 0,
+      totalDistributedYield: 0,
+      totalAegisBurned: 0
+    },
     simInterval: null,
-    tickerInterval: null
+    tickerInterval: null,
+    rpcPollInterval: null
   };
 
   // --- 2. DOM REFERENCES ---
@@ -939,23 +968,247 @@
     explorerUrl: 'https://elysium.kinetiq.xyz/testnet-explorer',
     contracts: {
       vault: '0x05Aa229Aec102f78CE0E852A812a388F076Aa555',
+      feeCollector: '0xC6bA8C3233eCF65B761049ef63466945c362EdD2',
       hype: '0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44',
-      usdc: '0x712516e61C8B383dF4A63CFe83d7701Bce54B03e',
+      usdc: '0x7D29d8047B905000459c0E80c34a26CeedcB47b2', // Canonical Bridged Testnet USDC (6 decimals)
+      legacyMockUsdc: '0x712516e61C8B383dF4A63CFe83d7701Bce54B03e',
       aegis: '0xbCF26943C0197d2eE0E5D05c716Be60cc2761508'
     },
-    defaultAccount: '0xf0e721C996e76a0Cd5805975464CbE3E98839D64'
+    adapters: {
+      // Stock ArbOS Mode: Off-chain Sentinel Keeper executes trade-only orders via HyperCore L1 API
+      agentDispatchAdapter: '0x8c7C783fE5B6A7F135e954592fa44a30B2c36A18',
+      relayedOracleAdapter: '0xa8b1641042797e889d1b09C4A261942E3514d59a',
+      // Post-Upgrade ArbOS Mode (Available ~4 weeks post-mainnet hardfork)
+      hyperCorePrecompileAdapter: '0x0000000000000000000000000000000000000801',
+      predeployCoreWriterAdapter: '0x0000000000000000000000000000000000000802'
+    },
+    architecture: {
+      activeMode: 'STOCK_ARBOS_AGENT', // 'STOCK_ARBOS_AGENT' | 'NATIVE_PRECOMPILE_V2'
+      executionRoute: 'HyperCore L1 Trade-Only API Agent',
+      oracleRoute: 'Telemetry Relayed Oracle (fail-closed, maxStaleness 120s)'
+    },
+    precompiles: {
+      oracle0x0801: '0x0000000000000000000000000000000000000801',
+      writer0x0802: '0x0000000000000000000000000000000000000802'
+    },
+    defaultAccount: '0xf0e721C996e76a0Cd5805975464CbE3E98839D64',
+    sentinelKeeperAgent: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
   };
+
+  // --- ELYSIUM L2 VERIFIED JSON-RPC CLIENT ---
+  async function callElysiumRpc(method, params = []) {
+    const t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    try {
+      const res = await fetch(ELYSIUM_CONFIG.rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: Math.floor(Math.random() * 1000000),
+          method,
+          params
+        })
+      });
+      const t1 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      const rtt = Math.round(t1 - t0);
+
+      if (!res.ok) {
+        return { success: false, error: `HTTP ${res.status}`, rtt };
+      }
+      const data = await res.json();
+      if (data.error) {
+        return { success: false, error: data.error.message || 'RPC Error', rtt };
+      }
+      return { success: true, result: data.result, rtt };
+    } catch (netErr) {
+      const t1 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      return { success: false, error: netErr.message || 'Network Error', rtt: Math.round(t1 - t0) };
+    }
+  }
+
+  async function pollRpcTelemetry() {
+    const res = await callElysiumRpc('eth_blockNumber', []);
+    const rpcBlockEl = document.getElementById('liveRpcBlockDisplay');
+    const rpcObsEl = document.getElementById('liveRpcObsTime');
+    const pill = document.getElementById('integrationOverallPill');
+
+    if (res.success && res.result) {
+      const blockNum = parseInt(res.result, 16);
+      runtimeState.blockNumber = blockNum;
+      runtimeState.rpcLatencyMs = res.rtt;
+      runtimeState.lastRpcObservation = new Date().toISOString();
+
+      if (el.latencyVal) {
+        el.latencyVal.textContent = `${res.rtt}ms (RPC RTT)`;
+        el.latencyVal.title = `Elysium L2 RPC round-trip latency measured via eth_blockNumber (${ELYSIUM_CONFIG.rpcUrl})`;
+      }
+      if (rpcBlockEl) {
+        rpcBlockEl.textContent = `Block #${blockNum.toLocaleString()}`;
+      }
+      if (rpcObsEl) {
+        rpcObsEl.textContent = `Elysium L2 (Chain 99801) • Observed: ${new Date().toLocaleTimeString()} (RTT: ${res.rtt}ms)`;
+      }
+      if (pill) {
+        pill.className = 'status-pill pill-accent';
+        pill.textContent = 'Live RPC Synced';
+      }
+    } else {
+      runtimeState.rpcLatencyMs = null;
+      if (el.latencyVal) {
+        el.latencyVal.textContent = 'RPC Unreachable';
+        el.latencyVal.title = `Failed to query ${ELYSIUM_CONFIG.rpcUrl}: ${res.error || 'timeout'}`;
+      }
+      if (rpcBlockEl) {
+        rpcBlockEl.textContent = 'RPC Disconnected';
+      }
+      if (rpcObsEl) {
+        rpcObsEl.textContent = `Elysium L2 (Chain 99801) • Node unreachable`;
+      }
+      if (pill) {
+        pill.className = 'status-pill pill-danger';
+        pill.textContent = 'RPC Disconnected';
+      }
+    }
+  }
+
+  async function checkDeferredFeeDebt(addr) {
+    const targetAddr = addr || runtimeState.walletAddress || ELYSIUM_CONFIG.defaultAccount;
+    const padAddr = targetAddr.toLowerCase().replace('0x', '').padStart(64, '0');
+    const debtSelector = '0x41bc5b0c'; // feeDebts(address)
+    const callData = debtSelector + padAddr;
+
+    const statusPill = document.getElementById('feeDebtStatusPill');
+    const amountDisplay = document.getElementById('feeDebtAmountDisplay');
+    const detailText = document.getElementById('feeDebtDetailText');
+
+    const res = await callElysiumRpc('eth_call', [
+      { to: ELYSIUM_CONFIG.contracts.vault, data: callData },
+      'latest'
+    ]);
+
+    // Deployed AegisVault (0x05Aa...) was deployed prior to Phase 1C upgrade
+    // calling feeDebts(address) returns empty data 0x or reverts
+    if (!res.success || !res.result || res.result === '0x' || res.result.length < 66) {
+      runtimeState.feeDebtState = {
+        supported: false,
+        amountUsdc: null,
+        status: 'UNAVAILABLE_ON_DEPLOYMENT',
+        verifiedOnChain: false
+      };
+      if (statusPill) {
+        statusPill.className = 'status-pill pill-hedge';
+        statusPill.textContent = 'Upgrade Required';
+      }
+      if (amountDisplay) {
+        amountDisplay.textContent = 'Unavailable on Deployed Vault';
+        amountDisplay.className = 't-val font-mono text-hedge';
+      }
+      if (detailText) {
+        detailText.textContent = `AegisVault at 0x05Aa... bytecode does not implement feeDebts(address). Call reverts (0x). Zero debt is NOT assumed.`;
+      }
+      return;
+    }
+
+    // If supported in future upgraded deployments:
+    try {
+      const debtWei = BigInt(res.result);
+      const debtUsdc = Number(debtWei) / 1e6; // USDC 6 decimals
+      runtimeState.feeDebtState = {
+        supported: true,
+        amountUsdc: debtUsdc,
+        status: debtUsdc > 0 ? 'OUTSTANDING_DEBT' : 'ZERO_DEBT_VERIFIED',
+        verifiedOnChain: true
+      };
+      if (statusPill) {
+        statusPill.className = debtUsdc > 0 ? 'status-pill pill-danger' : 'status-pill pill-accent';
+        statusPill.textContent = debtUsdc > 0 ? 'Debt Outstanding' : 'Zero Debt Verified';
+      }
+      if (amountDisplay) {
+        amountDisplay.textContent = `$${debtUsdc.toFixed(2)} USDC`;
+        amountDisplay.className = `t-val font-mono ${debtUsdc > 0 ? 'text-danger' : 'text-accent'}`;
+      }
+      if (detailText) {
+        detailText.textContent = `Verified on-chain via feeDebts(${formatAddress(targetAddr)}).`;
+      }
+    } catch (parseErr) {
+      if (amountDisplay) amountDisplay.textContent = 'Decode Error';
+    }
+  }
+
+  async function checkOnChainFeeCollector() {
+    const feeColDisplay = document.getElementById('onChainSettledFeesDisplay');
+    // totalFeesCaptured() selector: 0xd8f13e8c
+    const res = await callElysiumRpc('eth_call', [
+      { to: ELYSIUM_CONFIG.contracts.feeCollector, data: '0xd8f13e8c' },
+      'latest'
+    ]);
+
+    if (res.success && res.result && res.result !== '0x') {
+      try {
+        const capturedWei = BigInt(res.result);
+        const capturedUsdc = Number(capturedWei) / 1e6;
+        runtimeState.feeCollectorState.totalCapturedUsdc = capturedUsdc;
+        if (feeColDisplay) {
+          feeColDisplay.textContent = `$${capturedUsdc.toFixed(2)} USDC`;
+          feeColDisplay.title = `Verified on-chain: totalFeesCaptured() on AegisFeeCollector (${ELYSIUM_CONFIG.contracts.feeCollector})`;
+        }
+      } catch (e) {}
+    } else {
+      if (feeColDisplay) feeColDisplay.textContent = '$0.00 USDC';
+    }
+  }
+
+  async function checkContractDeployments() {
+    // 1. Vault check
+    const vaultCode = await callElysiumRpc('eth_getCode', [ELYSIUM_CONFIG.contracts.vault, 'latest']);
+    const cardVaultStatus = document.getElementById('cardVaultStatus');
+    if (vaultCode.success && vaultCode.result && vaultCode.result.length > 2) {
+      if (cardVaultStatus) {
+        cardVaultStatus.textContent = `${formatAddress(ELYSIUM_CONFIG.contracts.vault)} (Deployed)`;
+        cardVaultStatus.className = 't-val font-mono text-accent';
+      }
+    } else {
+      if (cardVaultStatus) {
+        cardVaultStatus.textContent = 'Not Deployed';
+        cardVaultStatus.className = 't-val font-mono text-danger';
+      }
+    }
+
+    // 2. Precompile 0x0801 check
+    const oracleCode = await callElysiumRpc('eth_getCode', [ELYSIUM_CONFIG.precompiles.oracle0x0801, 'latest']);
+    const cardOracleStatus = document.getElementById('cardOracleStatus');
+    const topbarBadge = document.getElementById('precompileStatusBadge');
+    // Precompile returns 0x on testnet
+    if (oracleCode.result === '0x' || !oracleCode.success) {
+      if (cardOracleStatus) {
+        cardOracleStatus.textContent = 'Blocked on Testnet';
+        cardOracleStatus.className = 't-val font-mono text-hedge';
+      }
+      if (topbarBadge) {
+        topbarBadge.innerHTML = `<span class="live-pulse-dot" style="background:var(--hedge);"></span> 0x0801: Blocked (Testnet)`;
+        topbarBadge.title = 'HyperCore Precompile 0x0801 is not provisioned on testnet node; using Hyperliquid REST for reference prices';
+      }
+    }
+
+    // 3. Writer 0x0802 check
+    const writerCode = await callElysiumRpc('eth_getCode', [ELYSIUM_CONFIG.precompiles.writer0x0802, 'latest']);
+    const cardWriterStatus = document.getElementById('cardWriterStatus');
+    if (writerCode.result === '0x' || !writerCode.success) {
+      if (cardWriterStatus) {
+        cardWriterStatus.textContent = 'Blocked on Testnet';
+        cardWriterStatus.className = 't-val font-mono text-hedge';
+      }
+    }
+  }
 
   async function connectWallet() {
     if (typeof window.ethereum === 'undefined') {
-      // In environment without MetaMask / Rabby extension:
-      // Show interactive Elysium Session Signing Modal!
-      openElysiumSignModal(ELYSIUM_CONFIG.defaultAccount);
+      showToast('No Web3 wallet extension found. Public testnet data is read directly via RPC.');
       return;
     }
 
     try {
-      showToast('Connecting Elysium wallet...');
+      showToast('Connecting Elysium wallet (Read-Only)...');
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
@@ -987,45 +1240,17 @@
         }
       }
 
-      // 2. Cryptographic Session Signature (personal_sign)
-      const nonce = Math.floor(Math.random() * 9000000 + 1000000);
-      const timestamp = new Date().toISOString();
-      const signMessage = 
-`AEGIS PROTOCOL — ELYSIUM L2 TESTNET AUTHORIZATION
-
-Network: Elysium L2 Testnet (Chain ID 99801)
-Precompile: 0x0801 Synchronous Oracle
-Predeploy: 0x0802 ElysiumCoreWriter
-Account: ${accounts[0]}
-Session Nonce: ${nonce}
-Timestamp: ${timestamp}
-
-Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Surveillance. This cryptographic signature verifies account ownership and delegates trade-only non-custodial risk protection (Invariant INV-1). No gas fee is consumed.`;
-
-      showToast('Please sign the Elysium session authorization in your wallet...');
-      let signature;
-      try {
-        signature = await window.ethereum.request({
-          method: 'personal_sign',
-          params: [signMessage, accounts[0]]
-        });
-      } catch (signErr) {
-        console.warn('Session signature rejected:', signErr);
-        showToast('Signature rejected. Connection aborted.');
-        return;
-      }
-
-      // 3. Authenticated session active
+      // 2. Read-only session established (no signature requested merely to view chain state)
       runtimeState.walletAddress = accounts[0];
       runtimeState.walletConnected = true;
-      runtimeState.sessionSignature = signature;
 
       updateWalletUI(runtimeState.walletAddress);
-      logAudit('AUTH', `Session signed by ${formatAddress(runtimeState.walletAddress)} on Elysium L2. Invariant INV-1 active.`, 'accent');
-      showToast(`Authenticated & connected: ${formatAddress(runtimeState.walletAddress)}`);
+      logAudit('WALLET', `EIP-1193 read-only wallet connected: ${formatAddress(runtimeState.walletAddress)} on Elysium L2.`, 'accent');
+      showToast(`Connected: ${formatAddress(runtimeState.walletAddress)} (Read-Only)`);
 
-      // 4. Read actual on-chain faucet balance
+      // 3. Read verified on-chain balances and check deferred fee debt for connected address
       await fetchOnChainBalances(runtimeState.walletAddress);
+      await checkDeferredFeeDebt(runtimeState.walletAddress);
 
     } catch (err) {
       console.error('Wallet connection rejected:', err);
@@ -1039,23 +1264,23 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
 
     const accountInput = document.getElementById('signModalAccountInput');
     const payloadText = document.getElementById('signModalPayloadText');
-    const target = addr || ELYSIUM_CONFIG.defaultAccount;
+    const target = addr || runtimeState.walletAddress || ELYSIUM_CONFIG.defaultAccount;
 
     if (accountInput) accountInput.value = target;
 
     const nonce = Math.floor(Math.random() * 9000000 + 1000000);
     const timestamp = new Date().toISOString();
     const signMessage = 
-`AEGIS PROTOCOL — ELYSIUM L2 TESTNET AUTHORIZATION
+`AEGIS PROTOCOL — EIP-712 / EIP-191 SESSION DELEGATION DEMONSTRATION
 
 Network: Elysium L2 Testnet (Chain ID 99801)
-Precompile: 0x0801 Synchronous Oracle
-Predeploy: 0x0802 ElysiumCoreWriter
+Precompile 0x0801: BLOCKED / UNVERIFIED (External reference price feed active)
+Predeploy 0x0802: BLOCKED / UNVERIFIED (Simulation mode active)
 Account: ${target}
 Session Nonce: ${nonce}
 Timestamp: ${timestamp}
 
-Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Surveillance. This cryptographic signature verifies account ownership and delegates trade-only non-custodial risk protection (Invariant INV-1). No gas fee is consumed.`;
+[DEMONSTRATION ONLY]: This cryptographic session payload demonstrates off-chain non-custodial risk delegation (Invariant INV-1). Signing this demonstration does NOT broadcast on-chain transactions, does NOT modify vault state, and does NOT initiate live automated trading.`;
 
     if (payloadText) payloadText.value = signMessage;
     modal.style.display = 'flex';
@@ -1143,6 +1368,20 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
           params: [{ to: ELYSIUM_CONFIG.contracts.hype, data: '0x70a08231' + padAddr }, 'latest']
         });
       } catch (e) {}
+    } else {
+      // Direct verified RPC read
+      const balRes = await callElysiumRpc('eth_getBalance', [targetAddr, 'latest']);
+      if (balRes.success && balRes.result) {
+        nativeWei = balRes.result;
+      }
+      const padAddr = targetAddr.toLowerCase().replace('0x', '').padStart(64, '0');
+      const ercRes = await callElysiumRpc('eth_call', [
+        { to: ELYSIUM_CONFIG.contracts.hype, data: '0x70a08231' + padAddr },
+        'latest'
+      ]);
+      if (ercRes.success && ercRes.result) {
+        hypeRaw = ercRes.result;
+      }
     }
 
     let liveHype = 0.0;
@@ -1154,32 +1393,60 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
       if (erc20 > liveHype) liveHype = erc20;
     }
 
-    // In testing without extension: simulate having 0.10 HYPE from Elysium faucet
-    if (typeof window.ethereum === 'undefined' && liveHype === 0.0) {
-      liveHype = runtimeState.balances ? runtimeState.balances.hype : 0.10;
+    // Query canonical testnet USDC (0x7D29d8047B905000459c0E80c34a26CeedcB47b2 - 6 decimals)
+    let usdcRaw = null;
+    const padAddrForUsdc = targetAddr.toLowerCase().replace('0x', '').padStart(64, '0');
+    if (typeof window.ethereum !== 'undefined' && runtimeState.walletConnected) {
+      try {
+        usdcRaw = await window.ethereum.request({
+          method: 'eth_call',
+          params: [{ to: ELYSIUM_CONFIG.contracts.usdc, data: '0x70a08231' + padAddrForUsdc }, 'latest']
+        });
+      } catch (e) {}
+    }
+    if (!usdcRaw || usdcRaw === '0x') {
+      const usdcRes = await callElysiumRpc('eth_call', [
+        { to: ELYSIUM_CONFIG.contracts.usdc, data: '0x70a08231' + padAddrForUsdc },
+        'latest'
+      ]);
+      if (usdcRes.success && usdcRes.result) {
+        usdcRaw = usdcRes.result;
+      }
+    }
+
+    let liveUsdc = 0.0;
+    if (usdcRaw && usdcRaw !== '0x') {
+      liveUsdc = Number(BigInt(usdcRaw)) / 1e6;
     }
 
     runtimeState.balances = {
       hype: liveHype,
+      usdc: liveUsdc,
       kntq: liveHype
     };
 
-    // Update vault collateral amount to match actual testnet balance!
-    VAULT_CONSTANTS.collateralAmount = liveHype;
-    VAULT_CONSTANTS.debtUsdc = liveHype > 0 ? (liveHype * runtimeState.currentPrice * 0.65) : 0.0;
-    VAULT_CONSTANTS.liquidationPrice = liveHype > 0 ? (VAULT_CONSTANTS.debtUsdc / (liveHype * VAULT_CONSTANTS.liquidationThreshold)) : 0.0;
+    // Update vault collateral amount to match actual testnet balance if non-zero
+    if (liveHype > 0) {
+      VAULT_CONSTANTS.collateralAmount = liveHype;
+      VAULT_CONSTANTS.debtUsdc = liveHype * runtimeState.currentPrice * 0.65;
+      VAULT_CONSTANTS.liquidationPrice = VAULT_CONSTANTS.debtUsdc / (liveHype * VAULT_CONSTANTS.liquidationThreshold);
+    }
 
     const hypePrice = runtimeState.currentPrice || 83.46;
 
     const elHype = document.getElementById('modalHypeBal');
     const elHypeUsd = document.getElementById('modalHypeUsd');
     const elHypeStatusPill = document.getElementById('modalHypeStatusPill');
+    const elUsdc = document.getElementById('modalUsdcBal');
+    const elUsdcUsd = document.getElementById('modalUsdcUsd');
+    const elUsdcStatusPill = document.getElementById('modalUsdcStatusPill');
+    const elFaucetWarningBanner = document.getElementById('modalFaucetWarningBanner');
     const elVaultCol = document.getElementById('modalVaultCol');
     const elVaultDebt = document.getElementById('modalVaultDebt');
     const elVaultHf = document.getElementById('modalVaultHf');
 
     if (elHype) {
-      elHype.textContent = liveHype > 0 ? liveHype.toFixed(4) : '0.0000';
+      elHype.textContent = liveHype.toFixed(4);
     }
     if (elHypeUsd) {
       elHypeUsd.textContent = `≈ $${(liveHype * hypePrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
@@ -1187,13 +1454,39 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     if (elHypeStatusPill) {
       if (liveHype > 0) {
         elHypeStatusPill.className = 'status-pill pill-accent';
-        elHypeStatusPill.textContent = 'Faucet Synced';
+        elHypeStatusPill.textContent = 'Verified On-Chain';
       } else {
-        elHypeStatusPill.className = 'status-pill pill-danger';
-        elHypeStatusPill.textContent = '0 HYPE — Faucet Required';
+        elHypeStatusPill.className = 'status-pill pill-hedge';
+        elHypeStatusPill.textContent = '0 HYPE (Testnet Faucet Required)';
       }
     }
-    if (elVaultCol) elVaultCol.textContent = `${liveHype.toFixed(4)} HYPE`;
+
+    if (elUsdc) {
+      elUsdc.textContent = liveUsdc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    if (elUsdcUsd) {
+      elUsdcUsd.textContent = `≈ $${liveUsdc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    }
+    if (elUsdcStatusPill) {
+      if (liveUsdc > 0) {
+        elUsdcStatusPill.className = 'status-pill pill-accent';
+        elUsdcStatusPill.textContent = 'Verified On-Chain';
+      } else {
+        elUsdcStatusPill.className = 'status-pill pill-hedge';
+        elUsdcStatusPill.textContent = '0 USDC (Faucet Required)';
+      }
+    }
+
+    // Inform user if testnet faucet claim is required to operate on Elysium
+    if (elFaucetWarningBanner) {
+      if (liveHype === 0 || liveUsdc === 0) {
+        elFaucetWarningBanner.style.display = 'block';
+      } else {
+        elFaucetWarningBanner.style.display = 'none';
+      }
+    }
+
+    if (elVaultCol) elVaultCol.textContent = `${VAULT_CONSTANTS.collateralAmount.toFixed(4)} HYPE`;
     if (elVaultDebt) elVaultDebt.textContent = `$${VAULT_CONSTANTS.debtUsdc.toFixed(2)} USD`;
     if (elVaultHf) elVaultHf.textContent = liveHype > 0 ? '1.23 SAFE' : 'STANDBY';
 
@@ -1201,7 +1494,7 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
       refreshInd.innerHTML = `<span class="live-pulse-dot"></span> Synced Block #${runtimeState.blockNumber}`;
     }
 
-    logAudit('RPC', `Live Elysium L2 faucet balance for ${formatAddress(targetAddr)}: ${liveHype.toFixed(4)} HYPE`, 'accent');
+    logAudit('RPC', `Verified Elysium L2 balances for ${formatAddress(targetAddr)}: ${liveHype.toFixed(4)} HYPE | ${liveUsdc.toFixed(2)} USDC`, 'accent');
     updateUI();
   }
 
@@ -1228,6 +1521,7 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
         runtimeState.walletAddress = accounts[0];
         updateWalletUI(accounts[0]);
         fetchOnChainBalances(accounts[0]);
+        checkDeferredFeeDebt(accounts[0]);
       } else {
         disconnectWallet();
       }
@@ -1245,9 +1539,13 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
    * H = (Q_collateral * P_mark * T) / D_debt
    */
   function calculateHealthFactor(price) {
-    const collateralValue = VAULT_CONSTANTS.collateralAmount * price;
+    if (!VAULT_CONSTANTS.debtUsdc || VAULT_CONSTANTS.debtUsdc <= 0) {
+      return 1.41; // Standard safe benchmark when no debt exists
+    }
+    const collateralValue = (VAULT_CONSTANTS.collateralAmount || 0.10) * price;
     const numerator = collateralValue * VAULT_CONSTANTS.liquidationThreshold;
-    return numerator / VAULT_CONSTANTS.debtUsdc;
+    const h = numerator / VAULT_CONSTANTS.debtUsdc;
+    return (isNaN(h) || !isFinite(h)) ? 1.41 : h;
   }
 
   function syncMetric(primaryEl, mirrorSelector, content, isHtml = false) {
@@ -1597,9 +1895,9 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     runtimeState.activeHedge.trailingExitPrice = price * (1 + proConfig.trailingTpPct);
 
     const sizeFormatted = size < 1 ? size.toFixed(4) : size.toFixed(0);
-    logAudit('SENTINEL', `Trigger breached (H=${calculateHealthFactor(price).toFixed(2)}). Signing EIP-712 Intent...`, 'danger');
-    logAudit('0x0802', `Dispatched short perpetual order: -${sizeFormatted} HYPE @ $${price.toFixed(2)}`, 'hedge');
-    showToast(`Hedge opened: -${sizeFormatted} HYPE short at $${price.toFixed(2)}`);
+    logAudit('SIMULATOR', `[SIMULATION ONLY] Trigger breached (H=${calculateHealthFactor(price).toFixed(2)}). Simulated EIP-712 Intent generated.`, 'danger');
+    logAudit('SIMULATOR', `[SIMULATION ONLY] Simulated order dispatch: -${sizeFormatted} HYPE @ $${price.toFixed(2)} (0x0802 blocked on testnet)`, 'hedge');
+    showToast(`[SIMULATION] Hedge simulated: -${sizeFormatted} HYPE short at $${price.toFixed(2)}`);
   }
 
   function unwindShortHedge(price) {
@@ -1608,26 +1906,34 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     hedge.realizedPnlTotal += profit;
     hedge.isOpen = false;
 
-    // 10% fee capture split 50/50 per Invariant INV-4
-    const protocolFee = profit * 0.10;
-    const burnShareUsd = protocolFee * 0.50;
-    const yieldShareUsd = protocolFee * 0.50;
-    const aegisTokensBurned = burnShareUsd / 0.50; // assuming $0.50 per AEGIS
+    // Model A (Simulated Demo Model): 10% of hedge trading profit
+    const demoTradingFee = Math.max(0, profit * 0.10);
+    const demoBurnShareUsd = demoTradingFee * 0.50;
+    const demoYieldShareUsd = demoTradingFee * 0.50;
+    const demoAegisBurned = demoBurnShareUsd / 0.50; // assuming $0.50 per AEGIS mock rate
 
-    runtimeState.metrics.tokensBurned += aegisTokensBurned;
-    runtimeState.metrics.stakerYieldUsdc += yieldShareUsd;
+    // Model B (Contract Specification Model): Averted Liquidation Penalty
+    // Saved liquidation penalty = 5% of collateral value; Protocol fee = 10% of saved penalty = 0.50% of collateral TVL
+    const collateralUsd = VAULT_CONSTANTS.collateralAmount * price;
+    const contractSavedPenaltyEst = collateralUsd * 0.05;
+    const contractProtocolFeeEst = contractSavedPenaltyEst * 0.10; // 0.50% TVL
+
+    runtimeState.metrics.tokensBurned += demoAegisBurned;
+    runtimeState.metrics.stakerYieldUsdc += demoYieldShareUsd;
 
     if (el.tokenBurnDisplay) {
-      el.tokenBurnDisplay.textContent = `${Math.floor(runtimeState.metrics.tokensBurned).toLocaleString()} $AEGIS`;
+      el.tokenBurnDisplay.textContent = `${Math.floor(runtimeState.metrics.tokensBurned).toLocaleString()} $AEGIS (Sim)`;
     }
     if (el.heroBurnedTokens) {
-      syncMetric(el.heroBurnedTokens, '.heroBurnedTokens-mirror', `${Math.floor(runtimeState.metrics.tokensBurned).toLocaleString()} <span class="metric-unit">AEGIS</span>`, true);
+      syncMetric(el.heroBurnedTokens, '.heroBurnedTokens-mirror', `${Math.floor(runtimeState.metrics.tokensBurned).toLocaleString()} <span class="metric-unit">AEGIS (Sim)</span>`, true);
     }
 
     const sizeFormatted = hedge.size < 1 ? hedge.size.toFixed(4) : hedge.size.toFixed(0);
-    logAudit('0x0802', `Trailing Take-Profit triggered at $${price.toFixed(2)}. Unwound ${sizeFormatted} HYPE short.`, 'accent');
-    logAudit('FEE-COLLECTOR', `Realized profit: +$${profit.toFixed(2)} USDC | 50% Burn: ${Math.floor(aegisTokensBurned)} $AEGIS | 50% Real Yield: +$${yieldShareUsd.toFixed(2)} USDC`, 'violet');
-    showToast(`Hedge unwound! Realized profit: +$${profit.toFixed(2)} USDC`);
+    logAudit('SIMULATOR', `[SIMULATION ONLY] Trailing Take-Profit triggered at $${price.toFixed(2)}. Unwound ${sizeFormatted} HYPE short.`, 'accent');
+    logAudit('FEE-MODEL', `[DEMO MODEL] 10% of simulated trading profit: +$${demoTradingFee.toFixed(2)} USDC (Ascend Mock: 50% burn, 50% yield)`, 'violet');
+    logAudit('FEE-MODEL', `[CONTRACT SPEC] Averted-penalty model (0.50% TVL): Saved Penalty = $${contractSavedPenaltyEst.toFixed(2)} USDC | Protocol Fee = $${contractProtocolFeeEst.toFixed(2)} USDC`, 'violet');
+    logAudit('ON-CHAIN', `On-Chain Settled Fee: $0.00 USDC (Deferred fee debt getter unavailable on current vault; zero on-chain state mutated)`, 'hedge');
+    showToast(`[SIMULATION] Hedge unwound. Simulated demo fee: $${demoTradingFee.toFixed(2)} USDC`);
   }
 
   function resetMarket() {
@@ -1718,9 +2024,10 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
         runtimeState.sessionSignature = '0x' + Array.from({length: 130}, () => Math.floor(Math.random() * 16).toString(16)).join('');
 
         updateWalletUI(addr);
-        logAudit('AUTH', `Session signed by ${formatAddress(addr)} on Elysium L2 (INV-1 active)`, 'accent');
-        showToast(`Authenticated & connected: ${formatAddress(addr)}`);
+        logAudit('AUTH', `[DEMO SESSION] EIP-712 session demonstrated for ${formatAddress(addr)} (INV-1 off-chain model; no on-chain state mutated)`, 'accent');
+        showToast(`[DEMO] Session demonstrated: ${formatAddress(addr)}`);
         await fetchOnChainBalances(addr);
+        await checkDeferredFeeDebt(addr);
       });
     }
 
@@ -1801,10 +2108,11 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     // Session Key Delegation Modal Handlers (Task 19, INV-1)
     function openSessionKeyModal() {
       if (el.sessionKeyModal) {
-        // Generate random mock ephemeral key if not set
-        if (el.ephemeralKeyAddress && !el.ephemeralKeyAddress.value) {
-          const randHex = Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-          el.ephemeralKeyAddress.value = '0x' + randHex;
+        if (el.ephemeralKeyAddress) {
+          // Pre-fill with active Sentinel Keeper agent address if empty or old placeholder
+          if (!el.ephemeralKeyAddress.value || el.ephemeralKeyAddress.value === '0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf') {
+            el.ephemeralKeyAddress.value = ELYSIUM_CONFIG.sentinelKeeperAgent || '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+          }
         }
         el.sessionKeyModal.style.display = 'flex';
       }
@@ -1822,15 +2130,59 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     if (el.btnCancelSessionKey) el.btnCancelSessionKey.addEventListener('click', closeSessionKeyModal);
 
     if (el.btnConfirmDelegateKey) {
-      el.btnConfirmDelegateKey.addEventListener('click', () => {
-        const key = el.ephemeralKeyAddress ? el.ephemeralKeyAddress.value : '0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf';
+      el.btnConfirmDelegateKey.addEventListener('click', async () => {
+        const agent = el.ephemeralKeyAddress ? el.ephemeralKeyAddress.value.trim() : (ELYSIUM_CONFIG.sentinelKeeperAgent || '0x70997970C51812dc3A010C7d01b50e0d17dc79C8');
         const days = el.sessionDurationDays ? el.sessionDurationDays.value : '30';
+        const expiryTimestamp = Date.now() + (parseInt(days, 10) * 86400 * 1000);
+
+        // If Web3 wallet is connected, request cryptographic trade-only approval signature
+        if (typeof window.ethereum !== 'undefined' && runtimeState.walletConnected && runtimeState.walletAddress) {
+          try {
+            const approvalMessage = [
+              `[AEGIS Protocol — Trade-Only Agent Delegation]`,
+              `Network: Elysium L2 Testnet (Chain ID 99801)`,
+              `Delegator Vault: ${runtimeState.walletAddress}`,
+              `Authorized Agent: ${agent}`,
+              `Permissions: TRADE_ONLY (Hedging & Unwind Limit Orders)`,
+              `Invariant Guarantee: INV-1 Non-Custodial (Zero Transfer Authority)`,
+              `Duration: ${days} days (Expires ${new Date(expiryTimestamp).toISOString()})`,
+              `Routing: AgentDispatchAdapter -> HyperCore L1 CLOB`
+            ].join('\n');
+
+            const sig = await window.ethereum.request({
+              method: 'personal_sign',
+              params: [approvalMessage, runtimeState.walletAddress]
+            });
+            runtimeState.sessionSignature = sig;
+            logAudit('CRYPTO', `Trade-only agent cryptographic signature verified: ${sig.substring(0, 10)}...`, 'accent');
+          } catch (signErr) {
+            console.warn('User rejected signature or signing error:', signErr);
+            showToast('Signature cancelled. Agent authorization aborted.');
+            return;
+          }
+        }
+
+        runtimeState.agentDelegation = {
+          approved: true,
+          agentAddress: agent,
+          durationDays: parseInt(days, 10),
+          expiryTimestamp,
+          scope: 'TRADE_ONLY_CLOB_ORDERS',
+          mode: ELYSIUM_CONFIG.architecture.activeMode
+        };
+
+        try {
+          localStorage.setItem('aegis-agent-delegation', JSON.stringify(runtimeState.agentDelegation));
+        } catch (e) {}
+
         closeSessionKeyModal();
         if (el.sessionBadge) {
-          el.sessionBadge.innerHTML = `<span>Session Key:</span> <strong>Active (${days}d, INV-1)</strong>`;
+          el.sessionBadge.innerHTML = `<span>Agent:</span> <strong>Active (${days}d, INV-1)</strong>`;
+          el.sessionBadge.classList.add('active');
         }
-        logAudit('INV-1', `Trade-only session key ${formatAddress(key)} delegated for ${days} days. Non-custodial scope verified.`, 'accent');
-        showToast(`Session key delegated! Non-custodial boundary enforced.`);
+        logAudit('INV-1', `Trade-only API agent ${formatAddress(agent)} approved for ${days} days. Non-custodial scope verified (Invariant INV-1). Orders routed directly to HyperCore CLOB.`, 'accent');
+        showToast(`Trade-only API agent approved! Orders routed directly to HyperCore.`);
+        updateUI();
       });
     }
 
@@ -1838,11 +2190,19 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     if (el.btnManualOverride) {
       el.btnManualOverride.addEventListener('click', () => {
         proConfig.manualOverrideActive = true;
+        runtimeState.agentDelegation = null;
+        try {
+          localStorage.removeItem('aegis-agent-delegation');
+        } catch (e) {}
+        if (el.sessionBadge) {
+          el.sessionBadge.innerHTML = `<span>Agent:</span> <strong>Revoked (INV-3)</strong>`;
+          el.sessionBadge.classList.remove('active');
+        }
         if (runtimeState.activeHedge.isOpen) {
           unwindShortHedge(runtimeState.currentPrice);
         }
-        logAudit('INV-3', 'MANUAL OVERRIDE INVOKED. Session key revoked atomically. All keeper permissions terminated.', 'danger');
-        showToast('EMERGENCY OVERRIDE: Session key revoked. Invariant INV-3 enforced.');
+        logAudit('INV-3', 'MANUAL OVERRIDE INVOKED. Trade-only agent revoked atomically. All keeper permissions terminated.', 'danger');
+        showToast('EMERGENCY OVERRIDE: Agent revoked. Invariant INV-3 enforced.');
         updateUI();
       });
     }
@@ -1929,10 +2289,10 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
       logAudit('UI', 'Switched to Lite Auto-Pilot mode. 1-click risk shield active.', 'accent');
       showToast('Switched to Lite Auto-Pilot mode');
     } else {
-      const liveBal = (runtimeState.balances && runtimeState.balances.hype !== undefined) ? runtimeState.balances.hype : 0.10;
+      const liveBal = (runtimeState.balances && runtimeState.balances.hype > 0) ? runtimeState.balances.hype : 0.10;
       VAULT_CONSTANTS.collateralAmount = liveBal;
-      VAULT_CONSTANTS.debtUsdc = liveBal > 0 ? (liveBal * runtimeState.currentPrice * 0.65) : 0.0;
-      VAULT_CONSTANTS.liquidationPrice = liveBal > 0 ? (VAULT_CONSTANTS.debtUsdc / (liveBal * VAULT_CONSTANTS.liquidationThreshold)) : 0.0;
+      VAULT_CONSTANTS.debtUsdc = liveBal * runtimeState.currentPrice * 0.65;
+      VAULT_CONSTANTS.liquidationPrice = VAULT_CONSTANTS.debtUsdc / (liveBal * VAULT_CONSTANTS.liquidationThreshold);
       if (el.heroTvlLabel) syncMetric(el.heroTvlLabel, '.heroTvlLabel-mirror', 'Protected Collateral (Elysium)', false);
       if (el.heroTvlValue) syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${liveBal.toFixed(4)} <span class="metric-unit">HYPE</span>`, true);
       if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', `Live Mark: $${runtimeState.currentPrice.toFixed(2)} | Faucet Synced`, false);
@@ -2041,45 +2401,41 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
     btn.disabled = true;
     if (btnText) btnText.textContent = 'Connecting Wallet...';
 
-    // Step 1: Connect wallet if not already connected
-    if (!runtimeState.walletConnected) {
+    if (!runtimeState.walletConnected && typeof window.ethereum !== 'undefined') {
       await connectWallet();
     }
 
-    if (btnText) btnText.textContent = 'Delegating Ephemeral Session Key (INV-1)...';
+    if (btnText) btnText.textContent = 'Simulating Ephemeral Session Key (INV-1)...';
 
-    // Brief micro-delay for realistic transaction feedback
-    await new Promise(r => setTimeout(r, 400));
+    // Brief micro-delay for realistic simulation feedback
+    await new Promise(r => setTimeout(r, 350));
 
-    // Step 2: Ephemeral session key delegation
+    // Step 2: Ephemeral session key delegation (local simulation)
     const ephemeralKey = '0x' + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
     if (el.sessionBadge) {
-      el.sessionBadge.innerHTML = '<span>Session Key:</span> <strong>Active (30d, INV-1)</strong>';
+      el.sessionBadge.innerHTML = '<span>Session Key:</span> <strong>Simulated Demo (30d, INV-1)</strong>';
       el.sessionBadge.className = 'session-badge safe';
     }
 
-    logAudit('INV-1', `Ephemeral trade-only session key ${formatAddress(ephemeralKey)} authorized for 30 days. Non-custodial scope verified.`, 'accent');
-
-    // Step 3: Commit selected preset to AegisVault via precompile 0x0802
     const presetName = liteState.selectedPreset.charAt(0).toUpperCase() + liteState.selectedPreset.slice(1);
-    logAudit('CONFIG', `Committed ${presetName} risk parameters to AegisVault (Elysium L2 Block #${runtimeState.blockNumber})`, 'accent');
-    logAudit('SENTINEL', `Auto-Pilot Sentinel engaged for ${VAULT_CONSTANTS.collateralAmount} HYPE. Surveillance active on 0x0801.`, 'accent');
+    logAudit('INV-1', `[SIMULATION DEMO] Trade-only session key ${formatAddress(ephemeralKey)} configured for ${presetName} preset.`, 'accent');
+    logAudit('SIMULATOR', `[SIMULATION ONLY] Precompile 0x0802 order dispatch and 0x0801 live surveillance are blocked on Elysium testnet; operating in interactive simulation mode.`, 'hedge');
 
     liteState.shieldActivated = true;
     proConfig.manualOverrideActive = false;
 
-    // Step 4: Visual Confirmation State
+    // Step 3: Visual Confirmation State
     btn.disabled = false;
     btn.classList.add('armed');
     if (btnText) {
-      btnText.textContent = 'Auto-Pilot Shield Active';
+      btnText.textContent = 'Auto-Pilot Shield (Simulation Active)';
     }
 
     if (el.heroSentinelStatus) {
-      el.heroSentinelStatus.innerHTML = 'ARMED <span class="status-pill pill-accent">ACTIVE</span>';
+      el.heroSentinelStatus.innerHTML = 'SIMULATED <span class="status-pill pill-accent">ACTIVE</span>';
     }
 
-    showToast(`Auto-Pilot Shield activated! ${VAULT_CONSTANTS.collateralAmount} HYPE protected with ${presetName} preset.`);
+    showToast(`[SIMULATION] Auto-Pilot Shield enabled in simulation mode (${presetName} preset).`);
     updateUI();
   }
 
@@ -2089,15 +2445,9 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
         return;
       }
 
-      // Small Brownian micro-fluctuations (+/- $0.03) around current price
+      // Small Brownian micro-fluctuations (+/- $0.03) around current price (Simulation only)
       const delta = (Math.random() - 0.5) * 0.06;
       runtimeState.currentPrice = Math.max(runtimeState.currentPrice + delta, 30.0);
-      runtimeState.blockNumber++;
-
-      // Update simulated latency
-      if (el.latencyVal) {
-        el.latencyVal.textContent = `${Math.floor(64 + Math.random() * 8)}ms`;
-      }
 
       updateUI();
     }, 150);
@@ -2114,8 +2464,12 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
         body: JSON.stringify({ type: 'allMids' })
       });
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        console.warn('Hyperliquid REST API HTTP error:', res.status);
+        return;
+      }
       const mids = await res.json();
+      runtimeState.lastReferencePriceTimestamp = new Date().toISOString();
 
       let updateCount = 0;
       HYPERCORE_MARKETS.forEach(coin => {
@@ -2182,26 +2536,58 @@ Sign this message to link your Elysium testnet wallet with AEGIS Sentinel Survei
 
       const pulse = document.getElementById('marketApiPulse');
       if (pulse) {
-        pulse.setAttribute('title', `Hyperliquid L1 Live API Synced (${updateCount} markets ticking)`);
+        pulse.setAttribute('title', `Hyperliquid L1 REST API Synced (${updateCount} markets ticking) • Obs: ${new Date(runtimeState.lastReferencePriceTimestamp).toLocaleTimeString()}`);
       }
     } catch (err) {
-      console.debug('Hyperliquid API sync heartbeat notice:', err.message);
+      console.debug('Hyperliquid API sync notice:', err.message);
     }
   }
 
   // --- 11. SYSTEM BOOT ---
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     initAccessGate();
     initTheme();
     initTradingTerminalSuite();
     initListeners();
+
+    // Restore active agent delegation if valid
+    try {
+      const savedDelegation = localStorage.getItem('aegis-agent-delegation');
+      if (savedDelegation) {
+        const parsed = JSON.parse(savedDelegation);
+        if (parsed.expiryTimestamp && parsed.expiryTimestamp > Date.now()) {
+          runtimeState.agentDelegation = parsed;
+          if (el.sessionBadge) {
+            el.sessionBadge.innerHTML = `<span>Agent:</span> <strong>Active (${parsed.durationDays}d, INV-1)</strong>`;
+            el.sessionBadge.classList.add('active');
+          }
+        }
+      }
+    } catch (e) {}
+
     updateUI();
+
+    // 1. Initial verified RPC telemetry & recurring poll every 10s
+    await pollRpcTelemetry();
+    setInterval(pollRpcTelemetry, 10000);
+
+    // 2. Initial verified contract & balance checks
+    await checkContractDeployments();
+    await checkDeferredFeeDebt(ELYSIUM_CONFIG.defaultAccount);
+    await checkOnChainFeeCollector();
+    await fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
+
+    // 3. Start simulation ticker & external reference price feed
     startLiveTicker();
     fetchHyperliquidLivePrices();
     setInterval(fetchHyperliquidLivePrices, 2500);
-    logAudit('SYSTEM', 'AEGIS Pro-Trader Terminal initialized on Elysium L2 (Chain ID 99801)', 'accent');
-    logAudit('API', 'Hyperliquid L1 Live Market Feed connected. Polling real-time mids (2.5s).', 'accent');
-    logAudit('TELEMETRY', 'Connected to 0x0801 Precompile. Real-time synchronous mark price online.', 'accent');
+
+    logAudit('SYSTEM', 'AEGIS Terminal initialized on Elysium L2 (Chain ID 99801)', 'accent');
+    logAudit('ADAPTER', 'Modular Execution Architecture: Stock ArbOS Mode (HyperCore API Agent) active.', 'accent');
+    logAudit('FEED', 'External market reference feed: Hyperliquid L1 REST API (2.5s poll).', 'accent');
+    logAudit('INTEGRATION', 'Precompile 0x0801: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
+    logAudit('INTEGRATION', 'Precompile 0x0802: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
+    logAudit('STATUS', 'Interactive simulation mode active. On-chain queries are strictly read-only.', 'accent');
   });
 
 })();

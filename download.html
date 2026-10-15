@@ -135,7 +135,7 @@
  padding: 24px;
  display: flex;
  flex-direction: column;
- justifyContent: space-between;
+ justify-content: space-between;
  }
  .card-preview {
  width: 100%;
@@ -259,37 +259,76 @@
  </div>
  </div>
 
- <!-- PRIMARY FEATURED: 3-MINUTE LIVE PRODUCT DEMO VIDEO -->
- <div class="featured-video-card" style="border: 2px solid var(--accent); background: linear-gradient(180deg, var(--raised) 0%, rgba(7, 112, 95, 0.04) 100%);">
- <div class="video-frame" style="aspect-ratio: 16 / 9; background: #07090e;">
- <video controls playsinline preload="metadata" poster="/brand/x/aegis-demo-thumbnail-1200x675.png">
- <source src="/brand/x/aegis-product-demo-3min.mp4" type="video/mp4">
- Your browser does not support HTML5 video.
- </video>
- </div>
- <div>
- <div class="badge" style="background: rgba(7, 112, 95, 0.15); color: var(--accent);">Live Product Demo (02:44)</div>
- <h2 style="font-family: var(--display); font-size: 30px; margin-bottom: 10px; color: var(--ink);">AEGIS 3-Min Live Product Demo</h2>
- <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
- Direct capture of the live running trader application on <strong>Elysium L2 &amp; HyperCore CLOB</strong>. Features loud, clear continuous voiceover narration throughout, ambient soundtrack, bold glowing presenter cursor directing the viewer to each feature in real time, live wallet connection, 1,000 HYPE collateral and $32k debt inspection, Lite Auto-Pilot 1-click micro-deposits (0.05 HYPE), Pro Terminal risk sliders, live -18% flash crash simulation, sub-78ms precompile hedge trigger (0x0801/0x0802), bottom-wick trailing take-profit, debt payback, and invariant audit logs.
- </p>
- <div class="card-meta" style="flex-wrap: wrap;">
- <span class="meta-tag">02:44 (Under 3 mins)</span>
- <span class="meta-tag">MP4 (H.264 / AAC)</span>
- <span class="meta-tag">Full Loud Narration</span>
- <span class="meta-tag">Bold Presenter Cursor</span>
- <span class="meta-tag">8.7 MB (Fast Buffer / GitHub Ready)</span>
- </div>
- <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
- <a href="/brand/x/aegis-product-demo-3min.mp4" download="aegis-product-demo-3min.mp4" class="btn btn-primary" style="padding: 14px 22px; font-size: 15px; flex: 1;">
- Download 3-Min Demo Video (8.7 MB MP4)
- </a>
- <button class="btn btn-secondary" style="width: auto;" onclick="copyDemoScript(this)">
- Copy Voiceover Script
- </button>
- </div>
- </div>
- </div>
+  <!-- PRIMARY FEATURED 1: 120-SECOND OFFICIAL PITCH DEMO (JUDGES & PARTNERS) -->
+  <div class="featured-video-card" style="border: 2px solid var(--accent); background: linear-gradient(180deg, var(--raised) 0%, rgba(7, 112, 95, 0.05) 100%); margin-bottom: 32px;">
+    <div class="video-frame" style="aspect-ratio: 16 / 9; background: #07090e;">
+      <video controls playsinline preload="metadata" poster="/brand/x/aegis-demo-thumbnail-1200x675.png">
+        <source src="/brand/x/aegis-pitch-demo-120s.mp4" type="video/mp4">
+        <track src="/brand/x/aegis-pitch-demo-120s.vtt" kind="subtitles" srclang="en" label="English Captions" default>
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+    <div>
+      <div class="badge" style="background: rgba(7, 112, 95, 0.15); color: var(--accent);">Official Pitch Demo (01:54 &bull; 120s Max)</div>
+      <h2 style="font-family: var(--display); font-size: 28px; margin-bottom: 10px; color: var(--ink);">AEGIS 120s Master Pitch Demo</h2>
+      <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
+        The official pitch video engineered for hackathon judges and ecosystem partners. Rendered strictly in <strong>Light Mode</strong> with AEGIS Grand brand colors, continuous broadcast voiceover (-13.68 dBFS RMS), synchronized virtual cursor, and <strong>burned-in brand captions</strong> with standalone SRT/VTT tracks. Spotlights live 0x0801 telemetry, 1-Click Lite Auto-Pilot presets, session key delegation (INV-1), -18% flash crash defense, sub-78ms precompile hedge (0x0802), V-bounce trailing profit unwind, and formal invariant security.
+      </p>
+      <div class="card-meta" style="flex-wrap: wrap;">
+        <span class="meta-tag">01:54 (Under 120s)</span>
+        <span class="meta-tag">Light Mode Grand Theme</span>
+        <span class="meta-tag">Embedded Brand Captions</span>
+        <span class="meta-tag">MP4 (H.264 / AAC)</span>
+        <span class="meta-tag">19.6 MB</span>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+        <a href="/brand/x/aegis-pitch-demo-120s.mp4" download="aegis-pitch-demo-120s.mp4" class="btn btn-primary" style="padding: 12px 20px; font-size: 14px; flex: 1;">
+          Download 120s Pitch Demo (19.6 MB MP4)
+        </a>
+        <a href="/brand/x/aegis-pitch-demo-120s.srt" download="aegis-pitch-demo-120s.srt" class="btn btn-secondary" style="width: auto; padding: 12px 16px; font-size: 14px;">
+          SRT Subtitles
+        </a>
+        <a href="/brand/x/aegis-pitch-demo-120s.vtt" download="aegis-pitch-demo-120s.vtt" class="btn btn-secondary" style="width: auto; padding: 12px 16px; font-size: 14px;">
+          VTT Subtitles
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIMARY FEATURED 2: 3-MINUTE COMPREHENSIVE LIVE PRODUCT DEMO VIDEO -->
+  <div class="featured-video-card" style="border: 1px solid var(--rule); margin-bottom: 36px;">
+    <div class="video-frame" style="aspect-ratio: 16 / 9; background: #07090e;">
+      <video controls playsinline preload="metadata" poster="/brand/x/aegis-demo-thumbnail-1200x675.png">
+        <source src="/brand/x/aegis-product-demo-3min.mp4" type="video/mp4">
+        <track src="/brand/x/aegis-product-demo-3min.vtt" kind="subtitles" srclang="en" label="English Captions" default>
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+    <div>
+      <div class="badge" style="background: rgba(7, 112, 95, 0.15); color: var(--accent);">Live Product Walkthrough (02:44)</div>
+      <h2 style="font-family: var(--display); font-size: 26px; margin-bottom: 10px; color: var(--ink);">AEGIS 3-Min Live Walkthrough</h2>
+      <p style="color: var(--ink-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
+        Comprehensive 02:44 technical walkthrough with full architectural deep-dive, invariant monitoring, and embedded timed captions. Direct capture on Elysium L2 testnet and HyperCore CLOB featuring live wallet connection, Lite Auto-Pilot 1-click micro-deposits, Pro Terminal risk sliders, live -18% flash crash simulation, bottom-wick trailing take-profit, debt payback, and invariant audit logs.
+      </p>
+      <div class="card-meta" style="flex-wrap: wrap;">
+        <span class="meta-tag">02:44 (Under 3 mins)</span>
+        <span class="meta-tag">Embedded Brand Captions</span>
+        <span class="meta-tag">MP4 (H.264 / AAC)</span>
+        <span class="meta-tag">25.8 MB</span>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+        <a href="/brand/x/aegis-product-demo-3min.mp4" download="aegis-product-demo-3min.mp4" class="btn btn-primary" style="padding: 12px 20px; font-size: 14px; flex: 1;">
+          Download 3-Min Walkthrough (25.8 MB MP4)
+        </a>
+        <a href="/brand/x/aegis-product-demo-3min.srt" download="aegis-product-demo-3min.srt" class="btn btn-secondary" style="width: auto; padding: 12px 16px; font-size: 14px;">
+          SRT Subtitles
+        </a>
+        <a href="/brand/x/aegis-product-demo-3min.vtt" download="aegis-product-demo-3min.vtt" class="btn btn-secondary" style="width: auto; padding: 12px 16px; font-size: 14px;">
+          VTT Subtitles
+        </a>
+      </div>
+    </div>
+  </div>
 
  <!-- SECONDARY FEATURED: LIGHT MODE LAUNCH TEASER VIDEO -->
  <div class="featured-video-card" style="margin-bottom: 36px;">

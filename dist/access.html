@@ -191,23 +191,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 24px);
+      padding: clamp(20px, 4vw, 40px) 16px;
       min-width: 0;
     }
 
     .gate-card {
       width: 100%;
-      max-width: 520px;
+      max-width: 418px;
       background: color-mix(in srgb, var(--raised) 75%, transparent);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--rule);
       border-radius: 16px;
-      padding: clamp(24px, 5vw, 40px);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      padding: 24px 24px 20px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 14px;
     }
 
     .gate-badge-row {
@@ -221,11 +221,11 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 4px 10px;
+      letter-spacing: 0.07em;
+      padding: 3px 9px;
       border-radius: 999px;
       background: var(--ground);
       color: var(--accent);
@@ -233,23 +233,23 @@
     }
 
     .gate-count-badge {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--ink-2);
       font-variant-numeric: tabular-nums;
     }
 
     .gate-title {
       font-family: var(--display);
-      font-size: clamp(1.6rem, 3.5vw, 2.1rem);
-      line-height: 1.2;
+      font-size: 1.35rem;
+      line-height: 1.25;
       color: var(--ink);
       text-wrap: balance;
     }
 
     .gate-desc {
       color: var(--ink-2);
-      font-size: 0.95rem;
-      line-height: 1.6;
+      font-size: 0.835rem;
+      line-height: 1.5;
     }
 
     .gate-desc strong {
@@ -260,18 +260,18 @@
     .gate-form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-top: 4px;
+      gap: 12px;
+      margin-top: 2px;
     }
 
     .input-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .input-label {
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -288,16 +288,16 @@
 
     .gate-input {
       width: 100%;
-      height: 48px;
+      height: 42px;
       background: var(--ground);
       border: 1px solid var(--rule);
-      border-radius: 16px;
-      padding: 0 16px;
+      border-radius: 12px;
+      padding: 0 14px;
       font-family: var(--text);
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 500;
       color: var(--ink);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
       font-variant-numeric: tabular-nums;
@@ -318,19 +318,19 @@
 
     .gate-btn-submit {
       width: 100%;
-      height: 48px;
+      height: 42px;
       background: var(--accent);
       color: var(--on-accent);
       border: none;
-      border-radius: 16px;
+      border-radius: 12px;
       font-family: var(--text);
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       transition: opacity 0.2s ease, transform 0.1s ease;
     }
 
@@ -344,13 +344,13 @@
 
     .gate-btn-ghost {
       width: 100%;
-      height: 44px;
+      height: 40px;
       background: transparent;
       color: var(--ink);
       border: 1px solid var(--rule);
-      border-radius: 16px;
+      border-radius: 12px;
       font-family: var(--text);
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       font-weight: 500;
       cursor: pointer;
       display: inline-flex;
@@ -368,10 +368,10 @@
     /* Notice & Alert States */
     .gate-alert {
       display: none;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      line-height: 1.5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      line-height: 1.45;
     }
 
     .gate-alert.error {
@@ -390,24 +390,25 @@
 
     .gate-notice {
       border-top: 1px solid var(--rule);
-      padding-top: 16px;
+      padding-top: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       color: var(--ink-2);
     }
 
     .gate-notice p {
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .gate-footer-links {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      font-size: 0.82rem;
+      gap: 6px 12px;
+      font-size: 0.76rem;
     }
 
     .gate-footer-links a {
@@ -550,6 +551,9 @@
       <div class="gate-notice">
         <p>
           <strong>Mainnet Transition Notice:</strong> Once Elysium & Ascend reach Mainnet, access will automatically open to all public traders without invitation codes.
+        </p>
+        <p style="font-size:0.75rem; color:var(--ink-2); margin-top:2px;">
+          Reviewer & Partner Access: Use evaluation pass <code>AEGIS-ALPHA-701</code> or claim access in Discord.
         </p>
         <div class="gate-footer-links">
           <a href="index.html">← Back to Overview</a>

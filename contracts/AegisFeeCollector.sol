@@ -116,10 +116,8 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
         uint256 fee = (savedPenaltyAmount * PROTOCOL_FEE_BPS) / 10000;
         if (fee == 0) revert ZeroAmount();
 
-        // Transfer USDC fee to collector if not already funded
-        if (usdcToken.balanceOf(address(this)) < (buybackBudget + yieldBudget + fee)) {
-            usdcToken.safeTransferFrom(vaultOwner, address(this), fee);
-        }
+        // Transfer USDC fee to collector directly from vault owner
+        usdcToken.safeTransferFrom(vaultOwner, address(this), fee);
 
         // Invariant INV-4: Exact 50/50 split with zero rounding loss
         uint256 buybackShare = fee / 2;
@@ -130,6 +128,35 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
         totalFeesCaptured += fee;
 
         emit FeeProcessed(vaultOwner, savedPenaltyAmount, fee, buybackShare, yieldShare);
+    }
+
+    /**
+     * @notice Processes a deferred fee debt payment and splits it 50/50.
+     * @dev Enforces Invariant INV-4: exact 50/50 division with zero rounding leakage.
+     * @param payer The account transferring the USDC.
+     * @param vaultOwner The vault borrower whose deferred fee debt is being settled.
+     * @param feeAmount The fee amount in USDC (scaled 1e6).
+     */
+    function processFeeDebtPayment(
+        address payer,
+        address vaultOwner,
+        uint256 feeAmount
+    ) external override onlyVaultOrOwner nonReentrant {
+        if (feeAmount == 0) revert ZeroAmount();
+        if (payer == address(0) || vaultOwner == address(0)) revert ZeroAddress();
+
+        // Transfer USDC fee to collector directly from payer
+        usdcToken.safeTransferFrom(payer, address(this), feeAmount);
+
+        // Invariant INV-4: Exact 50/50 split with zero rounding loss
+        uint256 buybackShare = feeAmount / 2;
+        uint256 yieldShare = feeAmount - buybackShare;
+
+        buybackBudget += buybackShare;
+        yieldBudget += yieldShare;
+        totalFeesCaptured += feeAmount;
+
+        emit FeeDebtPaymentProcessed(payer, vaultOwner, feeAmount, buybackShare, yieldShare);
     }
 
     /**

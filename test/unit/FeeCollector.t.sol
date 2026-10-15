@@ -173,4 +173,159 @@ contract FeeCollectorTest is Test {
 
         assertEq(totalCaptured, sumOfParts, "INV-4: Total captured must equal sum of all allocated and distributed parts");
     }
+
+    // =========================================================================
+    // PHASE 1C: FEE COLLECTION FAILURE MODES & ACCOUNTING EDGE CASES
+    // =========================================================================
+
+    function test_ProcessAvertedFee_MissingUsdcApprovalReverts() public {
+        address unapprovedUser = address(0x9991);
+        usdc.mint(unapprovedUser, 1_000_000 * 1e6);
+        // Zero allowance approved
+
+        vm.prank(vault);
+        vm.expectRevert(); // ERC20InsufficientAllowance
+        feeCollector.processAvertedFee(unapprovedUser, 1_000 * 1e6);
+
+        assertEq(feeCollector.totalFeesCaptured(), 0);
+        assertEq(feeCollector.buybackBudget(), 0);
+        assertEq(feeCollector.yieldBudget(), 0);
+    }
+
+    function test_ProcessAvertedFee_InsufficientAllowanceReverts() public {
+        address partialUser = address(0x9992);
+        usdc.mint(partialUser, 1_000_000 * 1e6);
+        // Fee will be 100 USDC; approve only 50 USDC
+        vm.prank(partialUser);
+        usdc.approve(address(feeCollector), 50 * 1e6);
+
+        vm.prank(vault);
+        vm.expectRevert(); // ERC20InsufficientAllowance
+        feeCollector.processAvertedFee(partialUser, 1_000 * 1e6);
+
+        assertEq(feeCollector.totalFeesCaptured(), 0);
+    }
+
+    function test_ProcessAvertedFee_InsufficientBorrowerBalanceReverts() public {
+        address brokeUser = address(0x9993);
+        // Approve max, but hold 0 USDC balance
+        vm.prank(brokeUser);
+        usdc.approve(address(feeCollector), type(uint256).max);
+
+        vm.prank(vault);
+        vm.expectRevert(); // ERC20InsufficientBalance
+        feeCollector.processAvertedFee(brokeUser, 1_000 * 1e6);
+
+        assertEq(feeCollector.totalFeesCaptured(), 0);
+    }
+
+    function test_ProcessAvertedFee_ZeroFeeDueToSmallPenaltyReverts() public {
+        // Saved penalty < 10 wei -> (9 * 1000) / 10000 = 0
+        vm.prank(vault);
+        vm.expectRevert(AegisFeeCollector.ZeroAmount.selector);
+        feeCollector.processAvertedFee(vaultOwner, 9);
+    }
+
+    function test_ProcessAvertedFee_ZeroAddressVaultOwnerReverts() public {
+        vm.prank(vault);
+        vm.expectRevert(ZeroAddress.selector);
+        feeCollector.processAvertedFee(address(0), 1_000 * 1e6);
+    }
+
+    function test_ProcessAvertedFee_PreFundedCollectorDoesNotBypassAllowance_Reverts() public {
+        address zeroAllowanceUser = address(0x9994);
+        usdc.mint(zeroAllowanceUser, 1_000 * 1e6);
+        // User has 0 allowance
+
+        // Directly seed collector with 100 USDC surplus
+        usdc.mint(address(feeCollector), 100 * 1e6);
+
+        vm.prank(vault);
+        // Saved penalty 1,000 USDC -> 100 USDC fee
+        // Must revert with ERC20InsufficientAllowance: surplus cannot bypass safeTransferFrom
+        vm.expectRevert();
+        feeCollector.processAvertedFee(zeroAllowanceUser, 1_000 * 1e6);
+
+        // State remains completely uncorrupted
+        assertEq(feeCollector.totalFeesCaptured(), 0, "No fees captured on failed pull");
+        assertEq(feeCollector.buybackBudget(), 0, "Buyback budget remains 0");
+        assertEq(feeCollector.yieldBudget(), 0, "Yield budget remains 0");
+        assertEq(usdc.balanceOf(zeroAllowanceUser), 1_000 * 1e6, "User tokens untouched");
+    }
+
+    function test_ProcessFeeDebtPayment_ExactAllocationAndConservation() public {
+        address payer = address(0x7771);
+        address borrower = address(0x7772);
+        uint256 debtAmount = 250 * 1e6; // $250 USDC
+
+        usdc.mint(payer, 1_000 * 1e6);
+        vm.prank(payer);
+        usdc.approve(address(feeCollector), debtAmount);
+
+        vm.prank(vault);
+        vm.expectEmit(true, true, false, true, address(feeCollector));
+        emit IAegisFeeCollector.FeeDebtPaymentProcessed(
+            payer,
+            borrower,
+            debtAmount,
+            125 * 1e6,
+            125 * 1e6
+        );
+        feeCollector.processFeeDebtPayment(payer, borrower, debtAmount);
+
+        assertEq(feeCollector.totalFeesCaptured(), debtAmount);
+        assertEq(feeCollector.buybackBudget(), 125 * 1e6);
+        assertEq(feeCollector.yieldBudget(), 125 * 1e6);
+        assertEq(usdc.balanceOf(address(feeCollector)), debtAmount);
+        assertEq(usdc.balanceOf(payer), 750 * 1e6);
+    }
+
+    function test_ProcessFeeDebtPayment_ZeroAmountReverts() public {
+        vm.prank(vault);
+        vm.expectRevert(AegisFeeCollector.ZeroAmount.selector);
+        feeCollector.processFeeDebtPayment(vaultOwner, vaultOwner, 0);
+    }
+
+    function test_ProcessFeeDebtPayment_ZeroAddressReverts() public {
+        vm.prank(vault);
+        vm.expectRevert(ZeroAddress.selector);
+        feeCollector.processFeeDebtPayment(address(0), vaultOwner, 100 * 1e6);
+
+        vm.prank(vault);
+        vm.expectRevert(ZeroAddress.selector);
+        feeCollector.processFeeDebtPayment(vaultOwner, address(0), 100 * 1e6);
+    }
+
+    function test_ProcessFeeDebtPayment_UnauthorizedCallerReverts() public {
+        vm.prank(unauthorized);
+        vm.expectRevert(UnauthorizedCaller.selector);
+        feeCollector.processFeeDebtPayment(vaultOwner, vaultOwner, 100 * 1e6);
+    }
+
+    function test_ProcessFeeDebtPayment_InsufficientAllowanceReverts() public {
+        address brokePayer = address(0x7773);
+        usdc.mint(brokePayer, 1_000 * 1e6);
+        // Only approve 50 USDC for a 100 USDC debt payment
+        vm.prank(brokePayer);
+        usdc.approve(address(feeCollector), 50 * 1e6);
+
+        vm.prank(vault);
+        vm.expectRevert(); // ERC20InsufficientAllowance
+        feeCollector.processFeeDebtPayment(brokePayer, vaultOwner, 100 * 1e6);
+
+        assertEq(feeCollector.totalFeesCaptured(), 0);
+    }
+
+    function test_ProcessAvertedFee_ExactOddPennySplit() public {
+        // savedPenaltyAmount = 10 wei -> fee = 1 wei
+        vm.prank(vault);
+        feeCollector.processAvertedFee(vaultOwner, 10);
+
+        uint256 buyback = feeCollector.buybackBudget(); // 1 / 2 = 0
+        uint256 yieldShare = feeCollector.yieldBudget(); // 1 - 0 = 1
+
+        assertEq(buyback, 0);
+        assertEq(yieldShare, 1);
+        assertEq(buyback + yieldShare, 1, "INV-4: Exact conservation on odd 1-wei fee");
+    }
 }
