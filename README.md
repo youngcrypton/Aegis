@@ -19,14 +19,15 @@
  </p>
 
  <p align="center">
- <a href="docs/INTRODUCING_AEGIS.md"><b>📖 Official Introduction Article</b></a> •
- <a href="#-elysium-testnet-onboarding--live-faucet-guide"><b>💧 Testnet Faucet Guide</b></a> •
+ <a href="LIGHTPAPER.md"><b>📄 Official Lightpaper</b></a> •
+ <a href="docs/INTRODUCING_AEGIS.md"><b>📖 Introduction Article</b></a> •
+ <a href="docs/FACT_CHECK_AND_VERIFICATION_DOSSIER.md"><b>🔍 Fact-Check Dossier</b></a> •
+ <a href="docs/index.html"><b>📚 Interactive Docs</b></a> •
+ <a href="#-elysium-testnet-onboarding--live-faucet-guide"><b>💧 Testnet Faucet</b></a> •
  <a href="#-official-pitch-demo-120s"><b>Pitch Demo (01:54)</b></a> •
- <a href="#-live-product-walkthrough-demo-0244"><b>Walkthrough (02:44)</b></a> •
  <a href="#the-aegis-approach">The Approach</a> •
  <a href="#system-architecture">Architecture</a> •
- <a href="#security-model--formal-invariants">Formal Invariants</a> •
- <a href="#roadmap--technical-limitations">Roadmap</a>
+ <a href="#security-model--formal-invariants">Formal Invariants</a>
  </p>
 
 </div>
