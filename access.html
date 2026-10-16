@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEGIS Protocol — Private Beta Terminal Access</title>
+  <title>AEGIS Protocol — Interactive Product Walkthrough</title>
   <!-- Favicon & Brand Icons -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -15,7 +15,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/brand/kit/tokens.css">
   <link rel="stylesheet" href="brand/kit/tokens.css">
   <style>
     :root {
@@ -77,7 +76,6 @@
       background: var(--bg-base);
       background-attachment: fixed;
       transition: background 500ms ease;
-      scroll-behavior: smooth;
       min-height: 100%;
     }
 
@@ -90,23 +88,24 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
-      padding: 0;
       line-height: 1.6;
       transition: color 500ms ease;
     }
 
     /* Top Navigation */
-    .gate-header {
-      height: 68px;
-      background: color-mix(in srgb, var(--ground) 80%, transparent);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--rule);
-      padding: 0 clamp(16px, 4vw, 36px);
+    .walkthrough-header {
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      padding: 0 clamp(16px, 4vw, 40px);
+      border-bottom: 1px solid var(--rule);
+      background: color-mix(in srgb, var(--ground) 80%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
     .brand-lockup {
@@ -117,327 +116,291 @@
       color: var(--ink);
     }
 
-    .brand-logo-svg {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
+    .brand-mark {
+      width: 32px;
+      height: 32px;
     }
 
-    .brand-wordmark {
+    .brand-name {
       font-family: var(--display);
-      font-size: 1.3rem;
-      font-weight: 400;
-      letter-spacing: -0.02em;
+      font-size: 22px;
       line-height: 1;
     }
 
-    .header-pills {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .network-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--rule);
-      background: var(--ground);
-      font-size: 0.8rem;
-      color: var(--ink-2);
-    }
-
-    .network-pill strong {
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 2px var(--raised);
-      animation: pulse-ring 2s infinite ease-out;
-    }
-
-    @keyframes pulse-ring {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-
-    .btn-theme-toggle {
-      background: var(--ground);
-      border: 1px solid var(--rule);
-      color: var(--ink);
-      font-family: var(--text);
-      font-size: 0.8rem;
-      padding: 6px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
-    }
-
-    .btn-theme-toggle:hover {
-      border-color: var(--ink-2);
-    }
-
-    /* Main Container */
-    .gate-main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: clamp(20px, 4vw, 40px) 16px;
-      min-width: 0;
-    }
-
-    .gate-card {
-      width: 100%;
-      max-width: 418px;
-      background: color-mix(in srgb, var(--raised) 75%, transparent);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--rule);
-      border-radius: 16px;
-      padding: 24px 24px 20px;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .gate-badge-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .gate-phase-badge {
+    .btn-skip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.7rem;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--rule);
+      background: var(--raised);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 150ms ease;
+    }
+
+    .btn-skip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--rule);
+      background: var(--raised);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      transition: border-color 150ms ease;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--ink-2);
+    }
+
+    /* Main Walkthrough Container */
+    .walkthrough-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(20px, 4vw, 40px) 16px;
+      max-width: 980px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .walkthrough-card {
+      width: 100%;
+      background: var(--raised);
+      border: 1px solid var(--rule);
+      border-radius: 20px;
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Slides Track */
+    .slides-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+    }
+
+    .slide-item {
+      display: none;
+      width: 100%;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+
+    .slide-item.active {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: clamp(24px, 4vw, 48px);
+      align-items: center;
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      .slide-item.active {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .slide-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .slide-step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: var(--ground);
+      letter-spacing: 0.06em;
       color: var(--accent);
-      border: 1px solid var(--rule);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      width: fit-content;
     }
 
-    .gate-count-badge {
-      font-size: 0.72rem;
-      color: var(--ink-2);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .gate-title {
+    .slide-title {
       font-family: var(--display);
-      font-size: 1.35rem;
-      line-height: 1.25;
+      font-size: clamp(26px, 3.5vw, 36px);
+      line-height: 1.15;
       color: var(--ink);
       text-wrap: balance;
     }
 
-    .gate-desc {
+    .slide-desc {
+      font-size: clamp(14px, 1.8vw, 15.5px);
       color: var(--ink-2);
-      font-size: 0.835rem;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    .gate-desc strong {
-      color: var(--ink);
-    }
-
-    /* Form & Input */
-    .gate-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 2px;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .input-label {
-      font-size: 0.74rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink-2);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .gate-input {
-      width: 100%;
-      height: 42px;
-      background: var(--ground);
-      border: 1px solid var(--rule);
-      border-radius: 12px;
-      padding: 0 14px;
-      font-family: var(--text);
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--ink);
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .gate-input::placeholder {
-      color: var(--ink-2);
-      opacity: 0.6;
-      text-transform: none;
-      letter-spacing: 0;
-    }
-
-    .gate-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(7, 112, 95, 0.15);
-    }
-
-    .gate-btn-submit {
-      width: 100%;
-      height: 42px;
-      background: var(--accent);
-      color: var(--on-accent);
-      border: none;
-      border-radius: 12px;
-      font-family: var(--text);
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: opacity 0.2s ease, transform 0.1s ease;
-    }
-
-    .gate-btn-submit:hover {
-      opacity: 0.92;
-    }
-
-    .gate-btn-submit:active {
-      transform: scale(0.99);
-    }
-
-    .gate-btn-ghost {
-      width: 100%;
-      height: 40px;
-      background: transparent;
-      color: var(--ink);
-      border: 1px solid var(--rule);
-      border-radius: 12px;
-      font-family: var(--text);
-      font-size: 0.84rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.15s ease, border-color 0.15s ease;
-    }
-
-    .gate-btn-ghost:hover {
-      background: var(--ground);
-      border-color: var(--ink-2);
-    }
-
-    /* Notice & Alert States */
-    .gate-alert {
-      display: none;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      line-height: 1.45;
-    }
-
-    .gate-alert.error {
-      display: block;
-      background: rgba(184, 37, 79, 0.12);
-      border: 1px solid var(--danger);
-      color: var(--danger);
-    }
-
-    .gate-alert.success {
-      display: block;
-      background: rgba(7, 112, 95, 0.12);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-    }
-
-    .gate-notice {
-      border-top: 1px solid var(--rule);
-      padding-top: 12px;
+    .slide-specs-list {
+      margin-top: 8px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      font-size: 0.76rem;
-      color: var(--ink-2);
     }
 
-    .gate-notice p {
-      line-height: 1.45;
-    }
-
-    .gate-footer-links {
+    .slide-spec-row {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: 6px 12px;
-      font-size: 0.76rem;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink);
     }
 
-    .gate-footer-links a {
-      color: var(--ink-2);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    .gate-footer-links a:hover {
+    .slide-spec-icon {
       color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
     }
 
-    /* Active Session Card state */
-    .session-active-card {
-      display: none;
+    /* Visual Graphic Stage */
+    .slide-visual {
       background: var(--ground);
       border: 1px solid var(--rule);
-      border-radius: 12px;
-      padding: 16px;
-      flex-direction: column;
-      gap: 12px;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
     }
 
-    .session-code-display {
-      font-family: var(--text);
+    .slide-visual svg {
+      width: 100%;
+      height: auto;
+      max-height: 240px;
+    }
+
+    /* Controls Bar at Bottom */
+    .walkthrough-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+      flex-wrap: wrap;
+    }
+
+    .step-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--rule);
+      border: none;
+      cursor: pointer;
+      transition: all 250ms ease;
+      padding: 0;
+    }
+
+    .step-dot.active {
+      width: 28px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .nav-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 13.5px;
       font-weight: 600;
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.05em;
+      cursor: pointer;
+      border: 1px solid var(--rule);
+      background: var(--ground);
+      color: var(--ink);
+      transition: all 150ms ease;
+      text-decoration: none;
+    }
+
+    .btn-nav:hover {
+      background: var(--raised);
+      border-color: var(--ink-2);
+    }
+
+    .btn-nav.primary {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--accent);
+    }
+
+    .btn-nav.primary:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .dont-show-row {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--ink-2);
+    }
+
+    .dont-show-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent);
+      cursor: pointer;
     }
   </style>
 </head>
@@ -462,242 +425,339 @@
     </defs>
   </svg>
 
-  <!-- Header -->
-  <header class="gate-header">
-    <a href="index.html" class="brand-lockup" aria-label="AEGIS Home">
-      <svg class="brand-logo-svg" viewBox="0 0 40 40" aria-hidden="true">
+  <!-- Top Header -->
+  <header class="walkthrough-header">
+    <a href="index.html" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#aegis-blade-grad)"/>
         <polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#aegis-blade-grad)"/>
         <polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#aegis-blade-grad)"/>
       </svg>
-      <span class="brand-wordmark">Aegis</span>
+      <span class="brand-name">Aegis</span>
     </a>
-
-    <div class="header-pills">
-      <div class="network-pill">
-        <span class="pulse-dot"></span>
-        <span>Elysium Testnet</span>
-        <strong>99801</strong>
-      </div>
-      <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle theme">
-        <span id="themeLabel">Light mode</span>
-      </button>
+    <div class="header-actions">
+      <button class="theme-toggle-btn" id="walkthroughThemeBtn" type="button" aria-label="Toggle theme">◐</button>
+      <a href="app/index.html" class="btn-skip" id="btnSkipToTerminal">Skip to Terminal →</a>
     </div>
   </header>
 
-  <!-- Main Gate Container -->
-  <main class="gate-main">
-    <div class="gate-card">
-      <div class="gate-badge-row">
-        <span class="gate-phase-badge">
-          <span class="pulse-dot"></span>
-          Ascend & Elysium Public Testnet
-        </span>
-        <span class="gate-count-badge" style="color:var(--accent); border-color:var(--accent);">Public &bull; Open Access</span>
-      </div>
+  <!-- Walkthrough Main View -->
+  <main class="walkthrough-main">
+    <div class="walkthrough-card">
 
-      <h1 class="gate-title">AEGIS Public Testnet is Live</h1>
+      <!-- Slides Container -->
+      <div class="slides-container" id="slidesContainer">
 
-      <p class="gate-desc">
-        AEGIS is now open to the public on <strong>Elysium L2 (Chain ID 99801)</strong>. No invite code is required. Connect any EVM wallet, claim free testnet HYPE and USDC from the faucet, and experience autonomous liquidation defense.
-      </p>
-
-      <!-- Active Session Notice -->
-      <div class="session-active-card" id="sessionActiveCard" style="display:flex;">
-        <div>
-          <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); display:block; margin-bottom:4px;">Testnet Status</span>
-          <div class="session-code-display" id="sessionActiveCode" style="color:var(--accent);">PUBLIC TESTNET OPEN</div>
+        <!-- Slide 1: Vault Risk Sentinel -->
+        <div class="slide-item active" data-step="0">
+          <div class="slide-info">
+            <span class="slide-step-badge">Feature 1 of 4 &bull; Surveillance</span>
+            <h1 class="slide-title">Autonomous Vault Sentinel &amp; Health Monitoring</h1>
+            <p class="slide-desc">
+              AEGIS continuously tracks your borrow positions on Elysium and Ascend. It monitors collateral ratios, oracle updates, and distance-to-liquidation buffers around the clock so you never get caught asleep.
+            </p>
+            <div class="slide-specs-list">
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Real-time Health Factor (H) tracking and liquidation warnings</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Configurable safety buffer zones and multi-condition triggers</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Protects spot HYPE and ETH collateral without forced fire-sales</span>
+              </div>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <svg viewBox="0 0 340 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="20" width="300" height="180" rx="16" fill="var(--raised)" stroke="var(--rule)"/>
+              <circle cx="170" cy="110" r="65" stroke="var(--rule)" stroke-width="12" stroke-dasharray="320" stroke-dashoffset="60"/>
+              <circle cx="170" cy="110" r="65" stroke="var(--accent)" stroke-width="12" stroke-dasharray="320" stroke-dashoffset="140" stroke-linecap="round"/>
+              <text x="170" y="105" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" fill="var(--ink)">1.41</text>
+              <text x="170" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--accent)">HEALTH: SAFE</text>
+              <rect x="60" y="165" width="220" height="20" rx="10" fill="var(--ground)"/>
+              <rect x="60" y="165" width="154" height="20" rx="10" fill="var(--accent)"/>
+              <text x="170" y="179" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="var(--on-accent)">+21.3% Liquidation Buffer</text>
+            </svg>
+          </div>
         </div>
-        <p style="font-size:0.85rem; color:var(--ink-2); line-height:1.4;">
-          All traders, borrowers, and liquidators can enter the terminal directly.
-        </p>
-        <a class="gate-btn-submit" id="btnEnterAuthorized" href="app/index.html" style="text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">
-          Launch Public Terminal ↗
-        </a>
+
+        <!-- Slide 2: HyperCore Delta Hedging -->
+        <div class="slide-item" data-step="1">
+          <div class="slide-info">
+            <span class="slide-step-badge">Feature 2 of 4 &bull; Execution</span>
+            <h1 class="slide-title">Sub-Second Delta Hedging on HyperCore</h1>
+            <p class="slide-desc">
+              When market volatility threatens your position, AEGIS triggers atomic short hedges directly onto Hyperliquid’s high-speed CLOB orderbook.
+            </p>
+            <div class="slide-specs-list">
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Fills in under 100 milliseconds via native precompile speed</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Short gains neutralize collateral drop, eliminating penalties</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Trailing profit targets automatically unwind the hedge on rebound</span>
+              </div>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <svg viewBox="0 0 340 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="20" width="300" height="180" rx="16" fill="var(--raised)" stroke="var(--rule)"/>
+              <!-- Collateral curve down -->
+              <path d="M50 70 Q130 90 200 140 T290 150" stroke="var(--danger)" stroke-width="3" stroke-linecap="round"/>
+              <!-- Hedge short curve up -->
+              <path d="M200 140 Q240 100 290 70" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+              <!-- Flat net delta line -->
+              <line x1="50" y1="100" x2="290" y2="100" stroke="var(--hedge)" stroke-width="2" stroke-dasharray="4 4"/>
+              <circle cx="200" cy="140" r="6" fill="var(--hedge)"/>
+              <text x="200" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="var(--hedge)">Hedge Triggered</text>
+              <text x="70" y="65" font-family="Inter, sans-serif" font-size="10" fill="var(--danger)">Collateral Mark</text>
+              <text x="270" y="60" text-anchor="end" font-family="Inter, sans-serif" font-size="10" fill="var(--accent)">Short Hedge PnL</text>
+              <text x="280" y="115" text-anchor="end" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="var(--ink)">Net Delta Held</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Slide 3: Non-Custodial Architecture (INV-1) -->
+        <div class="slide-item" data-step="2">
+          <div class="slide-info">
+            <span class="slide-step-badge">Feature 3 of 4 &bull; Security</span>
+            <h1 class="slide-title">100% Non-Custodial Security Guarantee</h1>
+            <p class="slide-desc">
+              Your collateral never leaves your vault. Protection is authorized via cryptographic trade-only session keys that strictly forbid withdrawals or transfers.
+            </p>
+            <div class="slide-specs-list">
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Zero transfer authority: Invariant INV-1 mathematically enforced</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Emergency 1-click killswitch revokes delegation instantly</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">✓</span>
+                <span>Audited open-source smart contracts on Elysium L2 (Chain ID 99801)</span>
+              </div>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <svg viewBox="0 0 340 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="20" width="300" height="180" rx="16" fill="var(--raised)" stroke="var(--rule)"/>
+              <!-- Vault Lock -->
+              <rect x="70" y="80" width="70" height="60" rx="10" fill="var(--ground)" stroke="var(--rule)"/>
+              <path d="M85 80 V65 a20 20 0 0 1 40 0 V80" stroke="var(--accent)" stroke-width="3" fill="none"/>
+              <circle cx="105" cy="105" r="5" fill="var(--ink)"/>
+              <text x="105" y="130" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="var(--ink)">SEALED</text>
+              <!-- Arrow to trade lane -->
+              <path d="M150 110 H220" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4"/>
+              <!-- Trade box -->
+              <rect x="230" y="80" width="70" height="60" rx="10" fill="var(--ground)" stroke="var(--accent)"/>
+              <text x="265" y="105" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--accent)">TRADE</text>
+              <text x="265" y="122" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="var(--ink-2)">ONLY</text>
+              <!-- Refused Transfer Lane -->
+              <path d="M105 145 V170" stroke="var(--danger)" stroke-width="2"/>
+              <text x="105" y="185" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="var(--danger)">WITHDRAW: REFUSED ✕</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Slide 4: Ready for Public Testnet -->
+        <div class="slide-item" data-step="3">
+          <div class="slide-info">
+            <span class="slide-step-badge">Feature 4 of 4 &bull; Launch</span>
+            <h1 class="slide-title">Open Public Testnet Live on Elysium</h1>
+            <p class="slide-desc">
+              Experience automated liquidation defense right now. Claim testnet tokens from the Elysium faucet, connect your wallet with standard EIP-1193, and launch the terminal.
+            </p>
+            <div class="slide-specs-list">
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">1.</span>
+                <span>Claim HYPE &amp; canonical USDC from the official Elysium Faucet</span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">2.</span>
+                <span>Choose between <strong>Lite Auto-Pilot</strong> or <strong>Pro Terminal</strong></span>
+              </div>
+              <div class="slide-spec-row">
+                <span class="slide-spec-icon">3.</span>
+                <span>Stress-test interactive flash crashes in real-time simulation</span>
+              </div>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:260px; text-align:center;">
+              <div style="padding:14px; background:var(--raised); border:1px solid var(--rule); border-radius:12px;">
+                <span style="font-size:11px; text-transform:uppercase; color:var(--ink-2); display:block; margin-bottom:4px;">Network</span>
+                <strong style="font-family:var(--display); font-size:16px; color:var(--ink);">Elysium L2 (99801)</strong>
+              </div>
+              <div style="padding:14px; background:var(--raised); border:1px solid var(--rule); border-radius:12px;">
+                <span style="font-size:11px; text-transform:uppercase; color:var(--ink-2); display:block; margin-bottom:4px;">Supported Assets</span>
+                <strong style="font-size:13.5px; color:var(--accent);">Testnet HYPE &bull; Canonical USDC</strong>
+              </div>
+              <a href="app/index.html" class="btn-nav primary" style="justify-content:center; padding:12px 20px;">
+                <span>Enter Public Terminal →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="gate-notice">
-        <p>
-          <strong>Public Testing Guidelines:</strong> Testnet faucet funds can be claimed at <code>https://elysium.kinetiq.xyz/testnet-faucet</code>. Use canonical testnet USDC (<code>0x7D29...47b2</code>) to fund your protected position.
-        </p>
-        <p style="font-size:0.75rem; color:var(--ink-2); margin-top:2px;">
-          Reviewer & Partner Access: Use evaluation pass <code>AEGIS-ALPHA-701</code> or claim access in Discord.
-        </p>
-        <div class="gate-footer-links">
-          <a href="index.html">← Back to Overview</a>
-          <a href="docs/index.html" target="_blank" rel="noopener">Protocol Documentation ↗</a>
-          <a href="https://x.com/aegis_hedge?s=20" target="_blank" rel="noopener">𝕏 @aegis_hedge ↗</a>
-          <a href="https://discord.gg/vcF6X2cM8a" target="_blank" rel="noopener">Discord Community ↗</a>
+      <!-- Controls Bar -->
+      <div class="walkthrough-controls">
+        <div class="step-dots" id="stepDots">
+          <button class="step-dot active" data-index="0" aria-label="Step 1"></button>
+          <button class="step-dot" data-index="1" aria-label="Step 2"></button>
+          <button class="step-dot" data-index="2" aria-label="Step 3"></button>
+          <button class="step-dot" data-index="3" aria-label="Step 4"></button>
+        </div>
+
+        <div class="nav-buttons-group">
+          <button class="btn-nav" id="btnPrevSlide" type="button" style="visibility:hidden;">← Back</button>
+          <button class="btn-nav primary" id="btnNextSlide" type="button">Next Feature →</button>
         </div>
       </div>
+
     </div>
+
+    <!-- Don't Show Again Option -->
+    <label class="dont-show-row">
+      <input type="checkbox" id="checkDontShowAgain">
+      <span>Don't show this walkthrough again (remember on this device)</span>
+    </label>
   </main>
 
-  <!-- Load Access Codes Validation & Supabase Modules -->
-  <script src="access-codes.js"></script>
-  <script src="supabase-client.js"></script>
   <script>
-    (function () {
-      'use strict';
+    (() => {
+      const slides = document.querySelectorAll('.slide-item');
+      const dots = document.querySelectorAll('.step-dot');
+      const btnPrev = document.getElementById('btnPrevSlide');
+      const btnNext = document.getElementById('btnNextSlide');
+      const themeBtn = document.getElementById('walkthroughThemeBtn');
+      const checkDontShow = document.getElementById('checkDontShowAgain');
+      let currentSlide = 0;
+      const totalSlides = slides.length;
 
-      // Theme Management
-      const themeBtn = document.getElementById('themeBtn');
-      const themeLabel = document.getElementById('themeLabel');
+      // Auto-bypass if user previously selected "Don't show again" AND didn't come with ?demo=1
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.get('demo') && localStorage.getItem('aegis-walkthrough-completed') === 'true') {
+        window.location.replace('app/index.html');
+        return;
+      }
 
-      function initTheme() {
-        const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        if (themeLabel) {
-          themeLabel.textContent = savedTheme === 'dark' ? 'Light mode' : 'Dark mode';
+      function goToSlide(index) {
+        if (index < 0 || index >= totalSlides) return;
+        currentSlide = index;
+
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === currentSlide);
+        });
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentSlide);
+        });
+
+        // Update Prev button visibility
+        btnPrev.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
+
+        // Update Next button text and action
+        if (currentSlide === totalSlides - 1) {
+          btnNext.textContent = 'Launch Aegis Terminal →';
+        } else {
+          btnNext.textContent = 'Next Feature →';
         }
       }
 
+      btnPrev.addEventListener('click', () => {
+        goToSlide(currentSlide - 1);
+      });
+
+      btnNext.addEventListener('click', () => {
+        if (currentSlide === totalSlides - 1) {
+          if (checkDontShow && checkDontShow.checked) {
+            localStorage.setItem('aegis-walkthrough-completed', 'true');
+          }
+          window.location.href = 'app/index.html';
+        } else {
+          goToSlide(currentSlide + 1);
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => goToSlide(index));
+      });
+
+      // Swipe navigation for mobile touch
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const card = document.querySelector('.walkthrough-card');
+
+      card.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      card.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) {
+          // Swiped left -> next
+          if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+        }
+        if (touchEndX > touchStartX + threshold) {
+          // Swiped right -> prev
+          if (currentSlide > 0) goToSlide(currentSlide - 1);
+        }
+      }
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+        } else if (e.key === 'ArrowLeft') {
+          if (currentSlide > 0) goToSlide(currentSlide - 1);
+        }
+      });
+
+      // Checkbox listener
+      if (checkDontShow) {
+        checkDontShow.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            localStorage.setItem('aegis-walkthrough-completed', 'true');
+          } else {
+            localStorage.removeItem('aegis-walkthrough-completed');
+          }
+        });
+      }
+
+      // Theme toggle
+      function initTheme() {
+        const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+
       if (themeBtn) {
-        themeBtn.addEventListener('click', function () {
+        themeBtn.addEventListener('click', () => {
           const current = document.documentElement.getAttribute('data-theme') || 'dark';
           const next = current === 'dark' ? 'light' : 'dark';
           document.documentElement.setAttribute('data-theme', next);
           localStorage.setItem('aegis-theme', next);
-          if (themeLabel) {
-            themeLabel.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
-          }
         });
       }
 
       initTheme();
-
-      // Destination resolver
-      function getTerminalUrl() {
-        if (window.location.pathname.indexOf('/app') !== -1) {
-          return 'index.html#simulator';
-        }
-        return 'app/index.html#simulator';
-      }
-
-      // Check current session state
-      const form = document.getElementById('gateForm');
-      const input = document.getElementById('accessCodeInput');
-      const alertBox = document.getElementById('gateAlert');
-      const submitBtn = document.getElementById('btnSubmitCode');
-      const activeCard = document.getElementById('sessionActiveCard');
-      const activeCodeText = document.getElementById('sessionActiveCode');
-      const enterAuthorizedBtn = document.getElementById('btnEnterAuthorized');
-      const revokeBtn = document.getElementById('btnRevokeSession');
-
-      function checkSession() {
-        const checker = window.AegisAccess || window.AegisAccessCodes;
-        if (!checker) return;
-
-        if (checker.isAuthorized()) {
-          const code = checker.getAuthorizedCode() || 'AUTHORIZED-BETA-PASS';
-          if (activeCodeText) activeCodeText.textContent = code;
-          if (activeCard) activeCard.style.display = 'flex';
-          if (form) form.style.display = 'none';
-        } else {
-          if (activeCard) activeCard.style.display = 'none';
-          if (form) form.style.display = 'flex';
-          if (input) input.focus();
-        }
-      }
-
-      checkSession();
-
-      if (enterAuthorizedBtn) {
-        enterAuthorizedBtn.addEventListener('click', function () {
-          window.location.href = getTerminalUrl();
-        });
-      }
-
-      if (revokeBtn) {
-        revokeBtn.addEventListener('click', function () {
-          const checker = window.AegisAccess || window.AegisAccessCodes;
-          if (checker) checker.revoke();
-          checkSession();
-        });
-      }
-
-      // Handle Form Submit
-      if (form) {
-        form.addEventListener('submit', async function (e) {
-          e.preventDefault();
-          alertBox.className = 'gate-alert';
-          alertBox.style.display = 'none';
-
-          const val = (input.value || '').replace(/\s+/g, '').toUpperCase();
-
-          if (!val) {
-            alertBox.className = 'gate-alert error';
-            alertBox.textContent = 'Please enter an access code.';
-            return;
-          }
-
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '<span>Verifying Access...</span>';
-
-          try {
-            let isValid = false;
-
-            // 1. Instant check against local access codes module (0ms)
-            const localChecker = window.AegisAccess || window.AegisAccessCodes;
-            if (localChecker && (localChecker.isValid(val) || localChecker.isValidCode(val))) {
-              isValid = true;
-            }
-
-            // 2. Also check remote Supabase instance if not found locally
-            if (!isValid && window.AegisSupabase) {
-              try {
-                const supaRes = await window.AegisSupabase.verifyAccessCode(val);
-                if (supaRes && supaRes.valid) {
-                  isValid = true;
-                }
-              } catch (e) {
-                console.debug('Supabase verify notice:', e);
-              }
-            }
-
-            if (isValid) {
-              if (localChecker) localChecker.authorize(val);
-              alertBox.className = 'gate-alert success';
-              alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
-              submitBtn.innerHTML = '<span>Access Granted ↗</span>';
-              setTimeout(function () {
-                window.location.href = getTerminalUrl();
-              }, 500);
-            } else {
-              alertBox.className = 'gate-alert error';
-              alertBox.textContent = '✕ Invalid or unrecognized access code.';
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '<span>Unlock Terminal ↗</span>';
-              input.select();
-            }
-          } catch (err) {
-            console.warn('Verification exception:', err);
-            const localChecker = window.AegisAccess || window.AegisAccessCodes;
-            if (localChecker && localChecker.authorize(val).success) {
-              alertBox.className = 'gate-alert success';
-              alertBox.textContent = '✓ Access Verified! Launching AEGIS Terminal...';
-              submitBtn.innerHTML = '<span>Access Granted ↗</span>';
-              setTimeout(function () {
-                window.location.href = getTerminalUrl();
-              }, 500);
-            } else {
-              alertBox.className = 'gate-alert error';
-              alertBox.textContent = '✕ Invalid access code. Please check and try again.';
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '<span>Unlock Terminal ↗</span>';
-              input.select();
-            }
-          }
-        });
-      }
-
-      // Auto-format input as user types
-      if (input) {
-        input.addEventListener('input', function () {
-          // Normalize uppercase
-          this.value = this.value.toUpperCase();
-        });
-      }
     })();
   </script>
 </body>

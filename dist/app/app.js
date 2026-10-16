@@ -807,6 +807,8 @@
     if (navVault) {
       navVault.addEventListener('click', () => {
         switchAppView('vault');
+        if (navVault) navVault.classList.add('active');
+        if (navTrading) navTrading.classList.remove('active');
         closeDrawer();
       });
     }
@@ -814,6 +816,21 @@
     if (navTrading) {
       navTrading.addEventListener('click', () => {
         switchAppView('trading');
+        if (navTrading) navTrading.classList.add('active');
+        if (navVault) navVault.classList.remove('active');
+        closeDrawer();
+      });
+    }
+
+    const drawerToggleModeBtn = document.getElementById('drawerToggleModeBtn');
+    const drawerModeLabel = document.getElementById('drawerModeLabel');
+    if (drawerToggleModeBtn) {
+      drawerToggleModeBtn.addEventListener('click', () => {
+        const targetMode = runtimeState.viewMode === 'pro' ? 'lite' : 'pro';
+        setTerminalViewMode(targetMode);
+        if (drawerModeLabel) {
+          drawerModeLabel.textContent = targetMode === 'pro' ? 'Switch to Lite Auto-Pilot' : 'Switch to Pro Terminal';
+        }
         closeDrawer();
       });
     }
@@ -821,42 +838,140 @@
     if (backToVaultBtn) {
       backToVaultBtn.addEventListener('click', () => {
         switchAppView('vault');
-      });
-    }
-
-    const drawerManageWallet = document.getElementById('drawerManageWalletBtn');
-    const drawerDisconnectWallet = document.getElementById('drawerDisconnectWalletBtn');
-
-    if (drawerManageWallet) {
-      drawerManageWallet.addEventListener('click', () => {
-        closeDrawer();
-        if (runtimeState.walletConnected) {
-          openWalletAccountModal();
-        } else {
-          connectWallet();
-        }
-      });
-    }
-
-    if (drawerDisconnectWallet) {
-      drawerDisconnectWallet.addEventListener('click', () => {
-        closeDrawer();
-        disconnectWallet();
-      });
-    }
-
-    if (lockBtn) {
-      lockBtn.addEventListener('click', () => {
-        if (confirm('Lock terminal and exit testnet beta session?')) {
-          if (window.AegisAccess) window.AegisAccess.revoke();
-          window.location.replace('access.html');
-        }
+        if (navVault) navVault.classList.add('active');
+        if (navTrading) navTrading.classList.remove('active');
       });
     }
   }
 
+  function initTerminalSettingsModal() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const modal = document.getElementById('settingsModal');
+    const backdrop = document.getElementById('settingsBackdrop');
+    const closeBtn = document.getElementById('settingsCloseBtn');
+    const resetBtn = document.getElementById('settingsResetBtn');
+
+    const toggleMap = {
+      toggleMetricsTicker: 'metricsTickerSection',
+      toggleHealthGauge: 'healthGaugeSection',
+      toggleSimBar: 'simBarSection',
+      toggleRiskControls: 'proConfigCard',
+      toggleEcosystemCard: 'tokenMetricsCard',
+      toggleAuditLog: 'auditCardSection'
+    };
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('aegis-terminal-settings') || '{}');
+        Object.keys(toggleMap).forEach(toggleId => {
+          const elToggle = document.getElementById(toggleId);
+          const targetSection = document.getElementById(toggleMap[toggleId]);
+          if (elToggle && targetSection) {
+            const isVisible = saved[toggleId] !== undefined ? saved[toggleId] : true;
+            elToggle.checked = isVisible;
+            targetSection.style.display = isVisible ? '' : 'none';
+          }
+        });
+      } catch (e) {
+        console.warn('Failed to parse terminal settings:', e);
+      }
+    }
+
+    function saveSettings() {
+      const settings = {};
+      Object.keys(toggleMap).forEach(toggleId => {
+        const elToggle = document.getElementById(toggleId);
+        const targetSection = document.getElementById(toggleMap[toggleId]);
+        if (elToggle && targetSection) {
+          settings[toggleId] = elToggle.checked;
+          targetSection.style.display = elToggle.checked ? '' : 'none';
+        }
+      });
+      try {
+        localStorage.setItem('aegis-terminal-settings', JSON.stringify(settings));
+      } catch (e) {}
+    }
+
+    function openSettings() {
+      if (modal) {
+        modal.hidden = false;
+        modal.classList.add('active');
+      }
+      if (backdrop) backdrop.classList.add('active');
+    }
+
+    function closeSettings() {
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => { modal.hidden = true; }, 200);
+      }
+      if (backdrop) backdrop.classList.remove('active');
+    }
+
+    if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+    if (closeBtn) closeBtn.addEventListener('click', closeSettings);
+    if (backdrop) backdrop.addEventListener('click', closeSettings);
+
+    Object.keys(toggleMap).forEach(toggleId => {
+      const elToggle = document.getElementById(toggleId);
+      if (elToggle) {
+        elToggle.addEventListener('change', saveSettings);
+      }
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        Object.keys(toggleMap).forEach(toggleId => {
+          const elToggle = document.getElementById(toggleId);
+          if (elToggle) elToggle.checked = true;
+        });
+        saveSettings();
+        showToast('Restored default terminal workspace layout.');
+      });
+    }
+
+    loadSettings();
+  }
+
+  function initWalletSelectModal() {
+    const modal = document.getElementById('walletModal');
+    const backdrop = document.getElementById('walletModalBackdrop');
+    const closeBtn = document.getElementById('walletModalCloseBtn');
+    const btnConnectInjected = document.getElementById('btnConnectInjected');
+
+    function closeModal() {
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => { modal.hidden = true; }, 200);
+      }
+      if (backdrop) backdrop.classList.remove('active');
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    if (btnConnectInjected) {
+      btnConnectInjected.addEventListener('click', async () => {
+        closeModal();
+        await connectWallet();
+      });
+    }
+  }
+
+  function openWalletSelectModal() {
+    const modal = document.getElementById('walletModal');
+    const backdrop = document.getElementById('walletModalBackdrop');
+    if (modal) {
+      modal.hidden = false;
+      modal.classList.add('active');
+    }
+    if (backdrop) backdrop.classList.add('active');
+  }
+
   function initTradingTerminalSuite() {
     initNavigationDrawer();
+    initTerminalSettingsModal();
+    initWalletSelectModal();
     renderMarketList();
 
     // Category tabs
@@ -1187,52 +1302,37 @@
 
   async function connectWallet() {
     if (typeof window.ethereum === 'undefined') {
-      showToast('No Web3 wallet extension found. Public testnet data is read directly via RPC.');
+      showToast('No Web3 wallet extension detected. You can test in simulated demo mode.');
       return;
     }
 
     try {
-      showToast('Connecting Elysium wallet (Read-Only)...');
+      showToast('Connecting wallet...');
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
         return;
       }
 
-      // 1. Verify or prompt adding/switching to Elysium L2 Testnet RPC
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: ELYSIUM_CONFIG.chainId }]
-        });
-      } catch (switchError) {
-        if (switchError.code === 4902 || switchError.message?.includes('Unrecognized')) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: ELYSIUM_CONFIG.chainId,
-                chainName: ELYSIUM_CONFIG.chainName,
-                rpcUrls: [ELYSIUM_CONFIG.rpcUrl],
-                blockExplorerUrls: [ELYSIUM_CONFIG.explorerUrl],
-                nativeCurrency: { name: 'Elysium HYPE', symbol: 'HYPE', decimals: 18 }
-              }]
-            });
-          } catch (addError) {
-            console.warn('Network addition cancelled:', addError);
-          }
-        }
-      }
-
-      // 2. Read-only session established (no signature requested merely to view chain state)
+      // Read-only session established (Hyperliquid model: clean connection without unsolicited chain additions)
       runtimeState.walletAddress = accounts[0];
       runtimeState.walletConnected = true;
 
       updateWalletUI(runtimeState.walletAddress);
-      logAudit('WALLET', `EIP-1193 read-only wallet connected: ${formatAddress(runtimeState.walletAddress)} on Elysium L2.`, 'accent');
-      showToast(`Connected: ${formatAddress(runtimeState.walletAddress)} (Read-Only)`);
+      logAudit('WALLET', `EIP-1193 wallet connected: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
+      showToast(`Connected: ${formatAddress(runtimeState.walletAddress)}`);
 
-      // 3. Read verified on-chain balances and check deferred fee debt for connected address
+      // Non-intrusive chain check (does not throw popups or trigger malicious heuristics)
+      try {
+        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (currentChainId !== ELYSIUM_CONFIG.chainId) {
+          logAudit('NETWORK', `Active wallet chain differs from Elysium L2 (99801). Switch network when ready to execute on-chain.`, 'hedge');
+        }
+      } catch (chainErr) {
+        console.warn('Silent chain check notice:', chainErr);
+      }
+
+      // Read verified on-chain balances and check deferred fee debt for connected address
       await fetchOnChainBalances(runtimeState.walletAddress);
       await checkDeferredFeeDebt(runtimeState.walletAddress);
 
@@ -1321,7 +1421,7 @@ Timestamp: ${timestamp}
     if (runtimeState.walletConnected) {
       openWalletAccountModal();
     } else {
-      connectWallet();
+      openWalletSelectModal();
     }
   }
 
@@ -2569,6 +2669,8 @@ Timestamp: ${timestamp}
     logAudit('SYSTEM', 'AEGIS Public Testnet Terminal initialized on Elysium L2 (Chain ID 99801)', 'accent');
     logAudit('ENGINE', 'HyperCore CLOB Sentinel Risk Protection active.', 'accent');
     logAudit('FEED', 'Live Market Reference: Hyperliquid L1 Real-Time API synced.', 'accent');
+    logAudit('INTEGRATION', 'Precompile 0x0801: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
+    logAudit('INTEGRATION', 'Precompile 0x0802: BLOCKED / UNVERIFIED on Elysium testnet node.', 'danger');
     logAudit('SECURITY', 'Non-Custodial Invariants INV-1 to INV-5 enforced.', 'accent');
     logAudit('STATUS', 'Public Testnet open to all testers. Faucet HYPE & USDC enabled.', 'accent');
   });

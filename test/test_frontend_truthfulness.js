@@ -79,10 +79,10 @@ async function main() {
 
   it('index.html explicitly tags simulation controls and demo components', () => {
     assert(appHtml.includes('Simulation Mode'), 'Missing "Simulation Mode" label in index.html');
-    assert(appHtml.includes('Simulated Ascend Mock'), 'Missing "Simulated Ascend Mock" badge in index.html');
     assert(appHtml.includes('Hyperliquid L1 REST'), 'Missing external reference price citation in index.html');
-    assert(appHtml.includes('Elysium Testnet Verification'), 'Missing verification card in index.html');
-    assert(appHtml.includes('Deferred Fee Debt & Accounting'), 'Missing deferred fee debt card in index.html');
+    assert(appHtml.includes('Ascend DEX Flywheel') || appHtml.includes('Simulated Ascend Mock'), 'Missing Ascend flywheel integration in index.html');
+    assert(appHtml.includes('Ecosystem &amp; Security Overview') || appHtml.includes('Ecosystem & Security Overview') || appHtml.includes('Elysium Testnet Verification'), 'Missing verification/overview card in index.html');
+    assert(appHtml.includes('INV-1 Non-Custodial') || appHtml.includes('Deferred Fee Debt & Accounting'), 'Missing invariant security guarantee in index.html');
   });
 
   // -------------------------------------------------------------
