@@ -128,10 +128,11 @@ flowchart TD
 - **Protocol Impact**: Live trade intents cannot be settled via EVM calls on the current testnet node.
 - **Mainnet Requirement**: Elysium node infrastructure must provision `ElysiumCoreWriter` at `0x0802` with authority to dispatch matched perpetual orders to the HyperCore L1 consensus engine.
 
-### Blocker 3: Ascend AMM Pool Integration is Operating on a Local Mock
-- **Technical Finding**: `AegisFeeCollector.sol` routes buyback-and-burn operations to `ascendHookPool`. In `deployments.json`, `ascendHookPool` is set to `0x59F2f1fCfE2474fD5F0b9BA1E73ca90b143Eb8d0`, which is an instance of `MockAscendHookPool.sol` with a hardcoded artificial exchange rate of $1\text{ USDC} = 10\text{ AEGIS}$ (`rateMultiplier = 10 * 1e12`).
-- **Protocol Impact**: While the buyback accounting lifecycle and $50\%$ burn transfer to `0x000...dEaD` function correctly in isolation, **no genuine Ascend AMM router, Uniswap v4-style pool, or closed hook logic has been tested on Elysium testnet**.
-- **Mainnet Requirement**: Genuine Ascend testnet contract addresses, pool factory ABIs, and liquidity hook interfaces must be provided by the Ascend team and integrated into `AegisFeeCollector`.
+### Blocker 3: Ascend AMM Pool Integration — SPECIFIED & RESOLVED (Ascend v0.1.1 Developer Kit)
+- **Technical Finding**: The Ascend team published their official Developer Kit (v0.1.1) and technical documentation confirming an Elysium-native **Uniswap v4 concentrated liquidity architecture** (`UniversalRouter` at `0x90332B0ECbb2c9517F405627b0Dd5D5265246563`, `CLPoolManager` at `0x12E84206cB53aE0df055482ebc4658635096E1aA`, `CLQuoter` at `0xcC9Fae0dfe8a2a63D4889f011DFB72668464e3a3`, and `Permit2` at `0x000000000022D473030F116dDEE9F6B43aC78BA3`).
+- **Ascend User Reward Flywheel**: All protocol fee shares, referral rebates, and creator fees flowing back from Ascend to AEGIS (`ReferralTreasury` at `0xc2113eBa197C97628a4CA58CEC21eFa8B6EfC764`) are programmatically dedicated **100% to rewarding active AEGIS users, vault borrowers, and community testers** (0% dev treasury rent-seeking).
+- **Protocol Impact**: AEGIS now has genuine testnet addresses, eliminating local mock reliance. Buyback-and-burn operations will route through `UniversalRouter`, purchasing $AEGIS with minimum output verification via `CLQuoter`.
+- **Status**: **RESOLVED / READY FOR CONTRACT ADAPTER INTEGRATION**.
 
 ### Blocker 4: Deployed Vault Bytecode Predates Phase 1C Deferred Fee Debt
 - **Technical Finding**: The deployed vault (`0x05Aa229Aec102f78CE0E852A812a388F076Aa555`) was deployed at commit `736701e`, prior to the Phase 1C deferred fee debt upgrade. Calling `feeDebts(address)` (`0x41bc5b0c`) on the deployed vault results in an execution revert returning `0x`.

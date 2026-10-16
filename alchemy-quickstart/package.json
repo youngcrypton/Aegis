@@ -1,0 +1,12 @@
+{
+  "name": "alchemy-quickstart",
+  "version": "1.0.0",
+  "description": "Send first Alchemy API request to call alchemy_getTokenBalances",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}

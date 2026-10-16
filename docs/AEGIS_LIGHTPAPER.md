@@ -179,6 +179,18 @@ Collected fees are strictly split 50/50 by `AegisFeeCollector.sol` (Invariant **
 * **50% Buyback-and-Burn:** Programmatically routed to Ascend Closed Hook Pools to purchase $AEGIS and burn it permanently to `0x000...dEaD`.
 * **50% Real Staking Yield:** Distributed directly to bonded Sentinel stakers and governance participants.
 
+### 6.3 The Ascend User Reward Flywheel (100% Community & User Rebates)
+Beyond internal liquidation protection fees, AEGIS integrates directly with Ascend's native Elysium DEX architecture (`UniversalRouter` at `0x90332B0ECbb2c9517F405627b0Dd5D5265246563`, `CLPoolManager`, and `ReferralTreasury` at `0xc2113eBa197C97628a4CA58CEC21eFa8B6EfC764`).
+
+All external fees, referral shares, and pool creator rebates returned to AEGIS from Ascend trading activity are strictly channeled to reward active protocol users:
+
+$$\text{Ascend Revenue}_{\text{returned}} \implies 100\% \text{ User \& Community Reward Allocation}$$
+
+1. **Vault Borrower Fee Rebates:** Borrowers maintaining protected collateral vaults on AEGIS receive fee discounts and cash-back rewards in $AEGIS or USDC derived directly from Ascend trading volume.
+2. **Active Trader & Tester Incentives:** Community members and pro-traders actively testing, stress-testing, and executing on the AEGIS terminal earn continuous rewards and loyalty boosts.
+3. **Liquidity Provider Rewards:** Users providing concentrated liquidity for the canonical `$AEGIS / USDC` pool on Ascend receive amplified yield distributions.
+4. **Zero Treasury Rent-Seeking:** 0% of Ascend-originating fee shares are withheld by team treasuries; 100% is cycled back into rewarding the people who use AEGIS.
+
 ---
 
 ## 7. Formal Verification & Test Suite Scorecard

@@ -1,0 +1,13 @@
+{
+  "name": "alchemy-smart-websockets",
+  "version": "1.0.0",
+  "description": "Alchemy Smart WebSockets Demo on Elysium Testnet",
+  "main": "demo-script.js",
+  "scripts": {
+    "start": "node demo-script.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ws": "^8.18.0"
+  }
+}
