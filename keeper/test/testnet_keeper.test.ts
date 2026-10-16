@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import * as fs from "fs";
+import * as path from "path";
 import { ethers } from "ethers";
 import { loadConfig } from "../src/config";
 import { TelemetryService } from "../src/telemetry";
@@ -25,18 +27,17 @@ describe("Sentinel Keeper Testnet Configuration & Dual-Mode Wiring", () => {
 
     it("should read contract addresses from deployments.json when not in env", () => {
       const cfg = loadConfig({} as any);
-      // deployments.json has:
-      // writerAdapter: 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6
-      // oracleAdapter: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-      // aegisVault: 0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e
+      const deployments = JSON.parse(
+        fs.readFileSync(path.resolve(__dirname, "../../deployments.json"), "utf8")
+      );
       expect(cfg.AGENT_DISPATCH_ADAPTER_ADDRESS.toLowerCase()).toBe(
-        "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6".toLowerCase()
+        deployments.writerAdapter.toLowerCase()
       );
       expect(cfg.RELAYED_ORACLE_ADAPTER_ADDRESS.toLowerCase()).toBe(
-        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0".toLowerCase()
+        deployments.oracleAdapter.toLowerCase()
       );
       expect(cfg.AEGIS_VAULT_ADDRESS.toLowerCase()).toBe(
-        "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e".toLowerCase()
+        deployments.aegisVault.toLowerCase()
       );
     });
   });

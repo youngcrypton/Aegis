@@ -19,9 +19,10 @@ contract DeployAegis is Script {
         AegisSentinelRegistry sentinelRegistry,
         AegisVault vault
     ) {
-        uint256 deployerPrivateKey = vm.envOr(
-            "DEPLOYER_PRIVATE_KEY",
-            uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(
+            deployerPrivateKey != 0,
+            "DeployAegis: DEPLOYER_PRIVATE_KEY environment variable required (public test keys rejected)"
         );
         address deployer = vm.addr(deployerPrivateKey);
 

@@ -30,19 +30,21 @@ contract DeployTestnetModular is Script {
         AegisSentinelRegistry sentinelRegistry,
         AegisVault vault
     ) {
-        uint256 deployerPrivateKey = vm.envOr(
-            "DEPLOYER_PRIVATE_KEY",
-            uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(
+            deployerPrivateKey != 0,
+            "DeployTestnetModular: DEPLOYER_PRIVATE_KEY environment variable required (public test keys rejected)"
         );
         address deployer = vm.addr(deployerPrivateKey);
 
         vm.startBroadcast(deployerPrivateKey);
 
-        // 1. Resolve Token Addresses (Canonical Testnet or Environment Override)
+        // 1. Resolve Token Addresses & Admin Destination
+        address protocolAdmin = vm.envOr("ADMIN_ADDRESS", address(0xf0e721C996e76a0Cd5805975464CbE3E98839D64));
         address usdc = vm.envOr("USDC_ADDRESS", CANONICAL_TESTNET_USDC);
         address aegis = vm.envOr("AEGIS_ADDRESS", address(0));
         address ascendPool = vm.envOr("ASCEND_POOL_ADDRESS", address(0));
-        address yieldTarget = vm.envOr("YIELD_TARGET_ADDRESS", deployer);
+        address yieldTarget = vm.envOr("YIELD_TARGET_ADDRESS", protocolAdmin);
 
         // Deploy mock $AEGIS token for testnet if not supplied
         if (aegis == address(0)) {
@@ -58,6 +60,9 @@ contract DeployTestnetModular is Script {
         // RelayedOracleAdapter: 300s (5-minute) staleness allowance for testnet relayer
         oracleAdapter = new RelayedOracleAdapter(deployer, 300);
         oracleAdapter.setReporter(deployer, true);
+        if (protocolAdmin != deployer) {
+            oracleAdapter.setReporter(protocolAdmin, true);
+        }
 
         // Seed initial market reference prices (scaled 1e8 USD)
         oracleAdapter.updatePrice(0, 82_50000000);     // Perp 0: HYPE @ $82.50
@@ -93,11 +98,21 @@ contract DeployTestnetModular is Script {
         feeCollector.setAuthorizedVault(address(vault), true);
         sentinelRegistry.setAuthorizedSlasher(address(vault), true);
 
+        // 5. Transfer Protocol Ownership to User Wallet
+        if (protocolAdmin != deployer) {
+            vault.transferOwnership(protocolAdmin);
+            sentinelRegistry.transferOwnership(protocolAdmin);
+            feeCollector.transferOwnership(protocolAdmin);
+            oracleAdapter.transferOwnership(protocolAdmin);
+            writerAdapter.transferOwnership(protocolAdmin);
+            console2.log("Ownership transferred to protocolAdmin:", protocolAdmin);
+        }
+
         vm.stopBroadcast();
 
-        // 5. Export Deployment Artifact
+        // 6. Export Deployment Artifact
         string memory obj = "deployment";
-        vm.serializeAddress(obj, "admin", deployer);
+        vm.serializeAddress(obj, "admin", protocolAdmin);
         vm.serializeAddress(obj, "usdc", usdc);
         vm.serializeAddress(obj, "aegis", aegis);
         vm.serializeAddress(obj, "whype", CANONICAL_TESTNET_WHYPE);

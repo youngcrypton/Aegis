@@ -229,69 +229,98 @@ async function main() {
   // -------------------------------------------------------------
   console.log('\n--- Suite 6: Live Elysium Testnet RPC Verification ---');
 
+  const dns = require('dns');
+  const https = require('https');
+  const resolver = new dns.Resolver();
+  resolver.setServers(['8.8.8.8', '1.1.1.1']);
+
+  function robustRpcCall(method, params) {
+    return new Promise((resolve, reject) => {
+      const postData = JSON.stringify({ jsonrpc: '2.0', id: 1, method, params });
+      function customLookup(hostname, options, callback) {
+        if (typeof options === 'function') { callback = options; options = {}; }
+        resolver.resolve4(hostname, (err, addresses) => {
+          if (err) return callback(err);
+          if (!addresses || addresses.length === 0) return callback(new Error('No address found'));
+          if (options && options.all) return callback(null, addresses.map(a => ({ address: a, family: 4 })));
+          callback(null, addresses[0], 4);
+        });
+      }
+      const req = https.request({
+        hostname: 'testnet-rpc.elysium.kinetiq.xyz',
+        port: 443,
+        path: '/',
+        method: 'POST',
+        lookup: customLookup,
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) }
+      }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      });
+      req.on('error', reject);
+      req.write(postData);
+      req.end();
+    });
+  }
+
   await itAsync('Can query live Elysium testnet RPC at https://testnet-rpc.elysium.kinetiq.xyz', async () => {
     const t0 = Date.now();
-    const res = await fetch('https://testnet-rpc.elysium.kinetiq.xyz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_blockNumber', params: [] })
-    });
+    const data = await robustRpcCall('eth_blockNumber', []);
     const t1 = Date.now();
     const rtt = t1 - t0;
 
-    assert(res.ok, `RPC returned HTTP ${res.status}`);
-    const data = await res.json();
     assert(data.result, 'RPC did not return blockNumber result');
     const blockNum = parseInt(data.result, 16);
     assert(blockNum > 9000000, `Block height ${blockNum} should be > 9,000,000`);
     console.log(`    (Observed Live Block #${blockNum.toLocaleString()} on Chain 99801 in ${rtt}ms)`);
   });
 
-  await itAsync('Empirically confirms feeDebts reverts (0x) on deployed AegisVault (0x05Aa...)', async () => {
-    const res = await fetch('https://testnet-rpc.elysium.kinetiq.xyz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 2,
-        method: 'eth_call',
-        params: [
-          {
-            to: '0x05Aa229Aec102f78CE0E852A812a388F076Aa555',
-            data: '0x41bc5b0c000000000000000000000000f0e721c996e76a0cd5805975464cbe3e98839d64'
-          },
-          'latest'
-        ]
-      })
-    });
-    const data = await res.json();
-    const isRevertOrEmpty = !data.result || data.result === '0x' || data.error;
-    assert(isRevertOrEmpty, 'Expected call to revert or return 0x for unsupported feeDebts getter');
-    console.log(`    (Confirmed: feeDebts(address) reverts on 0x05Aa... with: ${data.result || data.error?.message || 'revert'})`);
+  await itAsync('Empirically confirms feeDebts returns 0 debt on clean AegisVault (0xC064...)', async () => {
+    const data = await robustRpcCall('eth_call', [
+      {
+        to: '0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29',
+        data: '0x41bc5b0c000000000000000000000000f0e721c996e76a0cd5805975464cbe3e98839d64'
+      },
+      'latest'
+    ]);
+    assert(data.result, 'Expected feeDebts to return 32-byte hex result');
+    assert.strictEqual(BigInt(data.result), 0n, 'Fee debt on clean vault should be 0');
+    console.log(`    (Confirmed: feeDebts(address) on 0xC064... = 0 USDC debt)`);
   });
 
-  await itAsync('Empirically confirms totalFeesCaptured() returns 0 on AegisFeeCollector (0xC6bA...)', async () => {
-    const res = await fetch('https://testnet-rpc.elysium.kinetiq.xyz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 3,
-        method: 'eth_call',
-        params: [
-          {
-            to: '0xC6bA8C3233eCF65B761049ef63466945c362EdD2',
-            data: '0xd8f13e8c' // totalFeesCaptured()
-          },
-          'latest'
-        ]
-      })
-    });
-    const data = await res.json();
+  await itAsync('Empirically confirms totalFeesCaptured() returns 0 on clean AegisFeeCollector (0xCA9D...)', async () => {
+    const data = await robustRpcCall('eth_call', [
+      {
+        to: '0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae',
+        data: '0xd8f13e8c' // totalFeesCaptured()
+      },
+      'latest'
+    ]);
     assert(data.result, 'Expected totalFeesCaptured to return 32-byte hex');
     const captured = BigInt(data.result);
     assert.strictEqual(captured, 0n, 'On-chain captured fees should be 0');
-    console.log(`    (Confirmed: totalFeesCaptured() on 0xC6bA... = ${captured.toString()} USDC units)`);
+    console.log(`    (Confirmed: totalFeesCaptured() on 0xCA9D... = ${captured.toString()} USDC units)`);
+  });
+
+  await itAsync('Empirically confirms owner() on clean AegisVault is user wallet (0xf0e721...)', async () => {
+    const data = await robustRpcCall('eth_call', [
+      {
+        to: '0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29',
+        data: '0x8da5cb5b' // owner()
+      },
+      'latest'
+    ]);
+    assert(data.result, 'Expected owner() to return address hex');
+    const owner = '0x' + data.result.slice(26).toLowerCase();
+    assert.strictEqual(owner, '0xf0e721c996e76a0cd5805975464cbe3e98839d64', 'Vault owner must be user admin wallet');
+    console.log(`    (Confirmed: owner() on 0xC064... = ${owner})`);
   });
 
   console.log('\n=============================================================');

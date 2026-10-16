@@ -1066,17 +1066,18 @@
     rpcUrl: 'https://testnet-rpc.elysium.kinetiq.xyz',
     explorerUrl: 'https://elysium.kinetiq.xyz/testnet-explorer',
     contracts: {
-      vault: '0x05Aa229Aec102f78CE0E852A812a388F076Aa555',
-      feeCollector: '0xC6bA8C3233eCF65B761049ef63466945c362EdD2',
-      hype: '0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44',
+      vault: '0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29',
+      feeCollector: '0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae',
+      hype: '0xCD57F65c2B0e5881CFC2E609F7CD53b746E1F234',
       usdc: '0x7D29d8047B905000459c0E80c34a26CeedcB47b2', // Canonical Bridged Testnet USDC (6 decimals)
       legacyMockUsdc: '0x712516e61C8B383dF4A63CFe83d7701Bce54B03e',
-      aegis: '0xbCF26943C0197d2eE0E5D05c716Be60cc2761508'
+      aegis: '0x606f01e0cd5B90d09A99442e4265a915CeCa5104',
+      sentinelRegistry: '0x6C64188e1D677Eb85E4aD71836650310281f0893'
     },
     adapters: {
       // Stock ArbOS Mode: Off-chain Sentinel Keeper executes trade-only orders via HyperCore L1 API
-      agentDispatchAdapter: '0x8c7C783fE5B6A7F135e954592fa44a30B2c36A18',
-      relayedOracleAdapter: '0xa8b1641042797e889d1b09C4A261942E3514d59a',
+      agentDispatchAdapter: '0xBAD4C895DBcA78F10764D73274dC1f314c80237e',
+      relayedOracleAdapter: '0x8829386b87F6CFbf64A3f75916BC96bAb0B12991',
       // Post-Upgrade ArbOS Mode (Available ~4 weeks post-mainnet hardfork)
       hyperCorePrecompileAdapter: '0x0000000000000000000000000000000000000801',
       predeployCoreWriterAdapter: '0x0000000000000000000000000000000000000802'
@@ -1091,7 +1092,7 @@
       writer0x0802: '0x0000000000000000000000000000000000000802'
     },
     defaultAccount: '0xf0e721C996e76a0Cd5805975464CbE3E98839D64',
-    sentinelKeeperAgent: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+    sentinelKeeperAgent: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65'
   };
 
   // --- ELYSIUM L2 VERIFIED JSON-RPC CLIENT ---
@@ -2195,7 +2196,7 @@ Timestamp: ${timestamp}
         if (el.ephemeralKeyAddress) {
           // Pre-fill with active Sentinel Keeper agent address if empty or old placeholder
           if (!el.ephemeralKeyAddress.value || el.ephemeralKeyAddress.value === '0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf') {
-            el.ephemeralKeyAddress.value = ELYSIUM_CONFIG.sentinelKeeperAgent || '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+            el.ephemeralKeyAddress.value = ELYSIUM_CONFIG.sentinelKeeperAgent || '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65';
           }
         }
         el.sessionKeyModal.style.display = 'flex';
@@ -2215,7 +2216,7 @@ Timestamp: ${timestamp}
 
     if (el.btnConfirmDelegateKey) {
       el.btnConfirmDelegateKey.addEventListener('click', async () => {
-        const agent = el.ephemeralKeyAddress ? el.ephemeralKeyAddress.value.trim() : (ELYSIUM_CONFIG.sentinelKeeperAgent || '0x70997970C51812dc3A010C7d01b50e0d17dc79C8');
+        const agent = el.ephemeralKeyAddress ? el.ephemeralKeyAddress.value.trim() : (ELYSIUM_CONFIG.sentinelKeeperAgent || '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65');
         const days = el.sessionDurationDays ? el.sessionDurationDays.value : '30';
         const expiryTimestamp = Date.now() + (parseInt(days, 10) * 86400 * 1000);
 

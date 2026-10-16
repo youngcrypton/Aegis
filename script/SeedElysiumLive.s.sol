@@ -31,9 +31,10 @@ contract SeedElysiumLive is Script {
         // HYPE token deployed on Elysium testnet
         address hypeAddr = 0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44;
 
-        uint256 deployerPrivateKey = vm.envOr(
-            "DEPLOYER_PRIVATE_KEY",
-            uint256(0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d)
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(
+            deployerPrivateKey != 0,
+            "SeedElysiumLive: DEPLOYER_PRIVATE_KEY environment variable required (public test keys rejected)"
         );
         address deployer = vm.addr(deployerPrivateKey);
 
