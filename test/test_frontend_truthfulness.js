@@ -66,7 +66,7 @@ async function main() {
   });
 
   it('app.js does not enforce mandatory personal_sign on wallet connect', () => {
-    const connectWalletFn = appJs.substring(appJs.indexOf('async function connectWallet()'), appJs.indexOf('function openElysiumSignModal('));
+    const connectWalletFn = appJs.substring(appJs.indexOf('async function connectWallet()'), appJs.indexOf('function disconnectWallet()'));
     assert(!connectWalletFn.includes("method: 'personal_sign'"), 'connectWallet requires personal_sign merely to view chain data');
   });
 

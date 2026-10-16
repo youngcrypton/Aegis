@@ -1301,15 +1301,60 @@
     }
   }
 
+  // --- MULTI-PROVIDER WEB3 WALLET RESOLUTION (Bitget, Opus, OKX, MetaMask, Trust) ---
+  function getWeb3Provider() {
+    if (typeof window === 'undefined') return null;
+
+    // 1. Bitget / BitKeep mobile in-app browser
+    if (window.bitkeep && window.bitkeep.ethereum) return window.bitkeep.ethereum;
+    if (window.bitget && window.bitget.ethereum) return window.bitget.ethereum;
+
+    // 2. Opus Wallet mobile in-app browser
+    if (window.opus && window.opus.ethereum) return window.opus.ethereum;
+
+    // 3. OKX mobile wallet
+    if (window.okxwallet) return window.okxwallet;
+
+    // 4. Trust Wallet
+    if (window.trustwallet) return window.trustwallet;
+
+    // 5. Standard EIP-1193 / window.ethereum (MetaMask, Rabby, Coinbase)
+    if (window.ethereum) {
+      if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
+        const bitget = window.ethereum.providers.find(p => p.isBitKeep || p.isBitget);
+        if (bitget) return bitget;
+        return window.ethereum.providers[0];
+      }
+      return window.ethereum;
+    }
+
+    return null;
+  }
+
+  async function resolveProvider(timeoutMs = 600) {
+    let provider = getWeb3Provider();
+    if (provider) return provider;
+
+    // Mobile in-app browsers (Bitget, Opus) sometimes inject provider after DOM events
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeoutMs) {
+      await new Promise(r => setTimeout(r, 60));
+      provider = getWeb3Provider();
+      if (provider) return provider;
+    }
+    return null;
+  }
+
   async function connectWallet() {
-    if (typeof window.ethereum === 'undefined') {
-      showToast('No Web3 wallet extension detected. You can test in simulated demo mode.');
+    const provider = await resolveProvider(600);
+    if (!provider) {
+      showToast('No Web3 wallet detected. Mobile users: ensure you open in Bitget, Opus, or MetaMask dApp browser.');
       return;
     }
 
     try {
       showToast('Connecting wallet...');
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
         return;
@@ -1325,7 +1370,7 @@
 
       // Non-intrusive chain check (does not throw popups or trigger malicious heuristics)
       try {
-        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+        const currentChainId = await provider.request({ method: 'eth_chainId' });
         if (currentChainId !== ELYSIUM_CONFIG.chainId) {
           logAudit('NETWORK', `Active wallet chain differs from Elysium L2 (99801). Switch network when ready to execute on-chain.`, 'hedge');
         }
@@ -1341,39 +1386,6 @@
       console.error('Wallet connection rejected:', err);
       showToast('Wallet connection was cancelled or rejected.');
     }
-  }
-
-  function openElysiumSignModal(addr) {
-    const modal = document.getElementById('elysiumSignModal');
-    if (!modal) return;
-
-    const accountInput = document.getElementById('signModalAccountInput');
-    const payloadText = document.getElementById('signModalPayloadText');
-    const target = addr || runtimeState.walletAddress || ELYSIUM_CONFIG.defaultAccount;
-
-    if (accountInput) accountInput.value = target;
-
-    const nonce = Math.floor(Math.random() * 9000000 + 1000000);
-    const timestamp = new Date().toISOString();
-    const signMessage = 
-`AEGIS PROTOCOL — EIP-712 / EIP-191 SESSION DELEGATION DEMONSTRATION
-
-Network: Elysium L2 Testnet (Chain ID 99801)
-Precompile 0x0801: BLOCKED / UNVERIFIED (External reference price feed active)
-Predeploy 0x0802: BLOCKED / UNVERIFIED (Simulation mode active)
-Account: ${target}
-Session Nonce: ${nonce}
-Timestamp: ${timestamp}
-
-[DEMONSTRATION ONLY]: This cryptographic session payload demonstrates off-chain non-custodial risk delegation (Invariant INV-1). Signing this demonstration does NOT broadcast on-chain transactions, does NOT modify vault state, and does NOT initiate live automated trading.`;
-
-    if (payloadText) payloadText.value = signMessage;
-    modal.style.display = 'flex';
-  }
-
-  function closeElysiumSignModal() {
-    const modal = document.getElementById('elysiumSignModal');
-    if (modal) modal.style.display = 'none';
   }
 
   function disconnectWallet() {
@@ -1436,9 +1448,10 @@ Timestamp: ${timestamp}
     let nativeWei = null;
     let hypeRaw = null;
 
-    if (typeof window.ethereum !== 'undefined' && runtimeState.walletConnected) {
+    const provider = getWeb3Provider();
+    if (provider && runtimeState.walletConnected) {
       try {
-        nativeWei = await window.ethereum.request({
+        nativeWei = await provider.request({
           method: 'eth_getBalance',
           params: [targetAddr, 'latest']
         });
@@ -1448,7 +1461,7 @@ Timestamp: ${timestamp}
 
       const padAddr = targetAddr.toLowerCase().replace('0x', '').padStart(64, '0');
       try {
-        hypeRaw = await window.ethereum.request({
+        hypeRaw = await provider.request({
           method: 'eth_call',
           params: [{ to: ELYSIUM_CONFIG.contracts.hype, data: '0x70a08231' + padAddr }, 'latest']
         });
@@ -1481,9 +1494,9 @@ Timestamp: ${timestamp}
     // Query canonical testnet USDC (0x7D29d8047B905000459c0E80c34a26CeedcB47b2 - 6 decimals)
     let usdcRaw = null;
     const padAddrForUsdc = targetAddr.toLowerCase().replace('0x', '').padStart(64, '0');
-    if (typeof window.ethereum !== 'undefined' && runtimeState.walletConnected) {
+    if (provider && runtimeState.walletConnected) {
       try {
-        usdcRaw = await window.ethereum.request({
+        usdcRaw = await provider.request({
           method: 'eth_call',
           params: [{ to: ELYSIUM_CONFIG.contracts.usdc, data: '0x70a08231' + padAddrForUsdc }, 'latest']
         });
@@ -1599,22 +1612,33 @@ Timestamp: ${timestamp}
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   }
 
-  // Listen for provider events if available
-  if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('accountsChanged', (accounts) => {
-      if (accounts.length > 0) {
-        runtimeState.walletAddress = accounts[0];
-        updateWalletUI(accounts[0]);
-        fetchOnChainBalances(accounts[0]);
-        checkDeferredFeeDebt(accounts[0]);
-      } else {
-        disconnectWallet();
-      }
-    });
+  // Listen for provider events if available across injected wallets
+  function setupProviderEvents() {
+    const provider = getWeb3Provider();
+    if (provider && typeof provider.on === 'function') {
+      try {
+        provider.on('accountsChanged', (accounts) => {
+          if (accounts && accounts.length > 0) {
+            runtimeState.walletAddress = accounts[0];
+            updateWalletUI(accounts[0]);
+            fetchOnChainBalances(accounts[0]);
+            checkDeferredFeeDebt(accounts[0]);
+          } else {
+            disconnectWallet();
+          }
+        });
 
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload();
-    });
+        provider.on('chainChanged', () => {
+          window.location.reload();
+        });
+      } catch (e) {
+        console.debug('Provider event binding notice:', e);
+      }
+    }
+  }
+  setupProviderEvents();
+  if (typeof window !== 'undefined') {
+    window.addEventListener('ethereum#initialized', setupProviderEvents, { once: true });
   }
 
   // --- 5. MATHEMATICAL MARGIN & HEALTH FACTOR CALCULATOR ---
@@ -2095,47 +2119,6 @@ Timestamp: ${timestamp}
       });
     }
 
-    // Elysium Signature Modal Handlers
-    const btnConfirmSign = document.getElementById('btnConfirmSign');
-    if (btnConfirmSign) {
-      btnConfirmSign.addEventListener('click', async () => {
-        const inputAddr = document.getElementById('signModalAccountInput');
-        const addr = inputAddr ? inputAddr.value : ELYSIUM_CONFIG.defaultAccount;
-
-        closeElysiumSignModal();
-
-        runtimeState.walletAddress = addr;
-        runtimeState.walletConnected = true;
-        runtimeState.sessionSignature = '0x' + Array.from({length: 130}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-
-        updateWalletUI(addr);
-        logAudit('AUTH', `[DEMO SESSION] EIP-712 session demonstrated for ${formatAddress(addr)} (INV-1 off-chain model; no on-chain state mutated)`, 'accent');
-        showToast(`[DEMO] Session demonstrated: ${formatAddress(addr)}`);
-        await fetchOnChainBalances(addr);
-        await checkDeferredFeeDebt(addr);
-      });
-    }
-
-    const btnRejectSign = document.getElementById('btnRejectSign');
-    if (btnRejectSign) {
-      btnRejectSign.addEventListener('click', () => {
-        closeElysiumSignModal();
-        showToast('Signature rejected. Connection aborted.');
-      });
-    }
-
-    const btnCloseSign = document.getElementById('btnCloseSignModal');
-    if (btnCloseSign) {
-      btnCloseSign.addEventListener('click', closeElysiumSignModal);
-    }
-
-    const signModalOverlay = document.getElementById('elysiumSignModal');
-    if (signModalOverlay) {
-      signModalOverlay.addEventListener('click', (e) => {
-        if (e.target === signModalOverlay) closeElysiumSignModal();
-      });
-    }
-
     // Simulation triggers
     if (el.btnCrashTest) el.btnCrashTest.addEventListener('click', simulateFlashCrash);
     if (el.btnRetraceTest) el.btnRetraceTest.addEventListener('click', simulateRetracement);
@@ -2190,15 +2173,9 @@ Timestamp: ${timestamp}
       });
     }
 
-    // Session Key Delegation Modal Handlers (Task 19, INV-1)
+    // Risk Protection Settings Modal Handlers (INV-1)
     function openSessionKeyModal() {
       if (el.sessionKeyModal) {
-        if (el.ephemeralKeyAddress) {
-          // Pre-fill with active Sentinel Keeper agent address if empty or old placeholder
-          if (!el.ephemeralKeyAddress.value || el.ephemeralKeyAddress.value === '0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf') {
-            el.ephemeralKeyAddress.value = ELYSIUM_CONFIG.sentinelKeeperAgent || '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65';
-          }
-        }
         el.sessionKeyModal.style.display = 'flex';
       }
     }
@@ -2215,41 +2192,12 @@ Timestamp: ${timestamp}
     if (el.btnCancelSessionKey) el.btnCancelSessionKey.addEventListener('click', closeSessionKeyModal);
 
     if (el.btnConfirmDelegateKey) {
-      el.btnConfirmDelegateKey.addEventListener('click', async () => {
-        const agent = el.ephemeralKeyAddress ? el.ephemeralKeyAddress.value.trim() : (ELYSIUM_CONFIG.sentinelKeeperAgent || '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65');
+      el.btnConfirmDelegateKey.addEventListener('click', () => {
         const days = el.sessionDurationDays ? el.sessionDurationDays.value : '30';
         const expiryTimestamp = Date.now() + (parseInt(days, 10) * 86400 * 1000);
 
-        // If Web3 wallet is connected, request cryptographic trade-only approval signature
-        if (typeof window.ethereum !== 'undefined' && runtimeState.walletConnected && runtimeState.walletAddress) {
-          try {
-            const approvalMessage = [
-              `[AEGIS Protocol — Trade-Only Agent Delegation]`,
-              `Network: Elysium L2 Testnet (Chain ID 99801)`,
-              `Delegator Vault: ${runtimeState.walletAddress}`,
-              `Authorized Agent: ${agent}`,
-              `Permissions: TRADE_ONLY (Hedging & Unwind Limit Orders)`,
-              `Invariant Guarantee: INV-1 Non-Custodial (Zero Transfer Authority)`,
-              `Duration: ${days} days (Expires ${new Date(expiryTimestamp).toISOString()})`,
-              `Routing: AgentDispatchAdapter -> HyperCore L1 CLOB`
-            ].join('\n');
-
-            const sig = await window.ethereum.request({
-              method: 'personal_sign',
-              params: [approvalMessage, runtimeState.walletAddress]
-            });
-            runtimeState.sessionSignature = sig;
-            logAudit('CRYPTO', `Trade-only agent cryptographic signature verified: ${sig.substring(0, 10)}...`, 'accent');
-          } catch (signErr) {
-            console.warn('User rejected signature or signing error:', signErr);
-            showToast('Signature cancelled. Agent authorization aborted.');
-            return;
-          }
-        }
-
         runtimeState.agentDelegation = {
           approved: true,
-          agentAddress: agent,
           durationDays: parseInt(days, 10),
           expiryTimestamp,
           scope: 'TRADE_ONLY_CLOB_ORDERS',
@@ -2262,11 +2210,11 @@ Timestamp: ${timestamp}
 
         closeSessionKeyModal();
         if (el.sessionBadge) {
-          el.sessionBadge.innerHTML = `<span>Agent:</span> <strong>Active (${days}d, INV-1)</strong>`;
+          el.sessionBadge.innerHTML = `<span>Protection:</span> <strong>Active (${days}d, INV-1)</strong>`;
           el.sessionBadge.classList.add('active');
         }
-        logAudit('INV-1', `Trade-only API agent ${formatAddress(agent)} approved for ${days} days. Non-custodial scope verified (Invariant INV-1). Orders routed directly to HyperCore CLOB.`, 'accent');
-        showToast(`Trade-only API agent approved! Orders routed directly to HyperCore.`);
+        logAudit('INV-1', `Automated risk protection preferences saved for ${days} days (Invariant INV-1 non-custodial scope).`, 'accent');
+        showToast(`Risk protection preferences saved (${days} days).`);
         updateUI();
       });
     }
@@ -2486,7 +2434,7 @@ Timestamp: ${timestamp}
     btn.disabled = true;
     if (btnText) btnText.textContent = 'Connecting Wallet...';
 
-    if (!runtimeState.walletConnected && typeof window.ethereum !== 'undefined') {
+    if (!runtimeState.walletConnected && getWeb3Provider()) {
       await connectWallet();
     }
 

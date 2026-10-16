@@ -46,6 +46,12 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     /// @notice Cooldown unlock timestamp per operator when unbonding is initiated
     mapping(address => uint256) public override unbondingTimestamps;
 
+    /// @notice Pending partial unstake amount per operator undergoing cooldown
+    mapping(address => uint256) public override pendingUnstakeAmounts;
+
+    /// @notice Pending partial unstake unlock timestamp per operator
+    mapping(address => uint256) public override pendingUnstakeTimestamps;
+
     modifier onlySlasherOrOwner() {
         if (msg.sender != owner() && !authorizedSlashers[msg.sender]) {
             revert UnauthorizedCaller();
@@ -75,6 +81,7 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     function bondStake(uint256 amount) external nonReentrant {
         if (amount == 0) revert InsufficientBondAmount();
         if (unbondingTimestamps[msg.sender] != 0) revert CooldownActive(unbondingTimestamps[msg.sender]);
+        if (pendingUnstakeTimestamps[msg.sender] != 0) revert CooldownActive(pendingUnstakeTimestamps[msg.sender]);
 
         SentinelNode storage node = sentinels[msg.sender];
         uint256 newBond = node.bondedAmount + amount;
@@ -93,12 +100,13 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     }
 
     /**
-     * @notice Withdraw excess bonded tokens while retaining active node status.
-     * @dev Enforces remaining bond >= 25,000 * 1e18.
+     * @notice Initiates a 7-day unbonding cooldown for excess bonded tokens while retaining active node status.
+     * @dev Prevents frontrunning slashing evasion: funds remain locked and slashable during the 7-day cooldown.
      * @param amount Token amount to unstake.
      */
-    function unstake(uint256 amount) external nonReentrant {
+    function initiateUnstake(uint256 amount) public nonReentrant {
         if (unbondingTimestamps[msg.sender] != 0) revert CooldownActive(unbondingTimestamps[msg.sender]);
+        if (pendingUnstakeTimestamps[msg.sender] != 0) revert CooldownActive(pendingUnstakeTimestamps[msg.sender]);
 
         SentinelNode storage node = sentinels[msg.sender];
         if (amount == 0 || node.bondedAmount < amount) {
@@ -111,9 +119,73 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
         }
 
         node.bondedAmount = remaining;
-        aegisToken.safeTransfer(msg.sender, amount);
+        pendingUnstakeAmounts[msg.sender] = amount;
+        uint256 unlockTimestamp = block.timestamp + UNBONDING_COOLDOWN;
+        pendingUnstakeTimestamps[msg.sender] = unlockTimestamp;
 
-        emit SentinelUnstaked(msg.sender, amount, remaining);
+        emit SentinelPartialUnstakeInitiated(msg.sender, amount, unlockTimestamp);
+    }
+
+    /**
+     * @notice Finalizes partial unstake after the 7-day unbonding cooldown elapses.
+     */
+    function finalizeUnstake() public nonReentrant {
+        uint256 unlockTime = pendingUnstakeTimestamps[msg.sender];
+        if (unlockTime == 0) revert NoUnbondRequest();
+        if (block.timestamp < unlockTime) revert CooldownActive(unlockTime);
+
+        uint256 amount = pendingUnstakeAmounts[msg.sender];
+        delete pendingUnstakeAmounts[msg.sender];
+        delete pendingUnstakeTimestamps[msg.sender];
+
+        if (amount > 0) {
+            aegisToken.safeTransfer(msg.sender, amount);
+        }
+
+        emit SentinelPartialUnstakeFinalized(msg.sender, amount);
+        emit SentinelUnstaked(msg.sender, amount, sentinels[msg.sender].bondedAmount);
+    }
+
+    /**
+     * @notice Two-phase partial unstake: initiates on first call, finalizes after 7 days cooldown.
+     * @dev Prevents front-running slashing transactions by enforcing a 7-day unbonding delay.
+     * @param amount Token amount to unstake.
+     */
+    function unstake(uint256 amount) external nonReentrant {
+        uint256 unlockTime = pendingUnstakeTimestamps[msg.sender];
+        if (unlockTime == 0) {
+            if (unbondingTimestamps[msg.sender] != 0) revert CooldownActive(unbondingTimestamps[msg.sender]);
+
+            SentinelNode storage node = sentinels[msg.sender];
+            if (amount == 0 || node.bondedAmount < amount) {
+                revert InsufficientBondAmount();
+            }
+
+            uint256 remaining = node.bondedAmount - amount;
+            if (remaining < MIN_BOND) {
+                revert InsufficientBondAmount();
+            }
+
+            node.bondedAmount = remaining;
+            pendingUnstakeAmounts[msg.sender] = amount;
+            uint256 unlockTimestamp = block.timestamp + UNBONDING_COOLDOWN;
+            pendingUnstakeTimestamps[msg.sender] = unlockTimestamp;
+
+            emit SentinelPartialUnstakeInitiated(msg.sender, amount, unlockTimestamp);
+        } else {
+            if (block.timestamp < unlockTime) revert CooldownActive(unlockTime);
+
+            uint256 pendingAmt = pendingUnstakeAmounts[msg.sender];
+            delete pendingUnstakeAmounts[msg.sender];
+            delete pendingUnstakeTimestamps[msg.sender];
+
+            if (pendingAmt > 0) {
+                aegisToken.safeTransfer(msg.sender, pendingAmt);
+            }
+
+            emit SentinelPartialUnstakeFinalized(msg.sender, pendingAmt);
+            emit SentinelUnstaked(msg.sender, pendingAmt, sentinels[msg.sender].bondedAmount);
+        }
     }
 
     /**
@@ -124,6 +196,7 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
         SentinelNode storage node = sentinels[msg.sender];
         if (node.bondedAmount == 0) revert InsufficientBondAmount();
         if (unbondingTimestamps[msg.sender] != 0) revert CooldownActive(unbondingTimestamps[msg.sender]);
+        if (pendingUnstakeTimestamps[msg.sender] != 0) revert CooldownActive(pendingUnstakeTimestamps[msg.sender]);
 
         node.isActive = false;
         uint256 unlockTimestamp = block.timestamp + UNBONDING_COOLDOWN;
@@ -207,11 +280,23 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
         if (slashBps > MAX_SLASH_BPS) revert SlashExceedsMaxBound();
 
         SentinelNode storage node = sentinels[operator];
-        if (node.bondedAmount == 0) revert InsufficientBondAmount();
+        uint256 totalSlashable = node.bondedAmount + pendingUnstakeAmounts[operator];
+        if (totalSlashable == 0) revert InsufficientBondAmount();
 
-        uint256 slashAmount = (node.bondedAmount * slashBps) / 10000;
-        node.bondedAmount -= slashAmount;
+        uint256 slashAmount = (totalSlashable * slashBps) / 10000;
         node.slashCount += 1;
+
+        if (slashAmount <= node.bondedAmount) {
+            node.bondedAmount -= slashAmount;
+        } else {
+            uint256 excess = slashAmount - node.bondedAmount;
+            node.bondedAmount = 0;
+            if (excess <= pendingUnstakeAmounts[operator]) {
+                pendingUnstakeAmounts[operator] -= excess;
+            } else {
+                pendingUnstakeAmounts[operator] = 0;
+            }
+        }
 
         if (node.bondedAmount < MIN_BOND) {
             node.isActive = false;

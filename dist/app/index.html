@@ -21,6 +21,48 @@
 </head>
 <body>
 
+  <!-- Protocol Maintenance & Upgrade Lock (Terminal Inaccessible to Public) -->
+  <div id="maintenanceLock" style="position: fixed; inset: 0; z-index: 999999; background: var(--bg-base); display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(8px);">
+    <div style="background: var(--raised); border: 1px solid var(--rule); border-radius: 16px; padding: clamp(24px, 5vw, 44px); max-width: 560px; width: 100%; text-align: center; box-shadow: 0 24px 48px rgba(0,0,0,0.35);">
+      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--ground); border: 1px solid var(--rule); font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 20px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+        Scheduled Protocol Upgrade &amp; Security Maintenance
+      </div>
+      
+      <h1 style="font-family: var(--display); font-size: clamp(24px, 4vw, 32px); color: var(--ink); margin-bottom: 14px; line-height: 1.25; text-wrap: balance;">
+        Terminal Access Temporarily Paused
+      </h1>
+      
+      <p style="font-family: var(--text); font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 24px;">
+        The AEGIS Risk Sentinel &amp; Pro-Trader Terminal is currently offline for scheduled Elysium L2 node updates, contract registry security sync, and infrastructure maintenance.
+      </p>
+
+      <div style="background: var(--ground); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--ink-2);">Target Network:</span>
+          <span style="font-family: monospace; color: var(--accent); font-weight: 600;">Elysium L2 Testnet (99801)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--ink-2);">Terminal State:</span>
+          <span style="color: var(--hedge); font-weight: 600;">Maintenance &amp; Verification</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--ink-2);">Wallet Connections:</span>
+          <span style="color: var(--ink-2);">Temporarily Locked</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 24px; border-radius: 8px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px;">
+          Return to Homepage
+        </a>
+        <a href="/gitbook/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 24px; border-radius: 8px; background: var(--ground); border: 1px solid var(--rule); color: var(--ink); font-weight: 600; font-size: 14px;">
+          Read Official Lightpaper &amp; Docs ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- Shared Global SVGs for 3-Blade Master Logo Mark -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
@@ -1063,15 +1105,15 @@
 
   </main>
 
-  <!-- Session Key Delegation Modal (INV-1) -->
+  <!-- Automated Risk Protection Settings Modal (INV-1) -->
   <div class="modal-overlay" id="sessionKeyModal" style="display: none;">
     <div class="modal-card">
       <div class="modal-header-row">
-        <h3>Approve Trade-Only API Agent (INV-1)</h3>
+        <h3>Risk Sentinel Protection Settings (INV-1)</h3>
         <button class="modal-close-icon" id="btnCloseSessionKeyModal" type="button" aria-label="Close modal">&times;</button>
       </div>
       <p class="modal-desc">
-        <strong>Strict Non-Custodial Guarantee (INV-1):</strong> Authorize the AEGIS Sentinel Keeper as a trade-only agent. The agent can only submit hedging and unwind limit orders to HyperCore L1 via <code>AgentDispatchAdapter</code>. It is mathematically incapable of withdrawing or transferring collateral.
+        <strong>Strict Non-Custodial Guarantee (INV-1):</strong> Configure automated risk protection presets. All hedging orders route through verified on-chain adapters with zero collateral transfer or withdrawal authority.
       </p>
 
       <div style="background:var(--ground); border:1px solid var(--rule); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11px; display:flex; flex-direction:column; gap:4px;">
@@ -1090,11 +1132,7 @@
       </div>
 
       <div class="modal-field">
-        <label for="ephemeralKeyAddress">Sentinel Keeper Agent Address</label>
-        <input class="modal-input font-mono" id="ephemeralKeyAddress" type="text" value="0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65">
-      </div>
-      <div class="modal-field">
-        <label for="sessionDurationDays">Authorized Duration</label>
+        <label for="sessionDurationDays">Authorized Protection Duration</label>
         <select class="form-select" id="sessionDurationDays">
           <option value="7">7 Days</option>
           <option value="30" selected>30 Days (Recommended)</option>
@@ -1104,45 +1142,7 @@
       </div>
       <div class="modal-actions">
         <button class="sim-btn" id="btnCancelSessionKey" type="button">Cancel</button>
-        <button class="btn-primary" id="btnConfirmDelegateKey" type="button" style="padding: 0 16px;">Approve Trade-Only Agent</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Elysium L2 Cryptographic Session Signing Modal -->
-  <div class="modal-overlay" id="elysiumSignModal" style="display: none;">
-    <div class="modal-card" style="max-width: 520px;">
-      <div class="modal-header-row">
-        <h3>Elysium L2 Signature Authorization (INV-1)</h3>
-        <button class="modal-close-icon" id="btnCloseSignModal" type="button" aria-label="Close modal">&times;</button>
-      </div>
-      <p class="modal-desc">
-        Trade-only session authorization on <strong>Elysium L2 Testnet (Chain ID 99801)</strong>. Under Invariant INV-1, this key is mathematically barred from withdrawing or transferring collateral.
-      </p>
-
-      <div class="modal-field">
-        <label>Network & RPC Endpoint</label>
-        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:8px 12px; font-size:12px;">
-          <span style="color:var(--ink); font-weight:600;">Elysium L2 Testnet</span>
-          <span class="font-mono text-accent">Chain ID: 99801</span>
-        </div>
-      </div>
-
-      <div class="modal-field">
-        <label>Account Address</label>
-        <input class="modal-input font-mono" id="signModalAccountInput" type="text" readonly value="0x...">
-      </div>
-
-      <div class="modal-field">
-        <label>Demonstration Signature Payload (EIP-191 personal_sign)</label>
-        <textarea class="modal-input font-mono" id="signModalPayloadText" rows="4" readonly style="resize:none; font-size:11px; line-height:1.4; color:var(--ink-2);"></textarea>
-      </div>
-
-      <div class="modal-actions" style="margin-top:10px;">
-        <button class="sim-btn" id="btnRejectSign" type="button">Cancel</button>
-        <button class="btn-primary" id="btnConfirmSign" type="button" style="padding: 0 18px;">
-          Sign Demo Session (INV-1)
-        </button>
+        <button class="btn-primary" id="btnConfirmDelegateKey" type="button" style="padding: 0 16px;">Save Protection Preferences</button>
       </div>
     </div>
   </div>

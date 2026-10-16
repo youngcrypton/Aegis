@@ -20,10 +20,14 @@ interface IAegisSentinelRegistry {
     event SentinelDeactivated(address indexed operator);
     event SentinelExitInitiated(address indexed operator, uint256 unlockTimestamp);
     event SentinelExitFinalized(address indexed operator, uint256 amount);
+    event SentinelPartialUnstakeInitiated(address indexed operator, uint256 amount, uint256 unlockTimestamp);
+    event SentinelPartialUnstakeFinalized(address indexed operator, uint256 amount);
     event HedgeRecorded(address indexed operator, uint32 totalSuccessful);
 
     function bondStake(uint256 amount) external;
     function unstake(uint256 amount) external;
+    function initiateUnstake(uint256 amount) external;
+    function finalizeUnstake() external;
     function initiateExitSentinel() external;
     function finalizeExitSentinel() external;
     function exitSentinel() external;
@@ -37,6 +41,8 @@ interface IAegisSentinelRegistry {
     function isSentinelActive(address operator) external view returns (bool);
     function getSentinel(address operator) external view returns (SentinelNode memory);
     function unbondingTimestamps(address operator) external view returns (uint256);
+    function pendingUnstakeAmounts(address operator) external view returns (uint256);
+    function pendingUnstakeTimestamps(address operator) external view returns (uint256);
     function MIN_BOND() external view returns (uint256);
     function MAX_SLASH_BPS() external view returns (uint256);
     function UNBONDING_COOLDOWN() external view returns (uint256);

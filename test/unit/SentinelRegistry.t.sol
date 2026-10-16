@@ -84,12 +84,42 @@ contract SentinelRegistryTest is Test {
         vm.startPrank(operator);
         registry.bondStake(30_000 * 1e18);
         registry.unstake(5_000 * 1e18);
+
+        // Tokens are in pending unbonding cooldown, not yet in operator wallet
+        assertEq(aegisToken.balanceOf(operator), 100_000 * 1e18 - 30_000 * 1e18);
+        assertEq(registry.pendingUnstakeAmounts(operator), 5_000 * 1e18);
+
+        // Advance 7 days past cooldown and finalize
+        vm.warp(block.timestamp + 7 days);
+        registry.unstake(0);
         vm.stopPrank();
 
         SentinelNode memory node = registry.getSentinel(operator);
         assertEq(node.bondedAmount, MIN_BOND);
         assertTrue(registry.isSentinelActive(operator));
         assertEq(aegisToken.balanceOf(operator), 100_000 * 1e18 - MIN_BOND);
+    }
+
+    function test_SlashSentinel_CannotEvadeViaPartialUnstakeFrontrunning() public {
+        vm.startPrank(operator);
+        registry.bondStake(100_000 * 1e18);
+
+        // Operator attempts frontrunning by unstaking 75,000 AEGIS down to MIN_BOND
+        registry.unstake(75_000 * 1e18);
+        vm.stopPrank();
+
+        // Active bond is 25,000 AEGIS, but pending unbonding is 75,000 AEGIS
+        assertEq(registry.getSentinel(operator).bondedAmount, MIN_BOND);
+        assertEq(registry.pendingUnstakeAmounts(operator), 75_000 * 1e18);
+
+        // Slasher executes slashing at 10% (1,000 bps)
+        vm.prank(slasher);
+        registry.slashSentinel(operator, victim, 1000, "SLA frontrunning attempt");
+
+        // Full 10% penalty across total (100,000 * 10% = 10,000 AEGIS) is slashed
+        assertEq(aegisToken.balanceOf(victim), 10_000 * 1e18, "Victim must receive full penalty across total stake");
+        assertEq(registry.getSentinel(operator).bondedAmount, 15_000 * 1e18, "Bonded amount reduced by 10,000");
+        assertEq(registry.pendingUnstakeAmounts(operator), 75_000 * 1e18, "Pending unstake intact after bonded absorption");
     }
 
     function test_Unstake_RevertIfRemainingBelowMinimum() public {

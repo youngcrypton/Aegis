@@ -437,7 +437,7 @@
     </a>
     <div class="header-actions">
       <button class="theme-toggle-btn" id="walkthroughThemeBtn" type="button" aria-label="Toggle theme">◐</button>
-      <a href="app/index.html" class="btn-skip" id="btnSkipToTerminal">Skip to Terminal →</a>
+      <a href="app/index.html" class="btn-skip" id="btnSkipToTerminal">Terminal (Maintenance) →</a>
     </div>
   </header>
 
@@ -604,7 +604,7 @@
                 <strong style="font-size:13.5px; color:var(--accent);">Testnet HYPE &bull; Canonical USDC</strong>
               </div>
               <a href="app/index.html" class="btn-nav primary" style="justify-content:center; padding:12px 20px;">
-                <span>Enter Public Terminal →</span>
+                <span>Terminal Status (Scheduled Maintenance) →</span>
               </a>
             </div>
           </div>
@@ -647,12 +647,8 @@
       let currentSlide = 0;
       const totalSlides = slides.length;
 
-      // Auto-bypass if user previously selected "Don't show again" AND didn't come with ?demo=1
+      // Note: Auto-bypass disabled during scheduled maintenance
       const urlParams = new URLSearchParams(window.location.search);
-      if (!urlParams.get('demo') && localStorage.getItem('aegis-walkthrough-completed') === 'true') {
-        window.location.replace('app/index.html');
-        return;
-      }
 
       function goToSlide(index) {
         if (index < 0 || index >= totalSlides) return;
@@ -671,7 +667,7 @@
 
         // Update Next button text and action
         if (currentSlide === totalSlides - 1) {
-          btnNext.textContent = 'Launch Aegis Terminal →';
+          btnNext.textContent = 'Terminal Status (Maintenance) →';
         } else {
           btnNext.textContent = 'Next Feature →';
         }
