@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="docs.css">
+  <link rel="stylesheet" href="docs.css?v=2.2.0">
 </head>
 <body>
 
@@ -74,7 +74,7 @@
       </button>
       <a class="header-link-btn" href="../index.html">Landing</a>
       <a class="header-link-btn" href="https://github.com/youngcrypton/Aegis" target="_blank" rel="noopener">GitHub</a>
-      <a class="header-action-btn" href="javascript:void(0)" tabindex="-1" aria-disabled="true" style="filter: blur(4px); opacity: 0.55; pointer-events: none; cursor: not-allowed; text-decoration: none;">Launch App ↗</a>
+      <a class="header-action-btn" href="../app/index.html" title="Launch Aegis Terminal">Launch App ↗</a>
       <button class="theme-btn" id="themeBtn" type="button" aria-pressed="false">
         <span id="themeLabel">Dark</span> mode
       </button>
@@ -280,6 +280,21 @@
         </ul>
       </div>
 
+      <!-- Group 9: Protocol Roadmap -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Part IX: Protocol Roadmap</span>
+        </div>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="#protocol-roadmap">
+              <span>From Testnet to Mainnet Genesis</span>
+              <span class="nav-tag tag-core">Phasing</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
       <!-- Quick External Links -->
       <div class="sidebar-group">
         <div class="sidebar-group-title">
@@ -293,15 +308,15 @@
             </a>
           </li>
           <li class="sidebar-nav-item">
-            <a href="javascript:void(0)" tabindex="-1" aria-disabled="true" style="filter: blur(4px); opacity: 0.55; pointer-events: none; cursor: not-allowed; text-decoration: none;">
+            <a href="../app/index.html" title="Launch Aegis Terminal">
               <span>Launch App Terminal</span>
-              <span class="nav-tag tag-core">Locked</span>
+              <span class="nav-tag tag-core">App ↗</span>
             </a>
           </li>
           <li class="sidebar-nav-item">
-            <a href="../gitbook/index.html">
-              <span>GitBook Lightpaper</span>
-              <span class="nav-tag tag-brand">Book ↗</span>
+            <a href="https://aegis-hedge.gitbook.io/aegis/" target="_blank" rel="noopener" title="Official Aegis GitBook">
+              <span>GitBook Documentation</span>
+              <span class="nav-tag tag-brand">GitBook ↗</span>
             </a>
           </li>
           <li class="sidebar-nav-item">
@@ -400,6 +415,6 @@
     </div>
   </div>
 
-  <script src="docs.js"></script>
+  <script src="docs.js?v=2.2.0"></script>
 </body>
 </html>

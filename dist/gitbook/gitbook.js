@@ -631,32 +631,42 @@ node test/test_frontend_truthfulness.js</code></pre>
       prev: { id: 'scorecard', title: 'Automated Test Suite Scorecard (157/157)' },
       next: null,
       content: `
-        <h2>Phase 1: Testnet Alpha (Active Today)</h2>
+        <div style="border-left: 3px solid var(--accent); padding: 12px 16px; margin: 0 0 20px; background: color-mix(in srgb, var(--accent) 8%, var(--raised)); border-radius: 8px; font-size: 13.5px; line-height: 1.5;">
+          <strong style="color: var(--accent); display: block; margin-bottom: 4px;">V1 Architecture Strategy: Pure Autonomous Delta Hedging</strong>
+          Throughout the active Elysium testnet phase and V1 Mainnet Genesis, <strong>AEGIS is laser-focused on pure autonomous delta hedging</strong> for tokens with perpetual orderbooks on HyperCore, borrowers on Elysium, and tokens ascending from the Ascend Launchpad to HyperCore perpetual sessions. All staking contracts, fee collector distribution, and tokenomics yield mechanics are scheduled on our future roadmap (Phase 3).
+        </div>
+
+        <h2>Phase 1: Testnet Alpha (Active Today) — Pure Autonomous Hedging</h2>
         <ul>
-          <li>✅ Live deployment on Elysium Orbit L2 (Chain ID <code>99801</code>).</li>
-          <li>✅ Modular Dual-Mode Stack (<code>RelayedOracleAdapter</code> + <code>AgentDispatchAdapter</code>).</li>
-          <li>✅ Phase 1C deferred fee debt engine for non-blocking unwinds.</li>
-          <li>✅ Free public faucet onboarding flow (0.02, 0.05, 0.08 HYPE chips).</li>
+          <li>✅ <strong>Core Non-Custodial Vault:</strong> Deployed lean <code>AegisVault.sol</code> on Elysium Orbit L2 Testnet (Chain ID <code>99801</code>).</li>
+          <li>✅ <strong>HyperCore Sub-Second Execution:</strong> Real-time L1 CLOB order routing with sub-150ms execution latency.</li>
+          <li>✅ <strong>Live Mainnet Price Telemetry:</strong> Real-time mark price resolution against live Hyperliquid orderbook data.</li>
+          <li>✅ <strong>Ascend-to-HyperCore Token Hedging:</strong> Automated delta defense for WHYPE, WETH, and tokens that have ascended from Ascend Launchpad to HyperCore perpetual orderbooks.</li>
+          <li>✅ <strong>Non-Custodial Invariants (INV-1 to INV-5):</strong> Trade-only session keys with zero collateral withdrawal capability verified across 160,000+ fuzz runs.</li>
+          <li>✅ <strong>Dynamic Bottom-Wick Tracking:</strong> Continuous trough ratcheting with automated trailing take-profit unwinds.</li>
         </ul>
 
-        <h2>Phase 2: Mainnet Genesis</h2>
+        <h2>Phase 2: Mainnet Genesis — Production Hedging Engine</h2>
         <ul>
-          <li>⏳ Third-party external smart contract audit sign-off.</li>
-          <li>⏳ Ascend Closed Hook Pool mainnet launch integration.</li>
-          <li>⏳ Sentinel node operator bonding program (25,000 $AEGIS).</li>
+          <li>⏳ <strong>Targeted Security Audit:</strong> Focused, cost-efficient audit strictly covering the core non-custodial vault and session key delegation.</li>
+          <li>⏳ <strong>Ecosystem Grant Alignment:</strong> Collaboration with Elysium / Kinetiq ecosystem grant programs for security sponsorship.</li>
+          <li>⏳ <strong>Mainnet Launch on Elysium L2:</strong> Live autonomous liquidation protection for native WHYPE, WETH, WBTC, and top ascended ecosystem tokens.</li>
+          <li>⏳ <strong>Borrower Protection Integrations:</strong> Seamless risk defense for Elysium money market borrowers and leverage traders.</li>
         </ul>
 
-        <h2>Phase 3: Native Precompile Hardfork</h2>
+        <h2>Phase 3: Future Roadmap — Yield & Staking Flywheel</h2>
         <ul>
-          <li>⏳ Elysium validator activation of custom ArbOS precompiles <code>0x0801</code> and <code>0x0802</code>.</li>
-          <li>⏳ Zero-downtime hot-swap without vault migration.</li>
-          <li>⏳ Sub-70ms direct memory reads from HyperCore CLOB matching engine.</li>
+          <li>⏳ <strong>$AEGIS Token Deployment:</strong> Hard-capped supply of 700,000,000 $AEGIS with anti-dilutive economics and 35.0% Day-1 community float.</li>
+          <li>⏳ <strong>Decentralized Sentinel Bonding:</strong> Bonded node operator network with 25,000 $AEGIS stake requirements.</li>
+          <li>⏳ <strong>Ascend Closed Hook Pool Buyback & Burn:</strong> Programmatic routing of performance fees into Ascend AMM pools to burn $AEGIS.</li>
+          <li>⏳ <strong>Real-Yield Staking Distribution:</strong> Canonical USDC yield distribution to bonded node operators.</li>
         </ul>
 
-        <h2>Phase 4: Multi-Asset Expansion</h2>
+        <h2>Phase 4: Future Roadmap — Precompiles & Multi-Asset SDKs</h2>
         <ul>
-          <li>⏳ Cross-margin portfolio delta hedging.</li>
-          <li>⏳ Lending venue risk SDK integration.</li>
+          <li>⏳ <strong>Native ArbOS Precompile Activation:</strong> Validator activation of custom precompiles <code>0x0801</code> and <code>0x0802</code> for sub-70ms zero-gas EVM reads.</li>
+          <li>⏳ <strong>Cross-Margin Portfolio Delta Hedging:</strong> Unified account risk netting across multiple collateral positions.</li>
+          <li>⏳ <strong>Lending Protocol Risk SDK:</strong> Direct plug-and-play risk module for new money markets launching on Elysium.</li>
         </ul>
       `
     }
