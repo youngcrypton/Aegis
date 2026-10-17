@@ -439,13 +439,67 @@ try feeCollector.collectFee(user, protocolFee) {
       prev: { id: 'eip712-boundaries', title: 'Non-Custodial Session Boundaries' },
       next: { id: 'invariants', title: 'Security Invariants (INV-1 to INV-5)' },
       content: `
+        <div style="border-left: 3px solid var(--hedge); padding: 12px 16px; margin: 0 0 20px; background: color-mix(in srgb, var(--hedge) 8%, var(--raised)); border-radius: 8px; font-size: 13.5px; line-height: 1.5;">
+          <strong style="color: var(--hedge); display: block; margin-bottom: 4px;">Protocol Roadmap Notice (Phase 3 Integration):</strong>
+          Throughout the active Elysium testnet phase and initial V1 launch, <strong>AEGIS operates strictly as a lean, pure autonomous delta-hedging engine</strong>. Staking, real yield distribution, and fee buyback-and-burn mechanisms are on the protocol <strong>Roadmap (Phase 3)</strong> and are not active in V1. Active testnet testers and mainnet hedgers accumulate Phase 1 (10%) and Phase 2 (15%) Points, converting 100% unlocked at Ascend TGE.
+        </div>
+
         <h2>1. Fixed Hard Cap & Value Capture</h2>
         <ul>
-          <li><strong>Total Supply:</strong> 700,000,000 $AEGIS tokens. Zero inflationary minting capability.</li>
-          <li><strong>Utility:</strong> Sentinel bonding, governance, and fee yield capture.</li>
+          <li><strong>Total Supply:</strong> 700,000,000 $AEGIS tokens. Zero inflationary minting capability in smart contracts.</li>
+          <li><strong>Initial Day-1 Float:</strong> 245,000,000 $AEGIS (35.0%) — 100% community-owned with zero VC or team float.</li>
+          <li><strong>Team Alignment:</strong> Strict 24-month hard cliff; zero contributor tokens unlock until Month 25.</li>
         </ul>
 
-        <h2>2. Counter-Cyclical Deflationary Flywheel</h2>
+        <h2>2. Visual Token Allocation (700M Hard Cap)</h2>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin: 20px 0; padding: 20px; background: var(--raised); border: 1px solid var(--rule); border-radius: 12px;">
+          <div style="position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 200 200" width="200" height="200" style="transform: rotate(-90deg);">
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--rule)" stroke-width="30" opacity="0.25"></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--accent)" stroke-width="30" stroke-dasharray="43.98 395.84" stroke-dashoffset="0"><title>Phase 1 Testnet Points: 10.0% (70M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="color-mix(in srgb, var(--accent) 70%, #fff)" stroke-width="30" stroke-dasharray="65.97 373.85" stroke-dashoffset="-43.98"><title>Phase 2 Mainnet Points: 15.0% (105M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="color-mix(in srgb, var(--accent) 45%, var(--violet))" stroke-width="30" stroke-dasharray="43.98 395.84" stroke-dashoffset="-109.95"><title>Ascend Fair Launch: 10.0% (70M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--violet)" stroke-width="30" stroke-dasharray="87.96 351.86" stroke-dashoffset="-153.93"><title>kHYPE Liquid Staking: 20.0% (140M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--hedge)" stroke-width="30" stroke-dasharray="65.97 373.85" stroke-dashoffset="-241.89"><title>Ascend LP Incentives: 15.0% (105M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--danger)" stroke-width="30" stroke-dasharray="52.78 387.04" stroke-dashoffset="-307.86"><title>Protocol Security: 12.0% (84M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="var(--ink-2)" stroke-width="30" stroke-dasharray="43.98 395.84" stroke-dashoffset="-360.64"><title>Core Team: 10.0% (70M $AEGIS)</title></circle>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="color-mix(in srgb, var(--violet) 40%, var(--rule))" stroke-width="30" stroke-dasharray="35.19 404.63" stroke-dashoffset="-404.62"><title>Strategic & Audits: 8.0% (56M $AEGIS)</title></circle>
+            </svg>
+            <div style="position: absolute; text-align: center; pointer-events: none;">
+              <div style="font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--ink);">700M</div>
+              <div style="font-size: 10px; color: var(--accent); font-weight: 600; text-transform: uppercase;">$AEGIS CAP</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; width: 100%; font-size: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex-shrink: 0;"></span><span><strong>10.0%</strong> — Phase 1 Testnet Points (70M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 70%, #fff); flex-shrink: 0;"></span><span><strong>15.0%</strong> — Phase 2 Mainnet Points (105M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 45%, var(--violet)); flex-shrink: 0;"></span><span><strong>10.0%</strong> — Ascend Fair Launch (70M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--violet); flex-shrink: 0;"></span><span><strong>20.0%</strong> — kHYPE Liquid Staking (140M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--hedge); flex-shrink: 0;"></span><span><strong>15.0%</strong> — Ascend LP Incentives (105M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--danger); flex-shrink: 0;"></span><span><strong>12.0%</strong> — Protocol Security (84M)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--ink-2); flex-shrink: 0;"></span><span><strong>10.0%</strong> — Core Team (70M · 24m Cliff)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--violet) 40%, var(--rule)); flex-shrink: 0;"></span><span><strong>8.0%</strong> — Strategic & Audits (56M)</span></div>
+          </div>
+        </div>
+
+        <h2>3. Strategic Supply Matrix</h2>
+        <div class="gb-table-wrap">
+          <table class="gb-table">
+            <thead><tr><th>Category</th><th>Share</th><th>Amount</th><th>TGE</th><th>Vesting</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Phase 1: Testnet Points</strong></td><td>10.0%</td><td>70,000,000</td><td>100% (70M)</td><td>100% at TGE</td></tr>
+              <tr><td><strong>Phase 2: Mainnet Points</strong></td><td>15.0%</td><td>105,000,000</td><td>100% (105M)</td><td>100% at TGE</td></tr>
+              <tr><td><strong>Ascend Fair Launch</strong></td><td>10.0%</td><td>70,000,000</td><td>100% (70M)</td><td>100% at TGE</td></tr>
+              <tr><td><strong>kHYPE Liquid Staking</strong></td><td>20.0%</td><td>140,000,000</td><td>0.0%</td><td>24m linear</td></tr>
+              <tr><td><strong>Ascend LP Incentives</strong></td><td>15.0%</td><td>105,000,000</td><td>0.0%</td><td>36m linear</td></tr>
+              <tr><td><strong>Protocol Security Reserve</strong></td><td>12.0%</td><td>84,000,000</td><td>0.0%</td><td>12m cliff, 36m linear</td></tr>
+              <tr><td><strong>Core Contributors & Team</strong></td><td>10.0%</td><td>70,000,000</td><td>0.0%</td><td>24m cliff, 36m linear</td></tr>
+              <tr><td><strong>Strategic & Audits</strong></td><td>8.0%</td><td>56,000,000</td><td>0.0%</td><td>12m cliff, 24m linear</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>4. Counter-Cyclical Deflationary Flywheel</h2>
         <p>During market crashes, traditional protocols suffer insolvency. AEGIS executes hedges, averts liquidation losses, and captures a 10% performance fee.</p>
 
         <div class="gb-math-card">
@@ -453,7 +507,7 @@ try feeCollector.collectFee(user, protocolFee) {
           <div class="gb-math-formula">Fee_total = Burn_50% + Yield_50%</div>
         </div>
 
-        <p>50% is routed to Ascend Hook Pools to buy and burn $AEGIS permanently; 50% is distributed to bonded Sentinel stakers in USDC.</p>
+        <p>50% is routed to Ascend Hook Pools to buy and burn $AEGIS permanently; 50% is distributed to bonded Sentinel stakers in USDC *(Phase 3 Roadmap)*.</p>
       `
     },
     {

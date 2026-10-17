@@ -494,7 +494,7 @@ async function run() {
         body: JSON.stringify({
           embeds: [{
             title: `${AEGIS_EMOJI} AEGIS Protocol — Support Helpdesk`,
-            description: 'Welcome to the official **AEGIS Protocol Support Helpdesk**.\nNeed assistance, spotted a testnet vulnerability, have an account dispute, or want to connect with the team? Select a ticket category below to open a private ticket.\n\n**Available Ticket Categories:**\n• 🐞 **Bug Report Ticket** — Smart contract reverts, terminal latency/UI glitches, keeper execution anomalies, testnet RPC issues.\n• ⚠️ **Complaint / Account Ticket** — Terminal access code issues, wallet connectivity disputes, trade discrepancies, service feedback.\n• 🤝 **Other Reason Ticket** — Strategic partnerships, grants, security vulnerability disclosures, institutional inquiries.\n\n*Click a button or choose from the dropdown below to create your private ticket.*',
+            description: 'Welcome to the official **AEGIS Protocol Support Helpdesk**.\nNeed assistance, spotted a testnet vulnerability, have an account dispute, or want to connect with the team? Select a ticket category below to open a private ticket.\n\n**Available Ticket Categories:**\n• 🐞 **Bug Report Ticket** — Smart contract reverts, terminal latency/UI glitches, keeper execution anomalies, testnet RPC issues.\n• ⚠️ **Complaint / Account Ticket** — Terminal connectivity issues, wallet disputes, trade discrepancies, service feedback.\n• 🤝 **Other Reason Ticket** — Strategic partnerships, grants, security vulnerability disclosures, institutional inquiries.\n\n*Click a button or choose from the dropdown below to create your private ticket.*',
             color: BRAND_COLORS.TEAL,
             footer: {
               text: 'AEGIS Support Sentinel — Confidential, Non-Custodial, Rapid Resolution'
@@ -518,7 +518,7 @@ async function run() {
                     {
                       label: 'Complaint / Account Ticket',
                       value: 'ticket_complaint',
-                      description: 'Account disputes, access code questions, or protocol complaints',
+                      description: 'Account disputes, wallet connectivity questions, or protocol complaints',
                       emoji: { name: '⚠️' }
                     },
                     {

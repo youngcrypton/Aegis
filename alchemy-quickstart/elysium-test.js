@@ -21,7 +21,7 @@ if (!apiKey || apiKey.trim() === '' || apiKey === 'your_alchemy_api_key_here') {
 
 // Target wallet address to inspect (can pass via CLI: node elysium-test.js 0xYourAddress)
 // Defaults to the verified AEGIS testnet borrower address
-const targetAddress = process.argv[2] || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+const targetAddress = process.argv[2] || '0xf0e721C996e76a0Cd5805975464CbE3E98839D64';
 
 // Alchemy Elysium Testnet JSON-RPC endpoint
 const endpoint = `https://elysium-testnet.g.alchemy.com/v2/${apiKey.trim()}`;

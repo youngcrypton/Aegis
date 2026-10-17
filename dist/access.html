@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEGIS Protocol — Interactive Product Walkthrough</title>
+  <title>AEGIS Protocol — Guided Onboarding Walkthrough</title>
   <!-- Favicon & Brand Icons -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -152,6 +152,18 @@
       border-color: var(--accent);
       color: var(--accent);
       transform: translateX(2px);
+    }
+
+    .btn-skip.prominent {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-skip.prominent:hover {
+      opacity: 0.92;
+      color: var(--on-accent);
     }
 
     .theme-toggle-btn {
@@ -333,17 +345,16 @@
     .step-dot {
       width: 10px;
       height: 10px;
-      border-radius: 50%;
+      border-radius: 999px;
       background: var(--rule);
       border: none;
-      cursor: pointer;
-      transition: all 250ms ease;
       padding: 0;
+      cursor: pointer;
+      transition: all 200ms ease;
     }
 
     .step-dot.active {
       width: 28px;
-      border-radius: 999px;
       background: var(--accent);
     }
 
@@ -357,10 +368,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
       padding: 10px 20px;
-      border-radius: 999px;
-      font-size: 13.5px;
+      border-radius: 12px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       border: 1px solid var(--rule);
@@ -371,7 +381,6 @@
     }
 
     .btn-nav:hover {
-      background: var(--raised);
       border-color: var(--ink-2);
     }
 
@@ -386,14 +395,29 @@
       transform: translateY(-1px);
     }
 
+    .btn-bottom-skip {
+      color: var(--ink-2);
+      font-size: 13px;
+      text-decoration: none;
+      padding: 8px 12px;
+      transition: color 150ms ease;
+    }
+
+    .btn-bottom-skip:hover {
+      color: var(--accent);
+    }
+
+    /* Don't show again row */
     .dont-show-row {
-      margin-top: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      margin-top: 16px;
       font-size: 12.5px;
       color: var(--ink-2);
+      cursor: pointer;
+      user-select: none;
     }
 
     .dont-show-row input[type="checkbox"] {
@@ -425,7 +449,7 @@
     </defs>
   </svg>
 
-  <!-- Top Header -->
+  <!-- Top Header with Prominent Skip Button -->
   <header class="walkthrough-header">
     <a href="index.html" class="brand-lockup">
       <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
@@ -437,7 +461,7 @@
     </a>
     <div class="header-actions">
       <button class="theme-toggle-btn" id="walkthroughThemeBtn" type="button" aria-label="Toggle theme">◐</button>
-      <a href="app/index.html" class="btn-skip" id="btnSkipToTerminal">Terminal (Maintenance) →</a>
+      <a href="app/index.html" class="btn-skip prominent" id="btnSkipToTerminal">Skip to Terminal →</a>
     </div>
   </header>
 
@@ -451,8 +475,8 @@
         <!-- Slide 1: Vault Risk Sentinel -->
         <div class="slide-item active" data-step="0">
           <div class="slide-info">
-            <span class="slide-step-badge">Feature 1 of 4 &bull; Surveillance</span>
-            <h1 class="slide-title">Autonomous Vault Sentinel &amp; Health Monitoring</h1>
+            <span class="slide-step-badge">Slide 1 of 4 &bull; Vault Risk Sentinel</span>
+            <h1 class="slide-title">Real-Time Collateral &amp; Liquidation Defense</h1>
             <p class="slide-desc">
               AEGIS continuously tracks your borrow positions on Elysium and Ascend. It monitors collateral ratios, oracle updates, and distance-to-liquidation buffers around the clock so you never get caught asleep.
             </p>
@@ -488,8 +512,8 @@
         <!-- Slide 2: HyperCore Delta Hedging -->
         <div class="slide-item" data-step="1">
           <div class="slide-info">
-            <span class="slide-step-badge">Feature 2 of 4 &bull; Execution</span>
-            <h1 class="slide-title">Sub-Second Delta Hedging on HyperCore</h1>
+            <span class="slide-step-badge">Slide 2 of 4 &bull; HyperCore Delta Hedging</span>
+            <h1 class="slide-title">Sub-Second Pre-Emptive Protection</h1>
             <p class="slide-desc">
               When market volatility threatens your position, AEGIS triggers atomic short hedges directly onto Hyperliquid’s high-speed CLOB orderbook.
             </p>
@@ -529,8 +553,8 @@
         <!-- Slide 3: Non-Custodial Architecture (INV-1) -->
         <div class="slide-item" data-step="2">
           <div class="slide-info">
-            <span class="slide-step-badge">Feature 3 of 4 &bull; Security</span>
-            <h1 class="slide-title">100% Non-Custodial Security Guarantee</h1>
+            <span class="slide-step-badge">Slide 3 of 4 &bull; Non-Custodial Architecture</span>
+            <h1 class="slide-title">Trade-Only Delegated Security</h1>
             <p class="slide-desc">
               Your collateral never leaves your vault. Protection is authorized via cryptographic trade-only session keys that strictly forbid withdrawals or transfers.
             </p>
@@ -573,8 +597,8 @@
         <!-- Slide 4: Ready for Public Testnet -->
         <div class="slide-item" data-step="3">
           <div class="slide-info">
-            <span class="slide-step-badge">Feature 4 of 4 &bull; Launch</span>
-            <h1 class="slide-title">Open Public Testnet Live on Elysium</h1>
+            <span class="slide-step-badge">Slide 4 of 4 &bull; Ready for Public Testnet</span>
+            <h1 class="slide-title">Launch Terminal &amp; Connect</h1>
             <p class="slide-desc">
               Experience automated liquidation defense right now. Claim testnet tokens from the Elysium faucet, connect your wallet with standard EIP-1193, and launch the terminal.
             </p>
@@ -603,8 +627,8 @@
                 <span style="font-size:11px; text-transform:uppercase; color:var(--ink-2); display:block; margin-bottom:4px;">Supported Assets</span>
                 <strong style="font-size:13.5px; color:var(--accent);">Testnet HYPE &bull; Canonical USDC</strong>
               </div>
-              <a href="app/index.html" class="btn-nav primary" style="justify-content:center; padding:12px 20px;">
-                <span>Terminal Status (Scheduled Maintenance) →</span>
+              <a href="app/index.html" class="btn-nav primary" style="justify-content:center; padding:12px 20px; text-decoration:none;">
+                <span>Launch Aegis Terminal →</span>
               </a>
             </div>
           </div>
@@ -622,6 +646,7 @@
         </div>
 
         <div class="nav-buttons-group">
+          <a href="app/index.html" class="btn-bottom-skip">Skip to Terminal →</a>
           <button class="btn-nav" id="btnPrevSlide" type="button" style="visibility:hidden;">← Back</button>
           <button class="btn-nav primary" id="btnNextSlide" type="button">Next Feature →</button>
         </div>
@@ -638,6 +663,18 @@
 
   <script>
     (() => {
+      // Auto-skip for returning visitors if requested
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceGuide = urlParams.get('guide') === 'true';
+      if (!forceGuide) {
+        try {
+          if (localStorage.getItem('aegis-walkthrough-completed') === 'true') {
+            window.location.replace('app/index.html');
+            return;
+          }
+        } catch (e) {}
+      }
+
       const slides = document.querySelectorAll('.slide-item');
       const dots = document.querySelectorAll('.step-dot');
       const btnPrev = document.getElementById('btnPrevSlide');
@@ -646,9 +683,6 @@
       const checkDontShow = document.getElementById('checkDontShowAgain');
       let currentSlide = 0;
       const totalSlides = slides.length;
-
-      // Note: Auto-bypass disabled during scheduled maintenance
-      const urlParams = new URLSearchParams(window.location.search);
 
       function goToSlide(index) {
         if (index < 0 || index >= totalSlides) return;
@@ -667,7 +701,7 @@
 
         // Update Next button text and action
         if (currentSlide === totalSlides - 1) {
-          btnNext.textContent = 'Terminal Status (Maintenance) →';
+          btnNext.textContent = 'Launch Aegis Terminal →';
         } else {
           btnNext.textContent = 'Next Feature →';
         }
@@ -680,7 +714,9 @@
       btnNext.addEventListener('click', () => {
         if (currentSlide === totalSlides - 1) {
           if (checkDontShow && checkDontShow.checked) {
-            localStorage.setItem('aegis-walkthrough-completed', 'true');
+            try {
+              localStorage.setItem('aegis-walkthrough-completed', 'true');
+            } catch (e) {}
           }
           window.location.href = 'app/index.html';
         } else {
@@ -730,18 +766,22 @@
       // Checkbox listener
       if (checkDontShow) {
         checkDontShow.addEventListener('change', (e) => {
-          if (e.target.checked) {
-            localStorage.setItem('aegis-walkthrough-completed', 'true');
-          } else {
-            localStorage.removeItem('aegis-walkthrough-completed');
-          }
+          try {
+            if (e.target.checked) {
+              localStorage.setItem('aegis-walkthrough-completed', 'true');
+            } else {
+              localStorage.removeItem('aegis-walkthrough-completed');
+            }
+          } catch (err) {}
         });
       }
 
       // Theme toggle
       function initTheme() {
-        const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        try {
+          const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } catch (e) {}
       }
 
       if (themeBtn) {
@@ -749,7 +789,9 @@
           const current = document.documentElement.getAttribute('data-theme') || 'dark';
           const next = current === 'dark' ? 'light' : 'dark';
           document.documentElement.setAttribute('data-theme', next);
-          localStorage.setItem('aegis-theme', next);
+          try {
+            localStorage.setItem('aegis-theme', next);
+          } catch (e) {}
         });
       }
 

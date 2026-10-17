@@ -111,11 +111,11 @@ AEGIS is built for the entire spectrum of DeFi participants:
 
 ### 7. Live Testnet Beta & Interactive Sandbox: Ready to Test Today
 
-AEGIS is not just theory—our **Private Testnet Beta is live on Elysium L2 (Chain ID 99801)**:
+AEGIS is not just theory—our **Open Public Testnet is live on Elysium L2 (Chain ID 99801)**:
 
 - **Interactive Stress Test Simulator:** Test our defense live with zero real-capital risk. Trigger simulated **-18% flash crashes** and **V-bounce retracements** on screen to watch the Sentinel execute precompile `0x0802`, open the short perp, track the bottom tick, and unwind with profit into the vault.
-- **50 Exclusive Beta Tester Seats:** We are distributing 50 private institutional beta access codes for early testers and ecosystem partners.
-- **Streamlined Access Portal:** Enter your beta code at our redesigned access terminal to unlock full terminal permissions.
+- **100% Open Public Access:** No invite codes or waitlists required. Anyone can connect their Web3 wallet, claim faucet funds, and test autonomous liquidation defense on Elysium.
+- **Live Risk Terminal:** Experience sub-second telemetry and automated delta-neutral hedging directly at the public terminal.
 
 ---
 
@@ -136,8 +136,9 @@ The protocol is powered by a hard-capped supply of **700,000,000 $AEGIS** on Ely
 
 - **Ascend Closed Hook Integration:** 100% of performance fee buybacks route through `IAscendHookPool.sol`, generating organic volume and liquidity for Ascend LPs.
 - **50/50 Deflationary Value Capture:** 50% of captured fees permanently burn $AEGIS at `0x00...dead`, while 50% is distributed as non-inflationary real yield in USDC to bonded Sentinel stakers.
-- **39% Ascend Alignment:** 273,000,000 $AEGIS allocated to Ascend launchpad participants, kHYPE liquid stakers, and community incentives.
-- **Strict 24-Month Team Cliff:** Core contributor tokens feature an ultra-strict 2-year hard cliff followed by a 4-year linear release—a 6-year horizon demonstrating absolute long-term commitment.
+- **70% Community & User Alignment:** 490,000,000 $AEGIS dedicated to Phase 1 Testnet Points (10%), Phase 2 Mainnet Points (15%), Ascend Fair Launch (10%), kHYPE stakers (20%), and Ascend LPs (15%).
+- **100% Day-1 Community Unlock:** All 25% Points rewards + 10% Ascend Fair Launch (35% total Day-1 float) are 100% unlocked at Ascend TGE with zero vesting for users.
+- **Strict 24-Month Team Cliff:** Core contributor tokens feature an ultra-strict 2-year hard cliff—zero team tokens for 2 full years!
 
 ---
 
@@ -145,7 +146,7 @@ The protocol is powered by a hard-capped supply of **700,000,000 $AEGIS** on Ely
 
 The launch of the AEGIS architecture marks Day 1. Here is our near-term deployment schedule:
 
-1. **Public Mainnet Gate Opening:** Transitioning from the current 50-seat private testnet to completely open, un-gated access for all public traders upon Elysium & Ascend Mainnet launch.
+1. **Mainnet Production Deployment:** Transitioning the verified smart contracts, terminal, and keeper network to live Elysium & Ascend Mainnet.
 2. **Decentralized Sentinel Staking Network:** Public onboarding for independent node operators to bond 25,000 $AEGIS and participate in decentralized risk surveillance.
 3. **Mobile PWA Terminal & Real-Time Alert Bots:** Mobile-first risk monitoring with Discord and Telegram Sentinel bots broadcasting instant push notifications on vault health tremors.
 4. **Ascend Launchpad Ascension:** Deploying our Mirror Bridge to HyperEVM for native spot and perpetual listings on Kinetiq.
@@ -253,21 +254,21 @@ Join the Sentinel network and explore the terminal today:
 
 ---
 
-### Tweet 8 ($AEGIS Tokenomics & Ascend Flywheel)
-> 7/ Powered by $AEGIS (700M hard cap) with deep ecosystem alignment:
+### Tweet 8 ($AEGIS Tokenomics & Community Points Engine)
+> 7/ Powered by $AEGIS (700M hard cap) with an unprecedented 70% community allocation:
 >
-> 🔥 50% of performance fees burned permanently via @Ascend Closed Hook Pools
-> 💰 50% paid as real yield in USDC to bonded Sentinel node stakers
-> 🤝 39% direct allocation to Ascend LPs, kHYPE stakers, and community rewards
-> ⏳ Strict 24-month hard team cliff (6-year horizon)
+> 🎁 25% User Points Rewards: 10% for Phase 1 Testnet testers + 15% for Phase 2 Mainnet hedgers (100% unlocked at TGE!)
+> 🚀 10% Ascend Launchpad Fair Launch (100% unlocked Day-1 liquidity)
+> 💎 20% to native @Kinetiq kHYPE stakers + 15% to @Ascend LP providers
+> ⏳ 10% team allocation with a strict 24-month hard cliff (zero team tokens for 2 full years!)
 
 ---
 
 ### Tweet 9 (Live Private Beta & Master Demo Videos)
 > 8/ Experience AEGIS live right now:
 >
-> 🚀 Private Testnet Beta live on Elysium L2 (Chain ID 99801) with interactive -18% flash crash simulation!
-> 🎟️ 50 exclusive private beta seats currently active
+> 🚀 Open Public Testnet live on Elysium L2 (Chain ID 99801) with interactive -18% flash crash simulation!
+> 🌐 100% open public access — connect any EVM wallet, no codes or waitlist needed
 > 🎬 Two master demo videos (120s Pitch Demo + 3-min Technical Walkthrough) with embedded brand captions and live voiceover
 >
 > Check it out at aegis.terminall.workers.dev

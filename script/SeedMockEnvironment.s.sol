@@ -22,10 +22,8 @@ import {MockAscendHookPool} from "../test/mocks/MockAscendHookPool.sol";
  */
 contract SeedMockEnvironment is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envOr(
-            "DEPLOYER_PRIVATE_KEY",
-            uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
-        );
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(deployerPrivateKey != 0, "SeedMockEnvironment: DEPLOYER_PRIVATE_KEY required");
         address deployer = vm.addr(deployerPrivateKey);
 
         // Standard demo wallets
@@ -35,11 +33,11 @@ contract SeedMockEnvironment is Script {
         );
         address sentinelOperator = vm.envOr(
             "SENTINEL_OPERATOR_ADDRESS",
-            address(0x70997970C51812dc3A010C7d01b50e0d17dc79C8)
+            address(0xB8f01AAeE2250C2A244B92B51f39213aca305012)
         );
         address sessionKey = vm.envOr(
             "SESSION_KEY_ADDRESS",
-            address(0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC)
+            address(0x0b84253936Fd66B4b407C32d578B20499c766137)
         );
 
         vm.startBroadcast(deployerPrivateKey);
@@ -79,20 +77,14 @@ contract SeedMockEnvironment is Script {
         vm.stopBroadcast();
 
         // Broadcast as Sentinel to approve and bond
-        uint256 sentinelPrivateKey = vm.envOr(
-            "SENTINEL_PRIVATE_KEY",
-            uint256(0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d)
-        );
+        uint256 sentinelPrivateKey = vm.envOr("SENTINEL_PRIVATE_KEY", deployerPrivateKey);
         vm.startBroadcast(sentinelPrivateKey);
         aegis.approve(address(sentinelRegistry), 25_000 ether);
         sentinelRegistry.bondStake(25_000 ether);
         vm.stopBroadcast();
 
         // 5. Demo Trader opens Position and sets ProConfig
-        uint256 demoUserPrivateKey = vm.envOr(
-            "DEMO_USER_PRIVATE_KEY",
-            uint256(0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a)
-        );
+        uint256 demoUserPrivateKey = vm.envOr("DEMO_USER_PRIVATE_KEY", deployerPrivateKey);
         vm.startBroadcast(demoUserPrivateKey);
 
         // Register Position (1,000 HYPE collateral, $32,000 USDC debt, 80% LTV)

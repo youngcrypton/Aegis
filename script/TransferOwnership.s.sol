@@ -25,10 +25,8 @@ contract TransferOwnership is Script {
         address usdcAddr = json.readAddress(".usdc");
         address hypeAddr = json.readAddress(".hype");
 
-        uint256 currentOwnerPrivateKey = vm.envOr(
-            "CURRENT_OWNER_PRIVATE_KEY",
-            uint256(0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d)
-        );
+        uint256 currentOwnerPrivateKey = vm.envOr("CURRENT_OWNER_PRIVATE_KEY", uint256(0));
+        require(currentOwnerPrivateKey != 0, "TransferOwnership: CURRENT_OWNER_PRIVATE_KEY required");
         address currentOwner = vm.addr(currentOwnerPrivateKey);
 
         address newOwner = vm.envOr(

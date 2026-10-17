@@ -357,6 +357,10 @@ The $AEGIS token aligns network operators, protocol users, liquidity providers, 
 > [!NOTE]
 > **Non-Monetary Valuation Notice**: $AEGIS currently possesses zero established monetary value or public market price. All economic parameters and allocations represent programmatic token quantities, basis points ($\text{bps}$), and deterministic on-chain state transitions.
 
+> [!IMPORTANT]
+> **Roadmap Implementation Notice (Phase 3 Integration)**:  
+> Throughout the active Elysium testnet phase and initial V1 launch, **AEGIS operates strictly as a lean, pure autonomous delta-hedging engine**. Staking, real yield distribution, and fee buyback-and-burn mechanisms are on the protocol **Roadmap (Phase 3)** and are not active in V1. Active testnet testers and mainnet hedgers accumulate Phase 1 and Phase 2 Points, converting 100% unlocked at Ascend TGE.
+
 ```
  ┌──────────────────────────────────────┐
  │ Averted Liquidation Fee │
@@ -386,17 +390,31 @@ The $AEGIS token aligns network operators, protocol users, liquidity providers, 
  └─────────────────────────────┘
 ```
 
-### Complete 700M Supply Allocation
+### Complete 700M Supply Allocation (Community-First Model)
+
+```mermaid
+pie title $AEGIS Token Supply Allocation (700,000,000 Cap)
+    "kHYPE Liquid Staking (20%)" : 140000000
+    "Phase 2 Mainnet Points (15%)" : 105000000
+    "Ascend LP Incentives (15%)" : 105000000
+    "Protocol Security Reserve (12%)" : 84000000
+    "Phase 1 Testnet Points (10%)" : 70000000
+    "Ascend Fair Launch (10%)" : 70000000
+    "Core Contributors (10%)" : 70000000
+    "Strategic & Audits (8%)" : 56000000
+```
 
 | Allocation Category | % of Total | Token Amount | TGE Unlock | Cliff | Vesting Schedule |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Ascend Ecosystem & Community** | **26.0%** | 182,000,000 | 10.0% (18.2M) | 0 mos | 24 mos linear (kHYPE stakers & Ascend LP incentives) |
-| **Community & Sentinel Incentives** | **26.0%** | 182,000,000 | 5.0% (9.1M) | 0 mos | 36 mos linear (Sentinel 24/7 node uptime & relays) |
-| **Ascend Launchpad Fair Launch** | **13.0%** | 91,000,000 | 100.0% (91M) | 0 mos | Instant Day-1 liquidity via Ascend Closed Hook Pool |
-| **Protocol Security & Insurance** | **15.0%** | 105,000,000 | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan backstop) |
-| **Core Contributors & Team** | **12.0%** | 84,000,000 | **0.0%** | **24 mos** | **48 mos linear** (Strict 2-year cliff, 6-year horizon) |
-| **Strategic Partners & Foundation** | **8.0%** | 56,000,000 | 0.0% | 18 mos | 36 mos linear (Audits, legal structuring, institutional risk) |
-| **TOTAL** | **100.0%** | **700,000,000** | **~16.9%** | — | **Zero inflationary minting** |
+| **Phase 1: Testnet Points Reward** | **10.0%** | 70,000,000 | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Elysium & testnet points earners) |
+| **Phase 2: Mainnet Hedging Points** | **15.0%** | 105,000,000 | **100.0% (105M)** | 0 mos | **100% Unlocked at Ascend TGE** (Live autonomous delta hedgers) |
+| **Ascend Launchpad Fair Launch** | **10.0%** | 70,000,000 | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Day-1 public pool liquidity) |
+| **kHYPE Liquid Staking Rewards** | **20.0%** | 140,000,000 | 0.0% | 0 mos | 24 mos linear (Emissions to native kHYPE stakers on Kinetiq) |
+| **Ascend LP Incentives (POL)** | **15.0%** | 105,000,000 | 0.0% | 0 mos | 36 mos linear (Deep liquidity in $AEGIS/USDC & $AEGIS/HYPE) |
+| **Protocol Security & Insurance** | **12.0%** | 84,000,000 | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan emergency reserve) |
+| **Core Contributors & Builders** | **10.0%** | 70,000,000 | **0.0%** | **24 mos** | **36 mos linear** (Strict 2-year hard cliff, 5-year total horizon) |
+| **Strategic Ecosystem & Audits** | **8.0%** | 56,000,000 | 0.0% | 12 mos | 24 mos linear (Audit grants, security bounties, foundation growth) |
+| **TOTAL** | **100.0%** | **700,000,000** | **35.0% (245M)** | — | **Zero inflationary minting. 100% Day-1 float to Community.** |
 
 ### Four Core Value Accrual Pillars
 

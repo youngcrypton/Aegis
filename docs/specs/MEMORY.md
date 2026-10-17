@@ -148,11 +148,10 @@
      - `yieldDistributionTarget` on `AegisFeeCollector` updated to `0xf0e721C996e76a0Cd5805975464CbE3E98839D64`.
      - Funded user wallet with 0.015 KNTQ testnet gas and test assets (50k AEGIS, 10k HYPE, 100k USDC).
      - Verified on-chain via `cast call` that `0xf0e721...` is the sole protocol owner.
-    - **Private Testnet Beta Access Gate Implemented (2026-10-12)**:
-      - Generated 50 exclusive institutional beta access codes documented in [`ACCESS_CODES.md`](file:///c:/Users/ascend%20X%20elysium/ACCESS_CODES.md).
-      - Built client-side verification engine [`access-codes.js`](file:///c:/Users/ascend%20X%20elysium/access-codes.js) with testnet gate toggle `IS_TESTNET_GATE_ENABLED`.
-      - Deployed branded Access Gate UI in [`access.html`](file:///c:/Users/ascend%20X%20elysium/access.html) and [`app/access.html`](file:///c:/Users/ascend%20X%20elysium/app/access.html) conforming to `brand/kit/tokens.css`.
-      - Re-routed landing page CTAs to `access.html` and gated direct terminal navigation.
+    - **Open Public Testnet Configured (2026-10-16)**:
+      - Removed all private invite code requirements, gate pages, and code verification tables.
+      - Enabled direct, unrestricted access to the high-frequency risk terminal at `app/index.html`.
+      - Configured landing page CTAs to open `app/index.html` directly for all public testers.
 
 ---
 

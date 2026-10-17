@@ -1,6 +1,7 @@
 /**
  * AEGIS Protocol — Supabase Client & Telemetry Bridge
- * Connects frontend terminal to Supabase backend for access code verification and live audit sync.
+ * Connects frontend terminal to Supabase backend for live audit sync and risk telemetry.
+ * Public Open Testnet Mode (Chain ID 99801)
  */
 (function() {
   'use strict';
@@ -22,55 +23,6 @@
     }
 
     /**
-     * Validate an Access Code against Supabase table 'beta_access_codes'
-     */
-    async verifyAccessCode(code) {
-      if (!code) return { valid: false, error: 'Empty code' };
-      const cleanCode = code.replace(/\s+/g, '').toUpperCase();
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
-        const endpoint = `${this.url}/rest/v1/beta_access_codes?code=eq.${encodeURIComponent(cleanCode)}&is_active=eq.true&select=*`;
-        const res = await fetch(endpoint, {
-          method: 'GET',
-          headers: this.headers,
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        if (res.ok) {
-          const rows = await res.json();
-          if (Array.isArray(rows) && rows.length > 0) {
-            const match = rows[0];
-            return {
-              valid: true,
-              tier: match.tier,
-              label: match.label,
-              source: 'supabase'
-            };
-          }
-        }
-      } catch (err) {
-        console.debug('Supabase code verification fallback to local dataset:', err.message);
-      }
-
-      // Local offline fallback using window.AegisAccess or window.AegisAccessCodes
-      const checker = window.AegisAccess || window.AegisAccessCodes;
-      if (checker && (typeof checker.isValid === 'function' || typeof checker.isValidCode === 'function')) {
-        const isLocalValid = Boolean((checker.isValid && checker.isValid(cleanCode)) || (checker.isValidCode && checker.isValidCode(cleanCode)));
-        return {
-          valid: isLocalValid,
-          tier: 'TRADER_PASS',
-          label: 'Elysium Testnet Verified Code',
-          source: 'local_hash_index'
-        };
-      }
-
-      return { valid: false, error: 'Invalid access code' };
-    }
-
-    /**
      * Record a Sentinel Intervention or Risk Telemetry event
      */
     async recordSentinelAlert(alert) {
@@ -84,7 +36,7 @@
             target_account: alert.targetAccount || '0x0000000000000000000000000000000000000000',
             collateral_ratio: alert.collateralRatio || 150.0,
             health_factor: alert.healthFactor || 1.85,
-            mark_price: alert.markPrice || 83.50,
+            mark_price: alert.markPrice || 43.35,
             action_taken: alert.actionTaken || 'Delta-Neutral Rebalance',
             tx_hash: alert.txHash || null,
             latency_ms: alert.latencyMs || 3,

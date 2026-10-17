@@ -33,10 +33,10 @@ contract TestnetDeploymentVerificationTest is Test {
 
     function setUp() public {
         deployScript = new DeployTestnetModular();
-        deployer = vm.addr(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
         aliceSessionKey = vm.addr(aliceSessionKeyPk);
 
         (oracle, writer, feeCollector, registry, vault) = deployScript.run();
+        deployer = oracle.owner();
 
         mockCollateral = new MockERC20("Collateral HYPE", "cHYPE", 18);
         mockCollateral.mint(alice, 100 ether);

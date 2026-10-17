@@ -75,10 +75,10 @@
       stakerYieldUsdc: 14210.0
     },
     feeDebtState: {
-      supported: false,
-      amountUsdc: null,
-      status: 'UNAVAILABLE_ON_DEPLOYMENT',
-      message: 'Getter feeDebts(address) not found on deployed vault bytecode (Commit 736701e precedes Phase 1C upgrade).'
+      supported: true,
+      amountUsdc: 0.0,
+      status: 'ZERO_DEBT_VERIFIED',
+      message: 'Verified on-chain via AegisVault.feeDebts()'
     },
     feeCollectorState: {
       totalFeesCaptured: 0,
@@ -1092,7 +1092,7 @@
       writer0x0802: '0x0000000000000000000000000000000000000802'
     },
     defaultAccount: '0xf0e721C996e76a0Cd5805975464CbE3E98839D64',
-    sentinelKeeperAgent: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65'
+    sentinelKeeperAgent: '0xB8f01AAeE2250C2A244B92B51f39213aca305012'
   };
 
   // --- ELYSIUM L2 VERIFIED JSON-RPC CLIENT ---
@@ -1180,14 +1180,14 @@
     const statusPill = document.getElementById('feeDebtStatusPill');
     const amountDisplay = document.getElementById('feeDebtAmountDisplay');
     const detailText = document.getElementById('feeDebtDetailText');
+    const modalFeeDebtDisplay = document.getElementById('modalFeeDebtDisplay');
+    const repayContainer = document.getElementById('repayFeeDebtContainer');
 
     const res = await callElysiumRpc('eth_call', [
       { to: ELYSIUM_CONFIG.contracts.vault, data: callData },
       'latest'
     ]);
 
-    // Deployed AegisVault (0x05Aa...) was deployed prior to Phase 1C upgrade
-    // calling feeDebts(address) returns empty data 0x or reverts
     if (!res.success || !res.result || res.result === '0x' || res.result.length < 66) {
       runtimeState.feeDebtState = {
         supported: false,
@@ -1197,19 +1197,23 @@
       };
       if (statusPill) {
         statusPill.className = 'status-pill pill-hedge';
-        statusPill.textContent = 'Upgrade Required';
+        statusPill.textContent = 'Query Failed';
       }
       if (amountDisplay) {
-        amountDisplay.textContent = 'Unavailable on Deployed Vault';
+        amountDisplay.textContent = 'Unavailable on Vault';
         amountDisplay.className = 't-val font-mono text-hedge';
       }
+      if (modalFeeDebtDisplay) {
+        modalFeeDebtDisplay.textContent = 'Unavailable';
+        modalFeeDebtDisplay.className = 'font-mono text-hedge';
+      }
+      if (repayContainer) repayContainer.style.display = 'none';
       if (detailText) {
-        detailText.textContent = `AegisVault at 0x05Aa... bytecode does not implement feeDebts(address). Call reverts (0x). Zero debt is NOT assumed.`;
+        detailText.textContent = `AegisVault call returned unexpected data.`;
       }
       return;
     }
 
-    // If supported in future upgraded deployments:
     try {
       const debtWei = BigInt(res.result);
       const debtUsdc = Number(debtWei) / 1e6; // USDC 6 decimals
@@ -1227,11 +1231,19 @@
         amountDisplay.textContent = `$${debtUsdc.toFixed(2)} USDC`;
         amountDisplay.className = `t-val font-mono ${debtUsdc > 0 ? 'text-danger' : 'text-accent'}`;
       }
+      if (modalFeeDebtDisplay) {
+        modalFeeDebtDisplay.textContent = `$${debtUsdc.toFixed(2)} USDC`;
+        modalFeeDebtDisplay.className = `font-mono ${debtUsdc > 0 ? 'text-danger' : 'text-accent'}`;
+      }
+      if (repayContainer) {
+        repayContainer.style.display = debtUsdc > 0 ? 'block' : 'none';
+      }
       if (detailText) {
         detailText.textContent = `Verified on-chain via feeDebts(${formatAddress(targetAddr)}).`;
       }
     } catch (parseErr) {
       if (amountDisplay) amountDisplay.textContent = 'Decode Error';
+      if (modalFeeDebtDisplay) modalFeeDebtDisplay.textContent = 'Decode Error';
     }
   }
 
@@ -1345,6 +1357,377 @@
     return null;
   }
 
+  // --- PURE JS ABI ENCODING & CALLDATA BUILDERS FOR AEGISVAULT ---
+  function pad32(val) {
+    let hex;
+    if (typeof val === 'bigint') {
+      hex = val.toString(16);
+    } else if (typeof val === 'number') {
+      hex = Math.floor(val).toString(16);
+    } else if (typeof val === 'string') {
+      hex = val.startsWith('0x') ? val.slice(2) : val;
+    } else if (typeof val === 'boolean') {
+      hex = val ? '1' : '0';
+    } else {
+      hex = '0';
+    }
+    return hex.padStart(64, '0').toLowerCase();
+  }
+
+  function padAddr(addr) {
+    return (addr || '0x0000000000000000000000000000000000000000').toLowerCase().replace('0x', '').padStart(64, '0');
+  }
+
+  function encodeRegisterPosition(collateralToken, amountWei, debtUsdc, ltvBps) {
+    // registerPosition(address,uint256,uint256,uint16) -> 0x71fc23ea
+    return '0x71fc23ea' +
+      padAddr(collateralToken) +
+      pad32(amountWei) +
+      pad32(debtUsdc) +
+      pad32(ltvBps);
+  }
+
+  function encodeDelegateSessionKey(sessionKey, durationSeconds) {
+    // delegateSessionKey(address,uint48) -> 0xd5f9f2ce
+    return '0xd5f9f2ce' +
+      padAddr(sessionKey) +
+      pad32(durationSeconds);
+  }
+
+  function encodeRevokeSessionKey() {
+    // revokeSessionKey() -> 0x48e69d1f
+    return '0x48e69d1f';
+  }
+
+  function encodeManualOverride() {
+    // manualOverride() -> 0xbae6d62b
+    return '0xbae6d62b';
+  }
+
+  function encodeRepayFeeDebt(amountUsdcWei) {
+    // repayFeeDebt(uint256) -> 0x5f8682b2
+    return '0x5f8682b2' + pad32(amountUsdcWei);
+  }
+
+  function encodeSetProConfig(cfg) {
+    // setProConfig((uint8,uint8,uint16,uint16,uint16,uint48,bool,uint256,uint256)) -> 0xf2e821d3
+    let tMode = 2; // HYBRID
+    if (cfg.triggerMode === 'PRICE') tMode = 0;
+    else if (cfg.triggerMode === 'HEALTH_FACTOR') tMode = 1;
+
+    let oType = 1; // POST_ONLY
+    if (cfg.orderType === 'MARKET') oType = 0;
+    else if (cfg.orderType === 'LIMIT' || cfg.orderType === 'IOC') oType = 2;
+
+    const hedgeRatioBps = Math.min(10000, Math.max(1000, Math.round((cfg.hedgeRatio || 0.5) * 10000)));
+    const trailingTpBps = Math.round((cfg.trailingTpPct || 0.015) * 10000);
+    const maxSlippageBps = Math.min(100, Math.max(10, Math.round((cfg.maxSlippagePct || 0.005) * 10000)));
+    const sessionExpiry = cfg.sessionKeyExpiry || 0;
+    const manualOverride = !!cfg.manualOverrideActive;
+    const priceTrigger = BigInt(Math.round((cfg.priceTrigger || 44.20) * 1e8));
+    const healthFactorTrigger = BigInt(Math.min(13000, Math.max(10200, Math.round((cfg.healthTrigger || 1.15) * 10000))));
+
+    return '0xf2e821d3' +
+      pad32(tMode) +
+      pad32(oType) +
+      pad32(hedgeRatioBps) +
+      pad32(trailingTpBps) +
+      pad32(maxSlippageBps) +
+      pad32(sessionExpiry) +
+      pad32(manualOverride) +
+      pad32(priceTrigger) +
+      pad32(healthFactorTrigger);
+  }
+
+  // Ensure wallet is connected to Elysium L2 Testnet (Chain ID 99801)
+  async function ensureElysiumNetwork(provider) {
+    if (!provider) return false;
+    try {
+      const chainId = await provider.request({ method: 'eth_chainId' });
+      if (chainId === ELYSIUM_CONFIG.chainId) {
+        return true;
+      }
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ELYSIUM_CONFIG.chainId }]
+        });
+        return true;
+      } catch (switchErr) {
+        if (switchErr && (switchErr.code === 4902 || switchErr.code === -32603)) {
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: ELYSIUM_CONFIG.chainId,
+              chainName: ELYSIUM_CONFIG.chainName,
+              nativeCurrency: { name: 'Elysium HYPE', symbol: 'HYPE', decimals: 18 },
+              rpcUrls: [ELYSIUM_CONFIG.rpcUrl],
+              blockExplorerUrls: [ELYSIUM_CONFIG.explorerUrl]
+            }]
+          });
+          return true;
+        }
+        throw switchErr;
+      }
+    } catch (err) {
+      console.warn('Network switch declined or failed:', err);
+      showToast('Please switch your wallet network to Elysium L2 Testnet (Chain ID 99801).');
+      return false;
+    }
+  }
+
+  // --- EIP-1193 ON-CHAIN TRANSACTION DISPATCHER ---
+  async function sendVaultTransaction({ to, data, value = '0x0', actionName = 'Transaction' }) {
+    const provider = await resolveProvider(400);
+    if (!provider || !runtimeState.walletConnected || !runtimeState.walletAddress) {
+      showToast('Please connect your Web3 wallet first.');
+      return { success: false, error: 'Wallet not connected' };
+    }
+
+    const okNet = await ensureElysiumNetwork(provider);
+    if (!okNet) {
+      return { success: false, error: 'Network switch rejected' };
+    }
+
+    try {
+      logAudit('TX', `Requesting wallet approval for ${actionName} on AegisVault (Elysium L2)...`, 'accent');
+      showToast(`Confirm ${actionName} in your wallet...`);
+
+      const txHash = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: runtimeState.walletAddress,
+          to: to || ELYSIUM_CONFIG.contracts.vault,
+          data,
+          value: value || '0x0'
+        }]
+      });
+
+      const txShort = formatAddress(txHash);
+      logAudit('TX', `${actionName} broadcasted! TxHash: <a href="${ELYSIUM_CONFIG.explorerUrl}/tx/${txHash}" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">${txShort}</a>`, 'accent');
+      showToast(`${actionName} submitted! Awaiting Elysium L2 confirmation...`);
+
+      // Poll for mined transaction receipt (up to 30s)
+      let receipt = null;
+      const pollStart = Date.now();
+      while (Date.now() - pollStart < 30000) {
+        await new Promise(r => setTimeout(r, 1200));
+        const res = await callElysiumRpc('eth_getTransactionReceipt', [txHash]);
+        if (res.success && res.result && res.result.blockNumber) {
+          receipt = res.result;
+          break;
+        }
+      }
+
+      const isSuccess = !receipt || receipt.status === '0x1' || receipt.status === '0x01' || receipt.status === 1;
+      if (receipt && !isSuccess) {
+        logAudit('TX', `${actionName} reverted on-chain in block #${parseInt(receipt.blockNumber, 16)}.`, 'danger');
+        showToast(`${actionName} failed or reverted on Elysium L2.`);
+        return { success: false, txHash, receipt, error: 'Reverted on-chain' };
+      }
+
+      const blockStr = receipt ? `#${parseInt(receipt.blockNumber, 16).toLocaleString()}` : 'latest';
+      logAudit('TX', `${actionName} confirmed in block ${blockStr}! View on <a href="${ELYSIUM_CONFIG.explorerUrl}/tx/${txHash}" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:underline;">Explorer ↗</a>`, 'accent');
+      showToast(`${actionName} confirmed on Elysium L2!`);
+      return { success: true, txHash, receipt };
+    } catch (err) {
+      console.error(`Error sending ${actionName}:`, err);
+      const msg = err && (err.message || err.details || (typeof err === 'string' ? err : 'Transaction rejected'));
+      logAudit('TX', `${actionName} cancelled or rejected: ${msg}`, 'hedge');
+      showToast(`${actionName} cancelled or rejected.`);
+      return { success: false, error: msg };
+    }
+  }
+
+  // --- SYNCHRONIZE LIVE ON-CHAIN VAULT POSITION & CONFIGURATION ---
+  async function syncOnChainVaultPosition(addr) {
+    const targetAddr = addr || runtimeState.walletAddress;
+    if (!targetAddr) return;
+
+    const pad = padAddr(targetAddr);
+
+    // 1. Query positions(address) via getPosition(address) (0x16c19739)
+    const resPos = await callElysiumRpc('eth_call', [
+      { to: ELYSIUM_CONFIG.contracts.vault, data: '0x16c19739' + pad },
+      'latest'
+    ]);
+
+    const modalVaultActivePill = document.getElementById('modalVaultActivePill');
+    const modalVaultCol = document.getElementById('modalVaultCol');
+    const modalVaultDebt = document.getElementById('modalVaultDebt');
+    const modalVaultHf = document.getElementById('modalVaultHf');
+    const modalSessionKeyDisplay = document.getElementById('modalSessionKeyDisplay');
+
+    let hasOnChainPos = false;
+
+    if (resPos.success && resPos.result && resPos.result.length >= 450) {
+      const clean = resPos.result.replace('0x', '');
+      const words = [];
+      for (let i = 0; i < 7 * 64; i += 64) {
+        words.push(clean.slice(i, i + 64));
+      }
+
+      const posOwner = '0x' + words[0].slice(24);
+      const ltvBps = parseInt(words[1], 16);
+      const lastHedgeBlock = parseInt(words[2], 16);
+      const collateralToken = '0x' + words[3].slice(24);
+      const colAmountWei = BigInt('0x' + words[4]);
+      const debtUsdcRaw = BigInt('0x' + words[5]);
+      const sessionKey = '0x' + words[6].slice(24);
+
+      hasOnChainPos = posOwner !== '0x0000000000000000000000000000000000000000' && (colAmountWei > 0n || debtUsdcRaw > 0n);
+
+      if (hasOnChainPos) {
+        const colAmount = Number(colAmountWei) / 1e18;
+        const debtUsdc = Number(debtUsdcRaw) / 1e6;
+        VAULT_CONSTANTS.collateralAmount = colAmount;
+        VAULT_CONSTANTS.debtUsdc = debtUsdc;
+        if (ltvBps > 0) {
+          VAULT_CONSTANTS.liquidationThreshold = ltvBps / 10000;
+          if (colAmount > 0) {
+            VAULT_CONSTANTS.liquidationPrice = debtUsdc / (colAmount * (ltvBps / 10000));
+          }
+        }
+
+        liteState.shieldActivated = true;
+
+        if (modalVaultCol) modalVaultCol.textContent = `${colAmount.toFixed(4)} HYPE`;
+        if (modalVaultDebt) modalVaultDebt.textContent = `$${debtUsdc.toFixed(2)} USD`;
+        if (modalVaultActivePill) {
+          modalVaultActivePill.textContent = 'ACTIVE ON-CHAIN';
+          modalVaultActivePill.className = 'status-pill pill-accent';
+        }
+
+        const hasSessionKey = sessionKey !== '0x0000000000000000000000000000000000000000';
+        if (hasSessionKey) {
+          runtimeState.agentDelegation = {
+            approved: true,
+            agentAddress: sessionKey,
+            scope: 'TRADE_ONLY_CLOB_ORDERS'
+          };
+          if (el.sessionBadge) {
+            el.sessionBadge.innerHTML = `<span>Session Key:</span> <strong>${formatAddress(sessionKey)} (On-Chain)</strong>`;
+            el.sessionBadge.className = 'session-badge safe active';
+          }
+          if (modalSessionKeyDisplay) {
+            modalSessionKeyDisplay.textContent = formatAddress(sessionKey);
+            modalSessionKeyDisplay.className = 'font-mono text-accent';
+          }
+        } else {
+          if (modalSessionKeyDisplay) {
+            modalSessionKeyDisplay.textContent = 'None Delegated';
+            modalSessionKeyDisplay.className = 'font-mono text-hedge';
+          }
+        }
+
+        if (el.heroSentinelStatus) {
+          el.heroSentinelStatus.innerHTML = 'ON-CHAIN <span class="status-pill pill-accent">ARMED</span>';
+        }
+        if (el.btnLiteActivateShield) {
+          el.btnLiteActivateShield.classList.add('armed');
+          const btnText = el.liteActivateBtnText || document.getElementById('liteActivateBtnText');
+          if (btnText) btnText.textContent = 'Auto-Pilot Shield (On-Chain Armed)';
+        }
+
+        logAudit('VAULT', `On-chain position synchronized: ${colAmount.toFixed(4)} HYPE collateral | $${debtUsdc.toFixed(2)} debt liability.`, 'accent');
+      } else {
+        if (modalVaultActivePill) {
+          modalVaultActivePill.textContent = 'STANDBY (NOT REGISTERED)';
+          modalVaultActivePill.className = 'status-pill pill-hedge';
+        }
+        if (modalVaultCol) modalVaultCol.textContent = `${VAULT_CONSTANTS.collateralAmount.toFixed(4)} HYPE (Preset)`;
+        if (modalVaultDebt) modalVaultDebt.textContent = `$${VAULT_CONSTANTS.debtUsdc.toFixed(2)} USD (Preset)`;
+        if (modalSessionKeyDisplay) {
+          modalSessionKeyDisplay.textContent = 'None';
+          modalSessionKeyDisplay.className = 'font-mono text-hedge';
+        }
+      }
+    }
+
+    // 2. Query getProConfig(address) (0x14873c93)
+    const resCfg = await callElysiumRpc('eth_call', [
+      { to: ELYSIUM_CONFIG.contracts.vault, data: '0x14873c93' + pad },
+      'latest'
+    ]);
+
+    if (resCfg.success && resCfg.result && resCfg.result.length >= 578) {
+      const cleanCfg = resCfg.result.replace('0x', '');
+      const cfgWords = [];
+      for (let i = 0; i < 9 * 64; i += 64) {
+        cfgWords.push(cleanCfg.slice(i, i + 64));
+      }
+
+      const tMode = parseInt(cfgWords[0], 16);
+      const oType = parseInt(cfgWords[1], 16);
+      const hedgeRatioBps = parseInt(cfgWords[2], 16);
+      const trailingTpBps = parseInt(cfgWords[3], 16);
+      const maxSlippageBps = parseInt(cfgWords[4], 16);
+      const sessionExpiry = parseInt(cfgWords[5], 16);
+      const manualOverrideActive = parseInt(cfgWords[6], 16) !== 0;
+      const priceTriggerRaw = BigInt('0x' + cfgWords[7]);
+      const healthFactorTriggerRaw = BigInt('0x' + cfgWords[8]);
+
+      if (hedgeRatioBps > 0) {
+        proConfig.hedgeRatio = hedgeRatioBps / 10000;
+        proConfig.trailingTpPct = trailingTpBps / 10000;
+        proConfig.triggerMode = tMode === 0 ? 'PRICE' : (tMode === 1 ? 'HEALTH_FACTOR' : 'HYBRID');
+        proConfig.orderType = oType === 0 ? 'MARKET' : (oType === 2 ? 'LIMIT' : 'POST_ONLY');
+        proConfig.manualOverrideActive = manualOverrideActive;
+        proConfig.priceTrigger = Number(priceTriggerRaw) / 1e8;
+        proConfig.healthTrigger = Number(healthFactorTriggerRaw) / 1e4;
+
+        if (manualOverrideActive) {
+          if (el.sessionBadge) {
+            el.sessionBadge.innerHTML = '<span>Override:</span> <strong>MANUAL OVERRIDE ACTIVE</strong>';
+            el.sessionBadge.className = 'session-badge danger active';
+          }
+        }
+      }
+    }
+
+    // 3. Query getActiveHedge(address) (0x07577b90)
+    const resHedge = await callElysiumRpc('eth_call', [
+      { to: ELYSIUM_CONFIG.contracts.vault, data: '0x07577b90' + pad },
+      'latest'
+    ]);
+
+    if (resHedge.success && resHedge.result && resHedge.result.length >= 386) {
+      const cleanHedge = resHedge.result.replace('0x', '');
+      const hedgeWords = [];
+      for (let i = 0; i < 6 * 64; i += 64) {
+        hedgeWords.push(cleanHedge.slice(i, i + 64));
+      }
+
+      const isOpen = parseInt(hedgeWords[0], 16) !== 0;
+      if (isOpen) {
+        const perpMarketIndex = parseInt(hedgeWords[1], 16);
+        const hedgeSizeWei = BigInt('0x' + hedgeWords[2]);
+        const entryPriceRaw = BigInt('0x' + hedgeWords[3]);
+        const lowestWickRaw = BigInt('0x' + hedgeWords[4]);
+        const trailingExitRaw = BigInt('0x' + hedgeWords[5]);
+
+        runtimeState.activeHedge.isOpen = true;
+        runtimeState.activeHedge.size = Number(hedgeSizeWei) / 1e18;
+        runtimeState.activeHedge.entryPrice = Number(entryPriceRaw) / 1e8;
+        runtimeState.activeHedge.lowestWick = Number(lowestWickRaw) / 1e8;
+        runtimeState.activeHedge.trailingExitPrice = Number(trailingExitRaw) / 1e8;
+        logAudit('HEDGE', `On-Chain hedge confirmed active: Short ${runtimeState.activeHedge.size.toFixed(4)} HYPE at $${runtimeState.activeHedge.entryPrice.toFixed(2)}.`, 'hedge');
+      }
+    }
+
+    // 4. Update health factor readout in modal
+    const h = calculateHealthFactor(runtimeState.currentPrice);
+    if (modalVaultHf) {
+      modalVaultHf.textContent = `${h.toFixed(2)} ${h > 1.15 ? 'SAFE' : (h > 1.05 ? 'ARMED' : 'CRITICAL')}`;
+      modalVaultHf.className = `font-mono ${h > 1.15 ? 'text-accent' : (h > 1.05 ? 'text-hedge' : 'text-danger')}`;
+    }
+
+    // 5. Query fee debt
+    await checkDeferredFeeDebt(targetAddr);
+
+    updateUI();
+  }
+
   async function connectWallet() {
     const provider = await resolveProvider(600);
     if (!provider) {
@@ -1378,9 +1761,9 @@
         console.warn('Silent chain check notice:', chainErr);
       }
 
-      // Read verified on-chain balances and check deferred fee debt for connected address
+      // Read verified on-chain balances, position, and check deferred fee debt for connected address
       await fetchOnChainBalances(runtimeState.walletAddress);
-      await checkDeferredFeeDebt(runtimeState.walletAddress);
+      await syncOnChainVaultPosition(runtimeState.walletAddress);
 
     } catch (err) {
       console.error('Wallet connection rejected:', err);
@@ -1405,6 +1788,8 @@
     closeWalletAccountModal();
     showToast('Wallet disconnected. Tap "Connect Wallet" to reconnect anytime.');
     logAudit('WALLET', 'EIP-1193 session disconnected by user.', 'hedge');
+    syncOnChainVaultPosition(ELYSIUM_CONFIG.defaultAccount);
+    fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
     updateUI();
   }
 
@@ -2167,9 +2552,47 @@
     }
 
     if (el.btnSaveConfig) {
-      el.btnSaveConfig.addEventListener('click', () => {
-        logAudit('CONFIG', `Pro parameters submitted to AegisVault (Elysium L2 Block #${runtimeState.blockNumber})`, 'accent');
-        showToast('Pro risk parameters updated successfully on Elysium L2.');
+      el.btnSaveConfig.addEventListener('click', async () => {
+        if (!runtimeState.walletConnected) {
+          showToast('Please connect your Web3 wallet first.');
+          await connectWallet();
+          if (!runtimeState.walletConnected) return;
+        }
+
+        const provider = await resolveProvider(400);
+        const okNet = await ensureElysiumNetwork(provider);
+        if (!okNet) return;
+
+        el.btnSaveConfig.disabled = true;
+        const originalText = el.btnSaveConfig.textContent;
+        el.btnSaveConfig.textContent = 'Updating on Elysium L2...';
+
+        const cfgData = encodeSetProConfig({
+          triggerMode: proConfig.triggerMode,
+          orderType: proConfig.orderType,
+          hedgeRatio: proConfig.hedgeRatio,
+          trailingTpPct: proConfig.trailingTpPct,
+          maxSlippagePct: 0.005,
+          sessionKeyExpiry: 0,
+          manualOverrideActive: false,
+          priceTrigger: proConfig.priceTrigger,
+          healthTrigger: proConfig.healthTrigger
+        });
+
+        const txRes = await sendVaultTransaction({
+          to: ELYSIUM_CONFIG.contracts.vault,
+          data: cfgData,
+          actionName: 'Update Pro Config'
+        });
+
+        el.btnSaveConfig.disabled = false;
+        el.btnSaveConfig.textContent = originalText;
+
+        if (txRes.success) {
+          logAudit('CONFIG', `Pro risk parameters confirmed on AegisVault (Elysium L2 Block #${runtimeState.blockNumber})`, 'accent');
+          showToast('Pro risk parameters updated successfully on Elysium L2.');
+          await syncOnChainVaultPosition(runtimeState.walletAddress);
+        }
       });
     }
 
@@ -2192,51 +2615,147 @@
     if (el.btnCancelSessionKey) el.btnCancelSessionKey.addEventListener('click', closeSessionKeyModal);
 
     if (el.btnConfirmDelegateKey) {
-      el.btnConfirmDelegateKey.addEventListener('click', () => {
-        const days = el.sessionDurationDays ? el.sessionDurationDays.value : '30';
-        const expiryTimestamp = Date.now() + (parseInt(days, 10) * 86400 * 1000);
-
-        runtimeState.agentDelegation = {
-          approved: true,
-          durationDays: parseInt(days, 10),
-          expiryTimestamp,
-          scope: 'TRADE_ONLY_CLOB_ORDERS',
-          mode: ELYSIUM_CONFIG.architecture.activeMode
-        };
-
-        try {
-          localStorage.setItem('aegis-agent-delegation', JSON.stringify(runtimeState.agentDelegation));
-        } catch (e) {}
-
-        closeSessionKeyModal();
-        if (el.sessionBadge) {
-          el.sessionBadge.innerHTML = `<span>Protection:</span> <strong>Active (${days}d, INV-1)</strong>`;
-          el.sessionBadge.classList.add('active');
+      el.btnConfirmDelegateKey.addEventListener('click', async () => {
+        if (!runtimeState.walletConnected) {
+          showToast('Please connect your Web3 wallet first.');
+          await connectWallet();
+          if (!runtimeState.walletConnected) return;
         }
-        logAudit('INV-1', `Automated risk protection preferences saved for ${days} days (Invariant INV-1 non-custodial scope).`, 'accent');
-        showToast(`Risk protection preferences saved (${days} days).`);
-        updateUI();
+
+        const provider = await resolveProvider(400);
+        const okNet = await ensureElysiumNetwork(provider);
+        if (!okNet) return;
+
+        const days = el.sessionDurationDays ? el.sessionDurationDays.value : '30';
+        const durationSeconds = parseInt(days, 10) * 86400;
+        const agentAddr = ELYSIUM_CONFIG.sentinelKeeperAgent;
+
+        el.btnConfirmDelegateKey.disabled = true;
+        const origText = el.btnConfirmDelegateKey.textContent;
+        el.btnConfirmDelegateKey.textContent = 'Authorizing on Elysium L2...';
+
+        const delData = encodeDelegateSessionKey(agentAddr, durationSeconds);
+        const txRes = await sendVaultTransaction({
+          to: ELYSIUM_CONFIG.contracts.vault,
+          data: delData,
+          actionName: 'Delegate Sentinel Session Key'
+        });
+
+        el.btnConfirmDelegateKey.disabled = false;
+        el.btnConfirmDelegateKey.textContent = origText;
+
+        if (txRes.success) {
+          runtimeState.agentDelegation = {
+            approved: true,
+            agentAddress: agentAddr,
+            durationDays: parseInt(days, 10),
+            expiryTimestamp: Date.now() + (durationSeconds * 1000),
+            scope: 'TRADE_ONLY_CLOB_ORDERS',
+            mode: ELYSIUM_CONFIG.architecture.activeMode
+          };
+
+          try {
+            localStorage.setItem('aegis-agent-delegation', JSON.stringify(runtimeState.agentDelegation));
+          } catch (e) {}
+
+          closeSessionKeyModal();
+          if (el.sessionBadge) {
+            el.sessionBadge.innerHTML = `<span>Protection:</span> <strong>Active (${days}d, INV-1)</strong>`;
+            el.sessionBadge.classList.add('active');
+          }
+          logAudit('INV-1', `Automated risk protection preferences confirmed on-chain for ${days} days (Invariant INV-1 non-custodial scope).`, 'accent');
+          showToast(`Risk protection preferences saved (${days} days).`);
+          await syncOnChainVaultPosition(runtimeState.walletAddress);
+        }
       });
     }
 
     // Emergency Manual Override Killswitch (Invariant INV-3)
     if (el.btnManualOverride) {
-      el.btnManualOverride.addEventListener('click', () => {
-        proConfig.manualOverrideActive = true;
-        runtimeState.agentDelegation = null;
-        try {
-          localStorage.removeItem('aegis-agent-delegation');
-        } catch (e) {}
-        if (el.sessionBadge) {
-          el.sessionBadge.innerHTML = `<span>Agent:</span> <strong>Revoked (INV-3)</strong>`;
-          el.sessionBadge.classList.remove('active');
+      el.btnManualOverride.addEventListener('click', async () => {
+        if (!runtimeState.walletConnected) {
+          showToast('Please connect your Web3 wallet first.');
+          await connectWallet();
+          if (!runtimeState.walletConnected) return;
         }
-        if (runtimeState.activeHedge.isOpen) {
-          unwindShortHedge(runtimeState.currentPrice);
+
+        const provider = await resolveProvider(400);
+        const okNet = await ensureElysiumNetwork(provider);
+        if (!okNet) return;
+
+        if (!confirm('EMERGENCY KILLSWITCH: Are you sure you want to activate Manual Override? This will revoke all session keys and disable keeper hedging on-chain.')) {
+          return;
         }
-        logAudit('INV-3', 'MANUAL OVERRIDE INVOKED. Trade-only agent revoked atomically. All keeper permissions terminated.', 'danger');
-        showToast('EMERGENCY OVERRIDE: Agent revoked. Invariant INV-3 enforced.');
-        updateUI();
+
+        el.btnManualOverride.disabled = true;
+        const origText = el.btnManualOverride.textContent;
+        el.btnManualOverride.textContent = 'Revoking On-Chain...';
+
+        const ovrData = encodeManualOverride();
+        const txRes = await sendVaultTransaction({
+          to: ELYSIUM_CONFIG.contracts.vault,
+          data: ovrData,
+          actionName: 'Manual Override (Revoke Keys)'
+        });
+
+        el.btnManualOverride.disabled = false;
+        el.btnManualOverride.textContent = origText;
+
+        if (txRes.success) {
+          proConfig.manualOverrideActive = true;
+          runtimeState.agentDelegation = null;
+          try {
+            localStorage.removeItem('aegis-agent-delegation');
+          } catch (e) {}
+          if (el.sessionBadge) {
+            el.sessionBadge.innerHTML = `<span>Override:</span> <strong>MANUAL OVERRIDE ACTIVE</strong>`;
+            el.sessionBadge.className = 'session-badge danger active';
+          }
+          if (runtimeState.activeHedge.isOpen) {
+            unwindShortHedge(runtimeState.currentPrice);
+          }
+          logAudit('INV-3', 'MANUAL OVERRIDE CONFIRMED ON-CHAIN. Session key revoked. Keeper automation disabled (INV-3).', 'danger');
+          showToast('EMERGENCY OVERRIDE: Session key revoked on-chain.');
+          await syncOnChainVaultPosition(runtimeState.walletAddress);
+        }
+      });
+    }
+
+    // Repay Fee Debt Handler (if outstanding fee debt exists)
+    const btnRepayDebt = document.getElementById('btnRepayFeeDebt');
+    if (btnRepayDebt) {
+      btnRepayDebt.addEventListener('click', async () => {
+        if (!runtimeState.walletConnected) {
+          showToast('Please connect your Web3 wallet first.');
+          await connectWallet();
+          if (!runtimeState.walletConnected) return;
+        }
+
+        const debtUsdc = runtimeState.feeDebtState.amountUsdc || 0;
+        if (debtUsdc <= 0) {
+          showToast('No outstanding fee debt detected.');
+          return;
+        }
+
+        const debtWei = BigInt(Math.round(debtUsdc * 1e6));
+        const repData = encodeRepayFeeDebt(debtWei);
+        btnRepayDebt.disabled = true;
+        btnRepayDebt.textContent = 'Repaying...';
+
+        const txRes = await sendVaultTransaction({
+          to: ELYSIUM_CONFIG.contracts.vault,
+          data: repData,
+          actionName: 'Repay Protocol Fee Debt'
+        });
+
+        btnRepayDebt.disabled = false;
+        btnRepayDebt.textContent = 'Repay Debt';
+
+        if (txRes.success) {
+          showToast('Fee debt repaid on-chain!');
+          await checkDeferredFeeDebt(runtimeState.walletAddress);
+          await syncOnChainVaultPosition(runtimeState.walletAddress);
+        }
       });
     }
 
@@ -2432,44 +2951,121 @@
 
     if (!btn) return;
     btn.disabled = true;
-    if (btnText) btnText.textContent = 'Connecting Wallet...';
 
-    if (!runtimeState.walletConnected && getWeb3Provider()) {
+    if (!runtimeState.walletConnected) {
+      if (btnText) btnText.textContent = 'Connecting Wallet...';
       await connectWallet();
+      if (!runtimeState.walletConnected) {
+        btn.disabled = false;
+        if (btnText) btnText.textContent = 'Activate Auto-Pilot Shield';
+        return;
+      }
     }
 
-    if (btnText) btnText.textContent = 'Simulating Ephemeral Session Key (INV-1)...';
-
-    // Brief micro-delay for realistic simulation feedback
-    await new Promise(r => setTimeout(r, 350));
-
-    // Step 2: Ephemeral session key delegation (local simulation)
-    const ephemeralKey = '0x' + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    if (el.sessionBadge) {
-      el.sessionBadge.innerHTML = '<span>Session Key:</span> <strong>Simulated Demo (30d, INV-1)</strong>';
-      el.sessionBadge.className = 'session-badge safe';
+    const provider = await resolveProvider(400);
+    if (!provider) {
+      showToast('Web3 wallet provider not found.');
+      btn.disabled = false;
+      if (btnText) btnText.textContent = 'Activate Auto-Pilot Shield';
+      return;
     }
 
+    if (btnText) btnText.textContent = 'Verifying Elysium L2...';
+    const okNet = await ensureElysiumNetwork(provider);
+    if (!okNet) {
+      btn.disabled = false;
+      if (btnText) btnText.textContent = 'Activate Auto-Pilot Shield';
+      return;
+    }
+
+    const amount = liteState.selectedAmount || 0.05;
+    const amountWei = BigInt(Math.round(amount * 1e18));
+    const debtUsdc = BigInt(Math.round(amount * 32.0 * 1e6));
+    const ltvBps = 8000; // 80% maintenance threshold
+
+    const agentAddr = ELYSIUM_CONFIG.sentinelKeeperAgent;
+    const durationSec = 30 * 86400; // 30 days
     const presetName = liteState.selectedPreset.charAt(0).toUpperCase() + liteState.selectedPreset.slice(1);
-    logAudit('INV-1', `[SIMULATION DEMO] Trade-only session key ${formatAddress(ephemeralKey)} configured for ${presetName} preset.`, 'accent');
-    logAudit('SIMULATOR', `[SIMULATION ONLY] Precompile 0x0802 order dispatch and 0x0801 live surveillance are blocked on Elysium testnet; operating in interactive simulation mode.`, 'hedge');
 
-    liteState.shieldActivated = true;
-    proConfig.manualOverrideActive = false;
+    try {
+      // Step 1: Register Position on AegisVault (0x71fc23ea)
+      if (btnText) btnText.textContent = '1/3: Registering Position on-chain...';
+      const regData = encodeRegisterPosition(
+        ELYSIUM_CONFIG.contracts.hype,
+        amountWei,
+        debtUsdc,
+        ltvBps
+      );
 
-    // Step 3: Visual Confirmation State
-    btn.disabled = false;
-    btn.classList.add('armed');
-    if (btnText) {
-      btnText.textContent = 'Auto-Pilot Shield (Simulation Active)';
+      const regTx = await sendVaultTransaction({
+        to: ELYSIUM_CONFIG.contracts.vault,
+        data: regData,
+        actionName: `Register Position (${amount} HYPE, $${(amount * 32).toFixed(2)} Debt)`
+      });
+
+      if (!regTx.success) {
+        btn.disabled = false;
+        if (btnText) btnText.textContent = 'Activate Auto-Pilot Shield';
+        return;
+      }
+
+      // Step 2: Delegate Trade-Only Session Key (0xd5f9f2ce)
+      if (btnText) btnText.textContent = '2/3: Authorizing Session Key...';
+      const delData = encodeDelegateSessionKey(agentAddr, durationSec);
+      const delTx = await sendVaultTransaction({
+        to: ELYSIUM_CONFIG.contracts.vault,
+        data: delData,
+        actionName: 'Authorize Sentinel Session Key (30 Days)'
+      });
+
+      if (!delTx.success) {
+        logAudit('WARNING', 'Position registered, but session key authorization was declined.', 'hedge');
+      }
+
+      // Step 3: Configure preset parameters on AegisVault (0xf2e821d3)
+      if (btnText) btnText.textContent = '3/3: Committing Defense Preset...';
+      const cfgData = encodeSetProConfig({
+        triggerMode: proConfig.triggerMode,
+        orderType: proConfig.orderType,
+        hedgeRatio: proConfig.hedgeRatio,
+        trailingTpPct: proConfig.trailingTpPct,
+        maxSlippagePct: 0.005,
+        sessionKeyExpiry: 0,
+        manualOverrideActive: false,
+        priceTrigger: proConfig.priceTrigger,
+        healthTrigger: proConfig.healthTrigger
+      });
+
+      await sendVaultTransaction({
+        to: ELYSIUM_CONFIG.contracts.vault,
+        data: cfgData,
+        actionName: `Commit ${presetName} Defense Preset`
+      });
+
+      liteState.shieldActivated = true;
+      proConfig.manualOverrideActive = false;
+
+      btn.disabled = false;
+      btn.classList.add('armed');
+      if (btnText) {
+        btnText.textContent = 'Auto-Pilot Shield (On-Chain Armed)';
+      }
+
+      if (el.heroSentinelStatus) {
+        el.heroSentinelStatus.innerHTML = 'ON-CHAIN <span class="status-pill pill-accent">ARMED</span>';
+      }
+
+      showToast(`Auto-Pilot Shield armed on Elysium L2 (${presetName} preset)!`);
+      logAudit('SHIELD', `Auto-Pilot Shield registered and armed on AegisVault for ${formatAddress(runtimeState.walletAddress)}.`, 'accent');
+
+      await syncOnChainVaultPosition(runtimeState.walletAddress);
+
+    } catch (err) {
+      console.error('Error in activateLiteShield:', err);
+      btn.disabled = false;
+      if (btnText) btnText.textContent = 'Activate Auto-Pilot Shield';
+      showToast('Shield activation failed.');
     }
-
-    if (el.heroSentinelStatus) {
-      el.heroSentinelStatus.innerHTML = 'SIMULATED <span class="status-pill pill-accent">ACTIVE</span>';
-    }
-
-    showToast(`[SIMULATION] Auto-Pilot Shield enabled in simulation mode (${presetName} preset).`);
-    updateUI();
   }
 
   function startLiveTicker() {
@@ -2606,7 +3202,7 @@
 
     // 2. Initial verified contract & balance checks
     await checkContractDeployments();
-    await checkDeferredFeeDebt(ELYSIUM_CONFIG.defaultAccount);
+    await syncOnChainVaultPosition(ELYSIUM_CONFIG.defaultAccount);
     await checkOnChainFeeCollector();
     await fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
 

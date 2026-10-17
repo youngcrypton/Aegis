@@ -73,6 +73,9 @@ html {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 body {
@@ -84,6 +87,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
   transition: color 500ms ease, background 500ms ease;
 }
 
@@ -1359,7 +1364,7 @@ h1, h2, h3, .display-font {
     gap: 6px;
     flex-shrink: 0;
   }
-  .header-separator, .latency-badge, .session-badge, .beta-badge, .btn-theme-toggle {
+  .header-separator, .latency-badge, .session-badge, .beta-badge, .btn-theme-toggle, .btn-settings-toggle {
     display: none !important;
   }
   .brand-sub {
@@ -1378,10 +1383,19 @@ h1, h2, h3, .display-font {
     padding: 0 8px;
     font-size: 11px;
   }
+  @media (max-width: 480px) {
+    .faucet-pill-btn {
+      display: none !important;
+    }
+  }
   .wallet-btn {
     height: 28px;
     padding: 0 10px;
     font-size: 11.5px;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .app-drawer-btn {
     width: 32px;

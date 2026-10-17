@@ -38,6 +38,8 @@ export const configSchema = z.object({
     .enum(["HYPERCORE_AGENT", "ON_CHAIN_PRECOMPILE"])
     .default("HYPERCORE_AGENT"),
   HYPERCORE_API_URL: z.string().optional(),
+  HYPERCORE_PRICE_API_URL: z.string().default("https://api.hyperliquid.xyz"),
+  HYPERCORE_EXECUTION_API_URL: z.string().default("https://api.hyperliquid-testnet.xyz"),
   USE_HYPERCORE_L1_ORACLE: z
     .string()
     .transform((val) => val === "true" || val === "1")

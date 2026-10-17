@@ -174,14 +174,17 @@ AEGIS is not an isolated application on Elysium; it is deeply woven into the **A
 ### A. 100% Fee Buyback Routing via Ascend Closed Hook Pools
 Under Invariant INV-4, 50% of all protocol performance fee revenue is routed directly through `IAscendHookPool.sol` (`0x59F2f1fCfE2474fD5F0b9BA1E73ca90b143Eb8d0`). Every averted liquidation on Elysium generates organic buy-side volume for Ascend liquidity pools, permanently burning $AEGIS tokens to `0x000000000000000000000000000000000000dEaD`.
 
-### B. 39% Direct Ecosystem Alignment
+### B. 70.0% Direct Community & Ecosystem Alignment
 Out of our immutable hard cap of **700,000,000 $AEGIS** (with zero inflationary minting):
-- **182,000,000 $AEGIS (26.0%)** is allocated to Ascend ecosystem participants and kHYPE liquid stakers on Kinetiq.
-- **91,000,000 $AEGIS (13.0%)** is dedicated to the Ascend Fair Launch TGE via Closed Hook Pools.
-- **63,000,000 $AEGIS** is permanently paired as Protocol-Owned Liquidity (POL).
+- **Phase 1 Testnet Points (10.0% / 70,000,000 $AEGIS)**: 100% unlocked at Ascend TGE for early Elysium testnet testers.
+- **Phase 2 Mainnet Hedging Points (15.0% / 105,000,000 $AEGIS)**: 100% unlocked at Ascend TGE for live autonomous delta hedgers.
+- **Ascend Fair Launch (10.0% / 70,000,000 $AEGIS)**: 100% unlocked at Ascend TGE via Closed Hook Pools for Day-1 public liquidity.
+- **kHYPE Liquid Staking Rewards (20.0% / 140,000,000 $AEGIS)**: Streamed over 24 months to Kinetiq kHYPE liquid stakers.
+- **Ascend LP Incentives (15.0% / 105,000,000 $AEGIS)**: Incentivizing deep liquidity across $AEGIS/USDC & $AEGIS/HYPE over 36 months.
+- **Immediate Day-1 Community Float: 35.0% (245,000,000 $AEGIS)**, 100% in community hands with 0% team/VC unlock.
 
-### C. 24-Month Hard Team Cliff (6-Year Horizon)
-Demonstrating our long-term commitment to Elysium, core contributor tokens feature a strict **2-year hard cliff** followed by a 4-year linear release. The core team receives 0 tokens at TGE and 0 tokens during the first 24 months, aligning our incentives entirely with the multi-year expansion of the Elysium network.
+### C. 24-Month Hard Team Cliff (5-Year Horizon)
+Demonstrating our long-term commitment to Elysium, core contributor tokens (10.0% / 70,000,000 $AEGIS) feature a strict **2-year hard cliff** followed by a 3-year linear release. The core team receives 0 tokens at TGE and 0 tokens during the first 24 months, aligning our incentives entirely with the multi-year expansion of the Elysium network.
 
 ---
 
@@ -211,13 +214,13 @@ Every claim made in this announcement can be independently verified on the Elysi
 
 Entering Elysium is just the beginning. Our engineering roadmap outlines the progressive rollout of the protocol across three phases:
 
-1. **Phase 1: Private Testnet Beta (Active Now)**
-   - 50 institutional access codes distributed to Elysium validators, liquidity providers, and quantitative desks.
+1. **Phase 1: Open Public Testnet (Active Now)**
+   - 100% open public access on Elysium L2 (Chain ID 99801) for all traders, borrowers, and ecosystem builders. No waitlists or invite codes required.
    - Live interactive stress-test simulator: users can trigger simulated -18% flash crashes and observe sub-78ms precompile hedge dispatch with zero real-capital risk.
 2. **Phase 2: Decentralized Sentinel Staking Network (Coming Soon)**
    - Public node onboarding allowing independent operators to stake 25,000 $AEGIS, run the `@aegis/sentinel` daemon, and earn non-inflationary USDC real yield from averted liquidation fees.
 3. **Phase 3: Public Mainnet Launch & Ascend Ascension**
-   - Full gate removal: public access opened to all Elysium traders without invitation codes upon Elysium & Ascend Mainnet transition.
+   - Full mainnet deployment with real capital protection on live Elysium & Ascend Mainnet.
    - Deployment of the HyperEVM Mirror Bridge for cross-chain liquidity and native HIP-3 perpetual listings on Kinetiq.
 
 ---

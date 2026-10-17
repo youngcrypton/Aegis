@@ -574,7 +574,7 @@ async function handleInteraction(interaction) {
     ticketType = 'complaint';
     ticketTitle = '⚠️ Complaint / Account Dispute Ticket';
     ticketColor = BRAND_COLORS.AMBER;
-    ticketDesc = `👋 Welcome <@${user.id}>!\nThank you for reaching out to the AEGIS Helpdesk.\n\nPlease describe your complaint or dispute in detail:\n• **1. Summary of Dispute:** What issue occurred?\n• **2. Account Information:** Connected wallet address or terminal access code (⚠️ *NEVER share private keys or seed phrases!*)\n• **3. Desired Resolution:** What outcome are you seeking?\n\nA Community Administrator will assist you shortly.`;
+    ticketDesc = `👋 Welcome <@${user.id}>!\nThank you for reaching out to the AEGIS Helpdesk.\n\nPlease describe your complaint or dispute in detail:\n• **1. Summary of Dispute:** What issue occurred?\n• **2. Account Information:** Connected wallet address (⚠️ *NEVER share private keys or seed phrases!*)\n• **3. Desired Resolution:** What outcome are you seeking?\n\nA Community Administrator will assist you shortly.`;
   } else if (customId === 'btn_ticket_other' || (customId === 'ticket_select_category' && selectedValues.includes('ticket_other'))) {
     ticketType = 'general';
     ticketTitle = '🤝 General Inquiry & Partnership Ticket';

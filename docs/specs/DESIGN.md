@@ -207,27 +207,29 @@ The $AEGIS token has an immutable hard cap of **700,000,000 $AEGIS** on Elysium 
             +------------------------+
 ```
 
-### 5.1 Supply Allocation (700,000,000 Hard Cap)
+### 5.1 Supply Allocation (700,000,000 Hard Cap — Community-First Model)
 
 | Category | Share | Token Count | TGE Unlock | Cliff | Vesting Schedule |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Ascend Ecosystem & Community** | **26.0%** | 182,000,000 | 10.0% (18.2M) | 0 mos | 24 mos linear (kHYPE stakers & Ascend LP incentives) |
-| **Community & Sentinel Incentives** | **26.0%** | 182,000,000 | 5.0% (9.1M) | 0 mos | 36 mos linear (Sentinel 24/7 uptime & telemetry relays) |
-| **Ascend Fair Launch (TGE)** | **13.0%** | 91,000,000 | 100.0% (91M) | 0 mos | Instant Day-1 liquidity via Ascend Closed Hook Pool |
-| **Protocol Security & Insurance** | **15.0%** | 105,000,000 | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan backstop) |
-| **Core Contributors & Team** | **12.0%** | 84,000,000 | **0.0%** | **24 mos** | **48 mos linear** (2-year hard cliff, 6-year total horizon) |
-| **Strategic Partners & Foundation** | **8.0%** | 56,000,000 | 0.0% | 18 mos | 36 mos linear (Audits, legal structuring, institutional risk) |
-| **TOTAL** | **100.0%** | **700,000,000** | **~16.9%** | — | **Zero inflationary minting** |
+| **Phase 1: Testnet Points Reward** | **10.0%** | **70,000,000** | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Elysium & testnet points earners) |
+| **Phase 2: Mainnet Hedging Points** | **15.0%** | **105,000,000** | **100.0% (105M)** | 0 mos | **100% Unlocked at Ascend TGE** (Live autonomous delta hedgers) |
+| **Ascend Launchpad Fair Launch** | **10.0%** | **70,000,000** | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Day-1 public pool liquidity) |
+| **kHYPE Liquid Staking Rewards** | **20.0%** | **140,000,000** | 0.0% | 0 mos | 24 mos linear (Emissions to native kHYPE stakers on Kinetiq) |
+| **Ascend LP Incentives (POL)** | **15.0%** | **105,000,000** | 0.0% | 0 mos | 36 mos linear (Deep liquidity in $AEGIS/USDC & $AEGIS/HYPE) |
+| **Protocol Security & Insurance** | **12.0%** | **84,000,000** | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan emergency reserve) |
+| **Core Contributors & Builders** | **10.0%** | **70,000,000** | **0.0%** | **24 mos** | **36 mos linear** (Strict 2-year hard cliff, 5-year total horizon) |
+| **Strategic Ecosystem & Audits** | **8.0%** | **56,000,000** | 0.0% | 12 mos | 24 mos linear (Audit grants, security bounties, foundation growth) |
+| **TOTAL** | **100.0%** | **700,000,000** | **35.0% (245M)** | — | **Zero inflationary minting. 100% Day-1 float to Community.** |
 
 ### 5.2 Ascend Ecosystem Alignment & Symbiosis
-- **kHYPE Staker Integration**: Users staking HYPE into kHYPE on Kinetiq receive programmatic distributions from the 182M Ascend allocation without spending principal.
+- **kHYPE Staker Integration**: Users staking HYPE into kHYPE on Kinetiq receive programmatic distributions from the 140M kHYPE liquid staking allocation without spending principal.
 - **Closed Hook Pool Exclusive Routing**: 100% of the 50% performance fee buyback swaps route via Ascend Closed Hook Pools (`IAscendHookPool.sol`), driving continuous organic volume and fees to Ascend LPs.
 - **1% Launchpad Fee Recycled to HYPE/KNTQ**: Swaps on Ascend trigger Ascend's built-in 50:50 buyback of HYPE and KNTQ (with 60% of purchased KNTQ burned), aligning AEGIS with the broader Elysium/Kinetiq economy.
-- **Protocol-Owned Liquidity (POL)**: 63,000,000 $AEGIS paired permanently in an Ascend Closed Hook Pool to prevent liquidity fragmentation.
+- **Protocol-Owned Liquidity (POL)**: Deep liquidity paired permanently in an Ascend Closed Hook Pool funded by the 105,000,000 $AEGIS Ascend LP Incentives allocation.
 - **Ascension Graduation**: Qualifies for native Mirror Bridge deployment to HyperEVM for HyperCore spot and HIP-3 perpetual listings on Kinetiq.
 
 ### 5.3 Core Contributor 24-Month Hard Cliff
-Core contributors receive zero tokens at TGE and zero tokens during the entire first 24 months. At Month 25, tokens vest linearly over 48 months (1,750,000 $AEGIS per month), achieving full vesting at Month 72 (6 years).
+Core contributors receive zero tokens at TGE and zero tokens during the entire first 24 months. At Month 25, tokens vest linearly over 36 months (~1,944,444 $AEGIS per month), achieving full vesting at Month 60 (5 years).
 
 ### 5.4 Four Core Value Accrual Pillars
 1. **Slashable Sentinel Bonds**: Operators bond at least 25,000 $AEGIS (`MIN_BOND`) in `AegisSentinelRegistry.sol`. Invariant INV-2 bounds slashing at $\le 10\%$, credited directly to affected users.

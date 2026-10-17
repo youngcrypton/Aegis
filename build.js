@@ -37,7 +37,6 @@ fs.mkdirSync(DIST, { recursive: true });
 const rootFiles = [
   'index.html',
   'access.html',
-  'access-codes.js',
   'supabase-client.js',
   'download.html',
   '_headers',

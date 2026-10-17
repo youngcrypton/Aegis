@@ -9,8 +9,7 @@ Last updated: 2026-10-11
 - **Done:** kit-aligned landing page with the approved logo mark, kit tokens, and light and dark themes. Hero, protocol metrics, mechanics, comparison, security, footer.
 - **Done:** "Built on" strip with Elysium and Ascend logos, drifting in a straight line.
 - **Done:** mobile top bar with a menu button. It opens How it works, Why AEGIS, Security, and Enter terminal.
-- **Done:** Private Testnet Beta Access Gate (`access.html`, `app/access.html`): "Launch app" and "Launch app terminal" CTAs route to the access verification page.
-- **Done:** 50 Institutional Beta Access Codes generated and tracked in `ACCESS_CODES.md` with client-side verification via `access-codes.js`. Direct access to `app/index.html` is gated until Mainnet launch.
+- **Done:** Open Public Testnet: "Launch Public Testnet" and "Launch app terminal" CTAs route directly to `app/index.html`. Zero invite codes or gates required.
 - **Open:** footer links (About, Contact, Privacy Policy, Terms of Service) are placeholders (`href="#"`). They need real URLs.
 - **Open:** the brand kit's open items (wordmark case "Aegis" vs "AEGIS", navy on white) are unresolved. Follow the kit as written and flag them.
 
@@ -43,7 +42,7 @@ Last updated: 2026-10-11
  - **Done:** Connected Account & Balances Modal (`#walletAccountModal`): tapping the wallet button opens a clean modal showing connected address, explorer link, address copy button, live Elysium L2 balances (HYPE, USDC, AEGIS, KNTQ), and a functioning "Disconnect Wallet" button to disconnect anytime.
  - **Done:** Real On-Chain RPC Integration: queries Elysium L2 testnet contracts (`0x05Aa...` Vault, `0xcA03...` HYPE, `0x7125...` USDC, `0xbCF2...` AEGIS) and native gas token (KNTQ) to display real balances on the terminal.
  - **Done:** Brand Color Uniformity: matched landing page ambient background gradient (`var(--bg-base)`) across `html` and `body` in `app/styles.css` for both dark and light modes with seamless token transition.
- - **Done:** Supabase Backend Architecture (`supabase/schema.sql`, `supabase/config.toml`, `app/supabase-client.js`): tables for `beta_access_codes`, `vault_sessions`, and `sentinel_alerts` with RLS policies and client bridge.
+ - **Done:** Supabase Backend Architecture (`supabase/schema.sql`, `supabase/config.toml`, `app/supabase-client.js`): tables for `vault_sessions` and `sentinel_alerts` with RLS policies and live telemetry bridge.
  - **Done:** Cloudflare Deployment Suite (`wrangler.toml`, `_headers`, `_routes.json`, `.env.example`): production and staging Cloudflare Pages / Workers hosting configuration with strict security headers and smart edge placement.
 
 ## Archive

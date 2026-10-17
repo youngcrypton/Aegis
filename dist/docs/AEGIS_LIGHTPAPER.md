@@ -168,7 +168,11 @@ The **$AEGIS** token is the native governance, bonding, and fee-capture asset on
 * **Token Utility:**
   1. Sentinel Node Staking & Slashing Bond (25,000 $AEGIS).
   2. Protocol Governance & Parameter Tuning ($H_{\text{trigger}}$, $\tau$, fee splits).
-  3. Real Staking Yield Distribution in canonical debt tokens (USDC).
+  3. Real Staking Yield Distribution in canonical debt tokens (USDC) *(Phase 3 Roadmap)*.
+
+> [!IMPORTANT]
+> **Protocol Roadmap Notice (Phase 3 Integration):**  
+> Throughout the active Elysium testnet phase and initial V1 launch, **AEGIS operates strictly as a lean, pure autonomous delta-hedging engine**. Staking, real yield distribution, and fee buyback-and-burn mechanisms are on the protocol **Roadmap (Phase 3)** and are not active in V1. Active testnet testers and mainnet hedgers accumulate Phase 1 (10%) and Phase 2 (15%) Points, converting 100% unlocked at Ascend TGE.
 
 ### 6.2 Counter-Cyclical Deflationary Flywheel
 Unlike inflationary reward tokens, AEGIS captures value inversely to market distress:
@@ -190,6 +194,37 @@ $$\text{Ascend Revenue}_{\text{returned}} \implies 100\% \text{ User \& Communit
 2. **Active Trader & Tester Incentives:** Community members and pro-traders actively testing, stress-testing, and executing on the AEGIS terminal earn continuous rewards and loyalty boosts.
 3. **Liquidity Provider Rewards:** Users providing concentrated liquidity for the canonical `$AEGIS / USDC` pool on Ascend receive amplified yield distributions.
 4. **Zero Treasury Rent-Seeking:** 0% of Ascend-originating fee shares are withheld by team treasuries; 100% is cycled back into rewarding the people who use AEGIS.
+
+### 6.4 Comprehensive Supply Allocation & Two-Phase Point System (700M Hard Cap)
+
+```mermaid
+pie title $AEGIS Token Supply Distribution (700,000,000 Cap)
+    "kHYPE Liquid Staking (20%)" : 140000000
+    "Phase 2 Mainnet Points (15%)" : 105000000
+    "Ascend LP Incentives (15%)" : 105000000
+    "Protocol Security Reserve (12%)" : 84000000
+    "Phase 1 Testnet Points (10%)" : 70000000
+    "Ascend Fair Launch (10%)" : 70000000
+    "Core Contributors (10%)" : 70000000
+    "Strategic & Audits (8%)" : 56000000
+```
+
+| Category | Share (%) | Token Amount | TGE Unlock | Cliff | Vesting Schedule |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Phase 1: Testnet Points Reward** | **10.0%** | **70,000,000** | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Elysium & testnet points earners) |
+| **Phase 2: Mainnet Hedging Points** | **15.0%** | **105,000,000** | **100.0% (105M)** | 0 mos | **100% Unlocked at Ascend TGE** (Live autonomous delta hedgers) |
+| **Ascend Launchpad Fair Launch** | **10.0%** | **70,000,000** | **100.0% (70M)** | 0 mos | **100% Unlocked at Ascend TGE** (Day-1 public pool liquidity) |
+| **kHYPE Liquid Staking Rewards** | **20.0%** | **140,000,000** | 0.0% | 0 mos | 24 mos linear (Emissions to native kHYPE stakers on Kinetiq) |
+| **Ascend LP Incentives (POL)** | **15.0%** | **105,000,000** | 0.0% | 0 mos | 36 mos linear (Deep liquidity in $AEGIS/USDC & $AEGIS/HYPE) |
+| **Protocol Security & Insurance** | **12.0%** | **84,000,000** | 0.0% | 12 mos | 36 mos linear (DAO multi-sig black swan emergency reserve) |
+| **Core Contributors & Builders** | **10.0%** | **70,000,000** | **0.0%** | **24 mos** | **36 mos linear** (Strict 2-year hard cliff, 5-year total horizon) |
+| **Strategic Ecosystem & Audits** | **8.0%** | **56,000,000** | 0.0% | 12 mos | 24 mos linear (Audit grants, security bounties, foundation growth) |
+| **TOTAL** | **100.0%** | **700,000,000** | **35.0% (245M)** | — | **Zero inflationary minting. 100% Day-1 float to Community.** |
+
+* **The Two-Phase Point Engine:**  
+  * **Phase 1 (Testnet):** Users testing the terminal on Elysium L2 accumulate testnet points redeemable 1:1 for the 70,000,000 $AEGIS pool at Ascend TGE.
+  * **Phase 2 (Mainnet):** Active borrowers defending vaults with autonomous delta hedging accumulate mainnet volume points redeemable for the 105,000,000 $AEGIS pool at Ascend TGE.
+  * **100% Day-1 TGE Liquidity:** Both Phase 1 (10%) and Phase 2 (15%) rewards + Ascend Fair Launch (10%) = **35% total Day-1 circulating supply**, with zero vesting or lockup for community participants. Zero team tokens unlock at TGE.
 
 ---
 

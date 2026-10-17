@@ -415,7 +415,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     <a href="#security" class="hide-sm">Security</a>
     <a href="docs/index.html" target="_blank" rel="noopener" class="hide-sm">Docs</a>
     <a href="https://github.com/youngcrypton/Aegis" target="_blank" rel="noopener" class="hide-sm">GitHub</a>
-    <a href="access.html" class="open">Launch Public Testnet ↗</a>
+    <a href="access.html" class="open" title="Launch Public Testnet">Launch Public Testnet ↗</a>
     <button class="theme" id="themeBtn" aria-label="Switch color theme" aria-pressed="false">
       <span id="themeLabel">Dark</span><span class="knob" aria-hidden="true"></span>
     </button>
@@ -445,6 +445,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <p class="lede">When market wicks threaten your borrow health, AEGIS triggers atomic perpetual short hedges on HyperCore. Your collateral is never dumped. Your position stays 100% yours.</p>
         <div class="cta-row">
           <a class="btn" href="access.html">Launch Public Testnet ↗</a>
+          <a class="btn" href="docs/index.html" target="_blank" rel="noopener" style="background: var(--raised); color: var(--ink); border: 1px solid var(--rule);">Read Documentation ↗</a>
           <a class="ghost" href="#architecture">See how it works</a>
         </div>
       </div>
@@ -735,8 +736,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     <div class="wrap">
       <svg class="launch-mark" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="gLaunch" x1="10.17" y1="-0.15" x2="29.83" y2="40.15" gradientUnits="userSpaceOnUse"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient></defs><polygon points="13.42,3.36 21.27,3.36 9.89,36.38 2.97,36.38" fill="url(#gLaunch)"/><polygon points="21.95,12.72 29.26,12.72 20.83,36.38 14.05,36.38" fill="url(#gLaunch)"/><polygon points="30.06,20.78 36.77,20.78 31.18,36.38 24.78,36.38" fill="url(#gLaunch)"/></svg>
       <h2 class="display">Protect your leverage on Elysium.</h2>
-      <p>Configure your health trigger, delegate a trade-only session key, and trade with complete downside insulation.</p>
-      <a href="access.html" class="btn">Launch app terminal ↗</a>
+      <div style="margin-top: 24px;">
+        <a href="access.html" class="btn">Launch app terminal ↗</a>
+      </div>
+      <div style="margin-top: 18px;">
+        <a href="docs/index.html" class="ghost" target="_blank" rel="noopener">Explore Technical Documentation ↗</a>
+      </div>
     </div>
   </section>
 </main>

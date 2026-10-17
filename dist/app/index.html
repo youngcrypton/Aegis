@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>
+    // Terminal access is temporarily locked - redirect visitors to landing page
+    window.location.replace('../index.html');
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal</title>
   <!-- Favicon & Brand Icons -->
@@ -17,51 +21,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="https://s3.tradingview.com/tv.js"></script>
-  <script src="access-codes.js"></script>
 </head>
 <body>
-
-  <!-- Protocol Maintenance & Upgrade Lock (Terminal Inaccessible to Public) -->
-  <div id="maintenanceLock" style="position: fixed; inset: 0; z-index: 999999; background: var(--bg-base); display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(8px);">
-    <div style="background: var(--raised); border: 1px solid var(--rule); border-radius: 16px; padding: clamp(24px, 5vw, 44px); max-width: 560px; width: 100%; text-align: center; box-shadow: 0 24px 48px rgba(0,0,0,0.35);">
-      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--ground); border: 1px solid var(--rule); font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 20px;">
-        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
-        Scheduled Protocol Upgrade &amp; Security Maintenance
-      </div>
-      
-      <h1 style="font-family: var(--display); font-size: clamp(24px, 4vw, 32px); color: var(--ink); margin-bottom: 14px; line-height: 1.25; text-wrap: balance;">
-        Terminal Access Temporarily Paused
-      </h1>
-      
-      <p style="font-family: var(--text); font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 24px;">
-        The AEGIS Risk Sentinel &amp; Pro-Trader Terminal is currently offline for scheduled Elysium L2 node updates, contract registry security sync, and infrastructure maintenance.
-      </p>
-
-      <div style="background: var(--ground); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between;">
-          <span style="color: var(--ink-2);">Target Network:</span>
-          <span style="font-family: monospace; color: var(--accent); font-weight: 600;">Elysium L2 Testnet (99801)</span>
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span style="color: var(--ink-2);">Terminal State:</span>
-          <span style="color: var(--hedge); font-weight: 600;">Maintenance &amp; Verification</span>
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span style="color: var(--ink-2);">Wallet Connections:</span>
-          <span style="color: var(--ink-2);">Temporarily Locked</span>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 24px; border-radius: 8px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px;">
-          Return to Homepage
-        </a>
-        <a href="/gitbook/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 24px; border-radius: 8px; background: var(--ground); border: 1px solid var(--rule); color: var(--ink); font-weight: 600; font-size: 14px;">
-          Read Official Lightpaper &amp; Docs ↗
-        </a>
-      </div>
-    </div>
-  </div>
 
   <!-- Shared Global SVGs for 3-Blade Master Logo Mark -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1270,6 +1231,13 @@
           <div>Vault Collateral: <strong class="font-mono text-accent" id="modalVaultCol">0.0000 HYPE</strong></div>
           <div>Protected Debt: <strong class="font-mono" id="modalVaultDebt">$0.00 USD</strong></div>
           <div>Health Factor: <strong class="font-mono text-accent" id="modalVaultHf">SAFE</strong></div>
+        </div>
+        <div class="wallet-vault-stats" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--rule);">
+          <div>Fee Debt: <strong class="font-mono text-accent" id="modalFeeDebtDisplay">$0.00 USDC</strong></div>
+          <div>Session Key: <strong class="font-mono text-accent" id="modalSessionKeyDisplay">None</strong></div>
+          <div id="repayFeeDebtContainer" style="display: none;">
+            <button class="sim-btn" id="btnRepayFeeDebt" type="button" style="padding: 2px 8px; font-size: 11px;">Repay Debt</button>
+          </div>
         </div>
       </div>
 

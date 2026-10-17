@@ -38,15 +38,11 @@ contract SeedElysiumLive is Script {
         );
         address deployer = vm.addr(deployerPrivateKey);
 
-        // Demo Trader is account with private key 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
-        uint256 traderPrivateKey = vm.envOr(
-            "TRADER_PRIVATE_KEY",
-            uint256(0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a)
-        );
+        uint256 traderPrivateKey = vm.envOr("TRADER_PRIVATE_KEY", deployerPrivateKey);
         address trader = vm.addr(traderPrivateKey);
 
         // Trade-only session key
-        address sessionKey = address(0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65);
+        address sessionKey = vm.envOr("SESSION_KEY_ADDRESS", address(0x0b84253936Fd66B4b407C32d578B20499c766137));
 
         MockERC20 hype = MockERC20(hypeAddr);
         MockERC20 usdc = MockERC20(usdcAddr);
