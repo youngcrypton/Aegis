@@ -1,17 +1,10 @@
-# Aegis Protocol — Documentation Archive
+# Protocol Overview
 
-<figure><img src=".gitbook/assets/aegis-banner.png" alt="Aegis Protocol Banner"><figcaption><b>Aegis</b>: Autonomous sub-second risk engine bridging Elysium Orbit L2 smart contracts with HyperCore CLOB.</figcaption></figure>
+<figure><img src=".gitbook/assets/aegis-banner.png" alt="Aegis Protocol Banner"><figcaption><p>Aegis: Autonomous sub-second risk engine bridging Elysium Orbit L2 smart contracts with HyperCore CLOB.</p></figcaption></figure>
 
-<div align="center">
+[![Elysium Orbit L2](https://img.shields.io/badge/Network-Elysium%20Testnet%20\(99801\)-5FD9BE?style=flat-square\&logo=ethereum\&logoColor=white)](https://testnet.elysiumscan.org) [![HyperCore CLOB](https://img.shields.io/badge/CLOB-Hyperliquid%20HyperCore-6928ED?style=flat-square)](https://hyperliquid.xyz) [![Foundry Tests](https://img.shields.io/badge/Tests-157%2F157%20Passing%20\(100%\)-07705F?style=flat-square\&logo=foundry)](https://github.com/youngcrypton/Aegis) [![Invariant INV-1](https://img.shields.io/badge/Invariant-INV--1%20Zero--Custody-5FD9BE?style=flat-square)](https://github.com/youngcrypton/Aegis)
 
-[![Elysium Orbit L2](https://img.shields.io/badge/Network-Elysium%20Testnet%20(99801)-5FD9BE?style=flat-square&logo=ethereum&logoColor=white)](https://testnet.elysiumscan.org)
-[![HyperCore CLOB](https://img.shields.io/badge/CLOB-Hyperliquid%20HyperCore-6928ED?style=flat-square)](https://hyperliquid.xyz)
-[![Foundry Tests](https://img.shields.io/badge/Tests-157%2F157%20Passing%20(100%25)-07705F?style=flat-square&logo=foundry)](https://github.com/youngcrypton/Aegis)
-[![Invariant INV-1](https://img.shields.io/badge/Invariant-INV--1%20Zero--Custody-5FD9BE?style=flat-square)](https://github.com/youngcrypton/Aegis)
-
-</div>
-
----
+***
 
 ## Welcome to the AEGIS Protocol Documentation
 
@@ -19,15 +12,15 @@
 
 ### Core Documentation Resources
 
-* **[Introducing AEGIS](INTRODUCING_AEGIS.md)**  
+* [**Introducing AEGIS**](introducing_aegis.md)\
   The definitive introductory article covering protocol mechanics, liquidation mitigation, and zero-custody delegation.
-* **[Elysium Ecosystem Integration](ELYSIUM_ARTICLE.md)**  
+* [**Elysium Ecosystem Integration**](elysium_article.md)\
   Deep dive into Elysium Orbit L2 architecture, precompiles `0x0801`/`0x0802`, and the Kinetiq testnet deployment.
-* **[Fact-Check & Verification Dossier](FACT_CHECK_AND_VERIFICATION_DOSSIER.md)**  
+* [**Fact-Check & Verification Dossier**](fact_check_and_verification_dossier.md)\
   Rigorous on-chain and mathematical proof catalog verifying all protocol claims and engineering benchmarks.
-* **[Editorial Fact-Check Report](EDITORIAL_FACT_CHECK_REPORT.md)**  
+* [**Editorial Fact-Check Report**](editorial_fact_check_report.md)\
   Institutional verification report across code audits, math models, and upstream dependencies.
-* **[Lightpaper Mirror](AEGIS_LIGHTPAPER.md)**  
+* [**Lightpaper Mirror**](aegis_lightpaper.md)\
   Markdown mirror of the official eight-chapter AEGIS Lightpaper.
-* **[Publication Metadata](PUBLICATION_METADATA.md)**  
+* [**Publication Metadata**](publication_metadata.md)\
   Social distribution copy, SEO tags, announcement threads, and community launch assets.
