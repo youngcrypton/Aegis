@@ -220,6 +220,10 @@
     if (el.themeToggleText) {
       el.themeToggleText.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
     }
+    const drawerThemeLabel = document.getElementById('drawerThemeLabel');
+    if (drawerThemeLabel) {
+      drawerThemeLabel.textContent = theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme';
+    }
     if (document.getElementById('tradingview_chart_embed')) {
       if (typeof tvState !== 'undefined' && tvState.engine === 'hypercore') {
         renderHyperCoreCanvasChart();
@@ -832,6 +836,29 @@
           drawerModeLabel.textContent = targetMode === 'pro' ? 'Switch to Lite Auto-Pilot' : 'Switch to Pro Terminal';
         }
         closeDrawer();
+      });
+    }
+
+    const drawerThemeBtn = document.getElementById('drawerThemeBtn');
+    if (drawerThemeBtn) {
+      drawerThemeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+      });
+    }
+
+    const drawerSettingsBtn = document.getElementById('drawerSettingsBtn');
+    if (drawerSettingsBtn) {
+      drawerSettingsBtn.addEventListener('click', () => {
+        closeDrawer();
+        const settingsModal = document.getElementById('settingsModal');
+        const settingsBackdrop = document.getElementById('settingsBackdrop');
+        if (settingsModal) {
+          settingsModal.hidden = false;
+          settingsModal.classList.add('active');
+        }
+        if (settingsBackdrop) settingsBackdrop.classList.add('active');
       });
     }
 

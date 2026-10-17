@@ -51,7 +51,8 @@ const rootFiles = [
   'site.webmanifest',
   'LIGHTPAPER.md',
   'SUMMARY.md',
-  '.gitbook.yaml'
+  '.gitbook.yaml',
+  '.nojekyll'
 ];
 
 rootFiles.forEach(file => {

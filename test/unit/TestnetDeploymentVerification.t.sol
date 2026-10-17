@@ -32,6 +32,9 @@ contract TestnetDeploymentVerificationTest is Test {
     MockERC20 internal mockCollateral;
 
     function setUp() public {
+        if (vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0)) == 0) {
+            vm.setEnv("DEPLOYER_PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+        }
         deployScript = new DeployTestnetModular();
         aliceSessionKey = vm.addr(aliceSessionKeyPk);
 
