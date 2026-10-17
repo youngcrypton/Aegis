@@ -1,9 +1,9 @@
 # Table of contents
 
 * [Protocol Overview](README.md)
-* [Introducing AEGIS](INTRODUCING_AEGIS.md)
-* [Elysium Ecosystem Integration](ELYSIUM_ARTICLE.md)
-* [Fact-Check & Verification Dossier](FACT_CHECK_AND_VERIFICATION_DOSSIER.md)
-* [Editorial Fact-Check Report](EDITORIAL_FACT_CHECK_REPORT.md)
-* [Official Lightpaper Reference](AEGIS_LIGHTPAPER.md)
-* [Publication & Community Metadata](PUBLICATION_METADATA.md)
+* [Introducing AEGIS](introducing_aegis.md)
+* [Elysium Ecosystem Integration](elysium_article.md)
+* [Fact-Check & Verification Dossier](fact_check_and_verification_dossier.md)
+* [Editorial Fact-Check Report](editorial_fact_check_report.md)
+* [Official Lightpaper Reference](aegis_lightpaper.md)
+* [Publication & Community Metadata](publication_metadata.md)
