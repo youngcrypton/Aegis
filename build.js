@@ -25,7 +25,7 @@ function copyRecursive(src, dest) {
   }
 }
 
-console.log('🚀 Bundling AEGIS Protocol for Cloudflare Pages / Workers...');
+console.log('Bundling AEGIS Protocol for Cloudflare Pages / Workers...');
 
 // 1. Clean dist
 if (fs.existsSync(DIST)) {
@@ -74,4 +74,4 @@ dirsToCopy.forEach(dir => {
   }
 });
 
-console.log('✅ AEGIS Protocol successfully bundled into ./dist ready for Cloudflare deployment!');
+console.log('[AEGIS] Protocol successfully bundled into ./dist ready for Cloudflare deployment!');

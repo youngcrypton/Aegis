@@ -19,13 +19,13 @@
  </p>
 
  <p align="center">
- <a href="gitbook/index.html"><b>📖 GitBook Lightpaper</b></a> •
- <a href="LIGHTPAPER.md"><b>📄 Raw Lightpaper</b></a> •
- <a href="docs/INTRODUCING_AEGIS.md"><b>📖 Introduction Article</b></a> •
- <a href="docs/FACT_CHECK_AND_VERIFICATION_DOSSIER.md"><b>🔍 Fact-Check Dossier</b></a> •
- <a href="docs/index.html"><b>📚 Interactive Docs</b></a> •
- <a href="#-elysium-testnet-onboarding--live-faucet-guide"><b>💧 Testnet Faucet</b></a> •
- <a href="#-official-pitch-demo-120s"><b>Pitch Demo (01:54)</b></a> •
+ <a href="gitbook/index.html"><b>GitBook Lightpaper</b></a> •
+ <a href="LIGHTPAPER.md"><b>Raw Lightpaper</b></a> •
+ <a href="docs/INTRODUCING_AEGIS.md"><b>Introduction Article</b></a> •
+ <a href="docs/FACT_CHECK_AND_VERIFICATION_DOSSIER.md"><b>Fact-Check Dossier</b></a> •
+ <a href="docs/index.html"><b>Interactive Docs</b></a> •
+ <a href="#elysium-testnet-onboarding--live-faucet-guide"><b>Testnet Faucet</b></a> •
+ <a href="#official-pitch-demo-120s"><b>Pitch Demo (01:54)</b></a> •
  <a href="#system-architecture">Architecture</a>
  </p>
 
@@ -33,7 +33,7 @@
 
 ---
 
-## 🛡️ Official Pitch Demo (120s &bull; Judges Submission)
+## Official Pitch Demo (120s &bull; Judges Submission)
 
 > **Official 01:54 (114.0s) pitch demo video engineered for judges and partners. Rendered in Light Mode with grand brand tokens, audible continuous voiceover (-13.68 dBFS RMS), synchronized virtual cursor, and burned-in brand captions.**
 
@@ -81,7 +81,7 @@
 
 ---
 
-## ⚡ Live Product Walkthrough Demo (02:44)
+## Live Product Walkthrough Demo (02:44)
 
 > **Comprehensive 02:44 technical walkthrough with full architectural deep-dive, invariant monitoring, and embedded timed captions.**
 
@@ -131,7 +131,7 @@ Collateral Preserved ◄── Trailing Take-Profit Unwinds Hedge ◄── Hype
 
 ---
 
-## 💧 Elysium Testnet Onboarding & Live Faucet Guide
+## Elysium Testnet Onboarding & Live Faucet Guide
 
 AEGIS is live and testable on the **Elysium Orbit L2 Testnet (Chain ID `99801`)**. External users, traders, and node operators can test the complete end-to-end flow using free testnet faucet tokens.
 

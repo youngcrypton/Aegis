@@ -416,6 +416,12 @@ a:hover {
   padding-top: 2px;
 }
 
+.gb-callout-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
 .gb-callout-body {
   flex: 1;
 }

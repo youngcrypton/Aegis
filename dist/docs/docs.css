@@ -526,6 +526,12 @@ a:hover {
   margin-top: 2px;
 }
 
+.callout-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .callout-body {
   flex: 1;
   min-width: 0;

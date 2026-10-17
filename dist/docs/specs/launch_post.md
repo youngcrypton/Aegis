@@ -181,7 +181,7 @@ Join the Sentinel network and explore the terminal today:
 >
 > Today, we unveil the first non-custodial risk engine that turns forced liquidations into automated, profitable delta hedges.
 >
-> A thread on how we solved DeFi’s biggest flaw 🧵👇
+> A thread on how we solved DeFi’s biggest flaw:
 >
 > *(Attach Graphic: `launch-article-banner-1200x675.png` or 120s Video Teaser)*
 
@@ -214,8 +214,8 @@ Join the Sentinel network and explore the terminal today:
 >
 > AEGIS bridges Elysium L2 smart contracts with HyperCore consensus via two breakthrough precompiles:
 >
-> ⚡ Precompile 0x0801: Sub-78ms synchronous oracle reads directly from L1 consensus (zero oracle lag, zero mempool delay)
-> ⚡ Precompile 0x0802: Atomic order dispatch directly into the L1 CLOB with sub-tick execution precision
+> • Precompile 0x0801: Sub-78ms synchronous oracle reads directly from L1 consensus (zero oracle lag, zero mempool delay)
+> • Precompile 0x0802: Atomic order dispatch directly into the L1 CLOB with sub-tick execution precision
 
 ---
 
@@ -235,20 +235,20 @@ Join the Sentinel network and explore the terminal today:
 ### Tweet 6 (Formal Mathematical Security: 5 Verified Invariants)
 > 5/ Security is mathematically proven across 160,000+ fuzz testing runs:
 >
-> 🛡️ INV-1: Trade-only session keys (zero permission to withdraw collateral)
-> 🛡️ INV-2: Health Factor monotonicity (H_post >= H_pre)
-> 🛡️ INV-3: Atomic Manual Override killswitch to revoke authority anytime
-> 🛡️ INV-4: 50/50 fee split (Ascend burn + real yield)
-> 🛡️ INV-5: EIP-712 cryptographic intent signatures preventing replay attacks
+> • INV-1: Trade-only session keys (zero permission to withdraw collateral)
+> • INV-2: Health Factor monotonicity (H_post >= H_pre)
+> • INV-3: Atomic Manual Override killswitch to revoke authority anytime
+> • INV-4: 50/50 fee split (Ascend burn + real yield)
+> • INV-5: EIP-712 cryptographic intent signatures preventing replay attacks
 
 ---
 
 ### Tweet 7 (Built for Everyone: Lite Auto-Pilot & Pro Terminal)
 > 6/ Built for everyone:
 >
-> 🟢 Lite Auto-Pilot: 1-Click presets (Conservative, Balanced, Aggressive) calibrated for testnet faucet micro-deposits (0.02, 0.05, 0.08 HYPE). One click arms your shield.
+> • Lite Auto-Pilot: 1-Click presets (Conservative, Balanced, Aggressive) calibrated for testnet faucet micro-deposits (0.02, 0.05, 0.08 HYPE). One click arms your shield.
 >
-> 🔵 Pro Terminal: Multi-parameter sliders, 237-pair HyperCore market universe, dual charting engines, and live 10-level CLOB depth.
+> • Pro Terminal: Multi-parameter sliders, 237-pair HyperCore market universe, dual charting engines, and live 10-level CLOB depth.
 >
 > *(Attach Graphic: `launch-square-1080x1080.png`)*
 
@@ -257,19 +257,19 @@ Join the Sentinel network and explore the terminal today:
 ### Tweet 8 ($AEGIS Tokenomics & Community Points Engine)
 > 7/ Powered by $AEGIS (700M hard cap) with an unprecedented 70% community allocation:
 >
-> 🎁 25% User Points Rewards: 10% for Phase 1 Testnet testers + 15% for Phase 2 Mainnet hedgers (100% unlocked at TGE!)
-> 🚀 10% Ascend Launchpad Fair Launch (100% unlocked Day-1 liquidity)
-> 💎 20% to native @Kinetiq kHYPE stakers + 15% to @Ascend LP providers
-> ⏳ 10% team allocation with a strict 24-month hard cliff (zero team tokens for 2 full years!)
+> • 25% User Points Rewards: 10% for Phase 1 Testnet testers + 15% for Phase 2 Mainnet hedgers (100% unlocked at TGE!)
+> • 10% Ascend Launchpad Fair Launch (100% unlocked Day-1 liquidity)
+> • 20% to native @Kinetiq kHYPE stakers + 15% to @Ascend LP providers
+> • 10% team allocation with a strict 24-month hard cliff (zero team tokens for 2 full years!)
 
 ---
 
 ### Tweet 9 (Live Private Beta & Master Demo Videos)
 > 8/ Experience AEGIS live right now:
 >
-> 🚀 Open Public Testnet live on Elysium L2 (Chain ID 99801) with interactive -18% flash crash simulation!
-> 🌐 100% open public access — connect any EVM wallet, no codes or waitlist needed
-> 🎬 Two master demo videos (120s Pitch Demo + 3-min Technical Walkthrough) with embedded brand captions and live voiceover
+> • Open Public Testnet live on Elysium L2 (Chain ID 99801) with interactive -18% flash crash simulation!
+> • 100% open public access — connect any EVM wallet, no codes or waitlist needed
+> • Two master demo videos (120s Pitch Demo + 3-min Technical Walkthrough) with embedded brand captions and live voiceover
 >
 > Check it out at aegishedge.xyz
 
@@ -290,4 +290,4 @@ Join the Sentinel network and explore the terminal today:
 > GitHub: https://github.com/youngcrypton/Aegis
 > Discord: Join our community!
 >
-> Follow @aegis_hedge & turn on 🔔!
+> Follow @aegis_hedge for updates.

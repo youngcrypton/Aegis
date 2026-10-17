@@ -52,7 +52,7 @@
 ### Tweet 1 (The Hook & Announcement)
 > Forced liquidations remain the most destructive failure mode in DeFi. A 90-second price wick shouldn't wipe out your collateral and cost you 10% in penalties.
 > 
-> Today, we're introducing **AEGIS Protocol**: an autonomous, non-custodial risk management & automated delta-hedging layer for the Elysium ecosystem. 🛡️🧵👇
+> Today, we're introducing **AEGIS Protocol**: an autonomous, non-custodial risk management & automated delta-hedging layer for the Elysium ecosystem.
 
 ### Tweet 2 (The Core Problem)
 > In traditional lending, risk management is completely reactive: protocols wait until your Health Factor breaches 1.00, seize your collateral at a discount, and dump it into AMMs.
@@ -72,17 +72,17 @@
 ### Tweet 5 (Strict Non-Custody & Invariants)
 > We never take custody of your assets. Under protocol Invariant INV-1, delegated session keys are cryptographically constrained strictly to trade order routing:
 > 
-> ❌ Cannot withdraw collateral  
-> ❌ Cannot transfer tokens  
-> ✅ Single-transaction manualOverride() killswitch anytime (INV-3)
+> • Cannot withdraw collateral  
+> • Cannot transfer tokens  
+> • Single-transaction manualOverride() killswitch anytime (INV-3)
 
 ### Tweet 6 (The Elysium & HyperCore Synergy)
 > High-frequency risk defense requires low latency and deep liquidity:
 > 
-> ⚡ Sub-second finality on Elysium L2  
-> ⛽ Deterministic micro-gas fees  
-> 📊 Deep central limit orderbook liquidity on HyperCore  
-> 🔄 Modular dual-mode architecture ready for stock ArbOS & native precompiles
+> • Sub-second finality on Elysium L2  
+> • Deterministic micro-gas fees  
+> • Deep central limit orderbook liquidity on HyperCore  
+> • Modular dual-mode architecture ready for stock ArbOS & native precompiles
 
 ### Tweet 7 (Where We Stand Today)
 > We believe in building in public with radical technical transparency:
@@ -95,9 +95,9 @@
 ### Tweet 8 (Read the Full Article & Test the Terminal)
 > Dive into our comprehensive official introduction article covering full architecture, mathematical fee models, Sentinel bonding, and our mainnet roadmap:
 > 
-> 📖 Read the Article: https://aegishedge.xyz/docs/  
-> 🧪 Launch Testnet Terminal: https://aegishedge.xyz/app/  
-> 💻 Inspect the Code: https://github.com/youngcrypton/Aegis
+> • Read the Article: https://aegishedge.xyz/docs/  
+> • Launch Testnet Terminal: https://aegishedge.xyz/app/  
+> • Inspect the Code: https://github.com/youngcrypton/Aegis
 
 ---
 

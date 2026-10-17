@@ -267,7 +267,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 >
 > Over $2.4B was lost to DeFi liquidations since 2024. Most happened during 90-second flash crashes where the market bounced right back.
 >
-> Today, we unveil why Elysium is our permanent home to eliminate forced liquidations forever 🧵👇
+> Today, we unveil why Elysium is our permanent home to eliminate forced liquidations forever:
 >
 > _(Attach Graphic: `aegis-article-banner-5x2-dark.png`)_
 
@@ -287,7 +287,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 2/ Elysium L2 solves the trilemma:
 >
-> ⚡ Deterministic 100–200ms block intervals (10x faster state updates) ⚡ Native direct consensus bridge to @HyperliquidX’s L1 orderbook ⚡ Micro-fees with zero priority gas auction spikes
+> • Deterministic 100–200ms block intervals (10x faster state updates) • Native direct consensus bridge to @HyperliquidX’s L1 orderbook • Micro-fees with zero priority gas auction spikes
 >
 > It’s the only EVM execution environment capable of institutional-grade sub-second risk surveillance.
 
@@ -297,7 +297,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 3/ The core breakthroughs powering AEGIS on Elysium:
 >
-> 🔍 Precompile 0x0801: Sub-78ms synchronous oracle reads directly from HyperCore consensus memory (zero gas, zero mempool delay) 🎯 Predeploy 0x0802: Sub-100ms atomic order dispatch straight into the L1 Central Limit Orderbook
+> • Precompile 0x0801: Sub-78ms synchronous oracle reads directly from HyperCore consensus memory (zero gas, zero mempool delay) • Predeploy 0x0802: Sub-100ms atomic order dispatch straight into the L1 Central Limit Orderbook
 
 ***
 
@@ -325,7 +325,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 6/ Deeply aligned with the @Ascend ecosystem:
 >
-> 🔥 50% of performance fees route via IAscendHookPool.sol to market-buy & burn $AEGIS 💰 50% paid as real yield in USDC to bonded Sentinel stakers 🤝 39% token allocation dedicated to Ascend LPs, kHYPE stakers & community ⏳ 24-month hard team cliff (6-year horizon)
+> • 50% of performance fees route via IAscendHookPool.sol to market-buy & burn $AEGIS • 50% paid as real yield in USDC to bonded Sentinel stakers • 39% token allocation dedicated to Ascend LPs, kHYPE stakers & community • 24-month hard team cliff (6-year horizon)
 
 ***
 
@@ -333,7 +333,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 7/ Verified and live today on Elysium L2 Testnet (Chain ID 99801):
 >
-> 📍 Vault: `0x05Aa229Aec102f78CE0E852A812a388F076Aa555` 📍 Registry: `0x1275D096B9DBf2347bD2a131Fb6BDaB0B4882487` 📍 Fee Collector: `0xC6bA8C3233eCF65B761049ef63466945c362EdD2`
+> • Vault: `0x05Aa229Aec102f78CE0E852A812a388F076Aa555` • Registry: `0x1275D096B9DBf2347bD2a131Fb6BDaB0B4882487` • Fee Collector: `0xC6bA8C3233eCF65B761049ef63466945c362EdD2`
 >
 > Inspect contracts on Elysium Explorer: https://elysium.kinetiq.xyz/testnet-explorer
 
@@ -343,7 +343,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 8/ Experience the live terminal right now:
 >
-> 🎮 Interactive Crash Simulator: trigger a simulated -18% crash on screen and watch precompile 0x0802 hedge in sub-78ms with zero real-capital risk. 🎬 Watch our official master demos with live audio and captions!
+> • Interactive Crash Simulator: trigger a simulated -18% crash on screen and watch precompile 0x0802 hedge in sub-78ms with zero real-capital risk. Watch our official master demos with live audio and captions!
 >
 > Terminal: https://aegishedge.xyz/app/
 
@@ -355,4 +355,4 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 >
 > Read the full technical thesis: https://aegishedge.xyz/docs/ Open-Source Code: https://github.com/youngcrypton/Aegis Join our Discord community for beta codes!
 >
-> Never get liquidated again. 🛡️⚡
+> Never get liquidated again.

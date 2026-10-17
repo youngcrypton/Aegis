@@ -960,39 +960,55 @@
     loadSettings();
   }
 
-  function initWalletSelectModal() {
-    const modal = document.getElementById('walletModal');
-    const backdrop = document.getElementById('walletModalBackdrop');
-    const closeBtn = document.getElementById('walletModalCloseBtn');
-    const btnConnectInjected = document.getElementById('btnConnectInjected');
-
-    function closeModal() {
-      if (modal) {
-        modal.classList.remove('active');
-        setTimeout(() => { modal.hidden = true; }, 200);
-      }
-      if (backdrop) backdrop.classList.remove('active');
+  function closeWalletSelectModal() {
+    const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
+    const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.hidden = true;
     }
-
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (backdrop) backdrop.addEventListener('click', closeModal);
-
-    if (btnConnectInjected) {
-      btnConnectInjected.addEventListener('click', async () => {
-        closeModal();
-        await connectWallet();
-      });
+    if (backdrop) {
+      backdrop.classList.remove('active');
+      backdrop.hidden = true;
     }
   }
 
   function openWalletSelectModal() {
-    const modal = document.getElementById('walletModal');
-    const backdrop = document.getElementById('walletModalBackdrop');
+    const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
+    const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
     if (modal) {
       modal.hidden = false;
       modal.classList.add('active');
     }
-    if (backdrop) backdrop.classList.add('active');
+    if (backdrop) {
+      backdrop.hidden = false;
+      backdrop.classList.add('active');
+    }
+  }
+
+  function initWalletSelectModal() {
+    const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
+    const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
+    const closeBtn = document.getElementById('walletSelectCloseBtn') || document.getElementById('walletModalCloseBtn');
+    const btnConnectWc = document.getElementById('btnConnectWalletConnect');
+    const btnConnectInjected = document.getElementById('btnConnectInjected');
+
+    if (closeBtn) closeBtn.addEventListener('click', closeWalletSelectModal);
+    if (backdrop) backdrop.addEventListener('click', closeWalletSelectModal);
+
+    if (btnConnectWc) {
+      btnConnectWc.addEventListener('click', async () => {
+        closeWalletSelectModal();
+        await connectWalletConnect();
+      });
+    }
+
+    if (btnConnectInjected) {
+      btnConnectInjected.addEventListener('click', async () => {
+        closeWalletSelectModal();
+        await connectInjectedWallet();
+      });
+    }
   }
 
   function initTradingTerminalSuite() {
@@ -1340,9 +1356,16 @@
     }
   }
 
-  // --- MULTI-PROVIDER WEB3 WALLET RESOLUTION (Bitget, Opus, OKX, MetaMask, Trust) ---
+  // --- MULTI-PROVIDER WEB3 WALLET RESOLUTION (WalletConnect, Bitget, Opus, OKX, MetaMask, Trust) ---
+  let activeWcProvider = null;
+
   function getWeb3Provider() {
     if (typeof window === 'undefined') return null;
+
+    // 0. Active Official WalletConnect SDK Provider
+    if (runtimeState.activeProviderType === 'walletconnect' && activeWcProvider) {
+      return activeWcProvider;
+    }
 
     // 1. Bitget / BitKeep mobile in-app browser
     if (window.bitkeep && window.bitkeep.ethereum) return window.bitkeep.ethereum;
@@ -1755,30 +1778,100 @@
     updateUI();
   }
 
-  async function connectWallet() {
+  async function connectWalletConnect() {
+    try {
+      showToast('Initializing official WalletConnect...');
+      const wcModule = window['@walletconnect/ethereum-provider'];
+      if (!wcModule || !wcModule.EthereumProvider) {
+        showToast('WalletConnect SDK loading... please retry in a moment.');
+        return;
+      }
+
+      if (!activeWcProvider) {
+        activeWcProvider = await wcModule.EthereumProvider.init({
+          projectId: 'c4f79cc821944d9680842e34466bfbd',
+          chains: [99801],
+          optionalChains: [99801, 1],
+          showQrModal: true,
+          metadata: {
+            name: 'AEGIS Protocol',
+            description: 'High-Frequency Risk Sentinel & Pro-Trader Terminal',
+            url: 'https://aegishedge.xyz',
+            icons: ['https://aegishedge.xyz/favicon.svg']
+          }
+        });
+
+        activeWcProvider.on('accountsChanged', (accounts) => {
+          if (accounts && accounts.length > 0) {
+            runtimeState.walletAddress = accounts[0];
+            updateWalletUI(runtimeState.walletAddress);
+            fetchOnChainBalances(runtimeState.walletAddress);
+            syncOnChainVaultPosition(runtimeState.walletAddress);
+          } else {
+            disconnectWallet();
+          }
+        });
+
+        activeWcProvider.on('chainChanged', (chainId) => {
+          logAudit('NETWORK', `Wallet chain updated to ${chainId}`, 'hedge');
+        });
+
+        activeWcProvider.on('disconnect', () => {
+          disconnectWallet();
+        });
+      }
+
+      await activeWcProvider.enable();
+      const accounts = activeWcProvider.accounts;
+      if (!accounts || accounts.length === 0) {
+        showToast('No account selected in WalletConnect.');
+        return;
+      }
+
+      runtimeState.walletAddress = accounts[0];
+      runtimeState.walletConnected = true;
+      runtimeState.activeProviderType = 'walletconnect';
+
+      updateWalletUI(runtimeState.walletAddress);
+      logAudit('WALLET', `Official WalletConnect session active: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
+      showToast(`Connected via WalletConnect: ${formatAddress(runtimeState.walletAddress)}`);
+
+      await fetchOnChainBalances(runtimeState.walletAddress);
+      await syncOnChainVaultPosition(runtimeState.walletAddress);
+    } catch (err) {
+      console.warn('WalletConnect connection flow notice:', err);
+      const msg = err && err.message ? err.message : '';
+      if (!msg.toLowerCase().includes('user rejected') && !msg.toLowerCase().includes('user closed')) {
+        showToast(msg || 'WalletConnect session could not be established.');
+      } else {
+        showToast('WalletConnect connection cancelled.');
+      }
+    }
+  }
+
+  async function connectInjectedWallet() {
     const provider = await resolveProvider(600);
     if (!provider) {
-      showToast('No Web3 wallet detected. Mobile users: ensure you open in Bitget, Opus, or MetaMask dApp browser.');
+      showToast('No browser extension found. Try connecting with WalletConnect.');
       return;
     }
 
     try {
-      showToast('Connecting wallet...');
+      showToast('Connecting wallet extension...');
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
         return;
       }
 
-      // Read-only session established (Hyperliquid model: clean connection without unsolicited chain additions)
       runtimeState.walletAddress = accounts[0];
       runtimeState.walletConnected = true;
+      runtimeState.activeProviderType = 'injected';
 
       updateWalletUI(runtimeState.walletAddress);
       logAudit('WALLET', `EIP-1193 wallet connected: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
       showToast(`Connected: ${formatAddress(runtimeState.walletAddress)}`);
 
-      // Non-intrusive chain check (does not throw popups or trigger malicious heuristics)
       try {
         const currentChainId = await provider.request({ method: 'eth_chainId' });
         if (currentChainId !== ELYSIUM_CONFIG.chainId) {
@@ -1788,20 +1881,35 @@
         console.warn('Silent chain check notice:', chainErr);
       }
 
-      // Read verified on-chain balances, position, and check deferred fee debt for connected address
       await fetchOnChainBalances(runtimeState.walletAddress);
       await syncOnChainVaultPosition(runtimeState.walletAddress);
-
     } catch (err) {
       console.error('Wallet connection rejected:', err);
       showToast('Wallet connection was cancelled or rejected.');
     }
   }
 
-  function disconnectWallet() {
+  async function connectWallet() {
+    if (runtimeState.walletConnected) {
+      openWalletAccountModal();
+    } else {
+      openWalletSelectModal();
+    }
+  }
+
+  async function disconnectWallet() {
+    if (runtimeState.activeProviderType === 'walletconnect' && activeWcProvider) {
+      try {
+        await activeWcProvider.disconnect();
+      } catch (e) {
+        console.warn('Silent WC disconnect notice:', e);
+      }
+    }
+
     runtimeState.walletConnected = false;
     runtimeState.walletAddress = null;
     runtimeState.sessionSignature = null;
+    runtimeState.activeProviderType = null;
 
     if (el.walletAddrText) {
       el.walletAddrText.textContent = 'Connect Wallet';
@@ -1814,7 +1922,7 @@
 
     closeWalletAccountModal();
     showToast('Wallet disconnected. Tap "Connect Wallet" to reconnect anytime.');
-    logAudit('WALLET', 'EIP-1193 session disconnected by user.', 'hedge');
+    logAudit('WALLET', 'Session disconnected by user.', 'hedge');
     syncOnChainVaultPosition(ELYSIUM_CONFIG.defaultAccount);
     fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
     updateUI();

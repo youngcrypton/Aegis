@@ -2154,9 +2154,19 @@ body.mode-lite .lite-telemetry-card {
 }
 
 .drawer-card-item .d-icon {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
-  line-height: 1;
+  color: var(--ink-2);
+  transition: color 150ms ease;
+}
+
+.drawer-card-item:hover .d-icon,
+.drawer-card-item.active .d-icon {
+  color: var(--accent);
 }
 
 .drawer-card-item .d-title {
@@ -3337,6 +3347,97 @@ body.mode-lite .lite-telemetry-card {
 
 @media (max-width: 1180px) {
   .hide-laptop { display: none !important; }
+}
+
+/* Wallet Selection Modal Options (Official WalletConnect & Injected) */
+.wallet-select-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0 12px 0;
+}
+
+.wallet-option-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  color: var(--ink);
+  font-family: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: all 150ms ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wallet-option-card:hover {
+  background: var(--raised);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.wallet-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  color: var(--ink);
+}
+
+.wallet-option-icon.wc-icon {
+  background: rgba(59, 153, 252, 0.1);
+  border-color: rgba(59, 153, 252, 0.25);
+}
+
+.wallet-option-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.wallet-option-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wallet-option-desc {
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.wallet-option-arrow {
+  color: var(--ink-2);
+  font-size: 14px;
+  transition: transform 150ms ease, color 150ms ease;
+}
+
+.wallet-option-card:hover .wallet-option-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.wallet-select-footer {
+  font-size: 11px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
 }
 
 

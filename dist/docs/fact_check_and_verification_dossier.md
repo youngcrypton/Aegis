@@ -183,35 +183,35 @@ Copy and paste these formatted citations into your articles, Medium/Mirror posts
 Use this pre-formatted 6-tweet thread to demonstrate technical transparency to ecosystem participants:
 
 ```text
-1/6 🛡️ Technical transparency is non-negotiable at @aegis_hedge.
+1/6 Technical transparency is non-negotiable at @aegis_hedge.
 
 Before releasing our official introduction article, our engineering team conducted an exhaustive claim-by-claim verification of every smart contract, invariant, and testnet parameter.
 
-Here is the empirical evidence 🧵👇
+Here is the empirical evidence:
 
-2/6 ⛓️ Live Elysium Testnet Deployment
+2/6 Live Elysium Testnet Deployment
 AEGIS is configured and live on Elysium Orbit L2 (Chain ID 99801).
 • Canonical USDC: 0x7D29d8047B905000459c0E80c34a26CeedcB47b2
 • Canonical WHYPE: 0xCD57F65c2B0e5881CFC2E609F7CD53b746E1F234
 Verify directly on explorer: https://elysium.kinetiq.xyz/testnet-explorer
 
-3/6 🔒 Non-Custodial Invariants (INV-1 to INV-5)
+3/6 Non-Custodial Invariants (INV-1 to INV-5)
 Borrowers never relinquish collateral custody. Delegated session keys are trade-only with zero token transfer permissions.
 Verified over 160,000+ fuzz runs across 14 Foundry suites: 115/115 passing tests.
 
-4/6 ⚙️ Radical Honesty on Precompiles (0x0801 / 0x0802)
+4/6 Radical Honesty on Precompiles (0x0801 / 0x0802)
 Stock ArbOS testnet does not yet expose 0x0801/0x0802 natively.
 Instead of blocking launch, AEGIS built the Modular Dual-Mode Stack: RelayedOracleAdapter + AgentDispatchAdapter bridge live today, hot-swapping to native precompiles post-hardfork with ZERO vault migration.
 
-5/6 💧 100% Free Public Testnet Faucet Onboarding
+5/6 100% Free Public Testnet Faucet Onboarding
 External users can test AEGIS risk defense today:
 1. Claim 0.10 testnet HYPE: https://elysium.kinetiq.xyz/testnet-faucet
 2. Launch terminal: https://aegishedge.xyz/app/
 3. Select 0.02 / 0.05 / 0.08 HYPE chips
 4. Trigger -18% flash crash & watch sub-second hedge
 
-6/6 📖 Read the full Fact-Check & Technical Verification Dossier on our GitHub:
+6/6 Read the full Fact-Check & Technical Verification Dossier on our GitHub:
 https://github.com/youngcrypton/Aegis/blob/main/docs/FACT_CHECK_AND_VERIFICATION_DOSSIER.md
 
-Building real, verifiable DeFi risk infrastructure on @Elysium_L2. 🛡️⚡
+Building real, verifiable DeFi risk infrastructure on @Elysium_L2.
 ```

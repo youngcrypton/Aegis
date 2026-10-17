@@ -6,12 +6,12 @@ Throughout the active testnet phase and V1 Mainnet Genesis, **AEGIS is laser-foc
 {% endhint %}
 
 ## Phase 1: Testnet Alpha (Active Today) — Pure Autonomous Hedging
-* ✅ **Core Non-Custodial Vault:** Deploy lean `AegisVault.sol` on Elysium Orbit L2 Testnet (Chain ID `99801`).
-* ✅ **HyperCore Sub-Second Execution:** Real-time L1 CLOB order routing with sub-150ms execution latency.
-* ✅ **Live Mainnet Price Telemetry:** Real-time mark price resolution against live Hyperliquid orderbook data.
-* ✅ **Ascend-to-HyperCore Token Hedging:** Automated delta defense for WHYPE, WETH, and tokens that have ascended from Ascend Launchpad to HyperCore perpetual orderbooks.
-* ✅ **Non-Custodial Invariants (INV-1 to INV-5):** Trade-only session keys with zero collateral withdrawal capability verified across 160,000+ fuzz runs.
-* ✅ **Dynamic Bottom-Wick Tracking:** Continuous trough ratcheting with automated trailing take-profit unwinds.
+* [PASS] **Core Non-Custodial Vault:** Deploy lean `AegisVault.sol` on Elysium Orbit L2 Testnet (Chain ID `99801`).
+* [PASS] **HyperCore Sub-Second Execution:** Real-time L1 CLOB order routing with sub-150ms execution latency.
+* [PASS] **Live Mainnet Price Telemetry:** Real-time mark price resolution against live Hyperliquid orderbook data.
+* [PASS] **Ascend-to-HyperCore Token Hedging:** Automated delta defense for WHYPE, WETH, and tokens that have ascended from Ascend Launchpad to HyperCore perpetual orderbooks.
+* [PASS] **Non-Custodial Invariants (INV-1 to INV-5):** Trade-only session keys with zero collateral withdrawal capability verified across 160,000+ fuzz runs.
+* [PASS] **Dynamic Bottom-Wick Tracking:** Continuous trough ratcheting with automated trailing take-profit unwinds.
 
 ## Phase 2: Mainnet Genesis — Production Hedging Engine
 * ⏳ **Targeted Security Audit:** Focused, cost-efficient audit strictly covering the core non-custodial vault and session key delegation.

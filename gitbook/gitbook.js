@@ -17,7 +17,7 @@
       next: { id: 'liquidation-crisis', title: 'The Systemic Liquidation Crisis' },
       content: `
         <div class="gb-callout gb-callout-info">
-          <div class="gb-callout-icon">ℹ️</div>
+          <div class="gb-callout-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
           <div class="gb-callout-body">
             <div class="gb-callout-title">Production Verification Scorecard: 157 / 157 Passing</div>
             AEGIS smart contracts, formal invariants, Sentinel keeper daemon, and live RPC truthfulness suites are 100% verified on the <code>main</code> branch.
@@ -73,7 +73,7 @@
       next: { id: 'hold-the-line', title: 'The "Hold the Line" Thesis' },
       content: `
         <div class="gb-callout gb-callout-danger">
-          <div class="gb-callout-icon">⚠️</div>
+          <div class="gb-callout-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <div class="gb-callout-body">
             <div class="gb-callout-title">The Flaw of Collateral Auctions</div>
             Traditional DeFi liquidations do not protect users—they protect third-party liquidators at the direct expense of borrower equity.
@@ -107,7 +107,7 @@
       next: { id: 'system-overview', title: 'Three-Tier Protocol Stack' },
       content: `
         <div class="gb-callout gb-callout-success">
-          <div class="gb-callout-icon">🛡️</div>
+          <div class="gb-callout-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <div class="gb-callout-body">
             <div class="gb-callout-title">Core Protocol Axiom: "Hold the Line"</div>
             Never seize or dump collateral during temporary flash crashes. Neutralize directional downside delta synthetically, and preserve the asset until macro recovery.
@@ -190,7 +190,7 @@
       next: { id: 'health-factor', title: 'Health Factor & Position Valuation' },
       content: `
         <div class="gb-callout gb-callout-warning">
-          <div class="gb-callout-icon">⚡</div>
+          <div class="gb-callout-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
           <div class="gb-callout-body">
             <div class="gb-callout-title">Stock ArbOS vs. Validator Hardfork</div>
             Elysium Testnet currently executes stock Arbitrum Nitro ArbOS. Precompiles 0x0801 and 0x0802 are pending the upcoming L2 hardfork. AEGIS operates seamlessly today using the Modular Dual-Mode Stack.
@@ -322,7 +322,7 @@
       next: { id: 'bonding-slashing', title: 'Node Staking & Slashing Guardrails' },
       content: `
         <div class="gb-callout gb-callout-important">
-          <div class="gb-callout-icon">🛡️</div>
+          <div class="gb-callout-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <div class="gb-callout-body">
             <div class="gb-callout-title">Non-Blocking Unwind Invariant</div>
             If liquid USDC fee collection fails during a high-stress unwind, <code>AegisVault.sol</code> records the fee into <code>feeDebts[user]</code> instead of reverting. The unwind succeeds unconditionally.
@@ -638,35 +638,35 @@ node test/test_frontend_truthfulness.js</code></pre>
 
         <h2>Phase 1: Testnet Alpha (Active Today) — Pure Autonomous Hedging</h2>
         <ul>
-          <li>✅ <strong>Core Non-Custodial Vault:</strong> Deployed lean <code>AegisVault.sol</code> on Elysium Orbit L2 Testnet (Chain ID <code>99801</code>).</li>
-          <li>✅ <strong>HyperCore Sub-Second Execution:</strong> Real-time L1 CLOB order routing with sub-150ms execution latency.</li>
-          <li>✅ <strong>Live Mainnet Price Telemetry:</strong> Real-time mark price resolution against live Hyperliquid orderbook data.</li>
-          <li>✅ <strong>Ascend-to-HyperCore Token Hedging:</strong> Automated delta defense for WHYPE, WETH, and tokens that have ascended from Ascend Launchpad to HyperCore perpetual orderbooks.</li>
-          <li>✅ <strong>Non-Custodial Invariants (INV-1 to INV-5):</strong> Trade-only session keys with zero collateral withdrawal capability verified across 160,000+ fuzz runs.</li>
-          <li>✅ <strong>Dynamic Bottom-Wick Tracking:</strong> Continuous trough ratcheting with automated trailing take-profit unwinds.</li>
+          <li><strong>Core Non-Custodial Vault:</strong> Deployed lean <code>AegisVault.sol</code> on Elysium Orbit L2 Testnet (Chain ID <code>99801</code>).</li>
+          <li><strong>HyperCore Sub-Second Execution:</strong> Real-time L1 CLOB order routing with sub-150ms execution latency.</li>
+          <li><strong>Live Mainnet Price Telemetry:</strong> Real-time mark price resolution against live Hyperliquid orderbook data.</li>
+          <li><strong>Ascend-to-HyperCore Token Hedging:</strong> Automated delta defense for WHYPE, WETH, and tokens that have ascended from Ascend Launchpad to HyperCore perpetual orderbooks.</li>
+          <li><strong>Non-Custodial Invariants (INV-1 to INV-5):</strong> Trade-only session keys with zero collateral withdrawal capability verified across 160,000+ fuzz runs.</li>
+          <li><strong>Dynamic Bottom-Wick Tracking:</strong> Continuous trough ratcheting with automated trailing take-profit unwinds.</li>
         </ul>
 
         <h2>Phase 2: Mainnet Genesis — Production Hedging Engine</h2>
         <ul>
-          <li>⏳ <strong>Targeted Security Audit:</strong> Focused, cost-efficient audit strictly covering the core non-custodial vault and session key delegation.</li>
-          <li>⏳ <strong>Ecosystem Grant Alignment:</strong> Collaboration with Elysium / Kinetiq ecosystem grant programs for security sponsorship.</li>
-          <li>⏳ <strong>Mainnet Launch on Elysium L2:</strong> Live autonomous liquidation protection for native WHYPE, WETH, WBTC, and top ascended ecosystem tokens.</li>
-          <li>⏳ <strong>Borrower Protection Integrations:</strong> Seamless risk defense for Elysium money market borrowers and leverage traders.</li>
+          <li><strong>Targeted Security Audit:</strong> Focused, cost-efficient audit strictly covering the core non-custodial vault and session key delegation.</li>
+          <li><strong>Ecosystem Grant Alignment:</strong> Collaboration with Elysium / Kinetiq ecosystem grant programs for security sponsorship.</li>
+          <li><strong>Mainnet Launch on Elysium L2:</strong> Live autonomous liquidation protection for native WHYPE, WETH, WBTC, and top ascended ecosystem tokens.</li>
+          <li><strong>Borrower Protection Integrations:</strong> Seamless risk defense for Elysium money market borrowers and leverage traders.</li>
         </ul>
 
         <h2>Phase 3: Future Roadmap — Yield & Staking Flywheel</h2>
         <ul>
-          <li>⏳ <strong>$AEGIS Token Deployment:</strong> Hard-capped supply of 700,000,000 $AEGIS with anti-dilutive economics and 35.0% Day-1 community float.</li>
-          <li>⏳ <strong>Decentralized Sentinel Bonding:</strong> Bonded node operator network with 25,000 $AEGIS stake requirements.</li>
-          <li>⏳ <strong>Ascend Closed Hook Pool Buyback & Burn:</strong> Programmatic routing of performance fees into Ascend AMM pools to burn $AEGIS.</li>
-          <li>⏳ <strong>Real-Yield Staking Distribution:</strong> Canonical USDC yield distribution to bonded node operators.</li>
+          <li><strong>$AEGIS Token Deployment:</strong> Hard-capped supply of 700,000,000 $AEGIS with anti-dilutive economics and 35.0% Day-1 community float.</li>
+          <li><strong>Decentralized Sentinel Bonding:</strong> Bonded node operator network with 25,000 $AEGIS stake requirements.</li>
+          <li><strong>Ascend Closed Hook Pool Buyback & Burn:</strong> Programmatic routing of performance fees into Ascend AMM pools to burn $AEGIS.</li>
+          <li><strong>Real-Yield Staking Distribution:</strong> Canonical USDC yield distribution to bonded node operators.</li>
         </ul>
 
         <h2>Phase 4: Future Roadmap — Precompiles & Multi-Asset SDKs</h2>
         <ul>
-          <li>⏳ <strong>Native ArbOS Precompile Activation:</strong> Validator activation of custom precompiles <code>0x0801</code> and <code>0x0802</code> for sub-70ms zero-gas EVM reads.</li>
-          <li>⏳ <strong>Cross-Margin Portfolio Delta Hedging:</strong> Unified account risk netting across multiple collateral positions.</li>
-          <li>⏳ <strong>Lending Protocol Risk SDK:</strong> Direct plug-and-play risk module for new money markets launching on Elysium.</li>
+          <li><strong>Native ArbOS Precompile Activation:</strong> Validator activation of custom precompiles <code>0x0801</code> and <code>0x0802</code> for sub-70ms zero-gas EVM reads.</li>
+          <li><strong>Cross-Margin Portfolio Delta Hedging:</strong> Unified account risk netting across multiple collateral positions.</li>
+          <li><strong>Lending Protocol Risk SDK:</strong> Direct plug-and-play risk module for new money markets launching on Elysium.</li>
         </ul>
       `
     }
