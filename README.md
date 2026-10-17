@@ -162,12 +162,12 @@ AEGIS is bound to the official canonical Elysium testnet tokens and modular adap
 
 ```
 [1. Claim Faucet HYPE] ──► [2. Connect Terminal] ──► [3. Pick Micro-Chip] ──► [4. Delegate Key] ──► [5. Simulate Crash]
-https://elysium.kinetiq.    https://aegis.terminal    0.02 / 0.05 / 0.08 HYPE    INV-1 Trade-Only       Observe Sub-Second
-xyz/testnet-faucet          l.workers.dev/            Faucet Allocation Cap      Session Key            Hedge & Recovery
+https://elysium.kinetiq.    https://aegishedge.xyz    0.02 / 0.05 / 0.08 HYPE    INV-1 Trade-Only       Observe Sub-Second
+xyz/testnet-faucet          /app/                     Faucet Allocation Cap      Session Key            Hedge & Recovery
 ```
 
 1. **Claim Testnet Gas:** Visit the official [Elysium Testnet Faucet](https://elysium.kinetiq.xyz/testnet-faucet), connect your wallet, and request testnet HYPE. The faucet allocates `0.10 HYPE` per drip.
-2. **Launch the Web Terminal:** Open the [AEGIS Live Terminal](https://aegis.terminall.workers.dev/) and connect your wallet on Chain ID `99801`.
+2. **Launch the Web Terminal:** Open the [AEGIS Live Terminal](https://aegishedge.xyz/app/) and connect your wallet on Chain ID `99801`.
 3. **Select 1-Click Lite Auto-Pilot:** In the Lite Auto-Pilot tab, select one of the dedicated micro-deposit chips (`0.02 HYPE`, `0.05 HYPE`, or `0.08 HYPE`), specifically calibrated to fit comfortably within the faucet allocation limit.
 4. **Choose a Defense Preset:** Select your risk tolerance:
    - **Conservative:** Triggers hedge at Health Factor $H \le 1.25$ (100% delta coverage).

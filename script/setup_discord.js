@@ -370,7 +370,7 @@ async function run() {
               },
               {
                 name: '4️⃣ Step 4: Essential Links & Testnet Terminal',
-                value: '• **Web Terminal:** [aegis.terminall.workers.dev/access](https://aegis.terminall.workers.dev/access)\n• **Official Docs:** [aegis.terminall.workers.dev/docs](https://aegis.terminall.workers.dev/docs/)\n• **Elysium Testnet Faucet:** [Claim Testnet HYPE](https://elysium.kinetiq.xyz/testnet-faucet)',
+                value: '• **Web Terminal:** [aegishedge.xyz](https://aegishedge.xyz/)\n• **Official Docs:** [aegishedge.xyz/docs](https://aegishedge.xyz/docs/)\n• **Elysium Testnet Faucet:** [Claim Testnet HYPE](https://elysium.kinetiq.xyz/testnet-faucet)',
                 inline: false
               }
             ],
@@ -386,14 +386,14 @@ async function run() {
                   type: 2,
                   style: 5,
                   label: 'Launch Terminal',
-                  url: 'https://aegis.terminall.workers.dev/access',
+                  url: 'https://aegishedge.xyz/',
                   emoji: { name: '⚡' }
                 },
                 {
                   type: 2,
                   style: 5,
                   label: 'Technical Docs',
-                  url: 'https://aegis.terminall.workers.dev/docs/',
+                  url: 'https://aegishedge.xyz/docs/',
                   emoji: { name: '📜' }
                 },
                 {

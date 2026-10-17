@@ -19,7 +19,7 @@ Use these authoritative external documentation and network links to verify all c
 | **Official Elysium Faucet** | [https://elysium.kinetiq.xyz/testnet-faucet](https://elysium.kinetiq.xyz/testnet-faucet) | Public testnet gas distribution (0.10 HYPE drip cap per request). |
 | **Ascend Launchpad Documentation** | [https://ascendlaunch.gitbook.io/docs](https://ascendlaunch.gitbook.io/docs) | Ecosystem token launchpad, liquidity structures, and hook pool AMM designs. |
 | **Hyperliquid / HyperCore Docs** | [https://hyperliquid.gitbook.io/hyperliquid-docs](https://hyperliquid.gitbook.io/hyperliquid-docs) | L1 consensus, sub-78ms Central Limit Order Book (CLOB), and trade-only API lane. |
-| **AEGIS Live Web Terminal** | [https://aegis.terminall.workers.dev/](https://aegis.terminall.workers.dev/) | Live terminal interface, Lite Auto-Pilot presets, and interactive flash crash simulation. |
+| **AEGIS Live Web Terminal** | [https://aegishedge.xyz/app/](https://aegishedge.xyz/app/) | Live terminal interface, Lite Auto-Pilot presets, and interactive flash crash simulation. |
 | **AEGIS Official GitHub** | [https://github.com/youngcrypton/Aegis](https://github.com/youngcrypton/Aegis) | Open-source smart contracts, invariant test suites, keeper daemon, and brand kit. |
 
 ---
@@ -206,7 +206,7 @@ Instead of blocking launch, AEGIS built the Modular Dual-Mode Stack: RelayedOrac
 5/6 💧 100% Free Public Testnet Faucet Onboarding
 External users can test AEGIS risk defense today:
 1. Claim 0.10 testnet HYPE: https://elysium.kinetiq.xyz/testnet-faucet
-2. Launch terminal: https://aegis.terminall.workers.dev/
+2. Launch terminal: https://aegishedge.xyz/app/
 3. Select 0.02 / 0.05 / 0.08 HYPE chips
 4. Trigger -18% flash crash & watch sub-second hedge
 

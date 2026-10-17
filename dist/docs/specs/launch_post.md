@@ -157,8 +157,8 @@ The launch of the AEGIS architecture marks Day 1. Here is our near-term deployme
 
 Join the Sentinel network and explore the terminal today:
 
-- **Live Web Terminal:** [aegis.terminall.workers.dev](https://aegis.terminall.workers.dev/)
-- **Technical Documentation:** [aegis.terminall.workers.dev/docs/](https://aegis.terminall.workers.dev/docs/)
+- **Live Web Terminal:** [aegishedge.xyz/app](https://aegishedge.xyz/app/)
+- **Technical Documentation:** [aegishedge.xyz/docs](https://aegishedge.xyz/docs/)
 - **GitHub Open Source Repository:** [github.com/youngcrypton/Aegis](https://github.com/youngcrypton/Aegis)
 - **Official X (Twitter):** [@aegis_hedge](https://x.com/aegis_hedge?s=20)
 - **Official Discord Community:** Join our verified server with automated onboarding and helpdesk ticketing.
@@ -271,7 +271,7 @@ Join the Sentinel network and explore the terminal today:
 > 🌐 100% open public access — connect any EVM wallet, no codes or waitlist needed
 > 🎬 Two master demo videos (120s Pitch Demo + 3-min Technical Walkthrough) with embedded brand captions and live voiceover
 >
-> Check it out at aegis.terminall.workers.dev
+> Check it out at aegishedge.xyz
 
 ---
 
@@ -285,8 +285,8 @@ Join the Sentinel network and explore the terminal today:
 >
 > Never get liquidated again.
 >
-> Terminal: https://aegis.terminall.workers.dev/
-> Docs: https://aegis.terminall.workers.dev/docs/
+> Terminal: https://aegishedge.xyz/app/
+> Docs: https://aegishedge.xyz/docs/
 > GitHub: https://github.com/youngcrypton/Aegis
 > Discord: Join our community!
 >

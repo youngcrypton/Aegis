@@ -39,7 +39,7 @@
 - **Primary Keywords:**  
   `AEGIS Protocol, Elysium L2, HyperCore, non-custodial risk management, delta hedging, DeFi liquidation protection, session keys, automated hedging`
 - **Canonical URL:**  
-  `https://aegis.terminall.workers.dev/docs/introducing-aegis`
+  `https://aegishedge.xyz/docs/introducing_aegis`
 - **OG Type:** `article`
 - **Twitter Card:** `summary_large_image`
 
@@ -95,8 +95,8 @@
 ### Tweet 8 (Read the Full Article & Test the Terminal)
 > Dive into our comprehensive official introduction article covering full architecture, mathematical fee models, Sentinel bonding, and our mainnet roadmap:
 > 
-> 📖 Read the Article: https://aegis.terminall.workers.dev/docs/  
-> 🧪 Launch Testnet Terminal: https://aegis.terminall.workers.dev/  
+> 📖 Read the Article: https://aegishedge.xyz/docs/  
+> 🧪 Launch Testnet Terminal: https://aegishedge.xyz/app/  
 > 💻 Inspect the Code: https://github.com/youngcrypton/Aegis
 
 ---
@@ -107,8 +107,8 @@ Use only these verified, live links in public documentation and interfaces:
 
 | Resource | Verified URL | Description |
 |:---|:---|:---|
-| **Live Web Terminal** | [https://aegis.terminall.workers.dev/](https://aegis.terminall.workers.dev/) | Main user interface and risk simulation dashboard |
-| **Technical Documentation** | [https://aegis.terminall.workers.dev/docs/](https://aegis.terminall.workers.dev/docs/) | Comprehensive GitBook / architectural docs |
+| **Live Web Terminal** | [https://aegishedge.xyz/app/](https://aegishedge.xyz/app/) | Main user interface and risk simulation dashboard |
+| **Technical Documentation** | [https://aegishedge.xyz/docs/](https://aegishedge.xyz/docs/) | Comprehensive GitBook / architectural docs |
 | **GitHub Repository** | [https://github.com/youngcrypton/Aegis](https://github.com/youngcrypton/Aegis) | Open-source smart contracts, tests, and keeper daemon |
 | **Elysium Testnet Explorer** | [https://elysium.kinetiq.xyz/testnet-explorer](https://elysium.kinetiq.xyz/testnet-explorer) | Block explorer for Elysium Orbit L2 Testnet |
 | **Elysium Testnet Faucet** | [https://elysium.kinetiq.xyz/testnet-faucet](https://elysium.kinetiq.xyz/testnet-faucet) | Official faucet to claim testnet gas tokens |

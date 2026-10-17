@@ -6,8 +6,8 @@
 
 > **Official Links & Verification Sources:**
 >
-> * **Live Web Terminal:** [https://aegis.terminall.workers.dev/](https://aegis.terminall.workers.dev/)
-> * **Technical Documentation:** [https://aegis.terminall.workers.dev/docs/](https://aegis.terminall.workers.dev/docs/)
+> * **Live Web Terminal:** [https://aegishedge.xyz/app/](https://aegishedge.xyz/app/)
+> * **Technical Documentation:** [https://aegishedge.xyz/docs/](https://aegishedge.xyz/docs/)
 > * **GitHub Repository:** [https://github.com/youngcrypton/Aegis](https://github.com/youngcrypton/Aegis)
 > * **Elysium L2 Testnet Explorer:** [https://elysium.kinetiq.xyz/testnet-explorer](https://elysium.kinetiq.xyz/testnet-explorer)
 > * **Official X:** [@aegis\_hedge](https://x.com/aegis_hedge?s=20)
@@ -217,9 +217,9 @@ Every claim made in this announcement can be independently verified on the Elysi
 | **Mock USDC (Liability)**       | `0x712516e61C8B383dF4A63CFe83d7701Bce54B03e`            | [View on Elysium Explorer](https://elysium.kinetiq.xyz/testnet-explorer/address/0x712516e61C8B383dF4A63CFe83d7701Bce54B03e)                                                                                                                |
 | **Mock HYPE (Collateral)**      | `0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44`            | [View on Elysium Explorer](https://elysium.kinetiq.xyz/testnet-explorer/address/0xcA03Dc4665A8C3603cb4Fd5Ce71Af9649dC00d44)                                                                                                                |
 | **$AEGIS Token (Fixed Supply)** | `0xbCF26943C0197d2eE0E5D05c716Be60cc2761508` (700M Cap) | [View on Elysium Explorer](https://elysium.kinetiq.xyz/testnet-explorer/address/0xbCF26943C0197d2eE0E5D05c716Be60cc2761508)                                                                                                                |
-| **Precompiles Tested**          | `0x0801` (Oracle) / `0x0802` (Writer)                   | [Precompile Architecture Docs](https://aegis.terminall.workers.dev/docs/#precompiles) • [GitHub Oracle Adapter](https://github.com/youngcrypton/Aegis/blob/main/contracts/adapters/HyperCoreOracleAdapter.sol)                             |
+| **Precompiles Tested**          | `0x0801` (Oracle) / `0x0802` (Writer)                   | [Precompile Architecture Docs](https://aegishedge.xyz/docs/#precompiles) • [GitHub Oracle Adapter](https://github.com/youngcrypton/Aegis/blob/main/contracts/adapters/HyperCoreOracleAdapter.sol)                             |
 | **Formal Test Suite**           | 53/53 Tests Passing (160,000+ Fuzz Runs)                | [GitHub Open Source Tests](../test/)                                                                                                                                                                                                       |
-| **Live Pro Terminal**           | Interactive Crash Simulator (-18%)                      | [Launch Terminal](https://aegis.terminall.workers.dev/)                                                                                                                                                                                    |
+| **Live Pro Terminal**           | Interactive Crash Simulator (-18%)                      | [Launch Terminal](https://aegishedge.xyz/app/)                                                                                                                                                                                    |
 
 ***
 
@@ -248,8 +248,8 @@ By uniting sub-second block times, synchronous oracle precompiles, and non-custo
 
 We invite the entire Elysium community, developers, validators, and traders to inspect our contracts, test the simulator, and join us in building the autonomous risk layer of Web3.
 
-* **Launch the Live Terminal:** [https://aegis.terminall.workers.dev/](https://aegis.terminall.workers.dev/)
-* **Explore Technical Docs:** [https://aegis.terminall.workers.dev/docs/](https://aegis.terminall.workers.dev/docs/)
+* **Launch the Live Terminal:** [https://aegishedge.xyz/app/](https://aegishedge.xyz/app/)
+* **Explore Technical Docs:** [https://aegishedge.xyz/docs/](https://aegishedge.xyz/docs/)
 * **Join the Official Discord:** [https://discord.gg/aegis](https://discord.gg/aegis)
 * **Follow Updates on X:** [@aegis\_hedge](https://x.com/aegis_hedge?s=20)
 
@@ -345,7 +345,7 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 >
 > 🎮 Interactive Crash Simulator: trigger a simulated -18% crash on screen and watch precompile 0x0802 hedge in sub-78ms with zero real-capital risk. 🎬 Watch our official master demos with live audio and captions!
 >
-> Terminal: https://aegis.terminall.workers.dev/
+> Terminal: https://aegishedge.xyz/app/
 
 ***
 
@@ -353,6 +353,6 @@ _(Designed for the official_ [_@aegis\_hedge_](https://x.com/aegis_hedge) _proje
 
 > 9/ Welcome to the future of non-custodial risk defense on Elysium.
 >
-> Read the full technical thesis: https://aegis.terminall.workers.dev/docs/ Open-Source Code: https://github.com/youngcrypton/Aegis Join our Discord community for beta codes!
+> Read the full technical thesis: https://aegishedge.xyz/docs/ Open-Source Code: https://github.com/youngcrypton/Aegis Join our Discord community for beta codes!
 >
 > Never get liquidated again. 🛡️⚡

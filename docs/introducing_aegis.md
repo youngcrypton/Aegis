@@ -495,8 +495,8 @@ Prior to mainnet launch, AEGIS will complete multi-node decentralized keeper tri
 
 ## Verified Official Resources & Links
 
-- **Official Web Terminal:** [https://aegis.terminall.workers.dev/](https://aegis.terminall.workers.dev/)
-- **Technical Documentation Portal:** [https://aegis.terminall.workers.dev/docs/](https://aegis.terminall.workers.dev/docs/)
+- **Official Web Terminal:** [https://aegishedge.xyz/app/](https://aegishedge.xyz/app/)
+- **Technical Documentation Portal:** [https://aegishedge.xyz/docs/](https://aegishedge.xyz/docs/)
 - **GitHub Open-Source Repository:** [https://github.com/youngcrypton/Aegis](https://github.com/youngcrypton/Aegis)
 - **Elysium L2 Testnet Explorer:** [https://elysium.kinetiq.xyz/testnet-explorer](https://elysium.kinetiq.xyz/testnet-explorer)
 - **Official Elysium Testnet Faucet:** [https://elysium.kinetiq.xyz/testnet-faucet](https://elysium.kinetiq.xyz/testnet-faucet)
