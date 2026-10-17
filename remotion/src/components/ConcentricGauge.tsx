@@ -1,17 +1,22 @@
 import React from "react";
-import { AEGIS_THEME } from "../theme";
+import { AEGIS_THEME, AEGIS_LIGHT_THEME } from "../theme";
 
 interface ConcentricGaugeProps {
   healthFactor: number;
   size?: number;
   statusLabel?: string;
+  themeMode?: "light" | "dark";
 }
 
 export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
   healthFactor,
   size = 300,
   statusLabel,
+  themeMode = "dark",
 }) => {
+  const isLight = themeMode === "light";
+  const theme = isLight ? AEGIS_LIGHT_THEME : AEGIS_THEME;
+
   // Map Health Factor to needle rotation angle (in degrees):
   // 1.0 -> 180 deg (Far left danger)
   // 1.15 -> 140 deg (Warning trigger line)
@@ -30,14 +35,14 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
   }
 
   // Needle color based on health factor
-  let needleColor = AEGIS_THEME.accent;
-  let statusColor = AEGIS_THEME.accent;
+  let needleColor = theme.accent;
+  let statusColor = theme.accent;
   if (healthFactor <= 1.05) {
-    needleColor = AEGIS_THEME.danger;
-    statusColor = AEGIS_THEME.danger;
+    needleColor = theme.danger;
+    statusColor = theme.danger;
   } else if (healthFactor <= 1.25) {
-    needleColor = AEGIS_THEME.hedge;
-    statusColor = AEGIS_THEME.hedge;
+    needleColor = theme.hedge;
+    statusColor = theme.hedge;
   }
 
   return (
@@ -66,7 +71,7 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
         <path
           d="M 40 145 A 110 110 0 0 1 260 145"
           fill="none"
-          stroke="rgba(255, 255, 255, 0.06)"
+          stroke={isLight ? "rgba(22, 18, 48, 0.08)" : "rgba(255, 255, 255, 0.06)"}
           strokeWidth="16"
           strokeLinecap="round"
         />
@@ -75,7 +80,7 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
         <path
           d="M 40 145 A 110 110 0 0 1 59.9 81.9"
           fill="none"
-          stroke={AEGIS_THEME.danger}
+          stroke={theme.danger}
           strokeWidth="16"
           strokeLinecap="round"
           opacity="0.9"
@@ -85,7 +90,7 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
         <path
           d="M 59.9 81.9 A 110 110 0 0 1 103.5 45.3"
           fill="none"
-          stroke={AEGIS_THEME.hedge}
+          stroke={theme.hedge}
           strokeWidth="16"
           opacity="0.9"
         />
@@ -94,7 +99,7 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
         <path
           d="M 103.5 45.3 A 110 110 0 0 1 260 145"
           fill="none"
-          stroke={AEGIS_THEME.accent}
+          stroke={theme.accent}
           strokeWidth="16"
           strokeLinecap="round"
           opacity="0.9"
@@ -119,8 +124,8 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
         </g>
 
         {/* Center Needle Pivot */}
-        <circle cx="150" cy="145" r="7" fill="#ffffff" />
-        <circle cx="150" cy="145" r="4" fill="#0e1726" />
+        <circle cx="150" cy="145" r="7" fill={isLight ? "#161230" : "#ffffff"} />
+        <circle cx="150" cy="145" r="4" fill={isLight ? "#ffffff" : "#0e1726"} />
 
         {/* Value Readout (Strictly positioned at y=104 with 41px clear air above pivot) */}
         <text
@@ -129,7 +134,7 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
           textAnchor="middle"
           fill={needleColor}
           style={{
-            fontFamily: AEGIS_THEME.textFont,
+            fontFamily: theme.textFont,
             fontSize: "26px",
             fontWeight: "700",
             letterSpacing: "-0.02em",
@@ -144,9 +149,9 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
           x="150"
           y="122"
           textAnchor="middle"
-          fill={AEGIS_THEME.inkMuted}
+          fill={theme.inkMuted}
           style={{
-            fontFamily: AEGIS_THEME.textFont,
+            fontFamily: theme.textFont,
             fontSize: "9px",
             fontWeight: "600",
             letterSpacing: "0.15em",
@@ -164,9 +169,9 @@ export const ConcentricGauge: React.FC<ConcentricGaugeProps> = ({
             padding: "4px 12px",
             borderRadius: 999,
             border: `1px solid ${statusColor}44`,
-            background: `${statusColor}18`,
+            background: isLight ? `${statusColor}12` : `${statusColor}18`,
             color: statusColor,
-            fontFamily: AEGIS_THEME.textFont,
+            fontFamily: theme.textFont,
             fontSize: 12,
             fontWeight: 600,
             letterSpacing: "0.04em",

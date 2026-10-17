@@ -23,6 +23,8 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "render:demo120s": "remotion render AegisHackathonDemo120s out/aegis-hackathon-demo-120s.mp4 --concurrency=1 --disallow-parallel-encoding",
+    "still:demo120s": "remotion still AegisHackathonDemo120s out/demo120s-thumb.png --frame=600",
     "render:showcase": "remotion render AegisCinematicShowcase out/aegis-cinematic-showcase.mp4 --concurrency=1 --disallow-parallel-encoding",
     "still:showcase": "remotion still AegisCinematicShowcase out/showcase-thumb.png --frame=1000",
     "render:demo": "remotion render AegisLiveProductDemo out/aegis-live-product-demo.mp4 --concurrency=1 --disallow-parallel-encoding",
