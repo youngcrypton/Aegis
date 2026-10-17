@@ -1,5 +1,6 @@
 import React from "react";
 import { Composition } from "remotion";
+import { AegisCinematicShowcase } from "./compositions/AegisCinematicShowcase";
 import { AegisLaunchLight } from "./compositions/AegisLaunchLight";
 import { AegisLaunchTeaser } from "./compositions/AegisLaunchTeaser";
 import { AegisSocialSquare } from "./compositions/AegisSocialSquare";
@@ -8,6 +9,14 @@ import { AegisLiveProductDemo } from "./compositions/AegisLiveProductDemo";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="AegisCinematicShowcase"
+        component={AegisCinematicShowcase}
+        durationInFrames={2700}
+        fps={60}
+        width={1920}
+        height={1080}
+      />
       <Composition
         id="AegisLiveProductDemo"
         component={AegisLiveProductDemo}

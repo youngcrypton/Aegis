@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.534",
+    "@remotion/transitions": "^4.0.534",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.534"
@@ -22,6 +23,8 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "render:showcase": "remotion render AegisCinematicShowcase out/aegis-cinematic-showcase.mp4 --concurrency=1 --disallow-parallel-encoding",
+    "still:showcase": "remotion still AegisCinematicShowcase out/showcase-thumb.png --frame=1000",
     "render:demo": "remotion render AegisLiveProductDemo out/aegis-live-product-demo.mp4 --concurrency=1 --disallow-parallel-encoding",
     "render:light": "remotion render AegisLaunchLight out/aegis-launch-video-light.mp4 --concurrency=1 --disallow-parallel-encoding",
     "render:teaser": "remotion render AegisLaunchTeaser out/aegis-teaser.mp4 --concurrency=1 --disallow-parallel-encoding",
