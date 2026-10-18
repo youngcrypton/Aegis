@@ -132,7 +132,7 @@
     posLiqPrice: document.getElementById('posLiqPrice'),
 
     // Lite Mode controls
-    liteAutoPilotCard: document.getElementById('liteAutoPilotCard'),
+    liteAutoPilotCard: document.getElementById('vaultActionCard') || document.getElementById('liteAutoPilotCard'),
     proConfigCard: document.getElementById('proConfigCard'),
     microAmountChips: document.getElementById('microAmountChips'),
     presetsContainer: document.getElementById('presetsContainer'),
@@ -880,11 +880,11 @@
 
     const toggleMap = {
       toggleMetricsTicker: 'metricsTickerSection',
-      toggleHealthGauge: 'healthGaugeSection',
+      toggleHealthGauge: document.getElementById('gaugeCard') ? 'gaugeCard' : 'healthGaugeSection',
       toggleSimBar: 'simBarSection',
       toggleRiskControls: 'proConfigCard',
       toggleEcosystemCard: 'tokenMetricsCard',
-      toggleAuditLog: 'auditCardSection'
+      toggleAuditLog: document.getElementById('telemetryCard') ? 'telemetryCard' : 'auditCardSection'
     };
 
     function loadSettings() {
@@ -892,7 +892,9 @@
         const saved = JSON.parse(localStorage.getItem('aegis-terminal-settings') || '{}');
         Object.keys(toggleMap).forEach(toggleId => {
           const elToggle = document.getElementById(toggleId);
-          const targetSection = document.getElementById(toggleMap[toggleId]);
+          const targetSection = document.getElementById(toggleMap[toggleId]) || 
+            (toggleId === 'toggleHealthGauge' ? document.getElementById('healthGaugeSection') : 
+            (toggleId === 'toggleAuditLog' ? document.getElementById('auditCardSection') : null));
           if (elToggle && targetSection) {
             const isVisible = saved[toggleId] !== undefined ? saved[toggleId] : true;
             elToggle.checked = isVisible;
@@ -908,7 +910,9 @@
       const settings = {};
       Object.keys(toggleMap).forEach(toggleId => {
         const elToggle = document.getElementById(toggleId);
-        const targetSection = document.getElementById(toggleMap[toggleId]);
+        const targetSection = document.getElementById(toggleMap[toggleId]) || 
+          (toggleId === 'toggleHealthGauge' ? document.getElementById('healthGaugeSection') : 
+          (toggleId === 'toggleAuditLog' ? document.getElementById('auditCardSection') : null));
         if (elToggle && targetSection) {
           settings[toggleId] = elToggle.checked;
           targetSection.style.display = elToggle.checked ? '' : 'none';
@@ -1033,11 +1037,328 @@
     }
   }
 
+  // --- INTERACTIVE 4-STEP SPOTLIGHT ONBOARDING TOUR (BRAND KIT COMPLIANT) ---
+  function initSpotlightTour() {
+    const container = document.getElementById('aegisTourContainer');
+    const maskHole = document.getElementById('aegisTourMaskHole');
+    const highlightRing = document.getElementById('aegisTourHighlightRing');
+    const popover = document.getElementById('aegisTourPopover');
+    const stepBadge = document.getElementById('aegisTourStepBadge');
+    const titleEl = document.getElementById('aegisTourTitle');
+    const descEl = document.getElementById('aegisTourDesc');
+    const backBtn = document.getElementById('aegisTourBackBtn');
+    const nextBtn = document.getElementById('aegisTourNextBtn');
+    const nextBtnText = document.getElementById('aegisTourNextBtnText');
+    const skipBtn = document.getElementById('aegisTourSkipBtn');
+    const closeBtn = document.getElementById('aegisTourCloseBtn');
+    const dotsContainer = document.getElementById('aegisTourDots');
+    const replayBtn = document.getElementById('btnTourToggle');
+
+    if (!container || !popover) return;
+
+    const TOUR_STEPS = [
+      {
+        stepNumber: 1,
+        badge: 'STEP 1 OF 4',
+        title: 'Your Solvency Shield',
+        desc: 'This gauge measures your liquidation risk in real time. As long as the needle stays in the green (> 1.50x), your collateral is 100% safe. If market volatility dips toward the amber trigger zone, the Sentinel automatically shields your position.',
+        selector: '#gaugeCard, #healthFactorGaugeContainer, #healthGaugeSection'
+      },
+      {
+        stepNumber: 2,
+        badge: 'STEP 2 OF 4',
+        title: 'Visual Liquidation Floor',
+        desc: 'Track live pricing on Elysium Orbit L2. The amber threshold line displays the exact price where auto-pilot defense arms. Unlike traditional lending protocols, your assets are never fire-sold at bottom ticks.',
+        selector: '#chartCard, #tradingviewChartContainer, #positionOverviewCard, .position-card'
+      },
+      {
+        stepNumber: 3,
+        badge: 'STEP 3 OF 4',
+        title: 'One-Click Autonomous Protection',
+        desc: "Select your collateral ($HYPE, $PURR, $UBET), pick a deposit amount, and click 'Arm Sentinel'. AEGIS is non-custodial—you retain complete ownership of your coins and can withdraw at any time.",
+        selector: '#vaultActionCard, #vaultDepositForm, #liteAutoPilotCard, #proConfigCard'
+      },
+      {
+        stepNumber: 4,
+        badge: 'STEP 4 OF 4',
+        title: 'Autonomous On-Chain Sentinel',
+        desc: 'Watch automated keeper agents monitor order books and execute counterbalancing shorts on HyperCore to neutralize downside risk (Δ = 0). Every transaction is verifiable on Elysium L2.',
+        selector: '#telemetryCard, #auditLogCard, #auditCardSection, #liteTelemetryCard'
+      }
+    ];
+
+    let currentStepIndex = 0;
+    let isTourActive = false;
+    let repositionRaf = null;
+
+    function getTargetElement(step) {
+      const selectors = step.selector.split(',').map(s => s.trim());
+      for (const sel of selectors) {
+        const target = document.querySelector(sel);
+        if (target && target.offsetParent !== null) return target;
+      }
+      for (const sel of selectors) {
+        const target = document.querySelector(sel);
+        if (target) return target;
+      }
+      return null;
+    }
+
+    function updateHoleAndPopover() {
+      if (!isTourActive) return;
+      const step = TOUR_STEPS[currentStepIndex];
+      if (!step) return;
+
+      const target = getTargetElement(step);
+      if (!target) return;
+
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      const holeX = Math.max(0, rect.left - pad);
+      const holeY = Math.max(0, rect.top - pad);
+      const holeW = Math.max(0, rect.width + pad * 2);
+      const holeH = Math.max(0, rect.height + pad * 2);
+
+      if (maskHole) {
+        maskHole.setAttribute('x', holeX);
+        maskHole.setAttribute('y', holeY);
+        maskHole.setAttribute('width', holeW);
+        maskHole.setAttribute('height', holeH);
+      }
+
+      if (highlightRing) {
+        highlightRing.style.left = holeX + 'px';
+        highlightRing.style.top = holeY + 'px';
+        highlightRing.style.width = holeW + 'px';
+        highlightRing.style.height = holeH + 'px';
+        highlightRing.style.opacity = '1';
+      }
+
+      // Smart Popover Positioning
+      const popoverWidth = Math.min(360, window.innerWidth - 32);
+      const popoverHeight = popover.offsetHeight || 220;
+      let left = 16;
+      let top = 16;
+
+      if (window.innerWidth > 920) {
+        // Desktop positioning: Try Right, then Left, then Bottom, then Top
+        if (rect.right + popoverWidth + 24 <= window.innerWidth) {
+          left = rect.right + 16;
+          top = rect.top + (rect.height - popoverHeight) / 2;
+        } else if (rect.left - popoverWidth - 24 >= 0) {
+          left = rect.left - popoverWidth - 16;
+          top = rect.top + (rect.height - popoverHeight) / 2;
+        } else if (rect.bottom + popoverHeight + 20 <= window.innerHeight) {
+          top = rect.bottom + 16;
+          left = rect.left + (rect.width - popoverWidth) / 2;
+        } else {
+          top = rect.top - popoverHeight - 16;
+          left = rect.left + (rect.width - popoverWidth) / 2;
+        }
+      } else {
+        // Mobile / Tablet positioning: prefer below, fallback above
+        left = (window.innerWidth - popoverWidth) / 2;
+        if (rect.bottom + popoverHeight + 16 <= window.innerHeight) {
+          top = rect.bottom + 14;
+        } else if (rect.top - popoverHeight - 14 >= 0) {
+          top = rect.top - popoverHeight - 14;
+        } else {
+          top = Math.max(16, window.innerHeight - popoverHeight - 16);
+        }
+      }
+
+      // Bounds clamping
+      left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, left));
+      top = Math.max(16, Math.min(window.innerHeight - popoverHeight - 16, top));
+
+      popover.style.left = left + 'px';
+      popover.style.top = top + 'px';
+    }
+
+    function scheduleReposition() {
+      if (repositionRaf) cancelAnimationFrame(repositionRaf);
+      repositionRaf = requestAnimationFrame(updateHoleAndPopover);
+    }
+
+    function renderStep(index) {
+      if (index < 0 || index >= TOUR_STEPS.length) return;
+      currentStepIndex = index;
+      const step = TOUR_STEPS[index];
+
+      // Ensure we are in vault view so all 4 targets are visible
+      const tradingView = document.getElementById('tradingTerminalView');
+      if (tradingView && tradingView.style.display !== 'none') {
+        switchAppView('vault');
+      }
+
+      // Update contents
+      if (stepBadge) stepBadge.textContent = step.badge;
+      if (titleEl) titleEl.textContent = step.title;
+      if (descEl) descEl.textContent = step.desc;
+
+      // Update Navigation buttons
+      if (backBtn) {
+        backBtn.style.display = index === 0 ? 'none' : 'inline-flex';
+      }
+      if (nextBtnText) {
+        nextBtnText.textContent = index === TOUR_STEPS.length - 1 ? 'Finish Tour' : 'Next';
+      }
+
+      // Update Progress dots
+      if (dotsContainer) {
+        const dots = dotsContainer.querySelectorAll('.tour-dot');
+        dots.forEach((dot, dIdx) => {
+          if (dIdx === index) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      // Scroll target smoothly into view
+      const target = getTargetElement(step);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // Position immediately, then refine after scroll completes
+      updateHoleAndPopover();
+      setTimeout(updateHoleAndPopover, 120);
+      setTimeout(updateHoleAndPopover, 320);
+    }
+
+    function startTour(fromStep = 0) {
+      isTourActive = true;
+      container.style.display = 'block';
+      container.setAttribute('aria-hidden', 'false');
+      container.classList.add('active');
+      renderStep(fromStep);
+      window.addEventListener('resize', scheduleReposition, { passive: true });
+      window.addEventListener('scroll', scheduleReposition, { passive: true });
+    }
+
+    function endTour(markCompleted = true) {
+      isTourActive = false;
+      container.classList.remove('active');
+      if (maskHole) {
+        maskHole.setAttribute('width', '0');
+        maskHole.setAttribute('height', '0');
+      }
+      if (highlightRing) {
+        highlightRing.style.opacity = '0';
+      }
+      setTimeout(() => {
+        container.style.display = 'none';
+        container.setAttribute('aria-hidden', 'true');
+      }, 250);
+
+      window.removeEventListener('resize', scheduleReposition);
+      window.removeEventListener('scroll', scheduleReposition);
+
+      if (markCompleted) {
+        try {
+          localStorage.setItem('aegis-terminal-tour-seen', 'true');
+        } catch (e) {}
+      }
+    }
+
+    function nextStep() {
+      if (currentStepIndex < TOUR_STEPS.length - 1) {
+        renderStep(currentStepIndex + 1);
+      } else {
+        endTour(true);
+      }
+    }
+
+    function prevStep() {
+      if (currentStepIndex > 0) {
+        renderStep(currentStepIndex - 1);
+      }
+    }
+
+    // Attach button listeners
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        nextStep();
+      });
+    }
+
+    if (backBtn) {
+      backBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        prevStep();
+      });
+    }
+
+    if (skipBtn) {
+      skipBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        endTour(true);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        endTour(true);
+      });
+    }
+
+    // Progress dot click listeners
+    if (dotsContainer) {
+      const dots = dotsContainer.querySelectorAll('.tour-dot');
+      dots.forEach((dot, dotIdx) => {
+        dot.style.cursor = 'pointer';
+        dot.addEventListener('click', () => {
+          renderStep(dotIdx);
+        });
+      });
+    }
+
+    // Replay Quick Tour button in top navigation
+    if (replayBtn) {
+      replayBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        startTour(0);
+      });
+    }
+
+    // Keyboard navigation (Esc, ArrowRight/Enter, ArrowLeft)
+    window.addEventListener('keydown', (e) => {
+      if (!isTourActive) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        endTour(true);
+      } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        e.preventDefault();
+        nextStep();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevStep();
+      }
+    });
+
+    // First-Time Auto-Launch check after 1,200ms
+    try {
+      const hasSeenTour = localStorage.getItem('aegis-terminal-tour-seen');
+      if (!hasSeenTour) {
+        setTimeout(() => {
+          startTour(0);
+        }, 1200);
+      }
+    } catch (e) {
+      // In case localStorage is blocked
+    }
+  }
+
   function initTradingTerminalSuite() {
     initNavigationDrawer();
     initTerminalSettingsModal();
     initWalletSelectModal();
     initNetworkSwitcherButtons();
+    initSpotlightTour();
     renderMarketList();
 
     // Category tabs

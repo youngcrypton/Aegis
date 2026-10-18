@@ -86,6 +86,12 @@
         <span>Faucet ↗</span>
       </a>
 
+      <!-- Quick Tour Button -->
+      <button class="btn-tour-toggle" id="btnTourToggle" type="button" aria-label="Terminal onboarding tour" title="Take a 4-step quick tour of the AEGIS Terminal">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="hide-sm">Quick Tour</span>
+      </button>
+
       <button class="btn-theme-toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
         <span id="themeToggleText" class="hide-sm">Dark mode</span>
       </button>
@@ -400,7 +406,7 @@
       <div class="workspace-main">
 
         <!-- Position Card -->
-        <div class="card position-card">
+        <div class="card position-card" id="chartCard" data-card="positionOverviewCard">
           <div class="card-header">
             <h2 class="header-title">Protected Vault Position</h2>
             <div class="header-extra">
@@ -433,14 +439,14 @@
           </div>
 
           <!-- Dynamic SVG Health Factor Gauge & Buffer Bar -->
-          <div class="health-gauge-section" id="healthGaugeSection">
+          <div class="health-gauge-section" id="gaugeCard" data-section="healthGaugeSection">
             <div class="gauge-header">
               <span>Dynamic Health Factor Gauge <span class="status-pill pill-hedge" style="font-size:10px; padding:1px 6px; margin-left:4px;">Simulated Model</span></span>
               <span class="font-mono text-accent" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
             </div>
 
             <!-- Responsive SVG Radial Gauge -->
-            <div class="gauge-svg-wrapper" id="gaugeSvgContainer">
+            <div class="gauge-svg-wrapper" id="healthFactorGaugeContainer">
               <svg class="gauge-svg" viewBox="0 0 300 165" id="healthFactorGaugeSvg">
                 <!-- Pure Mathematical Semicircle Track (R=110, Center=150,145) -->
                 <path d="M 40 145 A 110 110 0 0 1 260 145" fill="none" stroke="var(--rule)" stroke-width="16" stroke-linecap="round"/>
@@ -597,7 +603,7 @@
       <div class="workspace-sidebar">
 
         <!-- Lite Auto-Pilot Risk Engine Card (Lite Only) -->
-        <div class="card lite-card lite-only" id="liteAutoPilotCard">
+        <div class="card lite-card lite-only" id="vaultActionCard" data-card="liteAutoPilotCard">
           <div class="card-header">
             <h2 class="header-title">
               <svg class="header-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -611,7 +617,7 @@
           </p>
 
           <!-- Step 1: Micro-Amount Testnet Faucet Selection -->
-          <div class="lite-section">
+          <div class="lite-section" id="vaultDepositForm">
             <div class="lite-section-header">
               <span class="lite-step-badge">1</span>
               <span class="lite-section-title">Testnet Collateral Deposit</span>
@@ -899,7 +905,7 @@
     </section>
 
     <!-- Bottom Row: Real-Time Audit Trail & Sentinel Event Stream -->
-    <section class="card audit-card" id="auditCardSection">
+    <section class="card audit-card" id="telemetryCard" data-section="auditCardSection">
       <div class="card-header">
         <h2 class="header-title">Real-Time Sentinel Event Stream & Execution Audit Trail</h2>
         <div class="header-extra">
@@ -1044,7 +1050,7 @@
           </div>
 
           <!-- Chart Viewport Container with AEGIS Floating Watermark -->
-          <div class="tt-chart-container" id="ttChartContainer">
+          <div class="tt-chart-container" id="tradingviewChartContainer" data-chart="ttChartContainer">
             <!-- 1. Native HyperCore Candlestick Canvas Engine (Hyperliquid Direct) -->
             <div id="hypercore_chart_wrap" class="tt-hypercore-canvas-wrap">
               <canvas id="hypercore_canvas_chart"></canvas>
@@ -1329,6 +1335,65 @@
 
     <div class="wallet-select-footer">
       <span>Non-custodial connection. AEGIS never has access to private keys or withdrawal permissions.</span>
+    </div>
+  </div>
+
+  <!-- Interactive Spotlight Onboarding Tour -->
+  <div id="aegisTourContainer" class="aegis-tour-container" style="display: none;" aria-hidden="true">
+    <svg id="aegisTourBackdrop" class="aegis-tour-backdrop" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id="aegisTourMask">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect id="aegisTourMaskHole" x="0" y="0" width="0" height="0" rx="16" ry="16" fill="#000000" />
+        </mask>
+      </defs>
+      <rect width="100%" height="100%" class="aegis-tour-mask-fill" mask="url(#aegisTourMask)" />
+    </svg>
+
+    <!-- Animated focus highlight ring around the target -->
+    <div id="aegisTourHighlightRing" class="aegis-tour-highlight-ring"></div>
+
+    <!-- Floating popover card -->
+    <div id="aegisTourPopover" class="aegis-tour-popover" role="dialog" aria-modal="true" aria-labelledby="aegisTourTitle">
+      <div class="aegis-tour-header">
+        <div class="aegis-tour-badge-wrap">
+          <span class="aegis-tour-step-badge" id="aegisTourStepBadge">STEP 1 OF 4</span>
+          <span class="aegis-tour-pulsing-dot" aria-hidden="true"></span>
+        </div>
+        <button class="aegis-tour-close-btn" id="aegisTourCloseBtn" type="button" aria-label="Close tour">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="aegis-tour-body">
+        <h3 class="aegis-tour-title" id="aegisTourTitle">Your Solvency Shield</h3>
+        <p class="aegis-tour-desc" id="aegisTourDesc">
+          This gauge measures your liquidation risk in real time. As long as the needle stays in the green (&gt; 1.50x), your collateral is 100% safe. If market volatility dips toward the amber trigger zone, the Sentinel automatically shields your position.
+        </p>
+      </div>
+
+      <div class="aegis-tour-footer">
+        <button class="aegis-tour-skip-btn" id="aegisTourSkipBtn" type="button">Skip Tour</button>
+        <div class="aegis-tour-dots" id="aegisTourDots" aria-hidden="true">
+          <span class="tour-dot active"></span>
+          <span class="tour-dot"></span>
+          <span class="tour-dot"></span>
+          <span class="tour-dot"></span>
+        </div>
+        <div class="aegis-tour-actions">
+          <button class="aegis-tour-nav-btn btn-tour-back" id="aegisTourBackBtn" type="button" style="display:none;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Back</span>
+          </button>
+          <button class="aegis-tour-nav-btn btn-tour-next" id="aegisTourNextBtn" type="button">
+            <span id="aegisTourNextBtnText">Next</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

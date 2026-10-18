@@ -359,6 +359,30 @@ h1, h2, h3, .display-font {
   border-color: var(--ink-2);
 }
 
+.btn-tour-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--ground);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.btn-tour-toggle:hover {
+  background: var(--raised);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .wallet-btn {
   display: inline-flex;
   align-items: center;
@@ -3525,6 +3549,288 @@ body.mode-lite .lite-telemetry-card {
   padding-top: 8px;
   border-top: 1px solid var(--rule);
   text-align: center;
+}
+
+/* ==========================================================================
+   AEGIS Terminal — Interactive Spotlight Onboarding Tour (Brand Kit Compliant)
+   Typography: Marcellus (--display) & Inter (--text)
+   Theme: Supports Light (:root) and Dark ([data-theme="dark"]) tokens
+   Radius: 16px flat radius, 1px --rule borders, --raised fill
+   ========================================================================== */
+
+.aegis-tour-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99990;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.aegis-tour-container.active {
+  display: block !important;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.aegis-tour-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99991;
+  pointer-events: auto;
+}
+
+.aegis-tour-mask-fill {
+  fill: rgba(22, 18, 48, 0.72);
+  transition: fill 200ms ease;
+}
+
+[data-theme="dark"] .aegis-tour-mask-fill {
+  fill: rgba(4, 17, 14, 0.86);
+}
+
+#aegisTourMaskHole {
+  transition: x 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              y 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              width 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              height 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.aegis-tour-highlight-ring {
+  position: fixed;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  box-shadow: 0 0 0 4px rgba(7, 112, 95, 0.20), 0 0 24px rgba(7, 112, 95, 0.35);
+  pointer-events: none;
+  z-index: 99992;
+  transition: top 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              left 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              width 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              height 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 200ms ease;
+}
+
+[data-theme="dark"] .aegis-tour-highlight-ring {
+  box-shadow: 0 0 0 4px rgba(95, 217, 190, 0.25), 0 0 30px rgba(95, 217, 190, 0.45);
+}
+
+.aegis-tour-popover {
+  position: fixed;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(22, 18, 48, 0.16);
+  padding: 20px;
+  z-index: 99995;
+  color: var(--ink);
+  font-family: var(--text);
+  box-sizing: border-box;
+  pointer-events: auto;
+  transition: top 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              left 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 200ms ease;
+}
+
+[data-theme="dark"] .aegis-tour-popover {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.70);
+}
+
+.aegis-tour-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.aegis-tour-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aegis-tour-step-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  background: rgba(7, 112, 95, 0.12);
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--text);
+}
+
+[data-theme="dark"] .aegis-tour-step-badge {
+  background: rgba(95, 217, 190, 0.16);
+}
+
+.aegis-tour-pulsing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: aegisTourPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes aegisTourPulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.aegis-tour-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--ground);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.aegis-tour-close-btn:hover {
+  background: var(--raised);
+  color: var(--ink);
+  border-color: var(--ink-2);
+}
+
+.aegis-tour-body {
+  margin-bottom: 16px;
+}
+
+.aegis-tour-title {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 8px 0;
+  text-wrap: balance;
+}
+
+.aegis-tour-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.aegis-tour-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  gap: 12px;
+}
+
+.aegis-tour-skip-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--text);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.aegis-tour-skip-btn:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.aegis-tour-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.aegis-tour-dots .tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rule);
+  transition: all 200ms ease;
+}
+
+.aegis-tour-dots .tour-dot.active {
+  background: var(--accent);
+  width: 14px;
+  border-radius: 999px;
+}
+
+.aegis-tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aegis-tour-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+
+.btn-tour-back {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+}
+
+.btn-tour-back:hover {
+  background: var(--raised);
+  border-color: var(--ink-2);
+}
+
+.btn-tour-next {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: var(--on-accent);
+}
+
+.btn-tour-next:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-tour-next:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .aegis-tour-popover {
+    width: calc(100vw - 32px);
+    left: 16px !important;
+    padding: 16px;
+  }
+  .aegis-tour-title {
+    font-size: 17px;
+  }
+  .aegis-tour-desc {
+    font-size: 12.5px;
+  }
 }
 
 
