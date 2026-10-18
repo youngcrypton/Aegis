@@ -202,12 +202,12 @@
 
   // --- 3. THEME MANAGEMENT ---
   function initTheme() {
-    const savedTheme = localStorage.getItem('aegis-theme') || 'dark';
+    const savedTheme = localStorage.getItem('aegis-theme') || 'light';
     setTheme(savedTheme);
 
     if (el.themeToggleBtn) {
       el.themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         setTheme(newTheme);
       });
@@ -217,8 +217,9 @@
   function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('aegis-theme', theme);
-    if (el.themeToggleText) {
-      el.themeToggleText.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+    if (el.themeToggleBtn) {
+      el.themeToggleBtn.setAttribute('title', theme === 'dark' ? 'Switch to Light mode' : 'Switch to Dark mode');
+      el.themeToggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to Light mode' : 'Switch to Dark mode');
     }
     const drawerThemeLabel = document.getElementById('drawerThemeLabel');
     if (drawerThemeLabel) {

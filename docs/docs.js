@@ -633,7 +633,7 @@
  function getTheme() {
  const stored = localStorage.getItem('aegis-theme');
  if (stored) return stored;
- return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+ return 'light';
  }
 
  function applyTheme(theme) {
