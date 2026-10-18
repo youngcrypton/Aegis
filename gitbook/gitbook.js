@@ -699,11 +699,11 @@ node test/test_frontend_truthfulness.js</code></pre>
 
   // --- 4. THEME MANAGEMENT ---
   function initTheme() {
-    const saved = localStorage.getItem('aegis-gitbook-theme') || 'dark';
+    const saved = localStorage.getItem('aegis-gitbook-theme') || 'light';
     applyTheme(saved);
 
     el.themeBtn.addEventListener('click', () => {
-      const current = el.root.getAttribute('data-theme') || 'dark';
+      const current = el.root.getAttribute('data-theme') || 'light';
       const next = current === 'dark' ? 'light' : 'dark';
       applyTheme(next);
     });
