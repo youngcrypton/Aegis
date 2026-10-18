@@ -70,7 +70,7 @@ export const AegisHackathonDemo120s: React.FC = () => {
         />
 
         {/* Act 4: -18% Flash Crash & Defense */}
-        <TransitionSeries.Sequence durationInFrames={920}>
+        <TransitionSeries.Sequence durationInFrames={818}>
           <Act4FlashCrashLight />
         </TransitionSeries.Sequence>
 

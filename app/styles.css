@@ -252,11 +252,89 @@ h1, h2, h3, .display-font {
   font-weight: 600;
 }
 
+.network-badge.interactive {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.network-badge.interactive:hover {
+  border-color: var(--accent);
+  background: var(--raised);
+}
+
+.network-badge.wrong-network {
+  border-color: var(--hedge);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--hedge);
+}
+
+.network-badge.wrong-network strong {
+  color: var(--hedge);
+}
+
+.network-badge.wrong-network .pulse-indicator {
+  background: var(--hedge);
+  box-shadow: 0 0 6px var(--hedge);
+}
+
 .pulse-indicator {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
+}
+
+/* Wrong Network Top Alert Banner */
+.wrong-network-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border-bottom: 1px solid var(--hedge);
+  padding: 10px 24px;
+  font-size: 13px;
+  color: var(--ink);
+  position: relative;
+  z-index: 100;
+}
+
+.wrong-network-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.wrong-network-content svg {
+  color: var(--hedge);
+  flex-shrink: 0;
+}
+
+.btn-switch-network {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--hedge);
+  color: var(--ground);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-switch-network:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.btn-switch-network:active {
+  transform: translateY(0);
 }
 
 .btn-theme-toggle {
@@ -3372,6 +3450,9 @@ body.mode-lite .lite-telemetry-card {
   transition: all 150ms ease;
   width: 100%;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .wallet-option-card:hover {
@@ -3379,6 +3460,12 @@ body.mode-lite .lite-telemetry-card {
   border-color: var(--accent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.wallet-option-card:active {
+  background: var(--raised);
+  border-color: var(--accent);
+  transform: scale(0.985);
 }
 
 .wallet-option-icon {

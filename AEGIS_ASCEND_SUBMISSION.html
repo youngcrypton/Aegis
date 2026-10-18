@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS Protocol — Ascend Launchpad Submission & Ecosystem Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --accent: #0284c7;
+      --accent-light: #e0f2fe;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --violet: #6366f1;
+      --violet-light: #eef2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      padding-bottom: 80px;
+    }
+
+    /* Floating Action Bar */
+    .action-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 100%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .action-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #0f172a;
+    }
+
+    .action-brand span {
+      background: linear-gradient(135deg, #1F0E4C, #642FEB);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Marcellus', serif;
+      font-size: 20px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #0f172a;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #334155;
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .toast-notice {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 2000;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Document Sheet container matching Google Docs style */
+    .document-page {
+      max-width: 860px;
+      margin: 40px auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 64px 72px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    @media print {
+      body { background: #fff; }
+      .action-bar, .toast-notice { display: none; }
+      .document-page {
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .document-page {
+        margin: 16px;
+        padding: 24px 20px;
+      }
+    }
+
+    /* Typography & Hierarchy */
+    h1.doc-title {
+      font-family: 'Marcellus', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .doc-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 40px;
+      font-size: 13.5px;
+      color: #334155;
+    }
+
+    .meta-item strong {
+      color: #0f172a;
+    }
+
+    h2.section-heading {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 40px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3.sub-heading {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: #334155;
+    }
+
+    ul, ol {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    strong {
+      color: #0f172a;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-left: 4px solid #0284c7;
+      background: var(--accent-light);
+      padding: 16px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 20px 0;
+      font-size: 14.5px;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .callout-success {
+      border-left-color: var(--emerald);
+      background: var(--emerald-light);
+    }
+    .callout-success .callout-title { color: var(--emerald); }
+
+    .callout-amber {
+      border-left-color: var(--amber);
+      background: var(--amber-light);
+    }
+    .callout-amber .callout-title { color: var(--amber); }
+
+    .callout-violet {
+      border-left-color: var(--violet);
+      background: var(--violet-light);
+    }
+    .callout-violet .callout-title { color: var(--violet); }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+
+    /* Badges & Pills */
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .pill-green { background: #dcfce7; color: #15803d; }
+    .pill-blue { background: #e0f2fe; color: #0369a1; }
+    .pill-violet { background: #ede9fe; color: #6d28d9; }
+    .pill-amber { background: #fef3c7; color: #b45309; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+    }
+
+    a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Sticky Bar -->
+  <div class="action-bar">
+    <div class="action-brand">
+      <span>AEGIS</span> • Submission to Ascend Protocol
+    </div>
+    <div class="action-buttons">
+      <button class="btn btn-primary" onclick="copyForGoogleDocs()" id="copyBtn">
+        📋 Copy for Google Docs
+      </button>
+      <button class="btn btn-secondary" onclick="window.print()">
+        🖨️ Print / Save PDF
+      </button>
+      <a class="btn btn-secondary" href="https://aegishedge.xyz/app" target="_blank" rel="noopener">
+        🌐 Open App
+      </a>
+    </div>
+  </div>
+
+  <div class="toast-notice" id="toast">
+    ✓ Formatted document copied! Open Google Docs and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong>).
+  </div>
+
+  <!-- Document Sheet Container -->
+  <div class="document-page" id="docContent">
+
+    <h1 class="doc-title">AEGIS Protocol — Official Project Submission & Launchpad Proposal</h1>
+    <div class="doc-subtitle">Submission Dossier for the Ascend Protocol Core Team & Ecosystem Reviewers</div>
+
+    <div class="meta-bar">
+      <div class="meta-item"><strong>Date:</strong> October 2026</div>
+      <div class="meta-item"><strong>Target Chain:</strong> Elysium Orbit L2 (Chain ID 99801) & HyperCore</div>
+      <div class="meta-item"><strong>Category:</strong> Autonomous Risk Engine & Liquidation Sentinel</div>
+      <div class="meta-item"><strong>Audit Verdict:</strong> <span class="pill pill-green">Fit for Submission</span></div>
+    </div>
+
+    <!-- 1. PROJECT + LINKS -->
+    <h2 class="section-heading">1. Project & Verified Links</h2>
+    <div class="table-container">
+      <table>
+        <tbody>
+          <tr>
+            <td style="width: 28%;"><strong>Project Name</strong></td>
+            <td><strong>Aegis Protocol</strong> (Aegis)</td>
+          </tr>
+          <tr>
+            <td><strong>X (Twitter)</strong></td>
+            <td><a href="https://x.com/aegis_hedge" target="_blank">https://x.com/aegis_hedge</a> (<code>@aegis_hedge</code>)</td>
+          </tr>
+          <tr>
+            <td><strong>Live Website / App</strong></td>
+            <td><a href="https://aegishedge.xyz" target="_blank">https://aegishedge.xyz</a> (Terminal: <a href="https://aegishedge.xyz/app" target="_blank">https://aegishedge.xyz/app</a>)</td>
+          </tr>
+          <tr>
+            <td><strong>Official Discord</strong></td>
+            <td><a href="https://discord.gg/vcF6X2cM8a" target="_blank">https://discord.gg/vcF6X2cM8a</a></td>
+          </tr>
+          <tr>
+            <td><strong>GitHub Repository</strong></td>
+            <td><a href="https://github.com/youngcrypton/Aegis" target="_blank">https://github.com/youngcrypton/Aegis</a></td>
+          </tr>
+          <tr>
+            <td><strong>GitBook & Documentation</strong></td>
+            <td><a href="https://aegishedge.xyz/gitbook" target="_blank">https://aegishedge.xyz/gitbook</a> (Repository: <code>/docs</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. PROJECT OVERVIEW -->
+    <h2 class="section-heading">2. Project Overview</h2>
+    
+    <h3 class="sub-heading">• What We’re Building on Aegis</h3>
+    <p>Aegis is an autonomous, non-custodial risk engine and synthetic delta-hedging protocol built for Elysium Orbit L2 and HyperCore (Hyperliquid's L1 high-performance CLOB). Rather than liquidating borrower collateral through fire-sale auctions when market prices plunge, Aegis autonomously opens counterbalancing short perpetual futures on HyperCore to neutralize directional downside risk (Δ = 0), keeping 100% of user collateral intact inside the vault under zero-custody delegation.</p>
+
+    <h3 class="sub-heading">• Who Aegis is For</h3>
+    <p>DeFi borrowers, money market depositors, leveraged traders, and ecosystem token holders across Elysium L2 who want to borrow against their assets without fearing liquidation wipeouts, bottom-tick collateral dumps, or predatory 5–10% penalty surcharges.</p>
+
+    <h3 class="sub-heading">• What Problem Aegis Solves</h3>
+    <p>Traditional collateralized debt protocols rely on abrupt, irreversible collateral auctions during volatility spikes. These auctions seize borrower equity at steep discounts, realize permanent capital losses at market troughs, and trigger catastrophic contagion cascades across the ecosystem. Aegis replaces auctions with automated, sub-second hedging that preserves the borrower's spot collateral until market mean-reversion occurs.</p>
+
+    <h3 class="sub-heading">• Why People Would Use Aegis (The Ascend → HyperCore Continuum)</h3>
+    <div class="callout callout-violet">
+      <div class="callout-title">The Ascend Ecosystem Downstream Hedging Flywheel</div>
+      Ascend is the premier launchpad and DEX on Elysium, guiding tokens through its 4-stage LaunchPath all the way to graduation into HyperCore perpetual markets. Once these tokens graduate, they become primary collateral assets across Elysium money markets. However, volatile new tokens carry substantial liquidation risk.<br><br>
+      <strong>Aegis acts as the ultimate safety blanket for the Ascend ecosystem:</strong> As long as tokens keep launching on Ascend and ascending to HyperCore perpetuals, users can borrow against and trade them with complete confidence because they can hedge their downside on Aegis. Furthermore, Aegis programmatically routes 50% of its performance fees into Ascend Closed Hook Pools to buy back and burn $AEGIS, driving permanent volume and liquidity back to Ascend.
+    </div>
+
+    <!-- 4. CURRENT STATUS + LAUNCH PLAN -->
+    <h2 class="section-heading">4. Current Status & Launch Plan</h2>
+
+    <h3 class="sub-heading">• Working (Functional Today on Aegis)</h3>
+    <ul>
+      <li><strong>Deployed Modular Contracts on Elysium L2 Testnet (Chain ID 99801):</strong>
+        <ul>
+          <li><code>AegisVault.sol</code>: <code>0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29</code></li>
+          <li><code>AegisSentinelRegistry.sol</code>: <code>0x6C64188e1D677Eb85E4aD71836650310281f0893</code></li>
+          <li><code>AegisFeeCollector.sol</code>: <code>0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae</code></li>
+          <li><code>RelayedOracleAdapter.sol</code>: <code>0x8829386b87F6CFbf64A3f75916BC96bAb0B12991</code></li>
+          <li><code>AgentDispatchAdapter.sol</code>: <code>0xBAD4C895DBcA78F10764D73274dC1f314c80237e</code></li>
+        </ul>
+      </li>
+      <li><strong>Ascend Hook Pool Integration in Code:</strong> <code>AegisFeeCollector.sol</code> natively interfaces with Ascend's <code>IAscendHookPool</code> (<code>0x2C9e2da841fE245a4d572f94191eB1884866aeBc</code>) and Universal Router (<code>0x90332B0ECbb2c9517F405627b0Dd5D5265246563</code>), enforcing programmatic buyback-and-burn directly on Ascend pools.</li>
+      <li><strong>100% Automated Test Suite Pass Rate:</strong> 116/116 Foundry unit/invariant/fuzz tests passing across 160,000+ fuzz runs verifying Invariants INV-1 to INV-5 and Phase 1C deferred fee debt; 29/29 Sentinel keeper tests passing.</li>
+      <li><strong>Live Production Web Terminal:</strong> Deployed at <a href="https://aegishedge.xyz/app" target="_blank">https://aegishedge.xyz/app</a> with multi-wallet injection (MetaMask, Bitget, OKX, Opus), live RPC telemetry, Concentric Health Gauge, and Lite Auto-Pilot vs Pro Terminal modes.</li>
+      <li><strong>Complete Documentation:</strong> GitBook portal published at <a href="https://aegishedge.xyz/gitbook" target="_blank">https://aegishedge.xyz/gitbook</a> and full technical lightpaper in repository.</li>
+    </ul>
+
+    <h3 class="sub-heading">• In Development (Preparing for Ascend & Elysium Mainnet)</h3>
+    <ul>
+      <li>Automated contract source code verification pipeline on Elysium Blockscout.</li>
+      <li>Decentralized Sentinel Keeper daemon cluster setup for multi-operator mainnet redundancy.</li>
+      <li>Ascend concentrated liquidity pool provisioning for canonical <code>$AEGIS / USDC</code> and <code>$AEGIS / HYPE</code> pairs.</li>
+      <li>Zero-downtime hot-swap architecture ready to switch from modular adapters to native Elysium ArbOS precompiles (<code>0x0801</code> HyperCore L1 memory reader & <code>0x0802</code> CLOB writer) post-hardfork without vault migration.</li>
+    </ul>
+
+    <h3 class="sub-heading">• Before Launch (Milestones & Expected Timeline)</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Target Window</th>
+            <th>Primary Deliverables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Milestone 1: Testnet & Ascend Hook Pool Testing</strong></td>
+            <td>Weeks 1–2</td>
+            <td>Ascend Hook Pool testnet validation, Elysium community testnet points sprint (Phase 1 Points).</td>
+          </tr>
+          <tr>
+            <td><strong>Milestone 2: External Security Audit</strong></td>
+            <td>Weeks 3–4</td>
+            <td>Formal third-party security audit of smart contracts and invariant verification.</td>
+          </tr>
+          <tr>
+            <td><strong>Milestone 3: Ascend Fair Launch & TGE</strong></td>
+            <td>Week 5</td>
+            <td>Ascend Launchpad Fair Launch & TGE on Elysium mainnet; Phase 1 & 2 Points 100% unlock.</td>
+          </tr>
+          <tr>
+            <td><strong>Milestone 4: Mainnet Live Hedging</strong></td>
+            <td>Week 6</td>
+            <td>Activation of live mainnet autonomous delta hedging for WHYPE and graduated Ascend tokens.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-heading">• $AEGIS Token Plan (70% Community & Ecosystem Alignment)</h3>
+    <p>The <strong>$AEGIS</strong> token has a strict, immutable hard cap of <strong>700,000,000 tokens</strong> with zero inflationary minting capabilities in its bytecode. The tokenomics are architected to prioritize <strong>Elysium ecosystem users</strong>, <strong>kHYPE liquid stakers</strong>, and <strong>Ascend liquidity providers</strong>:</p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Strategic Allocation</th>
+            <th>Share (%)</th>
+            <th>Token Quantity</th>
+            <th>TGE Release</th>
+            <th>Cliff</th>
+            <th>Vesting Schedule & Operational Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>kHYPE Liquid Staking Rewards</strong></td>
+            <td><strong>20.0%</strong></td>
+            <td><strong>140,000,000</strong></td>
+            <td>0.0%</td>
+            <td>0 mos</td>
+            <td>24 mos linear streaming to native <strong>kHYPE stakers on Kinetiq</strong> (users earn yield without selling principal).</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 2: Mainnet Hedging Points</strong></td>
+            <td><strong>15.0%</strong></td>
+            <td><strong>105,000,000</strong></td>
+            <td><strong>100.0% (105M)</strong></td>
+            <td>0 mos</td>
+            <td><strong>100% Unlocked at Ascend TGE</strong> (Active Elysium borrowers defending loans with delta hedging).</td>
+          </tr>
+          <tr>
+            <td><strong>Ascend LP Incentives (POL)</strong></td>
+            <td><strong>15.0%</strong></td>
+            <td><strong>105,000,000</strong></td>
+            <td>0.0%</td>
+            <td>0 mos</td>
+            <td>36 mos linear emissions to anchor deep liquidity in <code>$AEGIS/USDC</code> & <code>$AEGIS/HYPE</code> on Ascend.</td>
+          </tr>
+          <tr>
+            <td><strong>Protocol Security & Insurance</strong></td>
+            <td><strong>12.0%</strong></td>
+            <td><strong>84,000,000</strong></td>
+            <td>0.0%</td>
+            <td>12 mos</td>
+            <td>36 mos linear (DAO multi-sig black-swan emergency reserve).</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 1: Testnet Points Reward</strong></td>
+            <td><strong>10.0%</strong></td>
+            <td><strong>70,000,000</strong></td>
+            <td><strong>100.0% (70M)</strong></td>
+            <td>0 mos</td>
+            <td><strong>100% Unlocked at Ascend TGE</strong> (Early Elysium testnet testers & terminal experimenters).</td>
+          </tr>
+          <tr>
+            <td><strong>Ascend Launchpad Fair Launch</strong></td>
+            <td><strong>10.0%</strong></td>
+            <td><strong>70,000,000</strong></td>
+            <td><strong>100.0% (70M)</strong></td>
+            <td>0 mos</td>
+            <td><strong>100% Unlocked at Ascend TGE</strong> (Day-1 public liquidity via Ascend Closed Hook Pool).</td>
+          </tr>
+          <tr>
+            <td><strong>Core Contributors & Builders</strong></td>
+            <td><strong>10.0%</strong></td>
+            <td><strong>70,000,000</strong></td>
+            <td><strong>0.0%</strong></td>
+            <td><strong>24 mos</strong></td>
+            <td><strong>Strict 2-Year Hard Cliff</strong>; zero tokens until Month 25, followed by 36 mos linear vesting (5-year alignment).</td>
+          </tr>
+          <tr>
+            <td><strong>Strategic Ecosystem & Audits</strong></td>
+            <td><strong>8.0%</strong></td>
+            <td><strong>56,000,000</strong></td>
+            <td>0.0%</td>
+            <td>12 mos</td>
+            <td>24 mos linear (Audit grants, security bounties, foundation growth).</td>
+          </tr>
+          <tr style="background:#f1f5f9; font-weight:700;">
+            <td>TOTAL</td>
+            <td>100.0%</td>
+            <td>700,000,000</td>
+            <td>35.0% (245M)</td>
+            <td>—</td>
+            <td>70% Direct Community & Ecosystem Alignment. 0% Team Float at TGE.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-success">
+      <div class="callout-title">The Ascend User Reward Flywheel (100% Community Rebates)</div>
+      Beyond internal liquidation protection fees, Aegis integrates with Ascend's native DEX architecture. All external trading fees, referral shares, and pool creator rebates returned to Aegis from Ascend are <strong>100% redirected to Elysium users and borrowers</strong> as cash-back fee discounts and loyalty rewards. Zero funds are retained by developer accounts.
+    </div>
+
+    <h3 class="sub-heading">• Support Needed from Ascend</h3>
+    <ol>
+      <li><strong>Launchpad Scheduling:</strong> Inclusion and scheduling in the Ascend Launchpad calendar for the $AEGIS Fair Launch.</li>
+      <li><strong>Ecosystem Co-Marketing:</strong> Co-marketing and official ecosystem announcements recognizing Aegis as the primary liquidation defense layer for tokens graduating along the Ascend LaunchPath.</li>
+      <li><strong>Hook Pool Co-Deployment:</strong> Technical coordination on Ascend Closed Hook Pool parameterization and fee-rebate routing for canonical $AEGIS liquidity pools.</li>
+    </ol>
+
+    <!-- 5. AFTER LAUNCH -->
+    <h2 class="section-heading">5. After Launch & Roadmap Execution</h2>
+    <ul>
+      <li><strong>Ascend Flywheel Expansion:</strong> Continuous recycling of Ascend DEX pool creator rebates back into borrower cash-back discounts, creating a permanent incentive for traders to hold loans on Elysium.</li>
+      <li><strong>Multi-Collateral Sentinels for Ascended Tokens:</strong> As new tokens graduate through Ascend to HyperCore perpetuals, Aegis will immediately deploy dedicated Sentinel risk vaults for each asset, ensuring immediate leverage and debt viability across Elysium.</li>
+      <li><strong>Phase 3 Staking & Real Yield Activation:</strong> Launch of $AEGIS governance staking pools where 50% of all liquidation-prevention performance fees are distributed as non-inflationary real yield in canonical USDC to bonded node operators and stakers.</li>
+      <li><strong>Native ArbOS Precompile Hot-Swap:</strong> Hot-swap from modular adapters to native Elysium precompiles (<code>0x0801</code> HyperCore L1 memory reader and <code>0x0802</code> CLOB writer) with zero downtime and zero vault migration once validators activate the hardfork.</li>
+      <li><strong>Institutional Risk SDK:</strong> Release of the Aegis Keeper SDK allowing institutional funds and money markets on Elysium to integrate automated delta hedging natively into their lending frontends via 1-click SDK hooks.</li>
+    </ul>
+
+    <!-- 6. TEAM -->
+    <h2 class="section-heading">6. Team Information</h2>
+    <div class="table-container">
+      <table>
+        <tbody>
+          <tr>
+            <td style="width: 28%;"><strong>Team Size</strong></td>
+            <td><strong>3 Full-Time Builders</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Team Members & Experience</strong></td>
+            <td>
+              • <strong>Founder & Co-Founder:</strong> Proven track record in full-stack Web3 engineering, high-throughput EVM smart contract architecture, high-frequency derivative systems, and motion/interface design. Extensive experience shipping production DeFi protocols, building custom AMM/vault infrastructures, and participating in ecosystem hackathons.<br><br>
+              • <strong>Core Engineer:</strong> Quantitative systems and off-chain keeper automation specialist focusing on sub-second WebSocket telemetry, EIP-712 cryptographic signatures, and risk simulation engines.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Best Contact</strong></td>
+            <td>
+              • <strong>Telegram:</strong> <a href="https://t.me/young_crypton" target="_blank">@young_crypton</a><br>
+              • <strong>Discord:</strong> <code>@youngcrypton</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    function copyForGoogleDocs() {
+      const contentEl = document.getElementById('docContent');
+      
+      // Use ClipboardItem with text/html so Google Docs receives rich formatting
+      const htmlContent = contentEl.innerHTML;
+      const plainText = contentEl.innerText;
+
+      const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+      const blobText = new Blob([plainText], { type: 'text/plain' });
+
+      if (navigator.clipboard && navigator.clipboard.write) {
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': blobHtml,
+            'text/plain': blobText
+          })
+        ]).then(() => {
+          showToast();
+        }).catch(err => {
+          fallbackCopy();
+        });
+      } else {
+        fallbackCopy();
+      }
+    }
+
+    function fallbackCopy() {
+      const range = document.createRange();
+      range.selectNode(document.getElementById('docContent'));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      try {
+        document.execCommand('copy');
+        showToast();
+      } catch (err) {
+        alert('Please manually select all text and copy.');
+      }
+      window.getSelection().removeAllRanges();
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      const copyBtn = document.getElementById('copyBtn');
+      toast.style.display = 'flex';
+      copyBtn.textContent = '✓ Copied!';
+      copyBtn.style.background = '#059669';
+
+      setTimeout(() => {
+        toast.style.display = 'none';
+        copyBtn.textContent = '📋 Copy for Google Docs';
+        copyBtn.style.background = '#0f172a';
+      }, 4000);
+    }
+  </script>
+</body>
+</html>

@@ -1011,10 +1011,33 @@
     }
   }
 
+  function initNetworkSwitcherButtons() {
+    const networkBadge = document.getElementById('networkBadge');
+    const btnSwitchBanner = document.getElementById('btnSwitchNetworkBanner');
+    const btnModalSwitch = document.getElementById('btnModalSwitchNetwork');
+
+    if (networkBadge) {
+      networkBadge.addEventListener('click', () => {
+        switchOrAddElysiumNetwork();
+      });
+    }
+    if (btnSwitchBanner) {
+      btnSwitchBanner.addEventListener('click', () => {
+        switchOrAddElysiumNetwork();
+      });
+    }
+    if (btnModalSwitch) {
+      btnModalSwitch.addEventListener('click', () => {
+        switchOrAddElysiumNetwork();
+      });
+    }
+  }
+
   function initTradingTerminalSuite() {
     initNavigationDrawer();
     initTerminalSettingsModal();
     initWalletSelectModal();
+    initNetworkSwitcherButtons();
     renderMarketList();
 
     // Category tabs
@@ -1137,6 +1160,194 @@
     defaultAccount: '0xf0e721C996e76a0Cd5805975464CbE3E98839D64',
     sentinelKeeperAgent: '0xB8f01AAeE2250C2A244B92B51f39213aca305012'
   };
+
+  // --- ELYSIUM L2 WALLET_ADD_ETHEREUM_CHAIN PARAMETERS (1-CLICK SWITCH) ---
+  const ELYSIUM_CHAIN_PARAMS = {
+    chainId: '0x185d9', // 99801 in hex
+    chainName: 'Elysium L2 Testnet',
+    nativeCurrency: {
+      name: 'HYPE',
+      symbol: 'HYPE',
+      decimals: 18
+    },
+    rpcUrls: ['https://testnet-rpc.elysium.kinetiq.xyz'],
+    blockExplorerUrls: ['https://elysium.kinetiq.xyz/testnet-explorer']
+  };
+
+  function getFriendlyChainName(chainIdHex) {
+    if (!chainIdHex) return 'Unknown Network';
+    const id = typeof chainIdHex === 'string' && chainIdHex.startsWith('0x') ? parseInt(chainIdHex, 16) : Number(chainIdHex);
+    switch (id) {
+      case 99801: return 'Elysium L2 Testnet';
+      case 1: return 'Ethereum Mainnet';
+      case 42161: return 'Arbitrum One';
+      case 421614: return 'Arbitrum Sepolia';
+      case 10: return 'Optimism';
+      case 8453: return 'Base';
+      case 137: return 'Polygon';
+      case 56: return 'BNB Smart Chain';
+      case 11155111: return 'Sepolia Testnet';
+      default: return `Chain #${id}`;
+    }
+  }
+
+  function updateNetworkUI(chainIdHex) {
+    const isElysium = chainIdHex && (
+      chainIdHex === ELYSIUM_CONFIG.chainId || 
+      chainIdHex === '0x185d9' || 
+      chainIdHex === 99801 || 
+      chainIdHex === '99801'
+    );
+    runtimeState.isElysiumChain = Boolean(isElysium);
+    runtimeState.activeChainId = chainIdHex;
+
+    const wrongBanner = document.getElementById('wrongNetworkBanner');
+    const chainNameDisplay = document.getElementById('currentChainNameDisplay');
+    const networkBadge = document.getElementById('networkBadge');
+    const networkBadgeText = document.getElementById('networkBadgeText');
+    const networkBadgeChainId = document.getElementById('networkBadgeChainId');
+    const modalNetworkText = document.getElementById('modalNetworkText');
+    const modalNetworkPill = document.getElementById('modalNetworkPill');
+    const modalNetworkDot = document.getElementById('modalNetworkDot');
+    const btnModalSwitch = document.getElementById('btnModalSwitchNetwork');
+
+    if (runtimeState.walletConnected && !isElysium) {
+      const friendlyName = getFriendlyChainName(chainIdHex);
+      if (wrongBanner) {
+        wrongBanner.style.display = 'flex';
+      }
+      if (chainNameDisplay) {
+        chainNameDisplay.textContent = `${friendlyName} (${chainIdHex})`;
+      }
+      if (networkBadge) {
+        networkBadge.classList.add('wrong-network');
+        networkBadge.title = `Connected to ${friendlyName}. Click to switch to Elysium L2 (Chain 99801)`;
+      }
+      if (networkBadgeText) {
+        networkBadgeText.textContent = 'Wrong Net';
+      }
+      if (networkBadgeChainId) {
+        networkBadgeChainId.textContent = 'Switch';
+      }
+      if (modalNetworkText) {
+        modalNetworkText.textContent = `${friendlyName} (Not Elysium)`;
+      }
+      if (modalNetworkPill) {
+        modalNetworkPill.className = 'status-pill pill-danger';
+        modalNetworkPill.textContent = 'Wrong Net';
+      }
+      if (modalNetworkDot) {
+        modalNetworkDot.style.background = 'var(--danger)';
+      }
+      if (btnModalSwitch) {
+        btnModalSwitch.style.display = 'inline-flex';
+      }
+    } else {
+      if (wrongBanner) {
+        wrongBanner.style.display = 'none';
+      }
+      if (networkBadge) {
+        networkBadge.classList.remove('wrong-network');
+        networkBadge.title = 'Elysium L2 Testnet (Chain ID 99801)';
+      }
+      if (networkBadgeText) {
+        networkBadgeText.textContent = 'Elysium L2';
+      }
+      if (networkBadgeChainId) {
+        networkBadgeChainId.textContent = '99801';
+      }
+      if (modalNetworkText) {
+        modalNetworkText.textContent = 'Elysium L2 Testnet (Chain ID 99801)';
+      }
+      if (modalNetworkPill) {
+        modalNetworkPill.className = 'status-pill pill-accent';
+        modalNetworkPill.textContent = 'Synced';
+      }
+      if (modalNetworkDot) {
+        modalNetworkDot.style.background = 'var(--accent)';
+      }
+      if (btnModalSwitch) {
+        btnModalSwitch.style.display = 'none';
+      }
+    }
+  }
+
+  async function switchOrAddElysiumNetwork(prov) {
+    const p = prov || getWeb3Provider();
+    if (!p) {
+      showToast('No wallet detected. Please connect your wallet first.');
+      return false;
+    }
+
+    try {
+      showToast('Requesting switch to Elysium L2 (Chain 99801)...');
+      await p.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ELYSIUM_CONFIG.chainId }]
+      });
+      showToast('Switched to Elysium L2 Testnet!');
+      updateNetworkUI(ELYSIUM_CONFIG.chainId);
+      logAudit('NETWORK', 'Switched wallet chain to Elysium L2 (99801).', 'accent');
+      if (runtimeState.walletAddress) {
+        fetchOnChainBalances(runtimeState.walletAddress);
+        syncOnChainVaultPosition(runtimeState.walletAddress);
+      }
+      return true;
+    } catch (switchErr) {
+      console.warn('Switch chain notice:', switchErr);
+      const isUnrecognized = switchErr.code === 4902 || 
+        (switchErr.message && (switchErr.message.includes('4902') || switchErr.message.toLowerCase().includes('unrecognized') || switchErr.message.toLowerCase().includes('not added') || switchErr.message.toLowerCase().includes('unknown chain')));
+      
+      if (isUnrecognized) {
+        try {
+          showToast('Adding Elysium L2 Testnet settings with 1 click...');
+          await p.request({
+            method: 'wallet_addEthereumChain',
+            params: [ELYSIUM_CHAIN_PARAMS]
+          });
+          showToast('Elysium L2 Testnet added and activated!');
+          updateNetworkUI(ELYSIUM_CONFIG.chainId);
+          logAudit('NETWORK', 'Elysium L2 Testnet added to wallet via wallet_addEthereumChain.', 'accent');
+          if (runtimeState.walletAddress) {
+            fetchOnChainBalances(runtimeState.walletAddress);
+            syncOnChainVaultPosition(runtimeState.walletAddress);
+          }
+          return true;
+        } catch (addErr) {
+          console.error('wallet_addEthereumChain rejected:', addErr);
+          if (addErr.code === 4001 || (addErr.message && addErr.message.includes('User rejected'))) {
+            showToast('Elysium network addition was cancelled.');
+          } else {
+            showToast('Could not add Elysium network: ' + (addErr.message || 'Rejected'));
+          }
+          return false;
+        }
+      } else if (switchErr.code === 4001 || (switchErr.message && switchErr.message.includes('User rejected'))) {
+        showToast('Network switch cancelled by user.');
+        return false;
+      } else {
+        // Fallback attempt: some mobile wallets require wallet_addEthereumChain directly without error 4902
+        try {
+          await p.request({
+            method: 'wallet_addEthereumChain',
+            params: [ELYSIUM_CHAIN_PARAMS]
+          });
+          showToast('Elysium L2 Testnet added and activated!');
+          updateNetworkUI(ELYSIUM_CONFIG.chainId);
+          logAudit('NETWORK', 'Elysium L2 Testnet activated via fallback wallet_addEthereumChain.', 'accent');
+          if (runtimeState.walletAddress) {
+            fetchOnChainBalances(runtimeState.walletAddress);
+            syncOnChainVaultPosition(runtimeState.walletAddress);
+          }
+          return true;
+        } catch (fallbackErr) {
+          console.error('Fallback add chain failed:', fallbackErr);
+          showToast('Network switch prompt was rejected or not supported.');
+          return false;
+        }
+      }
+    }
+  }
 
   // --- ELYSIUM L2 VERIFIED JSON-RPC CLIENT ---
   async function callElysiumRpc(method, params = []) {
@@ -1356,8 +1567,38 @@
     }
   }
 
-  // --- MULTI-PROVIDER WEB3 WALLET RESOLUTION (WalletConnect, Bitget, Opus, OKX, MetaMask, Trust) ---
+  // --- MULTI-PROVIDER WEB3 WALLET RESOLUTION (Zerion, OKX, MetaMask, Bitget, Opus, Rabby, Trust, EIP-6963) ---
   let activeWcProvider = null;
+  const eip6963AnnouncedProviders = [];
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('eip6963:announceProvider', (event) => {
+      if (event && event.detail && event.detail.provider) {
+        const exists = eip6963AnnouncedProviders.some(p => p.info && event.detail.info && p.info.uuid === event.detail.info.uuid);
+        if (!exists) {
+          eip6963AnnouncedProviders.push(event.detail);
+        }
+      }
+    });
+    try {
+      window.dispatchEvent(new Event('eip6963:requestProvider'));
+    } catch (e) {}
+  }
+
+  function isInAppWalletBrowser() {
+    if (typeof window === 'undefined') return false;
+    if (window.zerionWallet || window.okxwallet || (window.bitkeep && window.bitkeep.ethereum) || (window.opus && window.opus.ethereum)) {
+      return true;
+    }
+    if (window.ethereum && (window.ethereum.isZerion || window.ethereum.isOkxWallet || window.ethereum.isBitKeep || window.ethereum.isTrust)) {
+      return true;
+    }
+    const ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent.toLowerCase() : '';
+    if (ua.includes('zerion') || ua.includes('okx') || ua.includes('bitkeep') || ua.includes('trustwallet') || ua.includes('tokenpocket')) {
+      return true;
+    }
+    return false;
+  }
 
   function getWeb3Provider() {
     if (typeof window === 'undefined') return null;
@@ -1367,24 +1608,61 @@
       return activeWcProvider;
     }
 
-    // 1. Bitget / BitKeep mobile in-app browser
+    // 1. Zerion Mobile In-App Browser & Zerion Extension
+    if (window.zerionWallet) return window.zerionWallet;
+    if (window.zerion && window.zerion.ethereum) return window.zerion.ethereum;
+
+    // 2. OKX Mobile Wallet & OKX Extension
+    if (window.okxwallet) return window.okxwallet;
+
+    // 3. Bitget / BitKeep mobile in-app browser
     if (window.bitkeep && window.bitkeep.ethereum) return window.bitkeep.ethereum;
     if (window.bitget && window.bitget.ethereum) return window.bitget.ethereum;
 
-    // 2. Opus Wallet mobile in-app browser
+    // 4. Opus Wallet mobile in-app browser
     if (window.opus && window.opus.ethereum) return window.opus.ethereum;
 
-    // 3. OKX mobile wallet
-    if (window.okxwallet) return window.okxwallet;
+    // 5. Rabby Wallet
+    if (window.rabby) return window.rabby;
 
-    // 4. Trust Wallet
+    // 6. Trust Wallet
     if (window.trustwallet) return window.trustwallet;
 
-    // 5. Standard EIP-1193 / window.ethereum (MetaMask, Rabby, Coinbase)
+    // 7. EIP-6963 Discovered Providers (prioritize Zerion or OKX if announced)
+    if (eip6963AnnouncedProviders.length > 0) {
+      const zerionAnnounced = eip6963AnnouncedProviders.find(p => p.info && (
+        (p.info.name && p.info.name.toLowerCase().includes('zerion')) ||
+        p.info.rdns === 'io.zerion.wallet'
+      ));
+      if (zerionAnnounced) return zerionAnnounced.provider;
+
+      const okxAnnounced = eip6963AnnouncedProviders.find(p => p.info && (
+        (p.info.name && p.info.name.toLowerCase().includes('okx')) ||
+        p.info.rdns === 'com.okex.wallet'
+      ));
+      if (okxAnnounced) return okxAnnounced.provider;
+
+      return eip6963AnnouncedProviders[0].provider;
+    }
+
+    // 8. Standard EIP-1193 / window.ethereum (MetaMask, Coinbase, etc.)
     if (window.ethereum) {
       if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
+        const zerion = window.ethereum.providers.find(p => p.isZerion);
+        if (zerion) return zerion;
+
+        const okx = window.ethereum.providers.find(p => p.isOkxWallet || p.isOKExWallet);
+        if (okx) return okx;
+
         const bitget = window.ethereum.providers.find(p => p.isBitKeep || p.isBitget);
         if (bitget) return bitget;
+
+        const rabby = window.ethereum.providers.find(p => p.isRabby);
+        if (rabby) return rabby;
+
+        const mm = window.ethereum.providers.find(p => p.isMetaMask);
+        if (mm) return mm;
+
         return window.ethereum.providers[0];
       }
       return window.ethereum;
@@ -1393,11 +1671,11 @@
     return null;
   }
 
-  async function resolveProvider(timeoutMs = 600) {
+  async function resolveProvider(timeoutMs = 800) {
     let provider = getWeb3Provider();
     if (provider) return provider;
 
-    // Mobile in-app browsers (Bitget, Opus) sometimes inject provider after DOM events
+    // Mobile in-app browsers (Zerion, OKX, Bitget, Opus) sometimes inject provider after DOM events
     const startTime = Date.now();
     while (Date.now() - startTime < timeoutMs) {
       await new Promise(r => setTimeout(r, 60));
@@ -1491,38 +1769,27 @@
 
   // Ensure wallet is connected to Elysium L2 Testnet (Chain ID 99801)
   async function ensureElysiumNetwork(provider) {
-    if (!provider) return false;
-    try {
-      const chainId = await provider.request({ method: 'eth_chainId' });
-      if (chainId === ELYSIUM_CONFIG.chainId) {
-        return true;
-      }
-      try {
-        await provider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: ELYSIUM_CONFIG.chainId }]
-        });
-        return true;
-      } catch (switchErr) {
-        if (switchErr && (switchErr.code === 4902 || switchErr.code === -32603)) {
-          await provider.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: ELYSIUM_CONFIG.chainId,
-              chainName: ELYSIUM_CONFIG.chainName,
-              nativeCurrency: { name: 'Elysium HYPE', symbol: 'HYPE', decimals: 18 },
-              rpcUrls: [ELYSIUM_CONFIG.rpcUrl],
-              blockExplorerUrls: [ELYSIUM_CONFIG.explorerUrl]
-            }]
-          });
-          return true;
-        }
-        throw switchErr;
-      }
-    } catch (err) {
-      console.warn('Network switch declined or failed:', err);
-      showToast('Please switch your wallet network to Elysium L2 Testnet (Chain ID 99801).');
+    const p = provider || getWeb3Provider();
+    if (!p) {
+      showToast('No wallet connected. Please connect your wallet first.');
       return false;
+    }
+    try {
+      const chainId = await p.request({ method: 'eth_chainId' });
+      const isElysium = chainId && (
+        chainId === ELYSIUM_CONFIG.chainId || 
+        chainId === '0x185d9' || 
+        chainId === 99801 || 
+        chainId === '99801'
+      );
+      if (isElysium) {
+        updateNetworkUI(chainId);
+        return true;
+      }
+      return await switchOrAddElysiumNetwork(p);
+    } catch (err) {
+      console.warn('Network verification notice:', err);
+      return await switchOrAddElysiumNetwork(p);
     }
   }
 
@@ -1813,7 +2080,13 @@
         });
 
         activeWcProvider.on('chainChanged', (chainId) => {
-          logAudit('NETWORK', `Wallet chain updated to ${chainId}`, 'hedge');
+          updateNetworkUI(chainId);
+          const friendlyName = getFriendlyChainName(chainId);
+          logAudit('NETWORK', `Wallet chain updated to ${friendlyName} (${chainId})`, 'hedge');
+          if (runtimeState.walletAddress) {
+            fetchOnChainBalances(runtimeState.walletAddress);
+            syncOnChainVaultPosition(runtimeState.walletAddress);
+          }
         });
 
         activeWcProvider.on('disconnect', () => {
@@ -1836,6 +2109,29 @@
       logAudit('WALLET', `Official WalletConnect session active: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
       showToast(`Connected via WalletConnect: ${formatAddress(runtimeState.walletAddress)}`);
 
+      // Automatic check and 1-click prompt to add/switch to Elysium L2
+      try {
+        const currentChainId = await activeWcProvider.request({ method: 'eth_chainId' });
+        updateNetworkUI(currentChainId);
+        const isElysium = currentChainId && (
+          currentChainId === ELYSIUM_CONFIG.chainId || 
+          currentChainId === '0x185d9' || 
+          currentChainId === 99801 || 
+          currentChainId === '99801'
+        );
+        if (!isElysium) {
+          const friendlyName = getFriendlyChainName(currentChainId);
+          logAudit('NETWORK', `Connected on ${friendlyName}. Automatically prompting 1-click switch to Elysium L2 (Chain ID 99801)...`, 'hedge');
+          setTimeout(async () => {
+            await switchOrAddElysiumNetwork(activeWcProvider);
+          }, 350);
+        } else {
+          logAudit('NETWORK', 'Connected on Elysium L2 Testnet (Chain ID 99801).', 'accent');
+        }
+      } catch (chainErr) {
+        console.warn('Silent WC chain check notice:', chainErr);
+      }
+
       await fetchOnChainBalances(runtimeState.walletAddress);
       await syncOnChainVaultPosition(runtimeState.walletAddress);
     } catch (err) {
@@ -1850,14 +2146,15 @@
   }
 
   async function connectInjectedWallet() {
-    const provider = await resolveProvider(600);
+    const provider = await resolveProvider(800);
     if (!provider) {
-      showToast('No browser extension found. Try connecting with WalletConnect.');
+      showToast('No Web3 wallet extension found. Try connecting with WalletConnect.');
+      openWalletSelectModal();
       return;
     }
 
     try {
-      showToast('Connecting wallet extension...');
+      showToast('Connecting wallet...');
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
@@ -1869,13 +2166,67 @@
       runtimeState.activeProviderType = 'injected';
 
       updateWalletUI(runtimeState.walletAddress);
-      logAudit('WALLET', `EIP-1193 wallet connected: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
+      logAudit('WALLET', `Wallet connected: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
       showToast(`Connected: ${formatAddress(runtimeState.walletAddress)}`);
 
+      // Bind accountsChanged and chainChanged listeners to this active provider
+      try {
+        if (typeof provider.on === 'function') {
+          provider.on('accountsChanged', (newAccounts) => {
+            if (newAccounts && newAccounts.length > 0) {
+              runtimeState.walletAddress = newAccounts[0];
+              updateWalletUI(newAccounts[0]);
+              fetchOnChainBalances(newAccounts[0]);
+              syncOnChainVaultPosition(newAccounts[0]);
+            } else {
+              disconnectWallet();
+            }
+          });
+
+          provider.on('chainChanged', (newChainId) => {
+            updateNetworkUI(newChainId);
+            const isElysium = newChainId && (
+              newChainId === ELYSIUM_CONFIG.chainId || 
+              newChainId === '0x185d9' || 
+              newChainId === 99801 || 
+              newChainId === '99801'
+            );
+            if (isElysium) {
+              showToast('Switched to Elysium L2 Testnet');
+              logAudit('NETWORK', 'Active chain switched to Elysium L2 (99801).', 'accent');
+            } else {
+              const name = getFriendlyChainName(newChainId);
+              showToast(`Active chain changed to ${name}.`);
+              logAudit('NETWORK', `Active chain changed to ${name} (${newChainId}).`, 'hedge');
+            }
+            if (runtimeState.walletAddress) {
+              fetchOnChainBalances(runtimeState.walletAddress);
+              syncOnChainVaultPosition(runtimeState.walletAddress);
+            }
+          });
+        }
+      } catch (evtErr) {
+        console.debug('Provider event binding notice:', evtErr);
+      }
+
+      // Check current chain ID and automatically prompt network addition/switch if not on Elysium L2
       try {
         const currentChainId = await provider.request({ method: 'eth_chainId' });
-        if (currentChainId !== ELYSIUM_CONFIG.chainId) {
-          logAudit('NETWORK', `Active wallet chain differs from Elysium L2 (99801). Switch network when ready to execute on-chain.`, 'hedge');
+        updateNetworkUI(currentChainId);
+        const isElysium = currentChainId && (
+          currentChainId === ELYSIUM_CONFIG.chainId || 
+          currentChainId === '0x185d9' || 
+          currentChainId === 99801 || 
+          currentChainId === '99801'
+        );
+        if (!isElysium) {
+          const friendlyName = getFriendlyChainName(currentChainId);
+          logAudit('NETWORK', `Connected on ${friendlyName}. Automatically prompting 1-click switch to Elysium L2 (Chain ID 99801)...`, 'hedge');
+          setTimeout(async () => {
+            await switchOrAddElysiumNetwork(provider);
+          }, 350);
+        } else {
+          logAudit('NETWORK', 'Connected on Elysium L2 Testnet (Chain ID 99801).', 'accent');
         }
       } catch (chainErr) {
         console.warn('Silent chain check notice:', chainErr);
@@ -1885,16 +2236,16 @@
       await syncOnChainVaultPosition(runtimeState.walletAddress);
     } catch (err) {
       console.error('Wallet connection rejected:', err);
-      showToast('Wallet connection was cancelled or rejected.');
+      if (err && (err.code === 4001 || (err.message && err.message.toLowerCase().includes('user rejected')))) {
+        showToast('Wallet connection was cancelled.');
+      } else {
+        showToast('Wallet connection error: ' + (err.message || 'Rejected'));
+      }
     }
   }
 
   async function connectWallet() {
-    if (runtimeState.walletConnected) {
-      openWalletAccountModal();
-    } else {
-      openWalletSelectModal();
-    }
+    await handleWalletBtnClick();
   }
 
   async function disconnectWallet() {
@@ -1950,12 +2301,27 @@
     if (modal) modal.style.display = 'none';
   }
 
-  function handleWalletBtnClick() {
+  async function handleWalletBtnClick() {
     if (runtimeState.walletConnected) {
       openWalletAccountModal();
-    } else {
-      openWalletSelectModal();
+      return;
     }
+
+    // If user is inside a mobile in-app dApp browser (Zerion, OKX, Bitget, Opus), connect directly
+    if (isInAppWalletBrowser()) {
+      await connectInjectedWallet();
+      return;
+    }
+
+    // If an injected extension is immediately detected (Zerion, OKX, MetaMask desktop extension)
+    const quickProvider = getWeb3Provider();
+    if (quickProvider && !quickProvider.isWalletConnect) {
+      await connectInjectedWallet();
+      return;
+    }
+
+    // Otherwise show modal (e.g. mobile Safari / Chrome)
+    openWalletSelectModal();
   }
 
   async function fetchOnChainBalances(addr) {
@@ -1969,7 +2335,7 @@
     let hypeRaw = null;
 
     const provider = getWeb3Provider();
-    if (provider && runtimeState.walletConnected) {
+    if (provider && runtimeState.walletConnected && runtimeState.isElysiumChain) {
       try {
         nativeWei = await provider.request({
           method: 'eth_getBalance',
@@ -1987,7 +2353,7 @@
         });
       } catch (e) {}
     } else {
-      // Direct verified RPC read
+      // Direct verified Elysium L2 RPC read
       const balRes = await callElysiumRpc('eth_getBalance', [targetAddr, 'latest']);
       if (balRes.success && balRes.result) {
         nativeWei = balRes.result;
@@ -2148,8 +2514,12 @@
           }
         });
 
-        provider.on('chainChanged', () => {
-          window.location.reload();
+        provider.on('chainChanged', (newChainId) => {
+          updateNetworkUI(newChainId);
+          if (runtimeState.walletAddress) {
+            fetchOnChainBalances(runtimeState.walletAddress);
+            syncOnChainVaultPosition(runtimeState.walletAddress);
+          }
         });
       } catch (e) {
         console.debug('Provider event binding notice:', e);
@@ -3313,6 +3683,30 @@
     initTheme();
     initTradingTerminalSuite();
     initListeners();
+
+    // Auto-detect already authorized account on startup (e.g. Zerion, OKX, MetaMask)
+    try {
+      const bootProvider = await resolveProvider(250);
+      if (bootProvider) {
+        const accounts = await bootProvider.request({ method: 'eth_accounts' });
+        if (accounts && accounts.length > 0) {
+          runtimeState.walletAddress = accounts[0];
+          runtimeState.walletConnected = true;
+          runtimeState.activeProviderType = 'injected';
+          updateWalletUI(runtimeState.walletAddress);
+
+          try {
+            const chainId = await bootProvider.request({ method: 'eth_chainId' });
+            updateNetworkUI(chainId);
+          } catch (e) {}
+
+          fetchOnChainBalances(runtimeState.walletAddress);
+          syncOnChainVaultPosition(runtimeState.walletAddress);
+        }
+      }
+    } catch (bootErr) {
+      console.debug('Silent startup wallet check notice:', bootErr);
+    }
 
     // Restore active agent delegation if valid
     try {

@@ -59,11 +59,11 @@
         </div>
       </div>
       <div class="header-separator"></div>
-      <div class="network-badge" id="networkBadge">
+      <button class="network-badge interactive" id="networkBadge" type="button" aria-label="Elysium Network Status" title="Click to Switch or Add Elysium L2 (Chain 99801)">
         <span class="pulse-indicator"></span>
-        <span>Elysium L2</span>
-        <strong>99801</strong>
-      </div>
+        <span id="networkBadgeText">Elysium L2</span>
+        <strong id="networkBadgeChainId">99801</strong>
+      </button>
     </div>
 
     <!-- View Mode Switcher Pill Toggle -->
@@ -102,6 +102,21 @@
       </button>
     </div>
   </header>
+
+  <!-- Wrong Network Warning & One-Click Switch Banner -->
+  <div class="wrong-network-banner" id="wrongNetworkBanner" style="display: none;">
+    <div class="wrong-network-content">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span>Connected to <strong id="currentChainNameDisplay">another network</strong>. Switch to Elysium L2 (Chain ID 99801) to interact on-chain.</span>
+    </div>
+    <button class="btn-switch-network" id="btnSwitchNetworkBanner" type="button">
+      One-Click Switch / Add Elysium L2
+    </button>
+  </div>
 
   <!-- Navigation & Session Drawer Backdrop -->
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
@@ -274,34 +289,6 @@
     </div>
     <div class="settings-modal-footer">
       <button class="settings-reset-btn" id="settingsResetBtn" type="button">Reset Default Layout</button>
-    </div>
-  </div>
-
-  <!-- Hyperliquid-Style Web3 Wallet Selection Modal -->
-  <div class="wallet-modal-backdrop" id="walletModalBackdrop"></div>
-  <div class="wallet-modal" id="walletModal" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle" hidden>
-    <div class="wallet-modal-header">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span class="pulse-indicator"></span>
-        <h3 id="walletModalTitle" style="font-family:var(--display); font-size:18px;">Connect Wallet</h3>
-      </div>
-      <button class="wallet-modal-close-btn" id="walletModalCloseBtn" type="button" aria-label="Close wallet modal">&times;</button>
-    </div>
-    <p style="font-size:12.5px; color:var(--ink-2); margin-bottom:16px;">Select your preferred EVM wallet. Read-only session keys ensure non-custodial protection without automatic chain injection.</p>
-    <div class="wallet-options-list">
-      <button class="wallet-option-item" id="btnConnectInjected" type="button">
-        <div class="wallet-option-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="4"/><path d="M16 12h.01"/><path d="M12 16H8"/></svg>
-        </div>
-        <div class="wallet-option-info">
-          <strong>Browser Wallet (EIP-1193 / EIP-6963)</strong>
-          <span>MetaMask, Zerion, Rabby, Rainbow, Coinbase</span>
-        </div>
-        <span class="wallet-option-badge">Connect</span>
-      </button>
-    </div>
-    <div class="wallet-modal-footer" style="margin-top:14px; font-size:11px; color:var(--ink-2); text-align:center;">
-      <span>By connecting, you agree to non-custodial risk sentinel monitoring.</span>
     </div>
   </div>
 
@@ -1148,14 +1135,17 @@
           <div class="wallet-avatar-badge" id="walletAvatarBadge">0x</div>
           <div class="wallet-address-details">
             <span class="wallet-full-addr font-mono" id="walletFullAddrText">0x0000...0000</span>
-            <span class="wallet-network-label">
-              <span class="live-pulse-dot"></span>
-              <span>Elysium L2 Testnet (Chain ID 99801)</span>
-              <span class="status-pill pill-accent" style="font-size:9.5px; padding:1px 6px; margin-left:4px;">Signed</span>
+            <span class="wallet-network-label" id="modalNetworkLabel">
+              <span class="live-pulse-dot" id="modalNetworkDot"></span>
+              <span id="modalNetworkText">Elysium L2 Testnet (Chain ID 99801)</span>
+              <span class="status-pill pill-accent" id="modalNetworkPill" style="font-size:9.5px; padding:1px 6px; margin-left:4px;">Signed</span>
             </span>
           </div>
         </div>
         <div class="wallet-address-actions">
+          <button class="wallet-action-btn" id="btnModalSwitchNetwork" type="button" style="display:none; background:var(--hedge); color:var(--ground); font-weight:600; border-color:var(--hedge);" title="Switch to Elysium L2 Testnet">
+            <span>Switch to Elysium L2</span>
+          </button>
           <button class="wallet-action-btn" id="btnCopyWalletAddr" type="button" title="Copy Address">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <span id="copyAddrBtnText">Copy</span>
@@ -1328,10 +1318,10 @@
         </div>
         <div class="wallet-option-details">
           <div class="wallet-option-title">
-            <span>Browser Extension</span>
-            <span class="status-pill" style="font-size:10px; padding:1px 6px;">EIP-1193</span>
+            <span>Browser & In-App Wallet</span>
+            <span class="status-pill pill-accent" style="font-size:10px; padding:1px 6px;">EIP-1193</span>
           </div>
-          <div class="wallet-option-desc">MetaMask, Rabby, OKX, Bitget, Coinbase extension</div>
+          <div class="wallet-option-desc">Zerion, OKX, MetaMask, Bitget, Opus, Trust, Rabby, Coinbase</div>
         </div>
         <span class="wallet-option-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </button>

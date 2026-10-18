@@ -34,3 +34,10 @@ keeper/coverage/
 
 # Temporary / Scratch Audio
 remotion/public/audio_pitch/*.wav
+
+# Python artifacts
+__pycache__/
+*.pyc
+scripts/__pycache__/
+scripts/parse_ecosystem.py
+
