@@ -46,15 +46,19 @@ Please report security issues responsibly using one of the following channels:
 
 ---
 
-## Bug Bounty Program
+## Bug Bounty Program (Planned — Not Yet Active)
 
-AEGIS values independent security researchers. Vulnerabilities identified in protocol smart contracts, invariant specifications, or off-chain keeper logic that lead to verifiable risk will be rewarded based on severity:
+> **⚠️ The AEGIS Bug Bounty Program is not currently active.** It is planned for launch during **Phase 3** of the protocol roadmap, following the completion of independent third-party security audits and formal verification. Until the program is officially announced with detailed scope, rules, and reward terms, no bounty submissions are being accepted and no rewards will be issued.
 
-| Severity Level | Impact Definition | Potential Bounty |
+AEGIS values independent security researchers and plans to launch a structured bug bounty program to incentivize responsible disclosure. Once active, vulnerabilities identified in protocol smart contracts, invariant specifications, or off-chain keeper logic that lead to verifiable risk will be rewarded based on severity. The planned reward tiers are as follows:
+
+| Severity Level | Impact Definition | Planned Bounty Range |
 | :--- | :--- | :--- |
 | **Critical** | Direct theft of user vault collateral, bypass of non-custodial invariant INV-1, or permanent locking of funds. | Up to $50,000 |
 | **High** | Manipulation of health factor calculations, evasion of slashing penalties, or unauthorized fee diversion. | Up to $20,000 |
 | **Medium** | Keeper denial of service, griefing attacks resulting in degraded hedging performance, or minor fee leakage. | Up to $5,000 |
 | **Low** | Non-critical edge cases, state inconsistencies without financial loss, or telemetry reporting errors. | Up to $1,000 |
 
-*Rewards are determined at the sole discretion of the protocol governance team based on impact, novel proof-of-concept, and quality of report.*
+*These tiers are indicative and subject to change. Final reward amounts, program scope, eligibility rules, and submission process will be published when the program officially launches. Rewards are determined at the sole discretion of the protocol governance team based on impact, novel proof-of-concept, and quality of report.*
+
+In the meantime, if you discover a critical security vulnerability, please report it responsibly via the channels listed in the [Reporting a Vulnerability](#reporting-a-vulnerability) section above. We appreciate your patience as we work toward launching a formal bounty program.

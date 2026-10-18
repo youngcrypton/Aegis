@@ -432,7 +432,7 @@ timeline
 ### Phase 3: Comprehensive Security Auditing & Formal Verification
 - Independent security reviews of all smart contracts (`AegisVault.sol`, `AegisFeeCollector.sol`, `AegisSentinelRegistry.sol`, adapters).
 - Quantitative economic simulation of trailing exit buffers ($\tau$) and liquidation penalty ratios across historical flash crash datasets.
-- Launch of a community bug bounty program for contract and keeper security.
+- Launch of a community bug bounty program for contract and keeper security. *(Planned — not yet active. The program will be formally announced with scope and rules after external audits are completed.)*
 
 ### Phase 4: Elysium Mainnet Deployment
 - Multi-signature governance deployment using Gnosis Safe with timelock controls.

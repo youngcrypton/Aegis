@@ -1,10 +1,10 @@
 {
   "name": "aegis",
   "version": "1.0.0",
-  "description": "AEGIS Protocol — High-Frequency Risk Sentinel & Pro-Trader Terminal",
+  "description": "AEGIS Protocol \u2014 High-Frequency Risk Sentinel & Pro-Trader Terminal",
   "scripts": {
-    "dev": "node scripts/serve_local.js",
-    "build": "node build.js",
+    "dev": "node api.js && node scripts/serve_local.js",
+    "build": "node api.js && node build.js",
     "discord:setup": "node script/setup_discord.js",
     "discord:bot": "node script/discord_sentinel_bot.js"
   },
