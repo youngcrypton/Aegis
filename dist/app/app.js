@@ -2055,8 +2055,9 @@
       }
 
       if (!activeWcProvider) {
+        const projectId = (typeof window !== 'undefined' && window.AEGIS_WC_PROJECT_ID) || 'c4f79cc821944d9680842e34466bfbd';
         activeWcProvider = await wcModule.EthereumProvider.init({
-          projectId: 'c4f79cc821944d9680842e34466bfbd',
+          projectId: projectId,
           chains: [99801],
           optionalChains: [99801, 1],
           showQrModal: true,
@@ -2145,17 +2146,39 @@
     }
   }
 
+  let isInjectedConnecting = false;
+
   async function connectInjectedWallet() {
-    const provider = await resolveProvider(800);
-    if (!provider) {
-      showToast('No Web3 wallet extension found. Try connecting with WalletConnect.');
-      openWalletSelectModal();
-      return;
+    if (isInjectedConnecting) return;
+    isInjectedConnecting = true;
+
+    const originalBtnText = el.walletAddrText ? el.walletAddrText.textContent : 'Connect Wallet';
+    if (el.walletAddrText) {
+      el.walletAddrText.textContent = 'Connecting...';
     }
 
+    let timeoutTimer = null;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutTimer = setTimeout(() => {
+        const timeoutErr = new Error('Check your wallet for a pending request');
+        timeoutErr.code = 'TIMEOUT';
+        reject(timeoutErr);
+      }, 45000);
+    });
+
     try {
-      showToast('Connecting wallet...');
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      const provider = await resolveProvider(800);
+      if (!provider) {
+        showToast('No Web3 wallet extension found. Try connecting with WalletConnect.');
+        openWalletSelectModal();
+        return;
+      }
+
+      showToast('Connecting wallet... Check for extension popup.');
+      const accountsPromise = provider.request({ method: 'eth_requestAccounts' });
+      const accounts = await Promise.race([accountsPromise, timeoutPromise]);
+      clearTimeout(timeoutTimer);
+
       if (!accounts || accounts.length === 0) {
         showToast('No accounts selected.');
         return;
@@ -2235,11 +2258,26 @@
       await fetchOnChainBalances(runtimeState.walletAddress);
       await syncOnChainVaultPosition(runtimeState.walletAddress);
     } catch (err) {
-      console.error('Wallet connection rejected:', err);
-      if (err && (err.code === 4001 || (err.message && err.message.toLowerCase().includes('user rejected')))) {
+      clearTimeout(timeoutTimer);
+      console.error('Wallet connection rejected or timed out:', err);
+      if (err && err.code === 'TIMEOUT') {
+        showToast('Check your wallet for a pending request');
+        logAudit('WALLET', 'Wallet approval request timed out after 45s. Check wallet extension popup.', 'hedge');
+      } else if (err && (err.code === 4001 || (err.message && err.message.toLowerCase().includes('user rejected')))) {
         showToast('Wallet connection was cancelled.');
       } else {
         showToast('Wallet connection error: ' + (err.message || 'Rejected'));
+      }
+    } finally {
+      clearTimeout(timeoutTimer);
+      isInjectedConnecting = false;
+      if (!runtimeState.walletConnected) {
+        if (el.walletAddrText) {
+          el.walletAddrText.textContent = originalBtnText || 'Connect Wallet';
+        }
+        if (el.walletBtn) {
+          el.walletBtn.classList.remove('connected');
+        }
       }
     }
   }
@@ -2307,20 +2345,7 @@
       return;
     }
 
-    // If user is inside a mobile in-app dApp browser (Zerion, OKX, Bitget, Opus), connect directly
-    if (isInAppWalletBrowser()) {
-      await connectInjectedWallet();
-      return;
-    }
-
-    // If an injected extension is immediately detected (Zerion, OKX, MetaMask desktop extension)
-    const quickProvider = getWeb3Provider();
-    if (quickProvider && !quickProvider.isWalletConnect) {
-      await connectInjectedWallet();
-      return;
-    }
-
-    // Otherwise show modal (e.g. mobile Safari / Chrome)
+    // Always open chooser modal so both Browser Wallet and WalletConnect (QR/Mobile) are available
     openWalletSelectModal();
   }
 

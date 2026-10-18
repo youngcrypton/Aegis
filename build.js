@@ -74,4 +74,10 @@ dirsToCopy.forEach(dir => {
   }
 });
 
+// Guarantee brand tokens are present for both root domain deployments and subpath / app-isolated testing
+const appBrandDest = path.join(DIST, 'app', 'brand', 'kit');
+if (!fs.existsSync(appBrandDest)) fs.mkdirSync(appBrandDest, { recursive: true });
+fs.copyFileSync(path.join(ROOT, 'brand', 'kit', 'tokens.css'), path.join(appBrandDest, 'tokens.css'));
+console.log(' ✓ Verified /app/brand/kit/tokens.css for isolated app testing');
+
 console.log('[AEGIS] Protocol successfully bundled into ./dist ready for Cloudflare deployment!');

@@ -1335,6 +1335,8 @@
   <!-- Notification Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- Process environment shim for WalletConnect Web3Modal & Lit dependencies -->
+  <script>window.process = window.process || { env: { NODE_ENV: 'production' }, platform: 'browser' };</script>
   <script src="walletconnect-provider.min.js"></script>
   <script src="hypercore-universe.js"></script>
   <script src="app.js"></script>
