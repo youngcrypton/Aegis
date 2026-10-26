@@ -238,8 +238,8 @@
   const HYPERCORE_MARKETS = (window.AEGIS_HYPERCORE_UNIVERSE && window.AEGIS_HYPERCORE_UNIVERSE.length > 0)
     ? window.AEGIS_HYPERCORE_UNIVERSE
     : [
-        { symbol: 'HYPE', name: 'Hyperliquid L1 Native', pair: 'HYPE / USD', price: 83.50, change: '+3.42%', cat: 'hypercore', tv: 'MEXC:HYPEUSDT', icon: '/assets/backers/hyperliquid.png', maxLev: 10, vol: 380000000 },
-        { symbol: 'PURR', name: 'HyperCore Spot & Perp Meme', pair: 'PURR / USD', price: 0.184, change: '+8.21%', cat: 'hypercore', tv: 'MEXC:PURRUSDT', icon: '/assets/backers/hyperliquid.png', maxLev: 10, vol: 45000000 },
+        { symbol: 'HYPE', name: 'Hyperliquid L1 Native', pair: 'HYPE / USD', price: 83.50, change: '+3.42%', cat: 'hypercore', tv: 'MEXC:HYPEUSDT', icon: '/assets/ecosystem/hyperliquid.png', maxLev: 10, vol: 380000000 },
+        { symbol: 'PURR', name: 'HyperCore Spot & Perp Meme', pair: 'PURR / USD', price: 0.184, change: '+8.21%', cat: 'hypercore', tv: 'MEXC:PURRUSDT', icon: '/assets/ecosystem/hyperliquid.png', maxLev: 10, vol: 45000000 },
         { symbol: 'BTC', name: 'Bitcoin Perp', pair: 'BTC / USD', price: 83500.00, change: '+0.84%', cat: 'majors', tv: 'BINANCE:BTCUSDT', icon: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png', maxLev: 40, vol: 1900000000 },
         { symbol: 'ETH', name: 'Ethereum Perp', pair: 'ETH / USD', price: 2520.50, change: '+1.25%', cat: 'majors', tv: 'BINANCE:ETHUSDT', icon: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png', maxLev: 25, vol: 790000000 }
       ];
@@ -718,7 +718,7 @@
       btn.dataset.symbol = coin.symbol;
 
       const isPos = coin.change && coin.change.startsWith('+');
-      const iconUrl = coin.icon || '/assets/backers/hyperliquid.png';
+      const iconUrl = coin.icon || '/assets/ecosystem/hyperliquid.png';
       const fallbackInitials = (coin.symbol || '').slice(0, 3);
       const maxLev = coin.maxLev || 10;
 
@@ -823,6 +823,14 @@
         switchAppView('trading');
         if (navTrading) navTrading.classList.add('active');
         if (navVault) navVault.classList.remove('active');
+        closeDrawer();
+      });
+    }
+
+    const navSimulator = document.getElementById('drawerNavSimulator');
+    if (navSimulator) {
+      navSimulator.addEventListener('click', () => {
+        openDeltaHedgeSimulator();
         closeDrawer();
       });
     }
@@ -3243,6 +3251,7 @@
     const sizeFormatted = size < 1 ? size.toFixed(4) : size.toFixed(0);
     logAudit('SIMULATOR', `[SIMULATION ONLY] Trigger breached (H=${calculateHealthFactor(price).toFixed(2)}). Simulated EIP-712 Intent generated.`, 'danger');
     logAudit('SIMULATOR', `[SIMULATION ONLY] Simulated order dispatch: -${sizeFormatted} HYPE @ $${price.toFixed(2)} (0x0802 blocked on testnet)`, 'hedge');
+    logAudit('SENTINEL', 'Autonomous Delta-Hedging active. Tap "View Simulator ↗" to inspect live offset curve & capital preserved.', 'accent');
     showToast(`[SIMULATION] Hedge simulated: -${sizeFormatted} HYPE short at $${price.toFixed(2)}`);
   }
 
@@ -3300,6 +3309,387 @@
       clearInterval(runtimeState.simInterval);
       runtimeState.simInterval = null;
     }
+  }
+
+  // --- 8B. AUTONOMOUS DELTA-HEDGING SIMULATOR ---
+  const simEngine = {
+    activePreset: 'vault',
+    drawdownPct: 0.0,
+    presets: {
+      vault: {
+        id: 'vault',
+        name: 'Active Terminal Vault (HYPE)',
+        collateral: 1000.00,
+        asset: 'HYPE',
+        debt: 32000,
+        price0: 48.50,
+        triggerHf: 1.10,
+        liqPenalty: 0.10,
+        precompile: '0x0801',
+        latency: 'under 70ms'
+      },
+      eth: {
+        id: 'eth',
+        name: '12.40 ETH · $22k Debt (Video)',
+        collateral: 12.40,
+        asset: 'ETH',
+        debt: 22000,
+        price0: 3412.80,
+        triggerHf: 1.20,
+        liqPenalty: 0.10,
+        precompile: '0x0801',
+        latency: 'under 70ms'
+      },
+      custom: {
+        id: 'custom',
+        name: 'Custom Parameters',
+        collateral: 1000.00,
+        asset: 'HYPE',
+        debt: 32000,
+        price0: 48.50,
+        triggerHf: 1.10,
+        liqPenalty: 0.10,
+        precompile: '0x0801',
+        latency: 'under 70ms'
+      }
+    }
+  };
+
+  function openDeltaHedgeSimulator(preferredPreset) {
+    const terminalPrice = runtimeState.currentPrice || VAULT_CONSTANTS.basePrice || 48.50;
+    const terminalBasePrice = VAULT_CONSTANTS.basePrice || 48.50;
+
+    // 1. Sync live terminal state into vault preset
+    const liveCollateral = VAULT_CONSTANTS.collateralAmount >= 1 
+      ? VAULT_CONSTANTS.collateralAmount 
+      : 1000.00;
+    const liveDebt = VAULT_CONSTANTS.debtUsdc >= 100 
+      ? VAULT_CONSTANTS.debtUsdc 
+      : 32000;
+    const liveTriggerHf = proConfig.healthTrigger || 1.10;
+
+    simEngine.presets.vault.collateral = liveCollateral;
+    simEngine.presets.vault.price0 = terminalBasePrice;
+    simEngine.presets.vault.debt = liveDebt;
+    simEngine.presets.vault.triggerHf = liveTriggerHf;
+    simEngine.presets.vault.asset = 'HYPE';
+
+    // 2. Select preset: if terminal has an active hedge, force 'vault' reflection
+    const isTerminalHedgeOpen = Boolean(runtimeState.activeHedge && runtimeState.activeHedge.isOpen);
+    const targetPreset = isTerminalHedgeOpen ? 'vault' : (preferredPreset || 'vault');
+    setSimulatorPreset(targetPreset);
+
+    // 3. Sync live drawdown & hedge position
+    if (isTerminalHedgeOpen) {
+      // Calculate active market drop percentage from terminal
+      const liveDropPct = Math.max(0, Math.min(50, ((terminalBasePrice - terminalPrice) / terminalBasePrice) * 100));
+      simEngine.drawdownPct = liveDropPct > 8 ? liveDropPct : 15.0;
+    } else if (targetPreset === 'vault') {
+      const liveDropPct = Math.max(0, Math.min(50, ((terminalBasePrice - terminalPrice) / terminalBasePrice) * 100));
+      simEngine.drawdownPct = liveDropPct > 0.5 ? liveDropPct : 0.0;
+    } else if (targetPreset === 'eth') {
+      simEngine.drawdownPct = 30.0;
+    }
+
+    // Sync slider DOM
+    const slider = document.getElementById('simDrawdownSlider');
+    if (slider) {
+      slider.value = simEngine.drawdownPct;
+    }
+    const ticks = document.querySelectorAll('.sim-slider-ticks .sim-tick-btn');
+    ticks.forEach(btn => {
+      btn.classList.toggle('active', Math.abs(parseFloat(btn.dataset.drop) - simEngine.drawdownPct) < 2);
+    });
+
+    const modal = document.getElementById('simModal');
+    const backdrop = document.getElementById('simModalBackdrop');
+    if (modal) {
+      modal.hidden = false;
+      modal.classList.add('active');
+    }
+    if (backdrop) backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderSimulator();
+  }
+
+  function closeDeltaHedgeSimulator() {
+    const modal = document.getElementById('simModal');
+    const backdrop = document.getElementById('simModalBackdrop');
+    if (modal) {
+      modal.classList.remove('active');
+      setTimeout(() => { modal.hidden = true; }, 220);
+    }
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function setSimulatorPreset(presetId) {
+    simEngine.activePreset = presetId;
+    const chips = document.querySelectorAll('.sim-preset-chips .sim-chip');
+    chips.forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.preset === presetId);
+    });
+
+    const customRow = document.getElementById('simCustomInputs');
+    if (customRow) {
+      customRow.style.display = presetId === 'custom' ? 'grid' : 'none';
+    }
+
+    renderSimulator();
+  }
+
+  function renderSimulator() {
+    const preset = simEngine.presets[simEngine.activePreset] || simEngine.presets.vault;
+    const drop = simEngine.drawdownPct / 100;
+    const pCurrent = preset.price0 * (1 - drop);
+    const unhedgedCollateralVal = preset.collateral * pCurrent;
+    const rawCollateralRatio = unhedgedCollateralVal / preset.debt;
+    
+    // In our delta-neutral architecture, the trigger line is at triggerHf (e.g. 1.10 or 1.20)
+    const triggerDropPct = Math.max(5, (1 - (preset.triggerHf * preset.debt) / (preset.collateral * preset.price0)) * 100);
+    const isTerminalHedgeOpen = Boolean(simEngine.activePreset === 'vault' && runtimeState.activeHedge && runtimeState.activeHedge.isOpen);
+    const isHedged = isTerminalHedgeOpen || (simEngine.drawdownPct >= Math.min(30, triggerDropPct));
+
+    // Update Header
+    const colDisplay = document.getElementById('simCollateralDisplay');
+    const debtDisplay = document.getElementById('simDebtDisplay');
+    if (colDisplay) colDisplay.textContent = `${preset.collateral.toFixed(2)} ${preset.asset}`;
+    if (debtDisplay) debtDisplay.textContent = `$${preset.debt.toLocaleString()}`;
+
+    // Update Trigger Level & Status Pill
+    const triggerVal = document.getElementById('simTriggerLevelVal');
+    if (triggerVal) triggerVal.textContent = preset.triggerHf.toFixed(2);
+
+    const statusPill = document.getElementById('simStatusPill');
+    const statusText = document.getElementById('simStatusText');
+    if (statusPill && statusText) {
+      if (isHedged) {
+        statusPill.className = 'sim-status-pill';
+        statusText.textContent = isTerminalHedgeOpen ? 'Live hedge active' : 'Hedge active';
+      } else {
+        statusPill.className = 'sim-status-pill healthy';
+        statusText.textContent = 'Healthy';
+      }
+    }
+
+    // Update Slider text
+    const dropText = document.getElementById('simDrawdownText');
+    if (dropText) dropText.textContent = `-${simEngine.drawdownPct.toFixed(1)}%`;
+
+    // Update Chart Price Header
+    const priceDisplay = document.getElementById('simChartPriceDisplay');
+    if (priceDisplay) {
+      priceDisplay.textContent = `Price: $${pCurrent.toFixed(2)} (-${simEngine.drawdownPct.toFixed(1)}%)`;
+    }
+
+    // Update Readout Boxes
+    const hedgeVal = document.getElementById('simReadoutHedgeVal');
+    const hedgeSub = document.getElementById('simReadoutHedgeSub');
+    const preservedVal = document.getElementById('simReadoutPreservedVal');
+    const seizedVal = document.getElementById('simSpecSeizedVal');
+
+    if (isHedged) {
+      const activeSize = (isTerminalHedgeOpen && runtimeState.activeHedge.size > 0)
+        ? (runtimeState.activeHedge.size < 1 ? runtimeState.activeHedge.size.toFixed(4) : runtimeState.activeHedge.size.toFixed(2))
+        : (preset.collateral * (proConfig.hedgeRatio || 0.50)).toFixed(2);
+      if (hedgeVal) hedgeVal.textContent = `${activeSize} ${preset.asset}`;
+      if (hedgeSub) {
+        hedgeSub.textContent = isTerminalHedgeOpen
+          ? `Live Terminal Hedge @ $${runtimeState.activeHedge.entryPrice.toFixed(2)} · Offsetting 100%`
+          : 'Short open · offsetting 100%';
+      }
+      const savedPenalty = Math.round(preset.debt * preset.liqPenalty);
+      if (preservedVal) preservedVal.textContent = `+$${savedPenalty.toLocaleString()}`;
+    } else {
+      if (hedgeVal) hedgeVal.textContent = `0.00 ${preset.asset}`;
+      if (hedgeSub) hedgeSub.textContent = `Standby · trigger ${preset.triggerHf.toFixed(2)}`;
+      if (preservedVal) preservedVal.textContent = '$0';
+    }
+
+    if (seizedVal) {
+      seizedVal.textContent = `0.00 ${preset.asset} (100% intact)`;
+    }
+
+    // Update Health Factor & Collateral Ratio
+    const hfNumber = document.getElementById('simHfNumber');
+    const crNumber = document.getElementById('simCrNumber');
+    const hfFill = document.getElementById('simHfFill');
+
+    const effectiveHf = isHedged ? preset.triggerHf : rawCollateralRatio;
+    if (hfNumber) {
+      hfNumber.textContent = effectiveHf.toFixed(2);
+      hfNumber.style.color = isHedged ? 'var(--hedge)' : 'var(--ink)';
+    }
+
+    if (crNumber) {
+      crNumber.textContent = `${Math.round(rawCollateralRatio * 100)}%`;
+    }
+
+    if (hfFill) {
+      // 1.0 = liquidated (0%), 2.0 = safe (100%)
+      const pct = Math.max(4, Math.min(100, ((effectiveHf - 1.0) / 1.0) * 100));
+      hfFill.style.width = `${pct}%`;
+      hfFill.style.background = isHedged ? 'var(--hedge)' : 'var(--accent)';
+    }
+
+    // SVG Curves Drawing
+    // Coordinates:
+    // x: 20 to 560
+    // y: 30 to 156
+    // Trigger y = 105
+    // Intersection at x = 360, y = 105
+    const collPath = document.getElementById('simSvgCollateralPath');
+    const hedgePath = document.getElementById('simSvgHedgePath');
+    const netLine = document.getElementById('simSvgNetLine');
+    const marker = document.getElementById('simSvgMarker');
+    const hedgeLegend = document.getElementById('simHedgeLegendItem');
+
+    // Interpolate cursor marker coordinates
+    let curX, curY;
+    if (simEngine.drawdownPct <= 30) {
+      const t = simEngine.drawdownPct / 30;
+      curX = 20 + t * (360 - 20);
+      curY = 30 + (t * 0.4 + t * t * 0.6) * (105 - 30);
+    } else {
+      const t = (simEngine.drawdownPct - 30) / 20;
+      curX = 360 + t * (560 - 360);
+      curY = 105 + (t * 0.5 + t * t * 0.5) * (156 - 105);
+    }
+
+    if (marker) {
+      marker.setAttribute('transform', `translate(${curX.toFixed(1)}, ${curY.toFixed(1)})`);
+      const markerCircle = marker.querySelector('circle:last-child');
+      if (markerCircle) {
+        markerCircle.setAttribute('fill', isHedged ? 'var(--hedge)' : 'var(--danger)');
+      }
+    }
+
+    if (hedgePath && netLine && hedgeLegend) {
+      if (isHedged) {
+        // Compute hedge path extending to curX or full 560
+        const hEndScale = Math.min(1.0, Math.max(0.2, (simEngine.drawdownPct - 25) / 25));
+        const hedgeEndX = 360 + hEndScale * 200;
+        const hedgeEndY = 105 - hEndScale * 51;
+        hedgePath.setAttribute('d', `M 360 105 C 420 80, 490 60, ${hedgeEndX.toFixed(1)} ${hedgeEndY.toFixed(1)}`);
+        hedgePath.style.display = 'block';
+
+        netLine.setAttribute('x1', '360');
+        netLine.setAttribute('y1', '105');
+        netLine.setAttribute('x2', hedgeEndX.toFixed(1));
+        netLine.setAttribute('y2', '105');
+        netLine.style.display = 'block';
+        hedgeLegend.style.display = 'flex';
+      } else {
+        hedgePath.style.display = 'none';
+        netLine.style.display = 'none';
+        hedgeLegend.style.display = 'none';
+      }
+    }
+  }
+
+  function initDeltaHedgeSimulator() {
+    // Sliders & Ticks
+    const slider = document.getElementById('simDrawdownSlider');
+    if (slider) {
+      slider.addEventListener('input', (e) => {
+        simEngine.drawdownPct = parseFloat(e.target.value);
+        // Sync active tick buttons
+        const ticks = document.querySelectorAll('.sim-slider-ticks .sim-tick-btn');
+        ticks.forEach(btn => {
+          btn.classList.toggle('active', Math.abs(parseFloat(btn.dataset.drop) - simEngine.drawdownPct) < 2);
+        });
+        renderSimulator();
+      });
+    }
+
+    const tickBtns = document.querySelectorAll('.sim-slider-ticks .sim-tick-btn');
+    tickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const drop = parseFloat(btn.dataset.drop);
+        simEngine.drawdownPct = drop;
+        if (slider) slider.value = drop;
+        tickBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderSimulator();
+      });
+    });
+
+    // Preset buttons
+    const btnPresetEth = document.getElementById('simPresetEth');
+    const btnPresetVault = document.getElementById('simPresetVault');
+    const btnPresetCustom = document.getElementById('simPresetCustom');
+
+    if (btnPresetEth) btnPresetEth.addEventListener('click', () => setSimulatorPreset('eth'));
+    if (btnPresetVault) btnPresetVault.addEventListener('click', () => setSimulatorPreset('vault'));
+    if (btnPresetCustom) btnPresetCustom.addEventListener('click', () => setSimulatorPreset('custom'));
+
+    // Custom Input Listeners
+    const inpCol = document.getElementById('simCustomCollateral');
+    const inpDebt = document.getElementById('simCustomDebt');
+    const inpPrice = document.getElementById('simCustomPrice');
+    const inpTrigger = document.getElementById('simCustomTrigger');
+
+    function syncCustomInputs() {
+      if (inpCol) simEngine.presets.custom.collateral = Math.max(0.01, parseFloat(inpCol.value) || 12.4);
+      if (inpDebt) simEngine.presets.custom.debt = Math.max(1, parseFloat(inpDebt.value) || 22000);
+      if (inpPrice) simEngine.presets.custom.price0 = Math.max(0.1, parseFloat(inpPrice.value) || 3412.80);
+      if (inpTrigger) simEngine.presets.custom.triggerHf = Math.max(1.01, parseFloat(inpTrigger.value) || 1.20);
+      renderSimulator();
+    }
+
+    if (inpCol) inpCol.addEventListener('input', syncCustomInputs);
+    if (inpDebt) inpDebt.addEventListener('input', syncCustomInputs);
+    if (inpPrice) inpPrice.addEventListener('input', syncCustomInputs);
+    if (inpTrigger) inpTrigger.addEventListener('input', syncCustomInputs);
+
+    // Modal Trigger Buttons
+    const btnOpenHedgeSimulator = document.getElementById('btnOpenHedgeSimulator');
+    if (btnOpenHedgeSimulator) {
+      btnOpenHedgeSimulator.addEventListener('click', () => openDeltaHedgeSimulator());
+    }
+
+    const btnVaultSimTrigger = document.getElementById('btnVaultSimTrigger');
+    if (btnVaultSimTrigger) {
+      btnVaultSimTrigger.addEventListener('click', () => openDeltaHedgeSimulator('vault'));
+    }
+
+    const btnActiveHedgeSimTrigger = document.getElementById('btnActiveHedgeSimTrigger');
+    if (btnActiveHedgeSimTrigger) {
+      btnActiveHedgeSimTrigger.addEventListener('click', () => openDeltaHedgeSimulator());
+    }
+
+    const drawerNavSimulator = document.getElementById('drawerNavSimulator');
+    if (drawerNavSimulator) {
+      drawerNavSimulator.addEventListener('click', () => {
+        openDeltaHedgeSimulator();
+        const drawer = document.getElementById('appDrawer');
+        const backdrop = document.getElementById('drawerBackdrop');
+        const drawerBtn = document.getElementById('appDrawerBtn');
+        if (drawer) drawer.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('active');
+        if (drawerBtn) drawerBtn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    // Modal Close Buttons
+    const closeBtn = document.getElementById('simModalCloseBtn');
+    if (closeBtn) closeBtn.addEventListener('click', closeDeltaHedgeSimulator);
+
+    const simBackdrop = document.getElementById('simModalBackdrop');
+    if (simBackdrop) simBackdrop.addEventListener('click', closeDeltaHedgeSimulator);
+
+    // Keyboard ESC handler
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('simModal');
+        if (modal && modal.classList.contains('active')) {
+          closeDeltaHedgeSimulator();
+        }
+      }
+    });
+
+    // Initial render
+    renderSimulator();
   }
 
   // --- 9. EVENT LISTENERS & INITIALIZATION ---
@@ -4030,6 +4420,7 @@
     initTheme();
     initTradingTerminalSuite();
     initListeners();
+    initDeltaHedgeSimulator();
 
     // Auto-detect already authorized account on startup (e.g. Zerion, OKX, MetaMask)
     try {

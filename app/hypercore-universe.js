@@ -12,7 +12,7 @@ window.AEGIS_HYPERCORE_UNIVERSE = [
     "cat": "hypercore",
     "maxLev": 10,
     "vol": 380000000,
-    "icon": "/assets/backers/hyperliquid.png",
+    "icon": "/assets/ecosystem/hyperliquid.png",
     "tv": "MEXC:HYPEUSDT"
   },
   {
@@ -24,7 +24,7 @@ window.AEGIS_HYPERCORE_UNIVERSE = [
     "cat": "hypercore",
     "maxLev": 10,
     "vol": 45000000,
-    "icon": "/assets/backers/hyperliquid.png",
+    "icon": "/assets/ecosystem/hyperliquid.png",
     "tv": "MEXC:PURRUSDT"
   },
   {

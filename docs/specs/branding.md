@@ -240,8 +240,8 @@ All text pairings meet WCAG AA standards (minimum 4.5:1 for body copy, 3.0:1 for
 | **Master Vector Mark** | `brand/kit/aegis-brand-kit.html` (§Logo) | SVG | **Approved** |
 | **X Profile Picture** | `brand/x/kit-avatar-1000.png` | PNG (1000×1000) | **Approved** |
 | **X Banner Header** | `brand/x/kit-banner-1500x500.png` | PNG (1500×500) | **Approved** |
-| **Elysium Partner Logo** | `assets/backers/elysium.png` | PNG | **Approved** |
-| **Ascend Partner Logo** | `assets/backers/ascent.png` | PNG | **Approved** |
+| **Elysium Network Logo** | `assets/ecosystem/elysium.png` | PNG | **Approved** |
+| **Ascend Partner Logo** | `assets/ecosystem/ascent.png` | PNG | **Approved** |
 
 ### 7.2 Unresolved Brand Open Items
 Per `AGENTS.md`, the following open items remain undecided by governance. Contributors and agents must flag them and never pick a side in product code:
