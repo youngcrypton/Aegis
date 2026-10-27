@@ -86,6 +86,8 @@ interface IAegisVault {
         bytes calldata signature
     ) external;
 
+    function manualUnwind(uint32 perpIndex, uint256 exitPrice) external;
+
     function updateLowestWick(address vaultOwner) external;
 
     function repayFeeDebt(uint256 amount) external returns (uint256 repaid);

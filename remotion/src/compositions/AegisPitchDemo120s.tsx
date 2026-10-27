@@ -11,8 +11,8 @@ import { Act6OutroLight } from "../scenes_120s/Act6OutroLight";
 import { AEGIS_LIGHT_THEME } from "../theme";
 
 /**
- * AEGIS Protocol — 120-Second Hackathon Demo Video (Light Mode)
- * Target: Hackathon Judges (Elysium L2 / Hyperliquid / DeFi Track)
+ * AEGIS Protocol — 120-Second Pitch Demo Video (Light Mode)
+ * Target: Ecosystem Partners & Institutional Evaluators (Elysium L2 / Hyperliquid / DeFi Track)
  * Resolution: 1920x1080 @ 30 FPS (Exactly 3,600 frames = 120.00 seconds)
  *
  * Sequence Breakdown (Accounting for 5x 20-frame transition overlaps = 100 frames):
@@ -25,7 +25,7 @@ import { AEGIS_LIGHT_THEME } from "../theme";
  *
  * Net Total Duration = 550 + 680 + 770 + 920 + 470 + 310 - (5 * 20) = 3,600 frames (120.00s)
  */
-export const AegisHackathonDemo120s: React.FC = () => {
+export const AegisPitchDemo120s: React.FC = () => {
   const t = AEGIS_LIGHT_THEME;
 
   return (

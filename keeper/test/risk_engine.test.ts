@@ -106,4 +106,32 @@ describe("RiskEngine Mathematical & Invariant Properties", () => {
     // 50% of 1000 HYPE = 500 HYPE
     expect(result.recommendedHedgeSize).toBe(ethers.parseUnits("500", 18));
   });
+
+  it("should accurately normalize and compute health factor for 8-decimal collateral (e.g. WBTC)", () => {
+    // 1 WBTC = 1e8 units
+    // Mark price = $60,000 (60,000 * 1e8)
+    // Debt = $40,000 USDC (40,000 * 1e6)
+    // Liquidation threshold = 8000 (80%)
+    // Normalized collateral = 1e18
+    // Expected H = (1e18 * 60,000e8 * 8000) / (40,000e6 * 1e20) = 12000 (1.20)
+    const rawWbtcAmount = 100_000_000n; // 1 WBTC (8 decimals)
+    const markPrice = 60_000_00000000n;
+    const debtUsdc = 40_000_000000n;
+    const hf = riskEngine.computeHealthFactor(rawWbtcAmount, markPrice, 8000, debtUsdc, 8);
+    expect(hf).toBe(12000n);
+  });
+
+  it("should accurately normalize and compute health factor for 6-decimal collateral (e.g. USDT)", () => {
+    // 50,000 USDT = 50,000 * 1e6 units
+    // Mark price = $1.00 (1 * 1e8)
+    // Debt = $30,000 USDC (30,000 * 1e6)
+    // Liquidation threshold = 8000 (80%)
+    // Expected H = (50,000e18 * 1e8 * 8000) / (30,000e6 * 1e20) = 13333 (1.3333)
+    const rawUsdtAmount = 50_000_000000n; // 50,000 USDT (6 decimals)
+    const markPrice = 1_00000000n;
+    const debtUsdc = 30_000_000000n;
+    const hf = riskEngine.computeHealthFactor(rawUsdtAmount, markPrice, 8000, debtUsdc, 6);
+    expect(hf).toBe(13333n);
+  });
 });
+

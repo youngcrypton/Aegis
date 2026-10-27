@@ -40,6 +40,12 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     /// @notice Authorized slasher or vault contracts
     mapping(address => bool) public authorizedSlashers;
 
+    /// @notice Minimum delay required between consecutive slash events for a single operator (rate limiter)
+    uint256 public slashCooldown;
+
+    /// @notice Timestamp of the last slash event per operator
+    mapping(address => uint256) public lastSlashTimestamp;
+
     /// @notice Registry of Sentinel nodes mapped by operator address
     mapping(address => SentinelNode) public sentinels;
 
@@ -51,6 +57,8 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
 
     /// @notice Pending partial unstake unlock timestamp per operator
     mapping(address => uint256) public override pendingUnstakeTimestamps;
+
+    event SlashCooldownUpdated(uint256 oldCooldown, uint256 newCooldown);
 
     modifier onlySlasherOrOwner() {
         if (msg.sender != owner() && !authorizedSlashers[msg.sender]) {
@@ -72,6 +80,15 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     function setAuthorizedSlasher(address slasher, bool authorized) external onlyOwner {
         if (slasher == address(0)) revert ZeroAddress();
         authorizedSlashers[slasher] = authorized;
+    }
+
+    /**
+     * @notice Set minimum delay required between consecutive slash events for an operator.
+     * @param _slashCooldown Cooldown in seconds.
+     */
+    function setSlashCooldown(uint256 _slashCooldown) external onlyOwner {
+        emit SlashCooldownUpdated(slashCooldown, _slashCooldown);
+        slashCooldown = _slashCooldown;
     }
 
     /**
@@ -278,6 +295,13 @@ contract AegisSentinelRegistry is IAegisSentinelRegistry, ReentrancyGuard, Ownab
     ) external onlySlasherOrOwner nonReentrant {
         if (operator == address(0) || victim == address(0)) revert ZeroAddress();
         if (slashBps > MAX_SLASH_BPS) revert SlashExceedsMaxBound();
+
+        if (slashCooldown > 0 && lastSlashTimestamp[operator] != 0 && msg.sender != owner()) {
+            if (block.timestamp < lastSlashTimestamp[operator] + slashCooldown) {
+                revert CooldownActive(lastSlashTimestamp[operator] + slashCooldown);
+            }
+        }
+        lastSlashTimestamp[operator] = block.timestamp;
 
         SentinelNode storage node = sentinels[operator];
         uint256 totalSlashable = node.bondedAmount + pendingUnstakeAmounts[operator];

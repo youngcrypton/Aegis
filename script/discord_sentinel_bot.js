@@ -89,16 +89,47 @@ process.on('unhandledRejection', (reason) => {
   console.error('[PROMISE REJECTION] Unhandled Rejection:', reason);
 });
 
-async function discordFetch(endpoint, options = {}) {
+async function discordFetch(endpoint, options = {}, retries = 0) {
+  const MAX_RETRIES = 5;
   const url = `${API_BASE}${endpoint}`;
-  const res = await fetch(url, { headers: HEADERS, ...options });
-  if (res.status === 429) {
-    const data = await res.json();
-    const wait = (data.retry_after || 1) * 1000;
-    console.log(` ⏳ Rate limit reached. Waiting ${wait}ms...`);
-    await new Promise(r => setTimeout(r, wait));
-    return discordFetch(endpoint, options);
+  const timeoutMs = options.timeoutMs || 10000;
+  const signal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout
+    ? AbortSignal.timeout(timeoutMs)
+    : undefined;
+
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: HEADERS,
+      signal,
+      ...options
+    });
+  } catch (netErr) {
+    if (retries < MAX_RETRIES) {
+      const wait = Math.min(1000 * Math.pow(2, retries), 10000);
+      console.warn(` ⚠️ Network error fetching ${endpoint} (${netErr.message}). Retrying in ${wait}ms (${retries + 1}/${MAX_RETRIES})...`);
+      await new Promise(r => setTimeout(r, wait));
+      return discordFetch(endpoint, options, retries + 1);
+    }
+    throw netErr;
   }
+
+  if (res.status === 429) {
+    if (retries >= MAX_RETRIES) {
+      throw new Error(`Discord API rate limit (429) exceeded maximum ${MAX_RETRIES} retries on ${endpoint}`);
+    }
+    let wait = 1000;
+    try {
+      const data = await res.json();
+      wait = Math.min((data.retry_after || 1) * 1000, 30000);
+    } catch {
+      wait = Math.min(1000 * Math.pow(2, retries), 30000);
+    }
+    console.log(` ⏳ Rate limit reached on ${endpoint}. Waiting ${wait}ms (attempt ${retries + 1}/${MAX_RETRIES})...`);
+    await new Promise(r => setTimeout(r, wait));
+    return discordFetch(endpoint, options, retries + 1);
+  }
+
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`Discord API ${res.status} on ${endpoint}: ${err}`);
@@ -109,16 +140,22 @@ async function discordFetch(endpoint, options = {}) {
 
 async function respondInteraction(interactionId, interactionToken, responseData) {
   const url = `${API_BASE}/interactions/${interactionId}/${interactionToken}/callback`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(responseData)
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error(`❌ respondInteraction failed (${res.status}) on ${interactionId}:`, errText);
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(responseData),
+      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`❌ respondInteraction failed (${res.status}) on ${interactionId}:`, errText);
+    }
+    return res;
+  } catch (err) {
+    console.error(`❌ respondInteraction network error on ${interactionId}:`, err.message);
+    return null;
   }
-  return res;
 }
 
 const WORD_TO_NUMBER = {

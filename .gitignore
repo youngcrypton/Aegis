@@ -26,6 +26,13 @@ GEMINI.md
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
+scratch/
+capture/
+render.log
+*.log
+/*.mp4
+/light-scene-*.png
+/sentinel-climax-thumb.png
 
 # Test & Coverage Artifacts
 keeper/coverage/

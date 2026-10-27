@@ -163,6 +163,15 @@
         <span class="d-badge pill-accent">CLOB Perps</span>
       </button>
 
+      <!-- Autonomous Delta-Hedging Simulator Drawer Nav Trigger -->
+      <button class="drawer-card-item" id="drawerNavSimulator" type="button">
+        <span class="d-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        <span class="d-title">Delta-Hedging Simulator</span>
+        <span class="d-badge pill-accent">Live Sim</span>
+      </button>
+
       <button class="drawer-card-item" id="drawerToggleModeBtn" type="button">
         <span class="d-icon" aria-hidden="true">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -390,6 +399,10 @@
         <button class="sim-btn btn-hedge" id="btnRetraceTest" type="button" title="Interactive simulation of an 8% dip and V-bounce with trailing unwind">
           Simulate Retracement (-8% V-Bounce)
         </button>
+        <button class="sim-btn btn-hedge-sim" id="btnOpenHedgeSimulator" type="button" title="Open Autonomous Delta-Hedging Simulator breakdown">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px; margin-right:4px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Hedge Simulator
+        </button>
         <button class="sim-btn" id="btnResetMarket" type="button">
           Reset Simulation ($48.50)
         </button>
@@ -414,6 +427,10 @@
           <div class="card-header">
             <h2 class="header-title">Protected Vault Position</h2>
             <div class="header-extra">
+              <button class="btn-vault-sim" id="btnVaultSimTrigger" type="button" title="Open Autonomous Delta-Hedging Simulator for this position">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>Hedge Simulator</span>
+              </button>
               <span>Vault ID: #0482</span>
               <span class="status-pill pill-accent">Elysium L2</span>
             </div>
@@ -499,7 +516,12 @@
                 <span class="status-dot"></span>
                 <span id="hedgeStatusText">STANDBY — RISK MONITORED</span>
               </div>
-              <div class="hedge-meta font-mono" id="hedgeMetaText">Hedge Ratio: 50% (500 HYPE Short)</div>
+              <div class="hedge-meta-wrap">
+                <span class="hedge-meta font-mono" id="hedgeMetaText">Hedge Ratio: 50% (500 HYPE Short)</span>
+                <button class="btn-inline-sim" id="btnActiveHedgeSimTrigger" type="button" title="Open Autonomous Delta-Hedging Simulator">
+                  View Simulator ↗
+                </button>
+              </div>
             </div>
             <div class="hedge-details-grid">
               <div class="hedge-item">
@@ -1270,25 +1292,29 @@
       </div>
 
       <!-- Modal Footer Actions -->
-      <div class="modal-actions" style="justify-content: space-between; align-items: center; margin-top: 4px;">
+      <div class="modal-actions" style="justify-content: space-between; align-items: center; margin-top: 4px; gap: 8px; flex-wrap: wrap;">
         <button class="wallet-action-btn" id="btnRefreshBalances" type="button">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-          <span>Refresh Balances</span>
+          <span>Refresh</span>
+        </button>
+        <button class="wallet-action-btn" id="btnSwitchWallet" type="button">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          <span>Switch Wallet</span>
         </button>
         <button class="btn-danger-outline" id="btnDisconnectWallet" type="button">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
-          <span>Disconnect Wallet</span>
+          <span>Disconnect</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Wallet Selection Modal (Official WalletConnect & Injected EIP-1193) -->
+  <!-- Wallet Selection Modal (Multi-Wallet & Official WalletConnect) -->
   <div class="settings-backdrop" id="walletSelectBackdrop"></div>
-  <div class="settings-modal" id="walletSelectModal" role="dialog" aria-modal="true" aria-labelledby="walletSelectModalTitle" hidden>
+  <div class="settings-modal wallet-select-modal" id="walletSelectModal" role="dialog" aria-modal="true" aria-labelledby="walletSelectModalTitle" hidden>
     <div class="settings-modal-header">
       <div class="settings-modal-title-row">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2" y="4" width="20" height="16" rx="4"/>
           <path d="M22 10H18a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h4"/>
           <circle cx="18" cy="12" r="1"/>
@@ -1297,48 +1323,225 @@
       </div>
       <button class="settings-close-btn" id="walletSelectCloseBtn" type="button" aria-label="Close wallet selection">&times;</button>
     </div>
-    <p class="settings-modal-sub">Select your connection method for Elysium L2 Testnet (Chain ID 99801).</p>
+    <p class="settings-modal-sub">Connect your wallet to AEGIS on Elysium L2 Testnet (Chain ID 99801).</p>
     
-    <div class="wallet-select-options">
-      <!-- Official WalletConnect Option -->
-      <button class="wallet-option-card" id="btnConnectWalletConnect" type="button">
-        <div class="wallet-option-icon wc-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M5.5 8.5C9.09 5 14.91 5 18.5 8.5L19 9C19.2 9.2 19.2 9.5 19 9.7L17.3 11.4C17.2 11.5 17 11.5 16.9 11.4L16.2 10.7C13.88 8.38 10.12 8.38 7.8 10.7L7 11.5C6.9 11.6 6.7 11.6 6.6 11.5L4.9 9.8C4.7 9.6 4.7 9.3 4.9 9.1L5.5 8.5ZM21.5 11.5L23.1 13.1C23.3 13.3 23.3 13.6 23.1 13.8L17.5 19.4C17.3 19.6 17 19.6 16.8 19.4L12.7 15.3C12.65 15.25 12.55 15.25 12.5 15.3L8.4 19.4C8.2 19.6 7.9 19.6 7.7 19.4L2.1 13.8C1.9 13.6 1.9 13.3 2.1 13.1L3.7 11.5C3.9 11.3 4.2 11.3 4.4 11.5L8.5 15.6C8.55 15.65 8.65 15.65 8.7 15.6L12.8 11.5C13 11.3 13.3 11.3 13.5 11.5L17.6 15.6C17.65 15.65 17.75 15.65 17.8 15.6L21.9 11.5C22.1 11.3 22.4 11.3 22.6 11.5H21.5Z" fill="#3B99FC"/>
+    <!-- Real-time Loading / Status / Error Banner -->
+    <div id="walletModalAlert" class="wallet-modal-alert" style="display: none;" role="status" aria-live="polite">
+      <div class="wallet-alert-content">
+        <div class="wallet-alert-icon" id="walletAlertIcon">
+          <div class="wallet-alert-spinner"></div>
+        </div>
+        <div class="wallet-alert-text">
+          <div class="wallet-alert-title" id="walletAlertTitle">Connecting to Wallet...</div>
+          <div class="wallet-alert-desc" id="walletAlertDesc">Approve connection request in your wallet.</div>
+        </div>
+        <button type="button" class="wallet-alert-cancel-btn" id="walletAlertCancelBtn" aria-label="Cancel connection">Cancel</button>
+      </div>
+      <div id="walletAlertActionContainer" class="wallet-alert-actions" style="display:none;"></div>
+    </div>
+
+    <!-- Official WalletConnect Hero Option -->
+    <div class="wallet-section-label">RECOMMENDED / MOBILE & QR</div>
+    <button class="wallet-featured-card" id="btnConnectWalletConnect" type="button">
+      <div class="wallet-featured-icon wc-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5.5 8.5C9.09 5 14.91 5 18.5 8.5L19 9C19.2 9.2 19.2 9.5 19 9.7L17.3 11.4C17.2 11.5 17 11.5 16.9 11.4L16.2 10.7C13.88 8.38 10.12 8.38 7.8 10.7L7 11.5C6.9 11.6 6.7 11.6 6.6 11.5L4.9 9.8C4.7 9.6 4.7 9.3 4.9 9.1L5.5 8.5ZM21.5 11.5L23.1 13.1C23.3 13.3 23.3 13.6 23.1 13.8L17.5 19.4C17.3 19.6 17 19.6 16.8 19.4L12.7 15.3C12.65 15.25 12.55 15.25 12.5 15.3L8.4 19.4C8.2 19.6 7.9 19.6 7.7 19.4L2.1 13.8C1.9 13.6 1.9 13.3 2.1 13.1L3.7 11.5C3.9 11.3 4.2 11.3 4.4 11.5L8.5 15.6C8.55 15.65 8.65 15.65 8.7 15.6L12.8 11.5C13 11.3 13.3 11.3 13.5 11.5L17.6 15.6C17.65 15.65 17.75 15.65 17.8 15.6L21.9 11.5C22.1 11.3 22.4 11.3 22.6 11.5H21.5Z" fill="#3B99FC"/>
+        </svg>
+      </div>
+      <div class="wallet-featured-details">
+        <div class="wallet-featured-title">
+          <span>WalletConnect</span>
+          <span class="status-pill pill-accent" style="font-size:10px; padding:1px 6px;">Official SDK</span>
+        </div>
+        <div class="wallet-featured-desc">Scan QR code with MetaMask Mobile, Trust, Rainbow, or 300+ wallets</div>
+      </div>
+      <span class="wallet-option-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>
+    </button>
+
+    <!-- Grid of Wallets -->
+    <div class="wallet-section-label" style="margin-top: 14px;">SELECT WALLET / BROWSER EXTENSION</div>
+    <div class="wallet-grid" id="walletGrid">
+      <!-- MetaMask -->
+      <button class="wallet-grid-item" id="btnWalletMetaMask" data-wallet="metamask" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <path d="M29.07 4L17.63 12.57l2.13-5.07L29.07 4z" fill="#E2761B"/>
+            <path d="M2.93 4l11.33 8.64-2.02-5.14L2.93 4zM24.84 21.65l-2.92 4.48 5.76 1.59 1.65-5.96-4.49-.11zM1.68 21.76l1.64 5.96 5.77-1.59-2.93-4.48-4.48.11z" fill="#E4761B"/>
+            <path d="M9.06 14.17l-1.6 2.42 5.72.25-.19-6.19-3.93 3.52zM22.94 14.17l-3.97-3.57-.14 6.24 5.71-.25-1.6-2.42z" fill="#E4761B"/>
+            <path d="M9.16 26.13l3.75-1.83-3.23-2.52-.52 4.35zM19.09 24.3l3.75 1.83-.52-4.35-3.23 2.52z" fill="#D7C1B3"/>
+            <path d="M12.91 24.3l3.09-1.5 3.09 1.5-3.09 3.42-3.09-3.42z" fill="#233447"/>
+            <path d="M12.7 18.25l-2.6-1.66-3.83.17 5.51 5.37.92-3.88zM19.3 18.25l.92 3.88 5.51-5.37-3.83-.17-2.6 1.66z" fill="#CD6116"/>
+            <path d="M25.73 16.59l-5.51 5.37 2.62 2.06 5.8-1.6 1.09-5.71-4-.12zM6.27 16.59l-4 .12 1.09 5.71 5.8 1.6 2.62-2.06-5.51-5.37z" fill="#E4751F"/>
+            <path d="M16 12.8l3.11 3.96 3.83-.17-5.71-4.88-1.23 1.09zM16 12.8l-1.23-1.09-5.71 4.88 3.83.17L16 12.8z" fill="#F6851B"/>
           </svg>
         </div>
-        <div class="wallet-option-details">
-          <div class="wallet-option-title">
-            <span>WalletConnect</span>
-            <span class="status-pill pill-accent" style="font-size:10px; padding:1px 6px;">Official SDK</span>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">MetaMask</span>
+            <span class="wallet-badge" id="badge-metamask">Popular</span>
           </div>
-          <div class="wallet-option-desc">Scan QR code with MetaMask Mobile, Trust, Rainbow, or 300+ wallets</div>
+          <span class="wallet-grid-sub">Extension & Mobile</span>
         </div>
-        <span class="wallet-option-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </button>
 
-      <!-- Injected Browser Extension Option -->
-      <button class="wallet-option-card" id="btnConnectInjected" type="button">
-        <div class="wallet-option-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
+      <!-- OKX Wallet -->
+      <button class="wallet-grid-item" id="btnWalletOkx" data-wallet="okx" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#000000"/>
+            <rect x="7" y="7" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
+            <rect x="18" y="7" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
+            <rect x="7" y="18" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
+            <rect x="18" y="18" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
           </svg>
         </div>
-        <div class="wallet-option-details">
-          <div class="wallet-option-title">
-            <span>Browser & In-App Wallet</span>
-            <span class="status-pill pill-accent" style="font-size:10px; padding:1px 6px;">EIP-1193</span>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">OKX Wallet</span>
+            <span class="wallet-badge" id="badge-okx">Popular</span>
           </div>
-          <div class="wallet-option-desc">Zerion, OKX, MetaMask, Bitget, Opus, Trust, Rabby, Coinbase</div>
+          <span class="wallet-grid-sub">Web3 Multi-Chain</span>
         </div>
-        <span class="wallet-option-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </button>
+
+      <!-- Trust Wallet -->
+      <button class="wallet-grid-item" id="btnWalletTrust" data-wallet="trust" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#0500FF" fill-opacity="0.12"/>
+            <path d="M16 5L6 9.5V16C6 22.3 10.3 27.5 16 29C21.7 27.5 26 22.3 26 16V9.5L16 5Z" fill="#0500FF"/>
+            <path d="M16 7.5L8 11.2V16C8 20.8 11.2 25.1 16 26.6V7.5Z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Trust Wallet</span>
+            <span class="wallet-badge" id="badge-trust">Mobile & Ext</span>
+          </div>
+          <span class="wallet-grid-sub">Multi-Asset</span>
+        </div>
+      </button>
+
+      <!-- Bitget Wallet -->
+      <button class="wallet-grid-item" id="btnWalletBitget" data-wallet="bitget" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#005B94"/>
+            <path d="M7 16L16 7L25 16L16 25L7 16Z" fill="#00F0FF"/>
+            <path d="M12 16L16 12L20 16L16 20L12 16Z" fill="#001B3A"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Bitget Wallet</span>
+            <span class="wallet-badge" id="badge-bitget">EIP-1193</span>
+          </div>
+          <span class="wallet-grid-sub">Web3 Trading</span>
+        </div>
+      </button>
+
+      <!-- Rabby Wallet -->
+      <button class="wallet-grid-item" id="btnWalletRabby" data-wallet="rabby" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#8697FF" fill-opacity="0.18"/>
+            <circle cx="16" cy="16" r="11" fill="#7084FF"/>
+            <path d="M11 19C11 16.5 13 14 16 14C19 14 21 16.5 21 19C21 21.5 19 23 16 23C13 23 11 21.5 11 19Z" fill="#FFFFFF"/>
+            <ellipse cx="14" cy="11.5" rx="1.8" ry="3.8" fill="#FFFFFF"/>
+            <ellipse cx="18" cy="11.5" rx="1.8" ry="3.8" fill="#FFFFFF"/>
+            <circle cx="14" cy="18" r="1" fill="#7084FF"/>
+            <circle cx="18" cy="18" r="1" fill="#7084FF"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Rabby Wallet</span>
+            <span class="wallet-badge" id="badge-rabby">Extension</span>
+          </div>
+          <span class="wallet-grid-sub">DeFi Browser</span>
+        </div>
+      </button>
+
+      <!-- Coinbase Wallet -->
+      <button class="wallet-grid-item" id="btnWalletCoinbase" data-wallet="coinbase" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#0052FF"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M16 6C10.477 6 6 10.477 6 16C6 21.523 10.477 26 16 26C21.523 26 26 21.523 26 16C26 10.477 21.523 6 16 6ZM12.5 13.5H19.5V18.5H12.5V13.5Z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Coinbase</span>
+            <span class="wallet-badge" id="badge-coinbase">Popular</span>
+          </div>
+          <span class="wallet-grid-sub">Self-Custody</span>
+        </div>
+      </button>
+
+      <!-- Rainbow Wallet -->
+      <button class="wallet-grid-item" id="btnWalletRainbow" data-wallet="rainbow" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#001A72"/>
+            <path d="M7 23C7 16.925 11.925 12 18 12V8C9.716 8 3 14.716 3 23H7Z" fill="#FF4438"/>
+            <path d="M10 23C10 18.582 13.582 15 18 15V12C11.925 12 7 16.925 7 23H10Z" fill="#FF8A00"/>
+            <path d="M13 23C13 20.239 15.239 18 18 18V15C13.582 15 10 18.582 10 23H13Z" fill="#FFD600"/>
+            <path d="M16 23C16 21.895 16.895 21 18 21V18C15.239 18 13 20.239 13 23H16Z" fill="#00E599"/>
+            <circle cx="21" cy="21" r="4.5" fill="#0085FF"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Rainbow</span>
+            <span class="wallet-badge" id="badge-rainbow">Mobile & Ext</span>
+          </div>
+          <span class="wallet-grid-sub">Ethereum & L2</span>
+        </div>
+      </button>
+
+      <!-- Zerion -->
+      <button class="wallet-grid-item" id="btnWalletZerion" data-wallet="zerion" type="button">
+        <div class="wallet-grid-icon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="6" fill="#2962FF"/>
+            <path d="M8 9H24L14 17H24V23H8L18 15H8V9Z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="wallet-grid-info">
+          <div class="wallet-grid-name-row">
+            <span class="wallet-grid-name">Zerion</span>
+            <span class="wallet-badge" id="badge-zerion">Smart Wallet</span>
+          </div>
+          <span class="wallet-grid-sub">Portfolio & L2</span>
+        </div>
       </button>
     </div>
 
+    <!-- Generic Injected / Other Wallet Option Button -->
+    <div style="margin-top: 10px;">
+      <button class="wallet-injected-fallback-btn" id="btnConnectInjected" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <span>Connect Other Detected In-App / Browser Provider (EIP-1193)</span>
+      </button>
+    </div>
+
+    <!-- Footer -->
     <div class="wallet-select-footer">
-      <span>Non-custodial connection. AEGIS never has access to private keys or withdrawal permissions.</span>
+      <div class="wallet-footer-security">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Non-custodial. AEGIS never requests private keys or token withdrawal permissions.</span>
+      </div>
+      <div class="wallet-footer-net">
+        <span class="badge-dot"></span>
+        <span>Elysium L2 Testnet • Chain ID 99801 (0x185d9)</span>
+      </div>
     </div>
   </div>
 
@@ -1400,6 +1603,193 @@
       </div>
     </div>
   </div>
+
+  <!-- Autonomous Delta-Hedging Simulator Modal (Brand Kit Compliant) -->
+  <div class="settings-backdrop" id="simModalBackdrop"></div>
+  <div class="sim-modal" id="simModal" role="dialog" aria-modal="true" aria-labelledby="simModalTitle" hidden>
+    <div class="sim-modal-card">
+      <!-- Top Header Row -->
+      <div class="sim-card-header">
+        <div class="sim-header-title-wrap">
+          <div class="sim-eyebrow">Autonomous Delta-Hedging Simulator</div>
+          <div class="sim-headline" id="simModalTitle">
+            <span id="simCollateralDisplay">12.40 ETH</span> collateral &bull; <span id="simDebtDisplay">$22,000</span> debt
+          </div>
+        </div>
+
+        <div class="sim-header-actions">
+          <div class="sim-status-pill" id="simStatusPill">
+            <span class="sim-pulse-dot" id="simPulseDot"></span>
+            <span id="simStatusText">Hedge active</span>
+          </div>
+          <span class="sim-trigger-label" id="simTriggerLabel">Trigger level <strong id="simTriggerLevelVal">1.20</strong></span>
+          <button class="sim-close-btn" id="simModalCloseBtn" type="button" aria-label="Close simulator">&times;</button>
+        </div>
+      </div>
+
+      <!-- Interactive Control Bar -->
+      <div class="sim-control-bar">
+        <div class="sim-control-row">
+          <div class="sim-control-group">
+            <span class="sim-control-label">Position Scenario:</span>
+            <div class="sim-preset-chips" role="radiogroup" aria-label="Simulator Preset">
+              <button class="sim-chip active" id="simPresetVault" type="button" data-preset="vault">Active Terminal Vault (HYPE)</button>
+              <button class="sim-chip" id="simPresetEth" type="button" data-preset="eth">12.40 ETH (Video Demo)</button>
+              <button class="sim-chip" id="simPresetCustom" type="button" data-preset="custom">Custom Parameters</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom inputs row (collapsible) -->
+        <div class="sim-custom-inputs" id="simCustomInputs" style="display: none;">
+          <div class="sim-input-item">
+            <label for="simCustomCollateral">Collateral Amount</label>
+            <input type="number" id="simCustomCollateral" value="12.40" step="0.1" min="0.1">
+          </div>
+          <div class="sim-input-item">
+            <label for="simCustomDebt">Debt Liability ($ USDC)</label>
+            <input type="number" id="simCustomDebt" value="22000" step="500" min="100">
+          </div>
+          <div class="sim-input-item">
+            <label for="simCustomPrice">Initial Mark Price ($)</label>
+            <input type="number" id="simCustomPrice" value="3412.80" step="10" min="1">
+          </div>
+          <div class="sim-input-item">
+            <label for="simCustomTrigger">Trigger Health (H)</label>
+            <input type="number" id="simCustomTrigger" value="1.20" step="0.01" min="1.02" max="1.50">
+          </div>
+        </div>
+
+        <!-- Interactive Market Drawdown Slider -->
+        <div class="sim-slider-row">
+          <div class="sim-slider-label-row">
+            <span class="sim-slider-label">Simulate Collateral Drawdown:</span>
+            <span class="sim-slider-val font-mono text-danger" id="simDrawdownText">-30.0%</span>
+          </div>
+          <input type="range" class="sim-range-input" id="simDrawdownSlider" min="0" max="50" step="0.5" value="30">
+          <div class="sim-slider-ticks font-mono">
+            <button class="sim-tick-btn" data-drop="0" type="button">0% (Baseline)</button>
+            <button class="sim-tick-btn" data-drop="15" type="button">-15% (Tremor)</button>
+            <button class="sim-tick-btn active" data-drop="30" type="button">-30% (Hedged · Screenshot)</button>
+            <button class="sim-tick-btn" data-drop="45" type="button">-45% (Flash Crash)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column Layout -->
+      <div class="sim-body-grid">
+        <!-- Left Column: Chart & Readouts -->
+        <div class="sim-col-left">
+          <!-- Chart Section -->
+          <div class="sim-chart-card">
+            <div class="sim-chart-header">
+              <span class="sim-chart-title">COLLATERAL DRAWDOWN &amp; HEDGE OFFSET</span>
+              <span class="sim-chart-price font-mono" id="simChartPriceDisplay">Price: $2,388.96 (-30.0%)</span>
+            </div>
+
+            <!-- SVG Canvas -->
+            <div class="sim-svg-wrap">
+              <svg class="sim-chart-svg" viewBox="0 0 580 180" preserveAspectRatio="none" id="simChartSvg">
+                <!-- Grid Guideline lines -->
+                <line x1="0" y1="45" x2="580" y2="45" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 4" opacity="0.4"/>
+                <line x1="0" y1="145" x2="580" y2="145" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 4" opacity="0.4"/>
+
+                <!-- Horizontal Amber Trigger Line (1.20) -->
+                <line id="simSvgTriggerLine" x1="0" y1="105" x2="580" y2="105" stroke="var(--hedge)" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.85"/>
+                <text id="simSvgTriggerLabel" x="410" y="100" fill="var(--hedge)" font-family="Inter, sans-serif" font-size="11" font-weight="600">Trigger line 1.20</text>
+
+                <!-- Collateral Curve Falling (Rose / Danger: #B8254F / var(--danger)) -->
+                <path id="simSvgCollateralPath" d="M 20 30 C 140 38, 260 70, 360 105 S 480 148, 560 156" fill="none" stroke="var(--danger)" stroke-width="2.8" stroke-linecap="round"/>
+
+                <!-- HyperCore Hedge Rising (Teal: #07705F / var(--accent)) -->
+                <path id="simSvgHedgePath" d="M 360 105 C 420 80, 490 60, 560 54" fill="none" stroke="var(--accent)" stroke-width="2.8" stroke-linecap="round"/>
+
+                <!-- Flat Combined Net Position holding level -->
+                <line id="simSvgNetLine" x1="360" y1="105" x2="560" y2="105" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+
+                <!-- Interactive Cursor Dot at Current Drawdown Point -->
+                <g id="simSvgMarker" transform="translate(460, 105)">
+                  <circle r="6" fill="var(--raised)" stroke="var(--hedge)" stroke-width="2.5"/>
+                  <circle r="2.5" fill="var(--hedge)"/>
+                </g>
+              </svg>
+
+              <!-- Legend -->
+              <div class="sim-chart-legend">
+                <div class="sim-legend-item">
+                  <span class="sim-legend-line sim-legend-rose"></span>
+                  <span>Collateral value (unhedged)</span>
+                </div>
+                <div class="sim-legend-item" id="simHedgeLegendItem">
+                  <span class="sim-legend-line sim-legend-teal"></span>
+                  <span class="text-accent" style="font-weight: 600;">HyperCore short perp (delta = 0)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Readout Split Row -->
+            <div class="sim-readout-row">
+              <div class="sim-readout-box sim-readout-left">
+                <div class="sim-readout-lbl">HyperCore hedge</div>
+                <div class="sim-readout-val font-mono" id="simReadoutHedgeVal">6.20 ETH</div>
+                <div class="sim-readout-sub" id="simReadoutHedgeSub">Short open &bull; offsetting 100%</div>
+              </div>
+              <div class="sim-readout-box sim-readout-right">
+                <div class="sim-readout-lbl">Capital preserved</div>
+                <div class="sim-readout-val font-mono text-accent" id="simReadoutPreservedVal">+$2,200</div>
+                <div class="sim-readout-sub">10% liquidation fee avoided</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Health Factor & Protocol Specification -->
+        <div class="sim-col-right">
+          <!-- Health Factor Card -->
+          <div class="sim-hf-card">
+            <div class="sim-hf-header">
+              <div>
+                <span class="sim-hf-title">HEALTH FACTOR</span>
+                <div class="sim-hf-number font-mono" id="simHfNumber">1.20</div>
+              </div>
+              <div class="sim-cr-wrap">
+                <span class="sim-cr-title">Collateral ratio</span>
+                <div class="sim-cr-number font-mono" id="simCrNumber">135%</div>
+              </div>
+            </div>
+
+            <!-- 4px Progress Track -->
+            <div class="sim-hf-track">
+              <div class="sim-hf-fill" id="simHfFill" style="width: 20%;"></div>
+            </div>
+          </div>
+
+          <!-- Protocol Specification Card -->
+          <div class="sim-spec-card">
+            <div class="sim-spec-title">PROTOCOL SPECIFICATION</div>
+            <div class="sim-spec-list">
+              <div class="sim-spec-row">
+                <span class="sim-spec-key">Precompile</span>
+                <span class="sim-spec-val font-mono">0x0801</span>
+              </div>
+              <div class="sim-spec-row">
+                <span class="sim-spec-key">Read latency</span>
+                <span class="sim-spec-val font-mono">under 70ms</span>
+              </div>
+              <div class="sim-spec-row">
+                <span class="sim-spec-key">Gas cost</span>
+                <span class="sim-spec-val font-mono text-accent">zero</span>
+              </div>
+              <div class="sim-spec-row">
+                <span class="sim-spec-key">Spot collateral seized</span>
+                <span class="sim-spec-val font-mono text-accent" id="simSpecSeizedVal">0.00 ETH (100% intact)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> <!-- /sim-body-grid -->
+    </div> <!-- /sim-modal-card -->
+  </div> <!-- /simModal -->
 
   <!-- Notification Toast Container -->
   <div class="toast-container" id="toastContainer"></div>

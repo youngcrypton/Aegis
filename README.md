@@ -33,28 +33,31 @@
 
 ---
 
-## Official Pitch Demo (120s &bull; Judges Submission)
+## Official Product Demo (120s &bull; Live Terminal Walkthrough)
 
-> **Official 01:54 (114.0s) pitch demo video engineered for judges and partners. Rendered in Light Mode with grand brand tokens, audible continuous voiceover (-13.68 dBFS RMS), synchronized virtual cursor, and burned-in brand captions.**
+> **Official 01:54 (114.0s) live product demo engineered for ecosystem partners and institutional evaluators. Rendered in Light Mode with grand brand tokens, audible continuous voiceover (-13.68 dBFS RMS), synchronized virtual cursor, and burned-in brand captions.**
 
 <div align="center">
 
- <a href="brand/x/aegis-pitch-demo-120s.mp4">
- <img src="brand/x/aegis-demo-preview.gif" alt="AEGIS Protocol Official 120s Pitch Demo" width="100%" style="border-radius: 12px; border: 1px solid #1F293D;" />
- </a>
+  <video src="https://raw.githubusercontent.com/youngcrypton/Aegis/main/brand/x/aegis-pitch-demo-120s.mp4" controls="controls" width="100%" poster="brand/x/aegis-demo-preview.gif">
+    <a href="https://github.com/youngcrypton/Aegis/blob/main/brand/x/aegis-pitch-demo-120s.mp4">
+      <img src="brand/x/aegis-demo-preview.gif" alt="AEGIS Protocol Official 120s Pitch Demo" width="100%" style="border-radius: 12px; border: 1px solid #1F293D;" />
+    </a>
+  </video>
 
- <p align="center">
- <a href="brand/x/aegis-pitch-demo-120s.mp4"><b>[▶ Watch 120s Pitch Demo &bull; 01:54 &bull; 19.6 MB MP4]</b></a> &nbsp;|&nbsp;
- <a href="brand/x/aegis-pitch-demo-120s.srt"><b>[SRT Subtitles]</b></a> &nbsp;|&nbsp;
- <a href="brand/x/aegis-pitch-demo-120s.vtt"><b>[VTT Subtitles]</b></a> &nbsp;|&nbsp;
- <a href="download.html"><b>[Media Hub]</b></a>
- </p>
+  <p align="center">
+    <a href="https://github.com/youngcrypton/Aegis/blob/main/brand/x/aegis-pitch-demo-120s.mp4"><b>[▶ Watch on GitHub &bull; In-Browser Player &bull; 01:54 &bull; 8.5 MB]</b></a> &nbsp;|&nbsp;
+    <a href="https://raw.githubusercontent.com/youngcrypton/Aegis/main/brand/x/aegis-pitch-demo-120s.mp4"><b>[Direct Stream MP4]</b></a> &nbsp;|&nbsp;
+    <a href="brand/x/aegis-pitch-demo-120s.srt"><b>[SRT Subtitles]</b></a> &nbsp;|&nbsp;
+    <a href="brand/x/aegis-pitch-demo-120s.vtt"><b>[VTT Subtitles]</b></a> &nbsp;|&nbsp;
+    <a href="download.html"><b>[Media Hub]</b></a>
+  </p>
 
 </div>
 
 | Telemetry Dimension | Official 120s Pitch Specification | Architecture Reference |
 | :--- | :--- | :--- |
-| **Duration** | **01:54** (114.0s) &bull; *Strictly within 60–120s hackathon envelope* | Hackathon Video Standard |
+| **Duration** | **01:54** (114.0s) &bull; *Concise 120s institutional pitch standard* | Ecosystem Video Standard |
 | **Theme & Color System** | **Light Mode Grand Palette** (`--ground: #FCFAFD`, `--accent: #0D9488`) | AEGIS Brand Kit (`tokens.css`) |
 | **Audio Loudness** | Broadcast Standard &bull; **-13.68 dBFS RMS** &bull; +5dB vocal boost | Audio Limiter Pipeline |
 | **Captions** | **Embedded Brand Captions** (Inter, Navy glass, Teal badge) | Synchronized DOM Component |
@@ -79,24 +82,18 @@
 
 </details>
 
----
-
-## Live Product Walkthrough Demo (02:44)
-
-> **Comprehensive 02:44 technical walkthrough with full architectural deep-dive, invariant monitoring, and embedded timed captions.**
+<details>
+<summary><b>[Archive] Click to expand Extended 02:44 Architectural Walkthrough Demo & Transcript</b></summary>
 
 <div align="center">
 
  <p align="center">
- <a href="brand/x/aegis-product-demo-3min.mp4"><b>[▶ Watch Full Walkthrough Demo &bull; 02:44 &bull; 25.8 MB MP4]</b></a> &nbsp;|&nbsp;
+ <a href="https://github.com/youngcrypton/Aegis/blob/main/brand/x/aegis-product-demo-3min.mp4"><b>[▶ Watch Extended Walkthrough &bull; 02:44 &bull; 25.8 MB MP4]</b></a> &nbsp;|&nbsp;
  <a href="brand/x/aegis-product-demo-3min.srt"><b>[SRT Subtitles]</b></a> &nbsp;|&nbsp;
  <a href="brand/x/aegis-product-demo-3min.vtt"><b>[VTT Subtitles]</b></a>
  </p>
 
 </div>
-
-<details>
-<summary><b>[Transcript] Click to expand the 6-Chapter Walkthrough Transcript</b></summary>
 
 1. **Chapter 1 (0:00 – 0:31) &bull; Architecture & Portfolio Telemetry**:
    *"Welcome to the live product demonstration of AEGIS, the first autonomous, non-custodial risk engine engineered to eliminate forced liquidations in DeFi. We are live on the Elysium Layer 2 testnet on Chain ID 99801. Our terminal connects directly to HyperCore Precompile 0x0801, streaming mark prices in sub-78 milliseconds from L1 consensus. On screen, our vault holds 1,000 HYPE collateral and $32,000 USDC debt, maintaining a safe Health Factor of 1.41 on our dynamic radial gauge."*

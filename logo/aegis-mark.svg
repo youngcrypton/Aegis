@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131 128" width="131" height="128">
+  <!-- AEGIS mark. Geometry and colours fitted from the approved logo (brand/logo/aegis-mark.svg). Do not edit by eye. -->
+  <defs>
+    <linearGradient id="aegis-grad" gradientUnits="userSpaceOnUse" x1="27.70" y1="-13.51" x2="103.30" y2="141.51"><stop offset="0.00" stop-color="#1F0E4C"/><stop offset="0.10" stop-color="#241056"/><stop offset="0.20" stop-color="#40178D"/><stop offset="0.30" stop-color="#5A1FC9"/><stop offset="0.40" stop-color="#6928ED"/><stop offset="0.50" stop-color="#642FEB"/><stop offset="0.60" stop-color="#4C44CB"/><stop offset="0.70" stop-color="#305EA5"/><stop offset="0.80" stop-color="#157286"/><stop offset="0.90" stop-color="#087B75"/><stop offset="1.00" stop-color="#087E6D"/></linearGradient>
+  </defs>
+  <polygon points="40.20,0.00 70.40,0.00 26.60,127.00 0.00,127.00" fill="url(#aegis-grad)"/>
+  <polygon points="73.00,36.00 101.10,36.00 68.70,127.00 42.60,127.00" fill="url(#aegis-grad)"/>
+  <polygon points="104.20,67.00 130.00,67.00 108.50,127.00 83.90,127.00" fill="url(#aegis-grad)"/>
+</svg>

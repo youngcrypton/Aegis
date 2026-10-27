@@ -598,4 +598,52 @@ contract SentinelRegistryTest is Test {
         assertEq(aegisToken.balanceOf(victim), (MIN_BOND * 500 * 3) / 10000);
         assertEq(aegisToken.balanceOf(address(registry)), 0);
     }
+
+    // -----------------------------------------------------------------------
+    // AEG-07: Sentinel Slashing Rate Limiter / Cooldown
+    // -----------------------------------------------------------------------
+
+    function test_SlashSentinel_EnforcesSlashCooldown() public {
+        vm.prank(operator);
+        registry.bondStake(MIN_BOND);
+
+        // Set 1-hour slash cooldown
+        vm.prank(owner);
+        registry.setSlashCooldown(1 hours);
+        assertEq(registry.slashCooldown(), 1 hours);
+
+        uint256 slashTime = block.timestamp;
+
+        // First slash succeeds
+        vm.prank(slasher);
+        registry.slashSentinel(operator, victim, 500, "First breach");
+        assertEq(registry.getSentinel(operator).slashCount, 1);
+
+        uint256 expectedUnlock = registry.lastSlashTimestamp(operator) + registry.slashCooldown();
+
+        // Immediate second slash by slasher within 1-hour window reverts with CooldownActive
+        vm.prank(slasher);
+        vm.expectRevert(abi.encodeWithSelector(CooldownActive.selector, expectedUnlock));
+        registry.slashSentinel(operator, victim, 500, "Immediate second breach");
+
+        // Advance 30 minutes (still in cooldown) -> reverts
+        vm.warp(slashTime + 30 minutes);
+        vm.prank(slasher);
+        vm.expectRevert(abi.encodeWithSelector(CooldownActive.selector, expectedUnlock));
+        registry.slashSentinel(operator, victim, 500, "Halfway breach");
+
+        // Owner emergency bypass: owner CAN slash during cooldown
+        vm.prank(owner);
+        registry.slashSentinel(operator, victim, 500, "Owner emergency slash");
+        assertEq(registry.getSentinel(operator).slashCount, 2);
+
+        // Slasher advances past 1-hour cooldown from the owner slash -> succeeds
+        uint256 ownerSlashUnlock = registry.lastSlashTimestamp(operator) + registry.slashCooldown();
+        vm.warp(ownerSlashUnlock + 1);
+        vm.prank(slasher);
+        registry.slashSentinel(operator, victim, 500, "Post-cooldown breach");
+        assertEq(registry.getSentinel(operator).slashCount, 3);
+    }
 }
+
+

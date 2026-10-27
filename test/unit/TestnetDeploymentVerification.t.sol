@@ -107,7 +107,7 @@ contract TestnetDeploymentVerificationTest is Test {
         uint256 currentNonce = vault.vaultNonces(alice);
         uint256 deadline = block.timestamp + 1 hours;
         int256 hedgeSize = -10 ether;
-        uint256 limitPrice = 54_00000000;
+        uint256 limitPrice = 54_50000000; // Within 1% of $55.00 mark price
 
         bytes32 digest = vault.hashHedgeIntent(alice, 0, hedgeSize, limitPrice, currentNonce, deadline);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(aliceSessionKeyPk, digest);

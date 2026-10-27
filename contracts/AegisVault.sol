@@ -3,6 +3,7 @@ pragma solidity 0.8.24;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {
     TriggerMode,
     OrderType,
@@ -20,11 +21,18 @@ import {
     InvalidPrice,
     MismatchedMarketIndex,
     NoOutstandingDebt,
-    ZeroRepaymentAmount
+    ZeroRepaymentAmount,
+    AmountOverflow,
+    InvalidHedgeDirection,
+    HedgeSizeExceeded,
+    InvalidAmount,
+    NoActiveHedge,
+    PredeployWriteFailed
 } from "./AegisTypes.sol";
 import {IAegisVault} from "./interfaces/IAegisVault.sol";
 import {IAegisFeeCollector} from "./interfaces/IAegisFeeCollector.sol";
 import {IHyperCoreOracle} from "./interfaces/IHyperCoreOracle.sol";
+import {IHyperCoreWriter} from "./interfaces/IHyperCoreWriter.sol";
 import {TradeIntentExecutor} from "./core/TradeIntentExecutor.sol";
 import {HyperCoreOracleAdapter} from "./adapters/HyperCoreOracleAdapter.sol";
 
@@ -112,7 +120,9 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         uint16 ltvBps
     ) external override nonReentrant {
         if (collateralToken == address(0)) revert ZeroAddress();
+        if (amount == 0 || debtUsdc == 0) revert InvalidAmount();
         if (ltvBps == 0 || ltvBps > 10000) revert InvalidHealthTrigger();
+        if (amount > type(uint96).max) revert AmountOverflow();
 
         positions[msg.sender] = VaultPosition({
             owner: msg.sender,
@@ -193,6 +203,26 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
     }
 
     /**
+     * @notice Normalizes collateral token amount to 18 decimals for accurate health calculations.
+     * @param token Address of the collateral token.
+     * @param rawAmount Unscaled collateral amount.
+     * @return Normalized collateral amount scaled to 18 decimals.
+     */
+    function _getNormalizedCollateral(address token, uint256 rawAmount) internal view returns (uint256) {
+        if (token == address(0) || rawAmount == 0) return rawAmount;
+        try IERC20Metadata(token).decimals() returns (uint8 dec) {
+            if (dec < 18) {
+                return rawAmount * (10 ** (18 - dec));
+            } else if (dec > 18 && dec <= 36) {
+                return rawAmount / (10 ** (dec - 18));
+            }
+            return rawAmount;
+        } catch {
+            return rawAmount;
+        }
+    }
+
+    /**
      * @notice Calculates the current health factor and trigger status of a borrower vault.
      * @param vaultOwner Address of the vault owner.
      * @param perpIndex Market index to query for mark price.
@@ -214,8 +244,10 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
             return (type(uint256).max, false, markPrice);
         }
 
+        uint256 normalizedCollateral = _getNormalizedCollateral(pos.collateralToken, uint256(pos.collateralAmount));
+
         // H = (Q_collateral * P_mark * T) / (D_total * 1e20)
-        healthFactor = (uint256(pos.collateralAmount) * markPrice * uint256(pos.liquidationThresholdBps))
+        healthFactor = (normalizedCollateral * markPrice * uint256(pos.liquidationThresholdBps))
             / (pos.debtAmountUsdc * 1e20);
 
         if (cfg.triggerMode == uint8(TriggerMode.PRICE)) {
@@ -258,9 +290,22 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         // Security Guard: Prevent double-hedge overwrites while an active hedge is open
         if (activeHedges[vaultOwner].isOpen) revert HedgeAlreadyActive();
 
+        // Direction Guard: Hedge position must be short (negative size)
+        if (size >= 0) revert InvalidHedgeDirection();
+
         // Telemetry verification: verify health factor breached trigger
         (, bool isTriggered, uint256 markPrice) = getVaultHealth(vaultOwner, perpIndex);
         if (!isTriggered) revert InvalidHealthTrigger();
+
+        // Slippage Guard: Limit price cannot violate configured max slippage against mark price
+        uint256 minLimitPrice = (markPrice * (10000 - uint256(cfg.maxSlippageBps))) / 10000;
+        if (limitPrice < minLimitPrice) revert SlippageExceeded();
+
+        // Size Bounds Guard: Hedge size cannot exceed configured hedge ratio of normalized collateral
+        uint256 absSize = uint256(-size);
+        uint256 normalizedCollateral = _getNormalizedCollateral(pos.collateralToken, uint256(pos.collateralAmount));
+        uint256 maxAllowedSize = (normalizedCollateral * uint256(cfg.hedgeRatioBps) * 105) / (10000 * 100);
+        if (absSize > maxAllowedSize) revert HedgeSizeExceeded();
 
         // Verify cryptographic session key intent & dispatch order
         _verifyAndDispatch(
@@ -274,7 +319,6 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         );
 
         // Record active hedge tracking state
-        uint256 absSize = size < 0 ? uint256(-size) : uint256(size);
         uint256 exitTrigger = (markPrice * (10000 + cfg.trailingTakeProfitBps)) / 10000;
 
         activeHedges[vaultOwner] = ActiveHedge({
@@ -328,6 +372,9 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         VaultPosition storage pos = positions[vaultOwner];
         ProConfig storage cfg = configs[vaultOwner];
 
+        if (cfg.manualOverrideActive) revert OverrideActive();
+        if (block.timestamp > cfg.sessionKeyExpiry) revert SessionKeyExpired();
+
         if (!hedge.isOpen) revert InvalidHealthTrigger();
         if (perpIndex != hedge.perpMarketIndex) revert MismatchedMarketIndex();
         if (exitPrice == 0) revert InvalidPrice();
@@ -370,7 +417,70 @@ contract AegisVault is IAegisVault, TradeIntentExecutor, ReentrancyGuard, Ownabl
         if (feeCollector != address(0)) {
             // Averted liquidation penalty = 5% of collateral valuation
             uint256 valuationPrice = liveMarkPrice < exitPrice ? liveMarkPrice : exitPrice;
-            uint256 colValUsdc = (uint256(pos.collateralAmount) * valuationPrice) / 1e20;
+            uint256 normCollateral = _getNormalizedCollateral(pos.collateralToken, pos.collateralAmount);
+            uint256 colValUsdc = (normCollateral * valuationPrice) / 1e20;
+            uint256 savedPenalty = (colValUsdc * 500) / 10000;
+            if (savedPenalty > 0) {
+                try IAegisFeeCollector(feeCollector).processAvertedFee(vaultOwner, savedPenalty) {}
+                catch (bytes memory reason) {
+                    emit FeeCollectionFailed(vaultOwner, savedPenalty, reason);
+                    uint256 protocolFee = (savedPenalty * PROTOCOL_FEE_BPS) / 10000;
+                    if (protocolFee > 0) {
+                        feeDebts[vaultOwner] += protocolFee;
+                        emit FeeDebtAccrued(vaultOwner, protocolFee, feeDebts[vaultOwner]);
+                    }
+                }
+            }
+        }
+
+        emit HedgeUnwound(vaultOwner, perpIndex, exitPrice);
+    }
+
+    /**
+     * @notice Emergency/manual unwind of an active hedge by the vault owner directly.
+     * @dev Allows the owner to close their active hedge even if manualOverride is active or session key revoked.
+     *      Dispatches directly to HyperCoreWriter without requiring delegated session key signature.
+     * @param perpIndex HyperCore perpetual market index.
+     * @param exitPrice Execution exit limit price.
+     */
+    function manualUnwind(uint32 perpIndex, uint256 exitPrice) external override nonReentrant {
+        address vaultOwner = msg.sender;
+        ActiveHedge storage hedge = activeHedges[vaultOwner];
+        VaultPosition storage pos = positions[vaultOwner];
+        ProConfig storage cfg = configs[vaultOwner];
+
+        if (!hedge.isOpen) revert NoActiveHedge();
+        if (perpIndex != hedge.perpMarketIndex) revert MismatchedMarketIndex();
+        if (exitPrice == 0) revert InvalidPrice();
+
+        uint256 liveMarkPrice = _getPerpPrice(perpIndex);
+        if (liveMarkPrice == 0) revert InvalidPrice();
+
+        // Validate exitPrice does not exceed max slippage from live mark price
+        uint256 maxAllowedExitPrice = (liveMarkPrice * (10000 + cfg.maxSlippageBps)) / 10000;
+        if (exitPrice > maxAllowedExitPrice) revert SlippageExceeded();
+
+        // Monotonic nonce progression (INV-5)
+        uint256 currentNonce = vaultNonces[vaultOwner]++;
+
+        // Dispatch buy-to-close intent directly to HyperCore writer
+        bool writeSuccess = IHyperCoreWriter(hyperCoreWriter).placeHedgeIntent(
+            vaultOwner,
+            perpIndex,
+            int256(hedge.size),
+            exitPrice
+        );
+        if (!writeSuccess) revert PredeployWriteFailed();
+
+        emit HedgeIntentDispatched(vaultOwner, perpIndex, int256(hedge.size), exitPrice, currentNonce);
+
+        hedge.isOpen = false;
+
+        // Process fee collection / fee debt if applicable
+        if (feeCollector != address(0)) {
+            uint256 valuationPrice = liveMarkPrice < exitPrice ? liveMarkPrice : exitPrice;
+            uint256 normCollateral = _getNormalizedCollateral(pos.collateralToken, pos.collateralAmount);
+            uint256 colValUsdc = (normCollateral * valuationPrice) / 1e20;
             uint256 savedPenalty = (colValUsdc * 500) / 10000;
             if (savedPenalty > 0) {
                 try IAegisFeeCollector(feeCollector).processAvertedFee(vaultOwner, savedPenalty) {}

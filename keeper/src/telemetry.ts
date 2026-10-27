@@ -20,6 +20,8 @@ export class TelemetryService {
   private isRunning: boolean = false;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private lastBlockNumber: number = 0;
+  private wsReconnectAttempts: number = 0;
+  private consecutivePollErrors: number = 0;
 
   constructor() {
     this.provider = new ethers.JsonRpcProvider(config.ELYSIUM_RPC_URL);
@@ -58,6 +60,7 @@ export class TelemetryService {
       this.ws = new WebSocket(config.ELYSIUM_WS_URL);
 
       this.ws.on("open", () => {
+        this.wsReconnectAttempts = 0;
         console.log(`[Telemetry] Connected to Elysium WebSocket: ${config.ELYSIUM_WS_URL}`);
         this.ws?.send(
           JSON.stringify({
@@ -91,7 +94,13 @@ export class TelemetryService {
 
       this.ws.on("close", () => {
         if (this.isRunning) {
-          this.reconnectTimeout = setTimeout(() => this.connectWebSocket(), 3000);
+          this.wsReconnectAttempts++;
+          // Exponential backoff with jitter (max 30s)
+          const baseDelay = Math.min(1500 * Math.pow(1.5, this.wsReconnectAttempts - 1), 30000);
+          const jitter = Math.floor(Math.random() * 1000);
+          const delay = Math.round(baseDelay + jitter);
+          console.warn(`[Telemetry] WebSocket closed. Reconnecting in ${delay}ms (attempt #${this.wsReconnectAttempts})...`);
+          this.reconnectTimeout = setTimeout(() => this.connectWebSocket(), delay);
         }
       });
     } catch {
@@ -102,22 +111,42 @@ export class TelemetryService {
   private startPollingFallback(): void {
     const poll = async () => {
       if (!this.isRunning) return;
+      let nextDelay = config.POLL_INTERVAL_MS;
+
       try {
         const blockNumber = await this.provider.getBlockNumber();
+        if (this.consecutivePollErrors > 0) {
+          console.log(`[Telemetry] RPC connection restored after ${this.consecutivePollErrors} failed attempts.`);
+          this.consecutivePollErrors = 0;
+        }
+
         if (blockNumber > this.lastBlockNumber) {
           this.lastBlockNumber = blockNumber;
           const block = await this.provider.getBlock(blockNumber);
           const timestamp = block ? Number(block.timestamp) : Math.floor(Date.now() / 1000);
           this.notifyBlock(blockNumber, timestamp);
         }
-      } catch {
+      } catch (err: any) {
+        this.consecutivePollErrors++;
+        // Circuit breaker: back off dynamically when RPC is unavailable to prevent resource exhaustion
+        nextDelay = Math.min(
+          config.POLL_INTERVAL_MS * Math.pow(2, Math.min(this.consecutivePollErrors, 7)),
+          15000
+        );
+
+        if (this.consecutivePollErrors === 1 || this.consecutivePollErrors % 10 === 0) {
+          console.warn(
+            `[Telemetry] Polling error (#${this.consecutivePollErrors}): ${err?.message || "RPC unreachable"}. Circuit breaker backoff: next poll in ${nextDelay}ms`
+          );
+        }
+
         if (config.DRY_RUN) {
           this.lastBlockNumber++;
           this.notifyBlock(this.lastBlockNumber, Math.floor(Date.now() / 1000));
         }
       } finally {
         if (this.isRunning) {
-          setTimeout(poll, config.POLL_INTERVAL_MS);
+          setTimeout(poll, nextDelay);
         }
       }
     };

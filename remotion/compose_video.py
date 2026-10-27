@@ -24,7 +24,7 @@ def compose_final_demo():
     # Mux video and master synchronized audio
     # -c:v libx264 -crf 18 ensures crystal clear 720p visual fidelity
     # -c:a aac -b:a 192k ensures broadcast audio fidelity
-    # -t 164.0 ensures exact video duration under the 3-minute hackathon ceiling
+    # -t 164.0 ensures exact video duration under the 3-minute presentation ceiling
     cmd = [
         ffmpeg_exe, "-y",
         "-i", video_in,

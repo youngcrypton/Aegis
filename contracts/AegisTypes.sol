@@ -96,3 +96,8 @@ error NoUnbondRequest();
 error NoOutstandingDebt();
 error ZeroRepaymentAmount();
 error PriceStale(uint32 perpIndex, uint256 updatedAt, uint256 currentTimestamp);
+error AmountOverflow();
+error InvalidHedgeDirection();
+error HedgeSizeExceeded();
+error InvalidAmount();
+error NoActiveHedge();

@@ -36,7 +36,8 @@ export interface VaultPositionData {
   liquidationThresholdBps: number; // e.g. 8000 = 80%
   lastHedgeBlock: number;
   collateralToken: string;
-  collateralAmount: bigint; // scaled 1e18
+  collateralDecimals?: number; // token decimals (defaults to 18)
+  collateralAmount: bigint; // unscaled raw amount
   debtAmountUsdc: bigint; // scaled 1e6
   sessionKey: string;
   config: ProConfigData;
@@ -52,26 +53,40 @@ export interface RiskEvaluationResult {
 
 export class RiskEngine {
   /**
+   * Normalizes raw collateral amount to standard 18-decimal precision.
+   */
+  public normalizeCollateralAmount(collateralAmount: bigint, decimals: number = 18): bigint {
+    if (decimals === 18) return collateralAmount;
+    if (decimals < 18) {
+      return collateralAmount * (10n ** BigInt(18 - decimals));
+    }
+    return collateralAmount / (10n ** BigInt(decimals - 18));
+  }
+
+  /**
    * Computes Health Factor H scaled 1e4 (10000 = 1.00)
-   * Formula: H = (Q_collateral * P_mark * T_bps) / (D_debt * 10^20)
+   * Formula: H = (Q_collateral_normalized * P_mark * T_bps) / (D_debt * 10^20)
    */
   public computeHealthFactor(
     collateralAmount: bigint,
     markPrice: bigint,
     liquidationThresholdBps: number,
-    debtAmountUsdc: bigint
+    debtAmountUsdc: bigint,
+    collateralDecimals: number = 18
   ): bigint {
     if (debtAmountUsdc === 0n) {
       return 100_0000n; // Arbitrary high value if debt is 0 (100.00)
     }
 
-    // collateralAmount: 1e18
+    const normalizedCollateral = this.normalizeCollateralAmount(collateralAmount, collateralDecimals);
+
+    // normalizedCollateral: 1e18
     // markPrice: 1e8
     // liquidationThresholdBps: e.g. 8000
     // debtAmountUsdc: 1e6
     // Formula scales denominator by 1e20 to produce 1e4 scale:
     // (1e18 * 1e8 * 1e4) / (1e6 * 1e20) = 1e30 / 1e26 = 1e4
-    const numerator = collateralAmount * markPrice * BigInt(liquidationThresholdBps);
+    const numerator = normalizedCollateral * markPrice * BigInt(liquidationThresholdBps);
     const denominator = debtAmountUsdc * 100_000_000_000_000_000_000n; // 1e20
 
     return numerator / denominator;
@@ -109,21 +124,23 @@ export class RiskEngine {
     markPrice: bigint,
     liquidationThresholdBps: number,
     debtAmountUsdc: bigint,
-    hedgeRatioBps: number
+    hedgeRatioBps: number,
+    collateralDecimals: number = 18
   ): bigint {
+    const normalizedCollateral = this.normalizeCollateralAmount(collateralAmount, collateralDecimals);
     if (hedgeRatioBps >= 10000) {
-      return collateralAmount;
+      return normalizedCollateral;
     }
 
     const tBps = BigInt(liquidationThresholdBps);
     // Collateral threshold valuation in 1e6 USDC units:
     // Q(1e18) * P(1e8) * T(1e4) / 1e24 = 1e6
     const collateralThresholdValuation =
-      (collateralAmount * markPrice * tBps) / 1_000_000_000_000_000_000_000_000n;
+      (normalizedCollateral * markPrice * tBps) / 1_000_000_000_000_000_000_000_000n;
 
     if (debtAmountUsdc <= collateralThresholdValuation) {
       // Minimal protection if debt is below threshold
-      return (collateralAmount * BigInt(hedgeRatioBps)) / 10000n;
+      return (normalizedCollateral * BigInt(hedgeRatioBps)) / 10000n;
     }
 
     const deficitUsdc = debtAmountUsdc - collateralThresholdValuation;
@@ -134,7 +151,7 @@ export class RiskEngine {
     const baseDeficit = (deficitUsdc * 100_000_000_000_000_000_000n) / (markPrice * oneMinusT);
     const hedgeSize = (baseDeficit * BigInt(hedgeRatioBps)) / 10000n;
 
-    return hedgeSize > collateralAmount ? collateralAmount : hedgeSize;
+    return hedgeSize > normalizedCollateral ? normalizedCollateral : hedgeSize;
   }
 
   /**
@@ -154,11 +171,13 @@ export class RiskEngine {
       };
     }
 
+    const decimals = position.collateralDecimals ?? 18;
     const h = this.computeHealthFactor(
       position.collateralAmount,
       markPrice,
       position.liquidationThresholdBps,
-      position.debtAmountUsdc
+      position.debtAmountUsdc,
+      decimals
     );
 
     const breached = this.isTriggerBreached(h, markPrice, position.config);
@@ -169,7 +188,8 @@ export class RiskEngine {
         markPrice,
         position.liquidationThresholdBps,
         position.debtAmountUsdc,
-        position.config.hedgeRatioBps
+        position.config.hedgeRatioBps,
+        decimals
       );
 
       return {

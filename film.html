@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AEGIS fly-over</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#DCCBFF;overflow:hidden}
+#stage{position:relative;width:1440px;height:1152px;overflow:hidden}
+canvas{position:absolute;left:0;top:0;width:1440px;height:1152px;display:block}
+#ov{position:absolute;left:0;top:0;width:1440px;height:1152px;pointer-events:none}
+#badge{position:absolute;left:50%;top:44px;transform:translateX(-50%);opacity:0;display:flex;align-items:center;gap:10px;
+  background:#fff;border-radius:999px;padding:8px 20px 8px 9px;font:600 21px/1 Inter,sans-serif;color:#161230;letter-spacing:.01em;
+  box-shadow:0 8px 24px rgba(22,18,48,.12);white-space:nowrap}
+#badge img{width:26px;height:26px;border-radius:7px}
+.line{position:absolute;left:0;width:1440px;text-align:center;color:#161230;white-space:nowrap}
+#l1{top:72px;font:500 74px/1.05 Marcellus,Inter,sans-serif;letter-spacing:-.02em}
+#l2{top:162px;font:italic 400 82px/1.05 Marcellus,Inter,sans-serif;color:#6930EA}
+.w{display:inline-block;opacity:0;will-change:transform,opacity,filter;margin:0 .12em}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="1440" height="1152"></canvas>
+  <div id="ov">
+    <div id="badge"><img id="bimg" src="capture/logo_tile.png" alt="">AEGIS</div>
+    <div class="line" id="l1"></div>
+    <div class="line" id="l2"></div>
+  </div>
+</div>
+<script>
+'use strict';
+/* ------------------------------------------------------------------ *
+ * AEGIS fly-over. Every frame is computed from t inside seek(t).
+ * Units: CSS px of the 1440 px wide page = world units on the floor.
+ * X = page x, Z = page y (down the page), Y = height above the floor.
+ * ------------------------------------------------------------------ */
+const W = 1440, H = 1152, F = 1880;          // frame size and focal length (px)
+const CROP_H = 1131;                         // hero card height in page px (see note)
+const ss = (a, b, t) => { const x = Math.min(1, Math.max(0, (t - a) / (b - a))); return x * x * (3 - 2 * x); };
+const qio = s => s < 0.5 ? 2 * s * s : 1 - Math.pow(-2 * s + 2, 2) / 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const D2R = Math.PI / 180;
+const DT = 0.001, TMAX = 16;
+
+let L, PAGE_H, HERO, BTN, FOOT, CRUISE, T0, S_CUM, RATE_CUM, K_LOG, D0, DFIN, DHERO, FOOT_TITLE_V;
+const cumAt = (arr, t) => { const x = Math.min(TMAX - 0.002, Math.max(0, t)) / DT; const i = Math.floor(x); const f = x - i; return arr[i] * (1 - f) + arr[i + 1] * f; };
+
+/* ---------- speed curve (share of cruise) ---------- */
+function speedRaw(t) {
+  if (t < 0.6) return 0.5 * ss(0, 0.6, t);
+  if (t < 1.25) return 0.5;
+  if (t < 1.6) return 0.5 + 0.5 * ss(1.25, 1.6, t);
+  if (t < 8.3) {
+    const m = 0.03 * Math.sin(2 * Math.PI * t / 2.6) * (1 - ss(6.6, 7.3, t));
+    return (1 + m) * (1 - 0.88 * ss(7.3, 8.3, t));
+  }
+  return 0.12;
+}
+/* ---------- rise speed (log scale trapezoid) ---------- */
+function rateRaw(t) {
+  if (t < 7.75) return 0;
+  if (t < 8.35) return ss(7.75, 8.35, t);
+  if (t < 8.95) return 1;
+  if (t < 9.25) return 1 - ss(8.95, 9.25, t);
+  return 0;
+}
+function dFlight(t) { return 1360 + 340 * ss(0, 8.2, t); }
+
+function buildTables() {
+  const n = Math.round(TMAX / DT);
+  S_CUM = new Float64Array(n + 1); RATE_CUM = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) {
+    const t = (i + 0.5) * DT;
+    S_CUM[i + 1] = S_CUM[i] + speedRaw(t) * DT;
+    RATE_CUM[i + 1] = RATE_CUM[i] + rateRaw(t) * DT;
+  }
+}
+
+/* ---------- camera ---------- */
+const logD = t => {
+  if (t < 7.75) return Math.log(dFlight(t));
+  if (t < 9.25) return Math.log(D0) + K_LOG * cumAt(RATE_CUM, t);
+  if (t < 9.47) return Math.log(DFIN) + Math.log(1 - 0.035 * ss(9.25, 9.47, t));
+  if (t < 9.97) return lerp(Math.log(DFIN * 0.965), Math.log(DHERO), qio((t - 9.47) / 0.5));
+  return Math.log(DHERO) + Math.log(1 - 0.02 * ss(9.97, 14.5, t));
+};
+const tiltAt = t => 56 * D2R * (1 - ss(8.15, 8.95, t));
+const mDive = t => t < 9.47 ? 0 : t < 9.97 ? qio((t - 9.47) / 0.5) : 1;
+
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const norm = a => { const l = Math.hypot(a[0], a[1], a[2]); return [a[0] / l, a[1] / l, a[2] / l]; };
+function lookAt(eye, c, up) {
+  const f = norm(sub(c, eye)), s = norm(cross(f, up)), u = cross(s, f);
+  return [s[0], u[0], -f[0], 0, s[1], u[1], -f[1], 0, s[2], u[2], -f[2], 0,
+          -dot(s, eye), -dot(u, eye), dot(f, eye), 1];
+}
+function perspective(fovy, aspect, n, f) {
+  const t = Math.tan(fovy / 2);
+  return [1 / (aspect * t), 0, 0, 0, 0, 1 / t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0];
+}
+function mul(a, b) {
+  const o = new Array(16).fill(0);
+  for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) {
+    let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k];
+    o[c * 4 + r] = s;
+  }
+  return o;
+}
+function camera(t) {
+  const d = Math.exp(logD(t)), th = tiltAt(t);
+  const Tv = camTv(t, d, th);
+  const eye = [720, d * Math.cos(th), Tv + d * Math.sin(th)];
+  const center = [720, 0, Tv];
+  const view = lookAt(eye, center, [0, 0, -1]);
+  const proj = perspective(2 * Math.atan(576 / F), W / H, 20, 80000);
+  return { d, th, Tv, eye, center, view, vp: mul(proj, view), proj };
+}
+function screenY(pz, Tv, d, th) {
+  const eye = [720, d * Math.cos(th), Tv + d * Math.sin(th)];
+  const view = lookAt(eye, [720, 0, Tv], [0, 0, -1]);
+  const proj = perspective(2 * Math.atan(576 / F), W / H, 20, 80000);
+  const vp = mul(proj, view);
+  const x = 720, y = 0, z = pz;
+  const cw = vp[3] * x + vp[7] * y + vp[11] * z + vp[15];
+  const cy = vp[1] * x + vp[5] * y + vp[9] * z + vp[13];
+  return (1 - cy / cw) / 2 * H;
+}
+function solveTv(pz, target, d, th) {
+  let prev = null;
+  for (let Tv = -40000; Tv <= 40000; Tv += 200) {
+    const f = screenY(pz, Tv, d, th) - target;
+    if (prev && Math.sign(f) !== Math.sign(prev.f)) {
+      let lo = prev.Tv, hi = Tv, flo = prev.f;
+      for (let k = 0; k < 60; k++) {
+        const mid = (lo + hi) / 2, fm = screenY(pz, mid, d, th) - target;
+        if (Math.sign(fm) === Math.sign(flo)) { lo = mid; flo = fm; } else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+    prev = { Tv, f };
+  }
+  return null;
+}
+function camTv(t, d, th) {
+  const flight = T0 + CRUISE * cumAt(S_CUM, t);
+  if (t < 8.0) return flight;
+  let pin;
+  if (t < 9.47) pin = solveTv(PAGE_H, 1110, d, th);            // bottom edge 42px above frame bottom
+  else if (t < 9.97) pin = solveTv(0, 0, d, th);                // top edge pinned to frame top
+  else pin = solveTv(0, 283 * ss(9.97, 10.1, t), d, th);        // top drops to y 283
+  if (pin === null) return flight;
+  return lerp(flight, pin, ss(8.0, 8.3, t));
+}
+
+/* ---------- pieces (lift + stand + shift schedules) ---------- */
+const D = Math.PI / 180;
+function pieceState(name, t) {
+  const b = L.layers[name];
+  const pad = 28;
+  const rect = [b.x - pad, b.y - pad, b.w + 2 * pad, b.h + 2 * pad];
+  let lift = 0, stand = 0, dx = 0;
+  switch (name) {
+    case 'sim':      lift = 34 * ss(0.1, 1.35, t); break;
+    case 'chipA':    lift = 70 * ss(0.1, 1.35, t) + 130 * ss(1.35, 2.5, t);
+                     stand = (30 * ss(0.1, 1.35, t) + 24 * ss(1.35, 2.5, t)) * D;
+                     dx = -900 * ss(1.35, 2.5, t); break;
+    case 'chipB':    lift = 20 * ss(1.2, 2.4, t); dx = 900 * ss(1.35, 2.5, t); break;
+    case 'panelA':   lift = 115 * ss(1.35, 2.7, t); stand = 46 * D * ss(1.35, 2.7, t); break;
+    case 'panelB':   lift = 115 * ss(1.35, 2.7, t); stand = 46 * D * ss(1.35, 2.7, t); break;
+    case 'panelC':   lift = 24 * ss(2.7, 3.3, t); break;
+    case 'proofMain':lift = 24 * ss(3.0, 3.5, t); break;
+    case 'proofA':   lift = 24 * ss(3.2, 3.8, t); break;
+    case 'proofB':   lift = 30 * ss(3.6, 4.2, t); break;
+    case 'proofC':   lift = 24 * ss(4.0, 4.6, t); break;
+    case 'vault':    lift = 22 * ss(5.0, 5.45, t) + 90 * ss(5.45, 6.3, t);
+                     stand = 30 * D * ss(5.45, 6.3, t); break;
+  }
+  return { name, tex: name, rect: [rect[0] + dx, rect[1], rect[2], rect[3]], lift, stand, alpha: 1,
+           texSize: [rect[2] * 2, rect[3] * 2] };
+}
+
+/* logo tiles: four tiles beside the button, lift, grow, hang at the top corners, trail, drift out, return to card corners */
+const TILE_HANG = [[-40, -40], [-150, 40], [1480, -40], [1590, 40]];
+function tileState(i, t, Tv) {
+  const hx = [BTN.x - 56, BTN.x - 96, BTN.x + BTN.w + 24, BTN.x + BTN.w + 64][i];
+  const hy = BTN.y + BTN.h / 2 - 16;
+  const home = [hx + 16, hy + 16];
+  const p1 = ss(0.1, 1.35, t);
+  let cx = lerp(home[0], TILE_HANG[i][0], p1);
+  let cy = lerp(home[1], TILE_HANG[i][1], p1);
+  let s = lerp(32, 170, p1);
+  const lift = 40 * ss(0, 0.6, t);
+  const trail = ss(1.2, 2.4, t);
+  cy = lerp(cy, Tv - 300, trail);
+  if (t > 2.4) cy = Tv - 300 - 420 * (t - 2.4);
+  let alpha = 1 - ss(2.9, 3.9, t);
+  // return to the card's top corners at the title card
+  if (t > 9.5) {
+    const endPos = [[22, 0], [1418, 0]];
+    if (i === 0 || i === 2) {
+      const e = i === 0 ? endPos[0] : endPos[1];
+      cx = e[0]; cy = e[1]; s = 45;
+      alpha = ss(9.9, 10.2, t);
+    } else {
+      alpha = 1 - ss(9.5, 9.8, t);
+    }
+  }
+  return { name: 'logo' + i, tex: 'logo', rect: [cx - s / 2, cy - s / 2, s, s], lift, stand: 0, alpha, texSize: [512, 512] };
+}
+
+/* ---------- WebGL ---------- */
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, preserveDrawingBuffer: true });
+const VS_QUAD = `#version 300 es
+in vec2 a_uv;
+uniform vec4 u_rect; uniform float u_lift; uniform float u_stand; uniform int u_shadow; uniform vec2 u_soff; uniform mat4 u_vp;
+out vec2 v_uv; out vec3 v_world; out vec2 v_page;
+void main(){
+  float xl = (a_uv.x - 0.5) * u_rect.z;
+  float zl = (a_uv.y - 0.5) * u_rect.w;
+  float cx = u_rect.x + 0.5 * u_rect.z, cz = u_rect.y + 0.5 * u_rect.w;
+  vec3 wp;
+  if (u_shadow == 1) { wp = vec3(cx + xl + u_soff.x, 0.2, cz + zl + u_soff.y); }
+  else { float cs = cos(u_stand), sn = sin(u_stand); wp = vec3(cx + xl, u_lift - zl * sn, cz + zl * cs); }
+  v_uv = a_uv; v_world = wp; v_page = vec2(u_rect.x + a_uv.x * u_rect.z, u_rect.y + a_uv.y * u_rect.w);
+  gl_Position = u_vp * vec4(wp, 1.0);
+}`;
+const FS_QUAD = `#version 300 es
+precision highp float;
+in vec2 v_uv; in vec3 v_world; in vec2 v_page;
+uniform sampler2D u_tex; uniform vec2 u_texSize; uniform mat4 u_view; uniform float u_focus;
+uniform int u_mode; uniform vec4 u_mask; uniform float u_maskR; uniform float u_fade; uniform float u_fadeY;
+uniform float u_alpha; uniform vec3 u_color; uniform float u_blur;
+out vec4 o;
+float sdRR(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
+void main(){
+  if (u_mode == 3) {
+    float d = length((v_uv - 0.5) * 2.0);
+    float a = exp(-d * d * 3.0) * u_alpha;
+    o = vec4(u_color * a, a); return;
+  }
+  float depth = max(1.0, -(u_view * vec4(v_world, 1.0)).z);
+  float r = depth < u_focus ? min(120.0, 75.0 * (u_focus - depth) / depth) : min(120.0, 6.0 * (depth - u_focus) / depth);
+  if (u_mode == 2) r = u_blur;
+  vec2 dx = dFdx(v_uv), dy = dFdy(v_uv);
+  float foot = max(length(dx * u_texSize), length(dy * u_texSize));
+  float lod = max(0.0, log2(max(1.0, r * foot / 6.3)));
+  vec4 acc = vec4(0.0);
+  for (int i = 0; i < 40; i++) {
+    float fi = float(i) + 0.5;
+    float rr = sqrt(fi / 40.0), th = fi * 2.39996323;
+    vec2 p = rr * vec2(cos(th), sin(th)) * r;
+    vec4 s = textureLod(u_tex, v_uv + p.x * dx + p.y * dy, lod);
+    acc += vec4(s.rgb * s.a, s.a);
+  }
+  acc /= 40.0;
+  vec2 c = 0.5 * (u_mask.xy + u_mask.zw), h = 0.5 * (u_mask.zw - u_mask.xy);
+  float m = 1.0 - smoothstep(-0.6, 0.6, sdRR(v_page - c, h, u_maskR));
+  float f = 1.0 - u_fade * step(u_fadeY, v_page.y);
+  float k = m * f;
+  if (u_mode == 2) { float a = acc.a * u_alpha * k; o = vec4(u_color * a, a); return; }
+  o = acc * k * u_alpha;
+}`;
+const VS_FLOOR = `#version 300 es
+in vec2 a_p; void main(){ gl_Position = vec4(a_p, 0.0, 1.0); }`;
+const FS_FLOOR = `#version 300 es
+precision highp float;
+uniform vec3 u_eye, u_s, u_u, u_f; uniform float u_F; uniform vec4 u_mask; uniform float u_maskR; uniform vec2 u_res;
+out vec4 o;
+float sdRR(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
+void main(){
+  vec2 px = vec2(gl_FragCoord.x, u_res.y - gl_FragCoord.y);
+  vec2 uv = px / u_res;
+  float X = (px.x - 720.0) / u_F, Y = (576.0 - px.y) / u_F;
+  vec3 dir = u_f + u_s * X + u_u * Y;
+  vec3 base = mix(vec3(0.969, 0.945, 0.980), vec3(0.863, 0.796, 1.0), smoothstep(0.30, 0.95, length((uv - 0.5) * vec2(1.0, 0.85)) * 1.25));
+  if (dir.y < -1e-4) {
+    float t = -u_eye.y / dir.y;
+    vec3 p = u_eye + dir * t;
+    vec2 c = 0.5 * (u_mask.xy + u_mask.zw), h = 0.5 * (u_mask.zw - u_mask.xy);
+    float sd = sdRR(p.xz - c - vec2(0.0, 14.0), h, u_maskR);
+    float sh = 0.26 * exp(-max(sd, 0.0) / 75.0);
+    base = mix(base, vec3(0.102, 0.129, 0.200), sh);
+  }
+  o = vec4(base, 1.0);
+}`;
+
+function compile(type, src) {
+  const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+function program(vs, fs) {
+  const p = gl.createProgram();
+  gl.attachShader(p, compile(gl.VERTEX_SHADER, vs)); gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  return p;
+}
+let PQ, PF, quadVAO, floorVAO, U = {}, UF = {}, aniso = null;
+function setupGL() {
+  PQ = program(VS_QUAD, FS_QUAD);
+  PF = program(VS_FLOOR, FS_FLOOR);
+  const names = ['u_rect', 'u_lift', 'u_stand', 'u_shadow', 'u_soff', 'u_vp', 'u_tex', 'u_texSize', 'u_view', 'u_focus',
+                 'u_mode', 'u_mask', 'u_maskR', 'u_fade', 'u_fadeY', 'u_alpha', 'u_color', 'u_blur'];
+  gl.useProgram(PQ);
+  names.forEach(n => U[n] = gl.getUniformLocation(PQ, n));
+  gl.useProgram(PF);
+  ['u_eye', 'u_s', 'u_u', 'u_f', 'u_F', 'u_mask', 'u_maskR', 'u_res'].forEach(n => UF[n] = gl.getUniformLocation(PF, n));
+  // unit quad
+  quadVAO = gl.createVertexArray(); gl.bindVertexArray(quadVAO);
+  const uvs = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
+  const vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
+  const locUV = gl.getAttribLocation(PQ, 'a_uv'); gl.enableVertexAttribArray(locUV); gl.vertexAttribPointer(locUV, 2, gl.FLOAT, false, 0, 0);
+  // full-screen triangle for the floor
+  floorVAO = gl.createVertexArray(); gl.bindVertexArray(floorVAO);
+  const fb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, fb);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const locP = gl.getAttribLocation(PF, 'a_p'); gl.enableVertexAttribArray(locP); gl.vertexAttribPointer(locP, 2, gl.FLOAT, false, 0, 0);
+  aniso = gl.getExtension('EXT_texture_filter_anisotropic');
+}
+function loadTex(src) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(16, gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+      res({ tex: t, w: img.naturalWidth, h: img.naturalHeight });
+    };
+    img.onerror = () => rej(new Error('failed to load ' + src));
+    img.src = src;
+  });
+}
+
+const TEX = {};
+const PAGE_TILES = [];
+const PIECE_NAMES = ['sim', 'chipA', 'chipB', 'panelA', 'panelB', 'panelC', 'proofMain', 'proofA', 'proofB', 'proofC', 'vault'];
+const DEV_ROWS = [[0, 4140], [4133, 8273], [8266, 12406], [12399, 16530]];
+
+function drawQuad(st, opts) {
+  gl.useProgram(PQ);
+  gl.bindVertexArray(quadVAO);
+  gl.uniform4f(U.u_rect, st.rect[0], st.rect[1], st.rect[2], st.rect[3]);
+  gl.uniform1f(U.u_lift, st.lift || 0);
+  gl.uniform1f(U.u_stand, st.stand || 0);
+  gl.uniform1i(U.u_shadow, opts.shadow ? 1 : 0);
+  gl.uniform2f(U.u_soff, opts.soff ? opts.soff[0] : 0, opts.soff ? opts.soff[1] : 0);
+  gl.uniformMatrix4fv(U.u_vp, false, opts.vp);
+  gl.uniformMatrix4fv(U.u_view, false, opts.view);
+  gl.uniform1f(U.u_focus, opts.focus);
+  gl.uniform1i(U.u_mode, opts.mode);
+  gl.uniform4f(U.u_mask, opts.mask ? opts.mask[0] : 0, opts.mask ? opts.mask[1] : 0, opts.mask ? opts.mask[2] : 1440, opts.mask ? opts.mask[3] : 1152);
+  gl.uniform1f(U.u_maskR, opts.maskR || 0);
+  gl.uniform1f(U.u_fade, opts.fade || 0);
+  gl.uniform1f(U.u_fadeY, opts.fadeY || 1e9);
+  gl.uniform1f(U.u_alpha, opts.alpha == null ? 1 : opts.alpha);
+  gl.uniform3f(U.u_color, opts.color ? opts.color[0] : 0, opts.color ? opts.color[1] : 0, opts.color ? opts.color[2] : 0);
+  gl.uniform1f(U.u_blur, opts.blur || 0);
+  gl.uniform2f(U.u_texSize, st.texSize[0], st.texSize[1]);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, opts.tex);
+  gl.uniform1i(U.u_tex, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+/* ---------- frame ---------- */
+const BLOBS = [
+  { cx: 0, cy: CROP_H, color: [0.412, 0.188, 0.918], start: 10.0 },
+  { cx: 1440, cy: CROP_H, color: [0.027, 0.439, 0.373], start: 10.15 },
+];
+const LIFT_LAYER_COLOR = [0.102, 0.129, 0.200];
+
+function render(t) {
+  const cam = camera(t);
+  const m = mDive(t);
+  const hm = lerp(PAGE_H, CROP_H, m), rm = lerp(24, 54, m);
+  const mask = [0, 0, W, hm];
+
+  gl.viewport(0, 0, W, H);
+  gl.disable(gl.BLEND);
+  gl.clearColor(0.86, 0.80, 1, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+  // 1. studio floor with the page's soft shadow
+  gl.useProgram(PF);
+  gl.bindVertexArray(floorVAO);
+  const f = norm(sub(cam.center, cam.eye));
+  const s = norm(cross(f, [0, 0, -1]));
+  const u = cross(s, f);
+  gl.uniform3f(UF.u_eye, cam.eye[0], cam.eye[1], cam.eye[2]);
+  gl.uniform3f(UF.u_s, s[0], s[1], s[2]);
+  gl.uniform3f(UF.u_u, u[0], u[1], u[2]);
+  gl.uniform3f(UF.u_f, f[0], f[1], f[2]);
+  gl.uniform1f(UF.u_F, F);
+  gl.uniform4f(UF.u_mask, mask[0], mask[1], mask[2], mask[3]);
+  gl.uniform1f(UF.u_maskR, rm);
+  gl.uniform2f(UF.u_res, W, H);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  // 2. blended layers
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  const common = { vp: cam.vp, view: cam.view, focus: cam.d, mask, maskR: rm, fade: m, fadeY: CROP_H };
+  // page tiles
+  PAGE_TILES.forEach((tile, i) => {
+    const y0 = DEV_ROWS[i][0] / 2, h = (DEV_ROWS[i][1] - DEV_ROWS[i][0]) / 2;
+    drawQuad({ rect: [0, y0, W, h], texSize: [2880, DEV_ROWS[i][1] - DEV_ROWS[i][0]] },
+             Object.assign({}, common, { tex: tile, mode: 0 }));
+  });
+  // pieces: shadows first, then pieces lowest first
+  const states = PIECE_NAMES.map(n => pieceState(n, t));
+  const tiles = [0, 1, 2, 3].map(i => tileState(i, t, cam.Tv)).filter(s => s.alpha > 0.001);
+  const all = states.concat(tiles).sort((a, b) => a.lift - b.lift);
+  const NOMASK = [-1e5, -1e5, 1e5, 1e5];
+  const pieceOpts = st => (st.tex === 'logo') ? { mask: NOMASK, maskR: 0, fade: 0 } : {};
+  all.forEach(st => {
+    if (st.lift > 0.5) {
+      const L_ = st.lift;
+      drawQuad(Object.assign({}, st, { lift: 0, stand: 0 }),
+        Object.assign({}, common, pieceOpts(st), { tex: TEX[st.tex].tex, mode: 2, shadow: true, soff: [0.10 * L_, 4 + 0.36 * L_], blur: 7 + 0.5 * L_, color: LIFT_LAYER_COLOR, alpha: 0.26 * st.alpha, focus: cam.d }));
+    }
+  });
+  all.forEach(st => {
+    drawQuad(st, Object.assign({}, common, pieceOpts(st), { tex: TEX[st.tex].tex, mode: 1, alpha: st.alpha }));
+  });
+  // end-card blurs (drift in at the bottom corners of the card)
+  BLOBS.forEach((b, i) => {
+    const a = 0.55 * ss(b.start, b.start + 0.8, t);
+    if (a <= 0.001) return;
+    const size = 900;
+    drawQuad({ rect: [b.cx - size, b.cy - size, 2 * size, 2 * size], texSize: [2, 2] },
+      Object.assign({}, common, { tex: TEX.logo.tex, mode: 3, color: b.color, alpha: a, mask: null, maskR: 0, fade: 0 }));
+  });
+  gl.finish();
+  return cam;
+}
+
+/* ---------- title card overlay (DOM, timed in seek) ---------- */
+const LINE1 = '';   // line 1 of the closing statement (empty = none)
+const LINE2 = '';   // italic tail (empty = none)
+function buildWords(el, text) {
+  el.innerHTML = '';
+  text.split(' ').forEach((w, i, arr) => {
+    const s = document.createElement('span'); s.className = 'w'; s.textContent = w;
+    el.appendChild(s); if (i < arr.length - 1) el.appendChild(document.createTextNode(' '));
+  });
+  return Array.from(el.querySelectorAll('.w'));
+}
+let W1 = [], W2 = [];
+function overlay(t) {
+  const badge = document.getElementById('badge');
+  badge.style.opacity = ss(10.02, 10.32, t).toFixed(3);
+  W1.forEach((el, i) => {
+    const st = 10.12 + i * 0.06;
+    el.style.opacity = t < st ? 0 : Math.min(1, (t - st) / 0.2).toFixed(3);
+  });
+  W2.forEach((el, i) => {
+    const st = 10.36 + i * 0.05;
+    const p = ss(0, 0.34, t - st);
+    el.style.opacity = p.toFixed(3);
+    el.style.transform = `translateY(${((1 - p) * 16).toFixed(2)}px)`;
+    el.style.filter = `blur(${((1 - p) * 12).toFixed(2)}px)`;
+  });
+}
+
+/* ---------- boot ---------- */
+window.seek = function (t) {
+  const cam = render(t);
+  overlay(t);
+  window.lastCam = { d: cam.d, th: cam.th * 180 / Math.PI, Tv: cam.Tv, t };
+  return window.lastCam;
+};
+(async function boot() {
+  try {
+    L = await (await fetch('capture/layers.json')).json();
+    PAGE_H = L.docH;
+    HERO = L.layers.hero; BTN = L.layers.btn; FOOT = L.layers.foot;
+    T0 = HERO.h * 0.25;                                   // centred on the top half of the hero
+    FOOT_TITLE_V = FOOT.y + 60;                           // footer title arrives at 8.0 s
+    DFIN = PAGE_H * F / (H - 84);                         // whole page fills the frame with 42px margins
+    DHERO = W * F / 1018;                                 // hero card 1018 px wide on screen
+    D0 = dFlight(7.75);
+    buildTables();
+    const I8 = cumAt(S_CUM, 8.0);
+    CRUISE = (FOOT_TITLE_V - T0) / I8;
+    const IR = cumAt(RATE_CUM, 9.25);
+    K_LOG = Math.log(DFIN / D0) / IR;
+    setupGL();
+    for (const i of [0, 1, 2, 3]) PAGE_TILES.push((await loadTex(`capture/tile${i}.jpg`)).tex);
+    TEX.logo = await loadTex('capture/logo_tile.png');
+    for (const n of PIECE_NAMES) TEX[n] = await loadTex(`capture/piece_${n}.png`);
+    W1 = buildWords(document.getElementById('l1'), LINE1);
+    W2 = buildWords(document.getElementById('l2'), LINE2);
+    window.info = { PAGE_H, CRUISE, T0, FOOT_TITLE_V, DFIN, DHERO, D0, K_LOG, CROP_H, I8 };
+    window.ready = true;
+  } catch (e) {
+    window.bootError = String(e && e.stack || e);
+    console.error(window.bootError);
+  }
+})();
+</script>
+</body>
+</html>

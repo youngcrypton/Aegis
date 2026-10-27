@@ -190,7 +190,8 @@ export class HyperCoreAgentClient {
       const resp = await fetch(`${this.apiUrl}/exchange`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: AbortSignal.timeout(10000) // 10s timeout to prevent keeper hang if HyperCore is unresponsive
       });
 
       const t1 = Date.now();

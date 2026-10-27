@@ -19,7 +19,7 @@ def compose_all_demos():
 
     jobs = [
         {
-            "name": "114s Pitch Demo (Judges & Hackathon Pitch)",
+            "name": "114s Pitch Demo (Protocol & Ecosystem Pitch)",
             "video_in": os.path.join(remotion_dir, "public", "recordings", "pitch-demo-recording.webm"),
             "audio_in": os.path.join(remotion_dir, "public", "audio", "pitch-master-voiceover-mix.wav"),
             "duration": "114.0",

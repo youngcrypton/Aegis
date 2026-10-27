@@ -49,8 +49,10 @@ export class SentinelKeeperDaemon {
   private processedIntents: Set<string> = new Set();
   private isProcessingBlock: boolean = false;
   private healthServer: http.Server | null = null;
+  private healthRateLimits: Map<string, { count: number; resetAt: number }> = new Map();
   private lastProcessedBlock: number = 0;
   private lastBlockTimestamp: number = 0;
+  private tokenDecimalsCache: Map<string, number> = new Map();
 
   constructor() {
     this.telemetry = new TelemetryService();
@@ -98,6 +100,39 @@ export class SentinelKeeperDaemon {
 
   public addMonitoredVault(vaultAddress: string): void {
     this.monitoredVaults.add(vaultAddress.toLowerCase());
+  }
+
+  /**
+   * Fetches the ERC20 token decimals for a collateral token, utilizing an in-memory cache.
+   * Defaults to 18 decimals on failure or zero address.
+   */
+  public async getCollateralDecimals(tokenAddress: string): Promise<number> {
+    if (!tokenAddress || tokenAddress === ethers.ZeroAddress) {
+      return 18;
+    }
+    const normalized = tokenAddress.toLowerCase();
+    if (this.tokenDecimalsCache.has(normalized)) {
+      return this.tokenDecimalsCache.get(normalized)!;
+    }
+    try {
+      const erc20 = new ethers.Contract(
+        tokenAddress,
+        ["function decimals() view returns (uint8)"],
+        this.telemetry.getProvider()
+      );
+      const dec = await erc20.decimals();
+      const numDec = Number(dec);
+      if (numDec > 0 && numDec <= 36) {
+        this.tokenDecimalsCache.set(normalized, numDec);
+        return numDec;
+      }
+    } catch (err: any) {
+      console.warn(
+        `[Keeper] Notice: Could not read decimals for ${tokenAddress}: ${err?.message || err}. Defaulting to 18.`
+      );
+    }
+    this.tokenDecimalsCache.set(normalized, 18);
+    return 18;
   }
 
   public async start(): Promise<void> {
@@ -254,12 +289,15 @@ export class SentinelKeeperDaemon {
         return;
       }
 
+      const decimals = await this.getCollateralDecimals(posData.collateralToken);
+
       const positionParsed: VaultPositionData = {
         vaultAddress: vaultOwner,
         owner: posData.owner,
         liquidationThresholdBps: Number(posData.liquidationThresholdBps),
         lastHedgeBlock: Number(posData.lastHedgeBlock),
         collateralToken: posData.collateralToken,
+        collateralDecimals: decimals,
         collateralAmount: BigInt(posData.collateralAmount),
         debtAmountUsdc: BigInt(posData.debtAmountUsdc),
         sessionKey: posData.sessionKey,
@@ -500,29 +538,90 @@ export class SentinelKeeperDaemon {
 
   public startHealthServer(port: number = 8080): void {
     this.healthServer = http.createServer((req, res) => {
-      if (req.url === "/health" || req.url === "/") {
-        const payload = {
+      // 1. Method check: only GET and HEAD permitted
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        res.writeHead(405, { "Content-Type": "application/json", "Allow": "GET, HEAD" });
+        res.end(JSON.stringify({ error: "Method Not Allowed" }));
+        return;
+      }
+
+      // 2. Rate limiting check (max 60 requests/minute per client IP)
+      const rawIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress || "127.0.0.1";
+      const now = Date.now();
+      const limitWindowMs = 60_000;
+      const maxRequests = 60;
+
+      let record = this.healthRateLimits.get(rawIp);
+      if (!record || now > record.resetAt) {
+        record = { count: 1, resetAt: now + limitWindowMs };
+        this.healthRateLimits.set(rawIp, record);
+      } else {
+        record.count++;
+      }
+
+      // Periodic cleanup if map grows
+      if (this.healthRateLimits.size > 500) {
+        for (const [ip, entry] of this.healthRateLimits.entries()) {
+          if (now > entry.resetAt) this.healthRateLimits.delete(ip);
+        }
+      }
+
+      if (record.count > maxRequests) {
+        res.writeHead(429, {
+          "Content-Type": "application/json",
+          "Retry-After": "60"
+        });
+        res.end(JSON.stringify({ error: "Too Many Requests", retryAfterSeconds: 60 }));
+        return;
+      }
+
+      const urlPath = (req.url || "/").split("?")[0];
+
+      // 3. Diagnostics endpoint (requires authentication if SENTINEL_HEALTH_TOKEN is set)
+      if (urlPath === "/diagnostics" || urlPath === "/metrics") {
+        const authToken = req.headers["x-sentinel-auth"] || (req.headers["authorization"] ? (req.headers["authorization"] as string).replace(/^Bearer\s+/i, "") : undefined);
+        const isAuthorized = Boolean(
+          config.SENTINEL_HEALTH_TOKEN && authToken === config.SENTINEL_HEALTH_TOKEN
+        );
+
+        if (!isAuthorized) {
+          res.writeHead(401, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Unauthorized: Diagnostic metrics require valid authentication" }));
+          return;
+        }
+
+        const diagPayload = {
           status: "healthy",
           uptimeSeconds: Math.floor(process.uptime()),
           chainId: config.CHAIN_ID,
           executionMode: config.KEEPER_EXECUTION_MODE,
-          rpcUrl: config.ELYSIUM_RPC_URL,
-          usdcAddress: config.USDC_ADDRESS,
-          agentDispatchAddress: config.AGENT_DISPATCH_ADAPTER_ADDRESS,
-          relayedOracleAddress: config.RELAYED_ORACLE_ADAPTER_ADDRESS,
           lastProcessedBlock: this.lastProcessedBlock,
           lastBlockTimestamp: this.lastBlockTimestamp,
           monitoredVaultsCount: this.monitoredVaults.size,
           activeHedgesCount: this.trailingTracker.getActiveCount(),
-          operatorAddress: config.SENTINEL_OPERATOR_ADDRESS,
+          timestamp: new Date().toISOString()
+        };
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(diagPayload, null, 2));
+        return;
+      }
+
+      // 4. Public health check: minimal liveness, strictly no internal secrets or sensitive state leaked
+      if (urlPath === "/health" || urlPath === "/") {
+        const payload = {
+          status: "healthy",
+          uptimeSeconds: Math.floor(process.uptime()),
+          chainId: config.CHAIN_ID,
+          lastProcessedBlock: this.lastProcessedBlock,
           timestamp: new Date().toISOString()
         };
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(payload, null, 2));
-      } else {
-        res.writeHead(404, { "Content-Type": "text/plain" });
-        res.end("Not Found");
+        return;
       }
+
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Not Found" }));
     });
 
     this.healthServer.listen(port, () => {

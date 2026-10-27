@@ -1,7 +1,7 @@
 # AEGIS PROTOCOL — MASTER DEMO VIDEO PROMPT (120 SECONDS / LIGHT MODE)
 
-> **File:** `docs/HACKATHON_DEMO_VIDEO_PROMPT.md`  
-> **Target Audience:** Hackathon Judges (Elysium L2 / Hyperliquid / DeFi Track)  
+> **File:** `docs/DEMO_VIDEO_PROMPT.md`  
+> **Target Audience:** Ecosystem Partners & Institutional Evaluators (Elysium L2 / Hyperliquid / DeFi Track)  
 > **Duration:** Exactly 120.00 Seconds (2 Minutes Max — 7,200 frames @ 60 FPS / 3,600 frames @ 30 FPS)  
 > **Visual Theme:** **AEGIS Brand Kit LIGHT MODE** (Strictly adhering to `brand/kit/tokens.css` and `AGENTS.md`)  
 > **Audio:** Synchronized Loud, Confident Engineer Voiceover with Subtle High-Tech Sound FX  
@@ -9,9 +9,9 @@
 ---
 
 ```markdown
-You are a Principal Motion Designer, Full-Stack DeFi Engineer, and Hackathon-Winning Demo Producer specializing in Remotion, React, and Web3 motion graphics.
+You are a Principal Motion Designer, Full-Stack DeFi Engineer, and High-Production DeFi Demo Producer specializing in Remotion, React, and Web3 motion graphics.
 
-Your task is to build a high-impact, 120-second (2-minute maximum, 1920x1080 @ 60 FPS, exactly 7,200 frames) product demo video for the hackathon judges of AEGIS Protocol.
+Your task is to build a high-impact, 120-second (2-minute maximum, 1920x1080 @ 60 FPS, exactly 7,200 frames) product demo video for the ecosystem partners and evaluators of AEGIS Protocol.
 
 The video must showcase what is ACTUALLY WORKING in the AEGIS codebase on Elysium Orbit L2 (Chain ID 99801) and HyperCore, highlighting the most critical technical innovations, accompanied by a loud, authoritative, perfectly timed voiceover narration that explains the protocol with clarity and punch.
 
@@ -162,15 +162,15 @@ Use this script for your text-to-speech engine (ElevenLabs "Adam" or "Antoni" vo
 ### 5. IMPLEMENTATION INSTRUCTIONS & RENDERING COMMANDS
 
 When executing this Remotion composition:
-1. Create `remotion/src/compositions/AegisHackathonDemo120s.tsx`.
+1. Create `remotion/src/compositions/AegisPitchDemo120s.tsx`.
 2. Register the composition in `remotion/src/Root.tsx`:
-   - `id="AegisHackathonDemo120s"`
+   - `id="AegisPitchDemo120s"`
    - `durationInFrames={7200}`
    - `fps={60}`
    - `width={1920}`
    - `height={1080}`
 3. Render using non-parallel single-threaded encoding to prevent Chromium memory spikes:
    ```powershell
-   npx remotion render AegisHackathonDemo120s out/aegis-hackathon-demo-120s.mp4 --concurrency=1 --disallow-parallel-encoding
+   npx remotion render AegisPitchDemo120s out/aegis-pitch-demo-120s.mp4 --concurrency=1 --disallow-parallel-encoding
    ```
 ```

@@ -9,5 +9,9 @@
     "discord:bot": "node script/discord_sentinel_bot.js"
   },
   "author": "AEGIS Core",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.64.1",
+    "sharp": "^0.35.5"
+  }
 }

@@ -1,3 +1,4 @@
+import * as http from "http";
 import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
 import * as fs from "fs";
 import * as path from "path";
@@ -5,6 +6,7 @@ import { ethers } from "ethers";
 import { loadConfig } from "../src/config";
 import { TelemetryService } from "../src/telemetry";
 import { RiskEngine, VaultPositionData, TriggerMode, OrderType } from "../src/risk_engine";
+import { SentinelKeeperDaemon } from "../src/index";
 
 describe("Sentinel Keeper Testnet Configuration & Dual-Mode Wiring", () => {
   describe("1. Testnet Configuration & Canonical USDC Binding", () => {
@@ -142,4 +144,157 @@ describe("Sentinel Keeper Testnet Configuration & Dual-Mode Wiring", () => {
       expect(evalBreached.recommendedHedgeSize).toBe(ethers.parseEther("0.10"));
     });
   });
+
+  describe("4. Health Endpoint Security, Data Minimization & Rate Limiting", () => {
+    let daemon: SentinelKeeperDaemon;
+    let serverPort: number;
+
+    beforeEach(async () => {
+      daemon = new SentinelKeeperDaemon();
+      daemon.startHealthServer(0);
+      const addr = (daemon as any).healthServer?.address();
+      serverPort = typeof addr === "object" && addr ? addr.port : 8080;
+    });
+
+    afterEach(() => {
+      daemon.stopHealthServer();
+    });
+
+    function makeRequest(
+      path: string,
+      method: string = "GET",
+      headers: Record<string, string> = {}
+    ): Promise<{ statusCode: number; headers: http.IncomingHttpHeaders; body: string }> {
+      return new Promise((resolve, reject) => {
+        const req = http.request(
+          {
+            hostname: "127.0.0.1",
+            port: serverPort,
+            path,
+            method,
+            headers
+          },
+          (res) => {
+            let data = "";
+            res.on("data", (chunk) => (data += chunk));
+            res.on("end", () =>
+              resolve({
+                statusCode: res.statusCode || 0,
+                headers: res.headers,
+                body: data
+              })
+            );
+          }
+        );
+        req.on("error", reject);
+        req.end();
+      });
+    }
+
+    it("should return minimal liveness info on /health and prevent operational info leakage", async () => {
+      const res = await makeRequest("/health");
+      expect(res.statusCode).toBe(200);
+      const payload = JSON.parse(res.body);
+
+      expect(payload.status).toBe("healthy");
+      expect(typeof payload.uptimeSeconds).toBe("number");
+      expect(payload.chainId).toBe(99801);
+
+      // Verify that sensitive internal topology is NOT leaked
+      expect(payload.rpcUrl).toBeUndefined();
+      expect(payload.operatorAddress).toBeUndefined();
+      expect(payload.usdcAddress).toBeUndefined();
+      expect(payload.agentDispatchAddress).toBeUndefined();
+      expect(payload.relayedOracleAddress).toBeUndefined();
+      expect(payload.monitoredVaultsCount).toBeUndefined();
+      expect(payload.activeHedgesCount).toBeUndefined();
+    });
+
+    it("should reject non-GET and non-HEAD methods with 405 Method Not Allowed", async () => {
+      const res = await makeRequest("/health", "POST");
+      expect(res.statusCode).toBe(405);
+      const payload = JSON.parse(res.body);
+      expect(payload.error).toBe("Method Not Allowed");
+    });
+
+    it("should reject unauthorized requests to /diagnostics with 401", async () => {
+      const res = await makeRequest("/diagnostics");
+      expect(res.statusCode).toBe(401);
+      const payload = JSON.parse(res.body);
+      expect(payload.error).toContain("Unauthorized");
+    });
+
+    it("should enforce rate limiting and respond with 429 after exceeding limit", async () => {
+      // Simulate rate limiter records for client
+      for (let i = 0; i < 60; i++) {
+        await makeRequest("/health");
+      }
+      // 61st request should be rate-limited
+      const rateLimitedRes = await makeRequest("/health");
+      expect(rateLimitedRes.statusCode).toBe(429);
+      expect(rateLimitedRes.headers["retry-after"]).toBe("60");
+      const payload = JSON.parse(rateLimitedRes.body);
+      expect(payload.error).toBe("Too Many Requests");
+    });
+  });
+
+  describe("5. Token Decimals Query & In-Memory Cache (AEG-REC-02)", () => {
+    let keeper: SentinelKeeperDaemon;
+
+    beforeEach(() => {
+      keeper = new SentinelKeeperDaemon();
+    });
+
+    afterEach(() => {
+      keeper.stop();
+    });
+
+    it("should return 18 for zero address or null without network calls", async () => {
+      const decZero = await keeper.getCollateralDecimals(ethers.ZeroAddress);
+      expect(decZero).toBe(18);
+
+      const decNull = await keeper.getCollateralDecimals("");
+      expect(decNull).toBe(18);
+    });
+
+    it("should query token.decimals() and cache result for multi-decimal tokens", async () => {
+      const mockToken = "0x1111111111111111111111111111111111111111";
+      const provider = (keeper as any).telemetry.getProvider();
+      
+      // Mock provider.call to return 8 (WBTC decimals: uint8)
+      const encoded8 = ethers.AbiCoder.defaultAbiCoder().encode(["uint8"], [8]);
+      const callSpy = jest.spyOn(provider, "call").mockResolvedValue(encoded8);
+
+      const decFirst = await keeper.getCollateralDecimals(mockToken);
+      expect(decFirst).toBe(8);
+      expect(callSpy).toHaveBeenCalledTimes(1);
+
+      // Second call should hit in-memory cache and not call provider
+      const decSecond = await keeper.getCollateralDecimals(mockToken);
+      expect(decSecond).toBe(8);
+      expect(callSpy).toHaveBeenCalledTimes(1);
+
+      callSpy.mockRestore();
+    });
+
+    it("should default to 18 on RPC error and cache default to prevent spam", async () => {
+      const failingToken = "0x2222222222222222222222222222222222222222";
+      const provider = (keeper as any).telemetry.getProvider();
+      
+      const callSpy = jest.spyOn(provider, "call").mockRejectedValue(new Error("RPC timeout"));
+
+      const dec = await keeper.getCollateralDecimals(failingToken);
+      expect(dec).toBe(18);
+      expect(callSpy).toHaveBeenCalledTimes(1);
+
+      // Subsequent call uses cached 18
+      const decCached = await keeper.getCollateralDecimals(failingToken);
+      expect(decCached).toBe(18);
+      expect(callSpy).toHaveBeenCalledTimes(1);
+
+      callSpy.mockRestore();
+    });
+  });
 });
+
+

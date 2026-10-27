@@ -436,7 +436,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <!-- Left: Title & Value Proposition -->
       <div class="headline-block">
         <div class="category-kicker">
-          Official Hackathon Product Walkthrough
+          Official Protocol Product Walkthrough
         </div>
         <h1 class="main-title">
           Never Get <span>Liquidated.</span>

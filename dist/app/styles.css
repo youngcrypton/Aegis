@@ -1443,36 +1443,42 @@ h1, h2, h3, .display-font {
 
 @media (max-width: 768px) {
   .app-header {
-    height: 48px;
+    height: 46px;
     padding: 0 10px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
   }
   .header-left {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
-  }
-  .header-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 1 auto;
     min-width: 0;
   }
-  .view-mode-switcher {
-    padding: 2px;
-    gap: 2px;
+  .brand-badge {
+    gap: 6px;
+    min-width: 0;
+    flex-shrink: 0;
   }
-  .mode-pill-btn {
-    height: 26px;
-    padding: 0 6px;
-    font-size: 11px;
+  .brand-logo-svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
   }
-  .mode-pill-btn .mode-label {
+  .brand-title {
+    font-size: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .header-separator, .latency-badge, .session-badge, .beta-badge, .btn-settings-toggle, .brand-sub, .network-badge {
+    display: none !important;
+  }
+  .header-center {
+    display: none !important;
+  }
+  .btn-tour-toggle {
     display: none !important;
   }
   .header-right {
@@ -1481,59 +1487,123 @@ h1, h2, h3, .display-font {
     gap: 6px;
     flex-shrink: 0;
   }
-  .header-separator, .latency-badge, .session-badge, .beta-badge, .btn-settings-toggle, .faucet-pill-btn, .brand-sub {
-    display: none !important;
+  .faucet-pill-btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    height: 26px;
+    padding: 0 8px;
+    font-size: 10.5px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 12%, var(--ground));
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap !important;
+    flex-shrink: 0;
+    transition: all 150ms ease;
   }
-  .brand-logo-svg {
-    width: 24px;
-    height: 24px;
+  .faucet-pill-btn:hover {
+    background: var(--accent);
+    color: var(--on-accent);
   }
-  .brand-title {
-    font-size: 16px;
+  .btn-theme-toggle {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 999px;
   }
-  .network-badge {
-    display: none !important;
+  .btn-theme-toggle .theme-icon-svg {
+    width: 14px;
+    height: 14px;
   }
   .wallet-btn {
-    height: 28px;
-    padding: 0 10px;
-    font-size: 11px;
-    max-width: 125px;
+    height: 26px;
+    padding: 0 8px;
+    font-size: 10.5px;
+    max-width: 105px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 0;
   }
   .app-drawer-btn {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    flex-shrink: 0;
   }
   .app-container {
-    padding: 10px 10px 24px;
-    gap: 10px;
+    padding: 8px 10px 24px;
+    gap: 8px;
   }
   .workspace-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
   }
   .workspace-main, .workspace-sidebar {
-    gap: 12px;
+    gap: 8px;
   }
   .card {
-    padding: 10px 12px;
+    padding: 9px 11px;
     border-radius: 12px;
   }
-  .gauge-svg {
-    max-width: 180px;
+  .card-header {
+    margin-bottom: 6px;
   }
-  .hero-metrics {
-    grid-template-columns: 1fr;
+  .header-title {
+    font-size: 14.5px;
+    gap: 6px;
+  }
+  .header-title svg {
+    width: 14px;
+    height: 14px;
+  }
+  .header-extra {
+    font-size: 10px;
+    gap: 6px;
+  }
+  .status-pill {
+    font-size: 9.5px;
+    padding: 1px 6px;
+  }
+  .hero-metrics-ticker {
+    margin-bottom: 0;
+  }
+  .hero-metrics-track {
+    --metric-gap: 8px;
+  }
+  .metric-card {
+    width: 135px;
+    min-width: 135px;
+    flex: 0 0 135px;
+    padding: 5px 8px;
+    border-radius: 9px;
+  }
+  .metric-label {
+    font-size: 8px;
+    margin-bottom: 1px;
+  }
+  .metric-value {
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+  .metric-unit, .metric-sub {
+    font-size: 8px;
   }
   .simulation-bar {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 6px 10px;
+    padding: 6px 8px;
     gap: 6px;
+    border-radius: 10px;
+  }
+  .sim-title {
+    font-size: 10.5px;
+    gap: 4px;
   }
   .sim-left {
     flex-direction: column;
@@ -1544,7 +1614,65 @@ h1, h2, h3, .display-font {
     width: 100%;
     text-align: center;
     height: 24px;
+    font-size: 10px;
+    border-radius: 5px;
+  }
+  .sim-right {
+    gap: 6px;
+  }
+  .toggle-switch {
+    width: 30px;
+    height: 17px;
+  }
+  .slider::before {
+    width: 11px;
+    height: 11px;
+    left: 3px;
+    bottom: 3px;
+  }
+  .toggle-switch input:checked + .slider::before {
+    transform: translateX(13px);
+  }
+  .toggle-label {
+    font-size: 10px;
+  }
+  .position-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .stat-box {
+    padding: 6px 8px;
+    border-radius: 8px;
+    gap: 1px;
+  }
+  .stat-name {
+    font-size: 9.5px;
+  }
+  .stat-val {
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .gauge-svg {
+    max-width: 135px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  .control-row {
+    padding: 5px 0;
+    gap: 6px;
+  }
+  .control-label {
     font-size: 10.5px;
+  }
+  .control-val {
+    font-size: 10.5px;
+  }
+  .primary-btn, .btn-hedge-action {
+    height: 34px;
+    font-size: 11.5px;
+    border-radius: 8px;
   }
 }
 
@@ -1556,29 +1684,16 @@ h1, h2, h3, .display-font {
   .brand-title {
     font-size: 15px;
   }
-  .mode-pill-btn {
-    width: 26px;
-    height: 26px;
-    padding: 0;
-    justify-content: center;
-  }
   .wallet-btn {
-    height: 26px;
-    padding: 0 8px;
-    font-size: 10.5px;
-    max-width: 115px;
+    height: 25px;
+    padding: 0 7px;
+    font-size: 10px;
+    max-width: 100px;
   }
-  .metric-card {
-    width: 145px;
-    min-width: 145px;
-    flex: 0 0 145px;
-    padding: 6px 8px;
-  }
-  .metric-value {
-    font-size: 12px;
-  }
-  .stat-val {
-    font-size: 12.5px;
+  .faucet-pill-btn {
+    height: 25px;
+    padding: 0 6px;
+    font-size: 10px;
   }
 }
 
@@ -2516,19 +2631,241 @@ body.mode-lite .lite-telemetry-card {
 }
 
 /* ==========================================================================
-   Hyperliquid-Style Web3 Wallet Selection Modal
+   AEGIS Multi-Wallet Selection Modal & WalletConnect (Official SDK)
+   Compliant with AEGIS Brand Kit (tokens.css) & AGENTS.md
    ========================================================================== */
-.wallet-options-list {
+.wallet-select-modal {
+  width: min(520px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Modal Alert Banner (Loading / Step / Error) */
+.wallet-modal-alert {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 12px 14px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
 }
 
-.wallet-option-item {
+.wallet-modal-alert.is-loading {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--ground));
+}
+
+.wallet-modal-alert.is-error {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--ground));
+}
+
+.wallet-alert-content {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
+  width: 100%;
+}
+
+.wallet-alert-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.wallet-modal-alert.is-error .wallet-alert-icon {
+  color: var(--danger);
+}
+
+.wallet-alert-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: walletSpin 0.75s linear infinite;
+}
+
+@keyframes walletSpin {
+  to { transform: rotate(360deg); }
+}
+
+.wallet-alert-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-alert-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wallet-alert-desc {
+  font-size: 11px;
+  color: var(--ink-2);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.wallet-alert-cancel-btn {
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--text);
+  color: var(--ink-2);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.wallet-alert-cancel-btn:hover {
+  background: var(--raised);
+  color: var(--ink);
+  border-color: var(--ink-2);
+}
+
+.wallet-alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.wallet-alert-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.wallet-alert-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Featured WalletConnect Hero Card */
+.wallet-featured-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--ink);
+  text-align: left;
+  transition: all 150ms ease;
+  width: 100%;
+}
+
+.wallet-featured-card:hover {
+  background: var(--raised);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.wallet-featured-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: color-mix(in srgb, #3B99FC 12%, var(--raised));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wallet-featured-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wallet-featured-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wallet-featured-desc {
+  font-size: 11px;
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+.wallet-option-arrow {
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.wallet-featured-card:hover .wallet-option-arrow {
+  color: var(--accent);
+  transform: translateX(2px);
+}
+
+/* Grid of Individual Wallets */
+.wallet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .wallet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wallet-grid-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
   background: var(--ground);
   border: 1px solid var(--rule);
   border-radius: 12px;
@@ -2537,49 +2874,133 @@ body.mode-lite .lite-telemetry-card {
   text-align: left;
   transition: all 150ms ease;
   width: 100%;
+  min-width: 0;
 }
 
-.wallet-option-item:hover {
+.wallet-grid-item:hover {
   background: var(--raised);
   border-color: var(--accent);
   transform: translateY(-1px);
 }
 
-.wallet-option-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
-  color: var(--accent);
+.wallet-grid-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.wallet-option-info {
-  flex: 1;
+.wallet-grid-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
-.wallet-option-info strong {
-  font-size: 13px;
+.wallet-grid-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 
-.wallet-option-info span {
+.wallet-grid-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wallet-grid-sub {
+  font-size: 10.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wallet-badge {
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  color: var(--ink-2);
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.wallet-badge.detected {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.wallet-injected-fallback-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  font-size: 11px;
+  font-family: var(--text);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.wallet-injected-fallback-btn:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: var(--ground);
+}
+
+.wallet-select-footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wallet-footer-security {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   color: var(--ink-2);
+  line-height: 1.35;
 }
 
-.wallet-option-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-accent);
+.wallet-footer-net {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: var(--ink-2);
 }
 
 /* ==========================================================================
@@ -3843,6 +4264,639 @@ body.mode-lite .lite-telemetry-card {
     font-size: 12.5px;
   }
 }
+
+/* ==========================================================================
+   Autonomous Delta-Hedging Simulator (Brand Kit Compliant)
+   Exact replica of the Light-Mode Video Scene and Brand Motif
+   Tokens: --ground, --raised, --ink, --ink-2, --rule, --accent, --hedge, --danger
+   ========================================================================== */
+
+/* Quick Trigger Buttons */
+.sim-btn.btn-hedge-sim {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(7, 112, 95, 0.06);
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+}
+.sim-btn.btn-hedge-sim:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn-vault-sim {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.btn-vault-sim:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.hedge-meta-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-inline-sim {
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.btn-inline-sim:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+/* Simulator Modal Dialog */
+.sim-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  width: min(1040px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(22, 18, 48, 0.22);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sim-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.sim-modal-card {
+  padding: 28px 36px 36px;
+}
+
+/* Modal Header */
+.sim-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sim-eyebrow {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sim-headline {
+  font-family: var(--display);
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.sim-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.sim-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--hedge);
+  color: var(--hedge);
+  background: rgba(163, 74, 8, 0.08);
+  transition: all 250ms ease;
+}
+
+.sim-status-pill.healthy {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(7, 112, 95, 0.08);
+}
+
+.sim-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hedge);
+}
+
+.sim-status-pill.healthy .sim-pulse-dot {
+  background: var(--accent);
+}
+
+.sim-trigger-label {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-trigger-label strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sim-close-btn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sim-close-btn:hover {
+  color: var(--ink);
+  background: var(--ground);
+}
+
+/* Control Bar */
+.sim-control-bar {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sim-control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sim-control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sim-control-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sim-preset-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sim-chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--raised);
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.sim-chip:hover {
+  border-color: var(--ink-2);
+}
+
+.sim-chip.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--raised);
+}
+
+.sim-custom-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+
+.sim-input-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim-input-item label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-transform: uppercase;
+}
+
+.sim-input-item input {
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--ink);
+  font-family: inherit;
+  outline: none;
+}
+
+.sim-input-item input:focus {
+  border-color: var(--accent);
+}
+
+.sim-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sim-slider-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sim-slider-val {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-range-input {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--rule);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sim-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--hedge);
+  border: 2px solid var(--raised);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+.sim-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.sim-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sim-tick-btn {
+  background: none;
+  border: 1px solid transparent;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  color: var(--ink-2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.sim-tick-btn:hover {
+  color: var(--ink);
+  background: var(--raised);
+  border-color: var(--rule);
+}
+
+.sim-tick-btn.active {
+  color: var(--hedge);
+  font-weight: 600;
+  background: var(--raised);
+  border-color: var(--hedge);
+}
+
+/* Two-Column Body Grid */
+.sim-body-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 28px;
+  margin-top: 22px;
+  align-items: start;
+}
+
+.sim-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sim-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sim-chart-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 0.05em;
+}
+
+.sim-chart-price {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-svg-wrap {
+  width: 100%;
+  height: 220px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  position: relative;
+  padding: 16px 20px 38px;
+  overflow: hidden;
+}
+
+.sim-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sim-chart-legend {
+  position: absolute;
+  bottom: 10px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  gap: 20px;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.sim-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sim-legend-line {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.sim-legend-rose {
+  background: var(--danger);
+}
+
+.sim-legend-teal {
+  background: var(--accent);
+}
+
+.sim-readout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--ground);
+  padding: 16px 20px;
+}
+
+.sim-readout-left {
+  border-right: 1px solid var(--rule);
+  padding-right: 16px;
+}
+
+.sim-readout-right {
+  padding-left: 20px;
+}
+
+.sim-readout-lbl {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.sim-readout-val {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.sim-readout-sub {
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+
+.sim-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sim-hf-card {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 24px 28px;
+}
+
+.sim-hf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.sim-hf-title {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.sim-hf-number {
+  font-family: var(--display);
+  font-size: 64px;
+  line-height: 0.95;
+  color: var(--hedge);
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
+}
+
+.sim-cr-wrap {
+  text-align: right;
+}
+
+.sim-cr-title {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.sim-cr-number {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-hf-track {
+  position: relative;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--rule);
+  margin-top: 22px;
+  overflow: hidden;
+}
+
+.sim-hf-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--hedge);
+  border-radius: 4px;
+  transition: width 150ms ease, background 250ms ease;
+}
+
+.sim-spec-card {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.sim-spec-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.sim-spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.sim-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+
+.sim-spec-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sim-spec-key {
+  color: var(--ink-2);
+}
+
+.sim-spec-val {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .sim-body-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .sim-modal-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sim-headline {
+    font-size: 20px;
+  }
+  .sim-readout-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .sim-readout-left {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding-right: 0;
+    padding-bottom: 12px;
+  }
+  .sim-readout-right {
+    padding-left: 0;
+  }
+  .sim-hf-number {
+    font-size: 48px;
+  }
+}
+
 
 
 

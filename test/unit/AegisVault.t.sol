@@ -20,7 +20,12 @@ import {
     MismatchedMarketIndex,
     NoOutstandingDebt,
     ZeroRepaymentAmount,
-    IntentExpired
+    IntentExpired,
+    AmountOverflow,
+    InvalidHedgeDirection,
+    HedgeSizeExceeded,
+    InvalidAmount,
+    NoActiveHedge
 } from "../../contracts/AegisTypes.sol";
 import {MockHyperCorePrecompile} from "../mocks/MockHyperCorePrecompile.sol";
 import {MockHyperCoreWriter} from "../mocks/MockHyperCoreWriter.sol";
@@ -33,6 +38,13 @@ import {IAegisVault} from "../../contracts/interfaces/IAegisVault.sol";
 contract AegisVaultHarness is AegisVault {
     constructor(address initialOwner, address _writer) AegisVault(initialOwner) {
         _setHyperCoreWriter(_writer);
+    }
+}
+
+// Mock failing fee collector to test fee failure fallback and debt accrual
+contract MockFailingFeeCollector {
+    function processAvertedFee(address, uint256) external pure {
+        revert("SimulatedFeeFailure");
     }
 }
 
@@ -214,7 +226,7 @@ contract AegisVaultTest is Test {
         assertLe(h, 11000);
 
         int256 hedgeSize = -100 ether;
-        uint256 limitPrice = 39_00000000;
+        uint256 limitPrice = 39_80000000;
         uint256 deadline = block.timestamp + 1 hours;
         uint256 nonce = vault.vaultNonces(borrower);
 
@@ -267,7 +279,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -10 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
@@ -277,7 +289,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -10 ether,
-            39_00000000,
+            39_80000000,
             block.timestamp + 1 hours,
             signature
         );
@@ -306,7 +318,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
@@ -315,7 +327,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             block.timestamp + 1 hours,
             signatureHedge
         );
@@ -379,7 +391,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             firstHedgeSize,
-            39_00000000,
+            39_80000000,
             vault.vaultNonces(borrower),
             block.timestamp + 1 hours
         );
@@ -388,7 +400,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             firstHedgeSize,
-            39_00000000,
+            39_80000000,
             block.timestamp + 1 hours,
             sig1
         );
@@ -452,7 +464,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -50 ether,
-            39_00000000,
+            39_80000000,
             vault.vaultNonces(borrower),
             block.timestamp + 1 hours
         );
@@ -460,7 +472,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -50 ether,
-            39_00000000,
+            39_80000000,
             block.timestamp + 1 hours,
             sigHedge1
         );
@@ -536,7 +548,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -50 ether,
-            39_00000000,
+            39_80000000,
             vault.vaultNonces(borrower),
             block.timestamp + 1 hours
         );
@@ -544,7 +556,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -50 ether,
-            39_00000000,
+            39_80000000,
             block.timestamp + 1 hours,
             validSig
         );
@@ -593,11 +605,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
 
         // Price has only risen to $40.50 (less than trailing target $40.80)
         MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 40_50000000);
@@ -647,11 +659,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
 
         MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 42_00000000);
 
@@ -697,11 +709,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
 
         bytes memory sigUnwind = _signHedge(
             sessionKeyPrivateKey,
@@ -745,11 +757,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
 
         // Rebound mark price = $42.00. Max buy limit allowed = $42.00 * 1.005 = $42.21
         MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 42_00000000);
@@ -799,11 +811,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             0,
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
 
         ActiveHedge memory h1 = vault.getActiveHedge(borrower);
         assertEq(h1.lowestWickPrice, 40_00000000);
@@ -878,11 +890,11 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -100 ether,
-            39_00000000,
+            39_80000000,
             vault.vaultNonces(borrower),
             block.timestamp + 1 hours
         );
-        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_00000000, block.timestamp + 1 hours, sigHedge);
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
         assertTrue(vault.getActiveHedge(borrower).isOpen);
     }
 
@@ -1478,4 +1490,424 @@ contract AegisVaultTest is Test {
         // Debt remains strictly 21 USDC (no duplicate debt)
         assertEq(vault.getFeeDebt(borrower), 21 * 1e6, "No duplicate debt created");
     }
+
+    // -----------------------------------------------------------------------
+    // AEG-06: Session Key & Manual Override enforcement in executeUnwindIntent
+    // -----------------------------------------------------------------------
+
+    function test_executeUnwindIntent_reverts_whenManualOverrideActive() public {
+        _setupOpenHedge();
+
+        vm.prank(borrower);
+        vault.manualOverride();
+        assertTrue(vault.getProConfig(borrower).manualOverrideActive);
+
+        uint256 exitPrice = 42_00000000;
+        bytes memory sigUnwind = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            100 ether,
+            exitPrice,
+            vault.vaultNonces(borrower),
+            block.timestamp + 1 hours
+        );
+
+        vm.expectRevert(OverrideActive.selector);
+        vault.executeUnwindIntent(
+            borrower,
+            PERP_INDEX,
+            exitPrice,
+            block.timestamp + 1 hours,
+            sigUnwind
+        );
+    }
+
+    function test_executeUnwindIntent_reverts_whenSessionKeyExpired() public {
+        _setupOpenHedge();
+
+        // Warp time beyond sessionKeyExpiry (which was block.timestamp + 30 days)
+        vm.warp(block.timestamp + 31 days);
+
+        uint256 exitPrice = 42_00000000;
+        bytes memory sigUnwind = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            100 ether,
+            exitPrice,
+            vault.vaultNonces(borrower),
+            block.timestamp + 1 hours
+        );
+
+        vm.expectRevert(SessionKeyExpired.selector);
+        vault.executeUnwindIntent(
+            borrower,
+            PERP_INDEX,
+            exitPrice,
+            block.timestamp + 1 hours,
+            sigUnwind
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // AEG-04: Collateral amount uint96 bounds enforcement in registerPosition
+    // -----------------------------------------------------------------------
+
+    function test_registerPosition_reverts_whenAmountExceedsUint96Max() public {
+        vm.prank(borrower);
+        vm.expectRevert(AmountOverflow.selector);
+        vault.registerPosition(
+            address(mockCollateral),
+            uint256(type(uint96).max) + 1,
+            2_000 * 1e6,
+            8000
+        );
+    }
+
+    function test_registerPosition_succeeds_atUint96Max() public {
+        vm.prank(borrower);
+        vault.registerPosition(
+            address(mockCollateral),
+            uint256(type(uint96).max),
+            2_000 * 1e6,
+            8000
+        );
+
+        assertEq(
+            vault.getPosition(borrower).collateralAmount,
+            type(uint96).max,
+            "Collateral amount recorded at uint96 max without truncation"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // AEG-01: Collateral Decimals Normalization in getVaultHealth
+    // -----------------------------------------------------------------------
+
+    function test_getVaultHealth_normalizes_8DecimalCollateral() public {
+        MockERC20 wbtc = new MockERC20("Wrapped BTC", "WBTC", 8);
+        address user = address(0xB8C);
+
+        // Deposit 1 WBTC (1e8)
+        // Debt: 40,000 USDC (40,000 * 1e6)
+        // LTV / liquidationThreshold: 8000 (80%)
+        vm.prank(user);
+        vault.registerPosition(address(wbtc), 1 * 1e8, 40_000 * 1e6, 8000);
+
+        // Mark price: $60,000 (60,000 * 1e8)
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 60_000 * 1e8);
+
+        (uint256 healthFactor,,) = vault.getVaultHealth(user, PERP_INDEX);
+
+        // Normalized collateral: 1e8 * 1e10 = 1e18
+        // Numerator: 1e18 * 60,000e8 * 8000 = 4.8e33
+        // Denominator: 40,000e6 * 1e20 = 4.0e30
+        // Expected health factor: 4.8e33 / 4.0e30 = 12000 (1.20)
+        assertEq(healthFactor, 12000, "Health factor should be 1.20 (12000 bps) for 8-decimal WBTC");
+    }
+
+    function test_getVaultHealth_normalizes_6DecimalCollateral() public {
+        MockERC20 usdt = new MockERC20("Tether USD", "USDT", 6);
+        address user = address(0x6DEC);
+
+        // Deposit 50,000 USDT (50,000 * 1e6)
+        // Debt: 30,000 USDC (30,000 * 1e6)
+        // LTV: 8000 (80%)
+        vm.prank(user);
+        vault.registerPosition(address(usdt), 50_000 * 1e6, 30_000 * 1e6, 8000);
+
+        // Mark price: $1.00 (1 * 1e8)
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 1 * 1e8);
+
+        (uint256 healthFactor,,) = vault.getVaultHealth(user, PERP_INDEX);
+
+        // Normalized collateral: 50,000e6 * 1e12 = 50,000e18
+        // Numerator: 50,000e18 * 1e8 * 8000 = 4e34
+        // Denominator: 30,000e6 * 1e20 = 3e30
+        // Expected health factor: 4e34 / 3e30 = 13333 (1.3333)
+        assertEq(healthFactor, 13333, "Health factor should be 1.3333 (13333 bps) for 6-decimal USDT");
+    }
+
+    function test_ExecuteUnwindIntent_CalculatesFeeWithNormalized8DecimalCollateral() public {
+        MockFailingFeeCollector mockFee = new MockFailingFeeCollector();
+        vm.prank(owner);
+        vault.setFeeCollector(address(mockFee));
+
+        MockERC20 wbtc = new MockERC20("Wrapped BTC", "WBTC", 8);
+        address user = address(0x8DEC);
+
+        vm.startPrank(user);
+        // Deposit 1 WBTC (1e8) with debt $45,000 (45,000 * 1e6), LTV: 80% (8000 bps)
+        vault.registerPosition(address(wbtc), 1 * 1e8, 45_000 * 1e6, 8000);
+        vault.setProConfig(ProConfig({
+            triggerMode: uint8(TriggerMode.HEALTH_FACTOR),
+            orderType: uint8(OrderType.POST_ONLY_LIMIT),
+            hedgeRatioBps: 10000,
+            trailingTakeProfitBps: 200,
+            maxSlippageBps: 50,
+            sessionKeyExpiry: 0,
+            manualOverrideActive: false,
+            priceTrigger: 0,
+            healthFactorTrigger: 11000
+        }));
+        vault.delegateSessionKey(sessionKeyAddress, 7 days);
+        vm.stopPrank();
+
+        // 1. Mark price drops to $50,000 (breaches trigger: H = (1e18 * 50,000e8 * 8000) / (45,000e6 * 1e20) = 4.0e33 / 4.5e30 = 8888 bps < 11000 bps)
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 50_000 * 1e8);
+
+        // Execute hedge intent
+        bytes memory sigHedge = _signHedge(
+            sessionKeyPrivateKey,
+            user,
+            PERP_INDEX,
+            -1 ether,
+            50_000 * 1e8,
+            vault.vaultNonces(user),
+            block.timestamp + 1 hours
+        );
+        vault.executeHedgeIntent(
+            user,
+            PERP_INDEX,
+            -1 ether,
+            50_000 * 1e8,
+            block.timestamp + 1 hours,
+            sigHedge
+        );
+        assertTrue(vault.getActiveHedge(user).isOpen);
+
+        // 2. Rebound price to $60,000 (trailing target was 50,000 * 1.02 = $51,000)
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 60_000 * 1e8);
+
+        bytes memory sigUnwind = _signHedge(
+            sessionKeyPrivateKey,
+            user,
+            PERP_INDEX,
+            1 ether,
+            60_000 * 1e8,
+            vault.vaultNonces(user),
+            block.timestamp + 1 hours
+        );
+
+        // Execute unwind
+        vault.executeUnwindIntent(
+            user,
+            PERP_INDEX,
+            60_000 * 1e8,
+            block.timestamp + 1 hours,
+            sigUnwind
+        );
+
+        assertFalse(vault.getActiveHedge(user).isOpen);
+
+        // Fee calculation verification:
+        // normCollateral = 1e8 * 1e10 = 1e18
+        // valuationPrice = 60,000 * 1e8
+        // colValUsdc = (1e18 * 60,000e8) / 1e20 = 60,000 * 1e6 ($60,000 USDC)
+        // savedPenalty = (60,000e6 * 500) / 10000 = 3,000 * 1e6 ($3,000 USDC)
+        // protocolFee = (3,000e6 * 1000) / 10000 = 300 * 1e6 ($300 USDC)
+        // Since user has not approved USDC, fee collection fails and feeDebts is accrued:
+        assertEq(
+            vault.feeDebts(user),
+            300 * 1e6,
+            "Fee debt should be exactly $300 USDC (300e6) for normalized 8-decimal WBTC collateral"
+        );
+    }
+
+    // ==========================================
+    // TASK 4: HARDENED ON-CHAIN INVARIANTS & REVIEWS
+    // ==========================================
+
+    function test_RevertIf_HedgeDirectionIsPositive() public {
+        vm.startPrank(borrower);
+        vault.registerPosition(address(mockCollateral), 100 ether, 3_000 * 1e6, 8000);
+        vault.setProConfig(ProConfig({
+            triggerMode: uint8(TriggerMode.HEALTH_FACTOR),
+            orderType: uint8(OrderType.POST_ONLY_LIMIT),
+            hedgeRatioBps: 10000,
+            trailingTakeProfitBps: 200,
+            maxSlippageBps: 50,
+            sessionKeyExpiry: 0,
+            manualOverrideActive: false,
+            priceTrigger: 0,
+            healthFactorTrigger: 11000
+        }));
+        vault.delegateSessionKey(sessionKeyAddress, 7 days);
+        vm.stopPrank();
+
+        int256 positiveSize = 100 ether; // Attempt to open LONG instead of SHORT
+        uint256 limitPrice = 39_80000000;
+        uint256 deadline = block.timestamp + 1 hours;
+        uint256 nonce = vault.vaultNonces(borrower);
+
+        bytes memory signature = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            positiveSize,
+            limitPrice,
+            nonce,
+            deadline
+        );
+
+        vm.expectRevert(InvalidHedgeDirection.selector);
+        vault.executeHedgeIntent(
+            borrower,
+            PERP_INDEX,
+            positiveSize,
+            limitPrice,
+            deadline,
+            signature
+        );
+    }
+
+    function test_RevertIf_HedgeLimitPriceViolatesSlippage() public {
+        vm.startPrank(borrower);
+        vault.registerPosition(address(mockCollateral), 100 ether, 3_000 * 1e6, 8000);
+        vault.setProConfig(ProConfig({
+            triggerMode: uint8(TriggerMode.HEALTH_FACTOR),
+            orderType: uint8(OrderType.POST_ONLY_LIMIT),
+            hedgeRatioBps: 10000,
+            trailingTakeProfitBps: 200,
+            maxSlippageBps: 50, // 0.5% max slippage (min price $39.80 for $40 mark)
+            sessionKeyExpiry: 0,
+            manualOverrideActive: false,
+            priceTrigger: 0,
+            healthFactorTrigger: 11000
+        }));
+        vault.delegateSessionKey(sessionKeyAddress, 7 days);
+        vm.stopPrank();
+
+        int256 hedgeSize = -100 ether;
+        uint256 badLimitPrice = 39_00000000; // $39.00 = 2.5% slippage -> exceeds 50 bps
+        uint256 deadline = block.timestamp + 1 hours;
+        uint256 nonce = vault.vaultNonces(borrower);
+
+        bytes memory signature = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            hedgeSize,
+            badLimitPrice,
+            nonce,
+            deadline
+        );
+
+        vm.expectRevert(SlippageExceeded.selector);
+        vault.executeHedgeIntent(
+            borrower,
+            PERP_INDEX,
+            hedgeSize,
+            badLimitPrice,
+            deadline,
+            signature
+        );
+    }
+
+    function test_RevertIf_HedgeSizeExceedsHedgeRatio() public {
+        vm.startPrank(borrower);
+        vault.registerPosition(address(mockCollateral), 100 ether, 3_000 * 1e6, 8000);
+        vault.setProConfig(ProConfig({
+            triggerMode: uint8(TriggerMode.HEALTH_FACTOR),
+            orderType: uint8(OrderType.POST_ONLY_LIMIT),
+            hedgeRatioBps: 5000, // 50% hedge ratio -> max allowed ~52.5 ether
+            trailingTakeProfitBps: 200,
+            maxSlippageBps: 50,
+            sessionKeyExpiry: 0,
+            manualOverrideActive: false,
+            priceTrigger: 0,
+            healthFactorTrigger: 11000
+        }));
+        vault.delegateSessionKey(sessionKeyAddress, 7 days);
+        vm.stopPrank();
+
+        int256 oversizedHedge = -100 ether; // 100 ether exceeds 50% hedge ratio
+        uint256 limitPrice = 39_80000000;
+        uint256 deadline = block.timestamp + 1 hours;
+        uint256 nonce = vault.vaultNonces(borrower);
+
+        bytes memory signature = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            oversizedHedge,
+            limitPrice,
+            nonce,
+            deadline
+        );
+
+        vm.expectRevert(HedgeSizeExceeded.selector);
+        vault.executeHedgeIntent(
+            borrower,
+            PERP_INDEX,
+            oversizedHedge,
+            limitPrice,
+            deadline,
+            signature
+        );
+    }
+
+    function test_Owner_ManualUnwind_SucceedsAfterOverride() public {
+        // Setup position and open hedge
+        vm.startPrank(borrower);
+        vault.registerPosition(address(mockCollateral), 100 ether, 3_000 * 1e6, 8000);
+        vault.setProConfig(ProConfig({
+            triggerMode: uint8(TriggerMode.HEALTH_FACTOR),
+            orderType: uint8(OrderType.POST_ONLY_LIMIT),
+            hedgeRatioBps: 10000,
+            trailingTakeProfitBps: 200,
+            maxSlippageBps: 50,
+            sessionKeyExpiry: 0,
+            manualOverrideActive: false,
+            priceTrigger: 0,
+            healthFactorTrigger: 11000
+        }));
+        vault.delegateSessionKey(sessionKeyAddress, 7 days);
+        vm.stopPrank();
+
+        bytes memory sigHedge = _signHedge(
+            sessionKeyPrivateKey,
+            borrower,
+            PERP_INDEX,
+            -100 ether,
+            39_80000000,
+            0,
+            block.timestamp + 1 hours
+        );
+        vault.executeHedgeIntent(borrower, PERP_INDEX, -100 ether, 39_80000000, block.timestamp + 1 hours, sigHedge);
+        assertTrue(vault.getActiveHedge(borrower).isOpen);
+
+        // Owner triggers manual override (INV-3) - session key revoked, keeper blocked
+        vm.prank(borrower);
+        vault.manualOverride();
+        assertTrue(vault.getProConfig(borrower).manualOverrideActive);
+        assertEq(vault.getPosition(borrower).sessionKey, address(0));
+
+        // Rebound mark price to $42.00
+        MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 42_00000000);
+
+        // Non-owner trying to manualUnwind reverts
+        vm.prank(address(0xCC3));
+        vm.expectRevert(NoActiveHedge.selector);
+        vault.manualUnwind(PERP_INDEX, 42_00000000);
+
+        // Owner directly calls manualUnwind - succeeds without session key!
+        vm.prank(borrower);
+        vault.manualUnwind(PERP_INDEX, 42_00000000);
+
+        assertFalse(vault.getActiveHedge(borrower).isOpen, "Hedge must be closed");
+    }
+
+    function test_RevertIf_RegisterPosition_ZeroAmountOrDebt() public {
+        vm.startPrank(borrower);
+        vm.expectRevert(InvalidAmount.selector);
+        vault.registerPosition(address(mockCollateral), 0, 3_000 * 1e6, 8000);
+
+        vm.expectRevert(InvalidAmount.selector);
+        vault.registerPosition(address(mockCollateral), 100 ether, 0, 8000);
+        vm.stopPrank();
+    }
 }
+
+

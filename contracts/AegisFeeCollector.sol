@@ -42,11 +42,17 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
     uint256 public override buybackBudget;
     uint256 public override yieldBudget;
 
+    /// @notice Minimum AEGIS tokens per 1 USDC (scaled 1e18 per 1e6 USDC) required for buyback swaps.
+    /// @dev If set > 0, enforces minimum tokens received even if caller passes minAegisOut = 0.
+    uint256 public minBuybackRate;
+
     /// @notice Lifetime metric counters
     uint256 public override totalFeesCaptured;
     uint256 public override totalBurnedFees;
     uint256 public override totalDistributedYield;
     uint256 public override totalAegisBurned;
+
+    event MinBuybackRateUpdated(uint256 oldRate, uint256 newRate);
 
     error ZeroAmount();
     error InsufficientBudget();
@@ -98,6 +104,15 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
         if (newTarget == address(0)) revert ZeroAddress();
         yieldDistributionTarget = newTarget;
         emit TargetUpdated(newTarget);
+    }
+
+    /**
+     * @notice Set minimum AEGIS rate per 1 USDC to protect against sandwich / MEV slippage.
+     * @param _minBuybackRate Minimum AEGIS (1e18) per 1 USDC (1e6).
+     */
+    function setMinBuybackRate(uint256 _minBuybackRate) external onlyOwner {
+        emit MinBuybackRateUpdated(minBuybackRate, _minBuybackRate);
+        minBuybackRate = _minBuybackRate;
     }
 
     /**
@@ -163,7 +178,11 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
      * @notice Swaps the accumulated buyback budget for $AEGIS on Ascend and burns it permanently.
      */
     function executeBuybackAndBurn() external override {
-        executeBuybackAndBurn(0);
+        uint256 minOut = 0;
+        if (minBuybackRate > 0) {
+            minOut = (buybackBudget * minBuybackRate) / 1e6;
+        }
+        executeBuybackAndBurn(minOut);
     }
 
     /**
@@ -173,6 +192,13 @@ contract AegisFeeCollector is IAegisFeeCollector, ReentrancyGuard, Ownable {
     function executeBuybackAndBurn(uint256 minAegisOut) public override nonReentrant {
         uint256 budget = buybackBudget;
         if (budget == 0) revert InsufficientBudget();
+
+        if (minBuybackRate > 0) {
+            uint256 requiredMinOut = (budget * minBuybackRate) / 1e6;
+            if (minAegisOut < requiredMinOut) {
+                minAegisOut = requiredMinOut;
+            }
+        }
 
         buybackBudget = 0;
         totalBurnedFees += budget;

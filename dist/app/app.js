@@ -973,6 +973,71 @@
     loadSettings();
   }
 
+  function showModalAlert(type, title, desc, actionButtonsHtml = '') {
+    const alertBox = document.getElementById('walletModalAlert');
+    const alertTitle = document.getElementById('walletAlertTitle');
+    const alertDesc = document.getElementById('walletAlertDesc');
+    const alertIcon = document.getElementById('walletAlertIcon');
+    const actionContainer = document.getElementById('walletAlertActionContainer');
+    const cancelBtn = document.getElementById('walletAlertCancelBtn');
+
+    if (!alertBox) return;
+
+    alertBox.style.display = 'flex';
+    alertBox.className = `wallet-modal-alert is-${type}`;
+
+    if (alertTitle) alertTitle.textContent = title;
+    if (alertDesc) alertDesc.textContent = desc;
+
+    if (alertIcon) {
+      if (type === 'loading') {
+        alertIcon.innerHTML = '<div class="wallet-alert-spinner"></div>';
+        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+      } else {
+        alertIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+      }
+    }
+
+    if (actionContainer) {
+      if (actionButtonsHtml) {
+        actionContainer.style.display = 'flex';
+        actionContainer.innerHTML = actionButtonsHtml;
+        const btnWc = actionContainer.querySelector('#btnAlertOpenWc');
+        if (btnWc) {
+          btnWc.addEventListener('click', () => {
+            hideModalAlert();
+            connectWalletConnect();
+          });
+        }
+      } else {
+        actionContainer.style.display = 'none';
+        actionContainer.innerHTML = '';
+      }
+    }
+  }
+
+  function hideModalAlert() {
+    const alertBox = document.getElementById('walletModalAlert');
+    if (alertBox) {
+      alertBox.style.display = 'none';
+      alertBox.className = 'wallet-modal-alert';
+    }
+  }
+
+  function refreshDetectedWalletsUI() {
+    const keys = ['metamask', 'okx', 'trust', 'bitget', 'rabby', 'coinbase', 'rainbow', 'zerion'];
+    keys.forEach(k => {
+      const badge = document.getElementById(`badge-${k}`);
+      if (!badge) return;
+      const prov = resolveSpecificProvider(k);
+      if (prov) {
+        badge.className = 'wallet-badge detected';
+        badge.innerHTML = '<span class="badge-dot"></span>Installed';
+      }
+    });
+  }
+
   function closeWalletSelectModal() {
     const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
     const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
@@ -984,11 +1049,14 @@
       backdrop.classList.remove('active');
       backdrop.hidden = true;
     }
+    hideModalAlert();
   }
 
   function openWalletSelectModal() {
     const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
     const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
+    hideModalAlert();
+    refreshDetectedWalletsUI();
     if (modal) {
       modal.hidden = false;
       modal.classList.add('active');
@@ -1005,13 +1073,22 @@
     const closeBtn = document.getElementById('walletSelectCloseBtn') || document.getElementById('walletModalCloseBtn');
     const btnConnectWc = document.getElementById('btnConnectWalletConnect');
     const btnConnectInjected = document.getElementById('btnConnectInjected');
+    const alertCancelBtn = document.getElementById('walletAlertCancelBtn');
+    const btnSwitchWallet = document.getElementById('btnSwitchWallet');
 
     if (closeBtn) closeBtn.addEventListener('click', closeWalletSelectModal);
     if (backdrop) backdrop.addEventListener('click', closeWalletSelectModal);
+    if (alertCancelBtn) alertCancelBtn.addEventListener('click', hideModalAlert);
+
+    if (btnSwitchWallet) {
+      btnSwitchWallet.addEventListener('click', () => {
+        closeWalletAccountModal();
+        openWalletSelectModal();
+      });
+    }
 
     if (btnConnectWc) {
       btnConnectWc.addEventListener('click', async () => {
-        closeWalletSelectModal();
         await connectWalletConnect();
       });
     }
@@ -1020,6 +1097,22 @@
       btnConnectInjected.addEventListener('click', async () => {
         closeWalletSelectModal();
         await connectInjectedWallet();
+      });
+    }
+
+    const walletKeys = ['metamask', 'okx', 'trust', 'bitget', 'rabby', 'coinbase', 'rainbow', 'zerion'];
+    walletKeys.forEach(k => {
+      const btn = document.querySelector(`[data-wallet="${k}"]`) || document.getElementById(`btnWallet${k.charAt(0).toUpperCase() + k.slice(1)}`);
+      if (btn) {
+        btn.addEventListener('click', async () => {
+          await connectSpecificWallet(k);
+        });
+      }
+    });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('eip6963:announceProvider', () => {
+        refreshDetectedWalletsUI();
       });
     }
   }
@@ -2375,21 +2468,179 @@
     updateUI();
   }
 
+  const WALLET_CONFIGS = {
+    metamask: {
+      name: 'MetaMask',
+      installUrl: 'https://metamask.io/download/',
+      deepLink: () => `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`
+    },
+    okx: {
+      name: 'OKX Wallet',
+      installUrl: 'https://www.okx.com/web3',
+      deepLink: () => `okx://wallet/dapp/url?dappUrl=${encodeURIComponent(window.location.href)}`
+    },
+    trust: {
+      name: 'Trust Wallet',
+      installUrl: 'https://trustwallet.com/download',
+      deepLink: () => `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(window.location.href)}`
+    },
+    bitget: {
+      name: 'Bitget Wallet',
+      installUrl: 'https://web3.bitget.com/',
+      deepLink: () => `bitkeep://bkconnect?action=dapp&url=${encodeURIComponent(window.location.href)}`
+    },
+    rabby: {
+      name: 'Rabby Wallet',
+      installUrl: 'https://rabby.io/',
+      deepLink: null
+    },
+    coinbase: {
+      name: 'Coinbase Wallet',
+      installUrl: 'https://www.coinbase.com/wallet',
+      deepLink: () => `https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(window.location.href)}`
+    },
+    rainbow: {
+      name: 'Rainbow Wallet',
+      installUrl: 'https://rainbow.me/',
+      deepLink: () => `https://rnbwapp.com/`
+    },
+    zerion: {
+      name: 'Zerion Wallet',
+      installUrl: 'https://zerion.io/',
+      deepLink: () => `https://wallet.zerion.io/`
+    }
+  };
+
+  function resolveSpecificProvider(walletKey) {
+    if (typeof window === 'undefined') return null;
+
+    // 1. Check EIP-6963 announced providers first
+    if (Array.isArray(eip6963AnnouncedProviders) && eip6963AnnouncedProviders.length > 0) {
+      const match = eip6963AnnouncedProviders.find(p => {
+        if (!p.info) return false;
+        const rdns = (p.info.rdns || '').toLowerCase();
+        const name = (p.info.name || '').toLowerCase();
+        if (walletKey === 'metamask') return rdns.includes('metamask') || name.includes('metamask');
+        if (walletKey === 'okx') return rdns.includes('okx') || rdns.includes('okex') || name.includes('okx');
+        if (walletKey === 'trust') return rdns.includes('trust') || name.includes('trust');
+        if (walletKey === 'bitget') return rdns.includes('bitget') || rdns.includes('bitkeep') || name.includes('bitget') || name.includes('bitkeep');
+        if (walletKey === 'rabby') return rdns.includes('rabby') || name.includes('rabby');
+        if (walletKey === 'coinbase') return rdns.includes('coinbase') || name.includes('coinbase');
+        if (walletKey === 'rainbow') return rdns.includes('rainbow') || name.includes('rainbow');
+        if (walletKey === 'zerion') return rdns.includes('zerion') || name.includes('zerion');
+        return false;
+      });
+      if (match && match.provider) return match.provider;
+    }
+
+    // 2. Specific window objects
+    if (walletKey === 'okx' && window.okxwallet) return window.okxwallet;
+    if (walletKey === 'trust' && window.trustwallet) return window.trustwallet;
+    if (walletKey === 'rabby' && window.rabby) return window.rabby;
+    if (walletKey === 'coinbase' && window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
+    if (walletKey === 'rainbow' && window.rainbow) return window.rainbow;
+    if (walletKey === 'zerion') {
+      if (window.zerionWallet) return window.zerionWallet;
+      if (window.zerion && window.zerion.ethereum) return window.zerion.ethereum;
+    }
+    if (walletKey === 'bitget') {
+      if (window.bitkeep && window.bitkeep.ethereum) return window.bitkeep.ethereum;
+      if (window.bitget && window.bitget.ethereum) return window.bitget.ethereum;
+    }
+
+    // 3. window.ethereum.providers array (multiple extensions installed)
+    if (window.ethereum && Array.isArray(window.ethereum.providers)) {
+      if (walletKey === 'metamask') {
+        const found = window.ethereum.providers.find(p => p.isMetaMask && !p.isRabby && !p.isZerion && !p.isOkxWallet && !p.isBitKeep);
+        if (found) return found;
+      }
+      if (walletKey === 'okx') {
+        const found = window.ethereum.providers.find(p => p.isOkxWallet || p.isOKExWallet);
+        if (found) return found;
+      }
+      if (walletKey === 'trust') {
+        const found = window.ethereum.providers.find(p => p.isTrust || p.isTrustWallet);
+        if (found) return found;
+      }
+      if (walletKey === 'bitget') {
+        const found = window.ethereum.providers.find(p => p.isBitKeep || p.isBitget);
+        if (found) return found;
+      }
+      if (walletKey === 'rabby') {
+        const found = window.ethereum.providers.find(p => p.isRabby);
+        if (found) return found;
+      }
+      if (walletKey === 'coinbase') {
+        const found = window.ethereum.providers.find(p => p.isCoinbaseWallet);
+        if (found) return found;
+      }
+      if (walletKey === 'rainbow') {
+        const found = window.ethereum.providers.find(p => p.isRainbow);
+        if (found) return found;
+      }
+      if (walletKey === 'zerion') {
+        const found = window.ethereum.providers.find(p => p.isZerion);
+        if (found) return found;
+      }
+    }
+
+    // 4. Single window.ethereum with flag
+    if (window.ethereum) {
+      if (walletKey === 'metamask' && window.ethereum.isMetaMask && !window.ethereum.isRabby && !window.ethereum.isZerion && !window.ethereum.isOkxWallet) {
+        return window.ethereum;
+      }
+      if (walletKey === 'okx' && (window.ethereum.isOkxWallet || window.ethereum.isOKExWallet)) {
+        return window.ethereum;
+      }
+      if (walletKey === 'trust' && (window.ethereum.isTrust || window.ethereum.isTrustWallet)) {
+        return window.ethereum;
+      }
+      if (walletKey === 'bitget' && (window.ethereum.isBitKeep || window.ethereum.isBitget)) {
+        return window.ethereum;
+      }
+      if (walletKey === 'rabby' && window.ethereum.isRabby) {
+        return window.ethereum;
+      }
+      if (walletKey === 'coinbase' && window.ethereum.isCoinbaseWallet) {
+        return window.ethereum;
+      }
+      if (walletKey === 'rainbow' && window.ethereum.isRainbow) {
+        return window.ethereum;
+      }
+      if (walletKey === 'zerion' && window.ethereum.isZerion) {
+        return window.ethereum;
+      }
+
+      // If user clicks MetaMask or general injected and only generic window.ethereum exists:
+      if (walletKey === 'metamask' && window.ethereum.isMetaMask) {
+        return window.ethereum;
+      }
+    }
+
+    return null;
+  }
+
   async function connectWalletConnect() {
     try {
-      showToast('Initializing official WalletConnect...');
+      showModalAlert('loading', 'Initializing WalletConnect...', 'Opening official WalletConnect modal. Scan QR code or select mobile wallet.');
+      showToast('Opening official WalletConnect modal...');
       const wcModule = window['@walletconnect/ethereum-provider'];
       if (!wcModule || !wcModule.EthereumProvider) {
+        showModalAlert('error', 'WalletConnect SDK Loading', 'WalletConnect SDK is still loading in your browser. Please retry in a moment.');
         showToast('WalletConnect SDK loading... please retry in a moment.');
         return;
       }
 
       if (!activeWcProvider) {
-        const projectId = (typeof window !== 'undefined' && window.AEGIS_WC_PROJECT_ID) || 'c4f79cc821944d9680842e34466bfbd';
+        const projectId = (typeof window !== 'undefined' && window.AEGIS_WC_PROJECT_ID) || 'b56e18d47c72ab683b10814fe9495694';
         activeWcProvider = await wcModule.EthereumProvider.init({
           projectId: projectId,
-          chains: [99801],
+          chains: [1],
           optionalChains: [99801, 1],
+          rpcMap: {
+            99801: 'https://testnet-rpc.elysium.kinetiq.xyz',
+            1: 'https://cloudflare-eth.com'
+          },
           showQrModal: true,
           metadata: {
             name: 'AEGIS Protocol',
@@ -2428,6 +2679,7 @@
       await activeWcProvider.enable();
       const accounts = activeWcProvider.accounts;
       if (!accounts || accounts.length === 0) {
+        showModalAlert('error', 'No Account Selected', 'No account was selected in WalletConnect.');
         showToast('No account selected in WalletConnect.');
         return;
       }
@@ -2435,6 +2687,10 @@
       runtimeState.walletAddress = accounts[0];
       runtimeState.walletConnected = true;
       runtimeState.activeProviderType = 'walletconnect';
+      runtimeState.connectedWalletName = 'WalletConnect';
+
+      hideModalAlert();
+      closeWalletSelectModal();
 
       updateWalletUI(runtimeState.walletAddress);
       logAudit('WALLET', `Official WalletConnect session active: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
@@ -2469,9 +2725,157 @@
       console.warn('WalletConnect connection flow notice:', err);
       const msg = err && err.message ? err.message : '';
       if (!msg.toLowerCase().includes('user rejected') && !msg.toLowerCase().includes('user closed')) {
+        showModalAlert('error', 'WalletConnect Notice', msg || 'WalletConnect session could not be established.');
         showToast(msg || 'WalletConnect session could not be established.');
       } else {
+        showModalAlert('error', 'Connection Cancelled', 'WalletConnect connection window was closed.');
         showToast('WalletConnect connection cancelled.');
+      }
+    }
+  }
+
+  async function connectSpecificWallet(walletKey) {
+    const config = WALLET_CONFIGS[walletKey] || { name: 'Web3 Wallet', installUrl: '#' };
+    const walletName = config.name;
+
+    showModalAlert('loading', `Connecting to ${walletName}...`, 'Checking for installed extension or provider...');
+
+    // Small delay to allow DOM render
+    await new Promise(r => setTimeout(r, 60));
+
+    const provider = resolveSpecificProvider(walletKey);
+
+    if (!provider) {
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile && typeof config.deepLink === 'function' && config.deepLink()) {
+        const link = config.deepLink();
+        showModalAlert(
+          'error',
+          `${walletName} Not Detected in Browser`,
+          `Tap below to open in ${walletName} mobile app, or scan with WalletConnect.`,
+          `<a class="wallet-alert-btn" href="${link}">Open in ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>`
+        );
+      } else {
+        showModalAlert(
+          'error',
+          `${walletName} Not Detected`,
+          `${walletName} extension is not installed or active in this browser.`,
+          `<a class="wallet-alert-btn" href="${config.installUrl}" target="_blank" rel="noopener noreferrer">Install ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>`
+        );
+      }
+      return;
+    }
+
+    showModalAlert('loading', `Connecting to ${walletName}...`, `Please approve the connection request in ${walletName}.`);
+
+    let timeoutTimer = null;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutTimer = setTimeout(() => {
+        const err = new Error('Connection request timed out. Check your wallet extension popup.');
+        err.code = 'TIMEOUT';
+        reject(err);
+      }, 45000);
+    });
+
+    try {
+      const accountsPromise = provider.request({ method: 'eth_requestAccounts' });
+      const accounts = await Promise.race([accountsPromise, timeoutPromise]);
+      clearTimeout(timeoutTimer);
+
+      if (!accounts || accounts.length === 0) {
+        showModalAlert('error', 'No Account Selected', 'Please unlock your wallet and choose an account.');
+        return;
+      }
+
+      runtimeState.walletAddress = accounts[0];
+      runtimeState.walletConnected = true;
+      runtimeState.activeProviderType = 'injected';
+      runtimeState.connectedWalletName = walletName;
+
+      hideModalAlert();
+      closeWalletSelectModal();
+
+      updateWalletUI(runtimeState.walletAddress);
+      logAudit('WALLET', `Connected to ${walletName}: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
+      showToast(`Connected: ${walletName} (${formatAddress(runtimeState.walletAddress)})`);
+
+      // Bind accountsChanged and chainChanged listeners to this provider
+      try {
+        if (typeof provider.on === 'function') {
+          provider.on('accountsChanged', (newAccounts) => {
+            if (newAccounts && newAccounts.length > 0) {
+              runtimeState.walletAddress = newAccounts[0];
+              updateWalletUI(newAccounts[0]);
+              fetchOnChainBalances(newAccounts[0]);
+              syncOnChainVaultPosition(newAccounts[0]);
+            } else {
+              disconnectWallet();
+            }
+          });
+
+          provider.on('chainChanged', (newChainId) => {
+            updateNetworkUI(newChainId);
+            const isElysium = newChainId && (
+              newChainId === ELYSIUM_CONFIG.chainId || 
+              newChainId === '0x185d9' || 
+              newChainId === 99801 || 
+              newChainId === '99801'
+            );
+            if (isElysium) {
+              showToast('Switched to Elysium L2 Testnet');
+              logAudit('NETWORK', 'Active chain switched to Elysium L2 (99801).', 'accent');
+            } else {
+              const name = getFriendlyChainName(newChainId);
+              showToast(`Active chain changed to ${name}.`);
+              logAudit('NETWORK', `Active chain changed to ${name} (${newChainId}).`, 'hedge');
+            }
+            if (runtimeState.walletAddress) {
+              fetchOnChainBalances(runtimeState.walletAddress);
+              syncOnChainVaultPosition(runtimeState.walletAddress);
+            }
+          });
+        }
+      } catch (evtErr) {
+        console.debug('Provider event binding notice:', evtErr);
+      }
+
+      // Check current chain ID and automatically prompt network addition/switch if not on Elysium L2
+      try {
+        const currentChainId = await provider.request({ method: 'eth_chainId' });
+        updateNetworkUI(currentChainId);
+        const isElysium = currentChainId && (
+          currentChainId === ELYSIUM_CONFIG.chainId || 
+          currentChainId === '0x185d9' || 
+          currentChainId === 99801 || 
+          currentChainId === '99801'
+        );
+        if (!isElysium) {
+          const friendlyName = getFriendlyChainName(currentChainId);
+          logAudit('NETWORK', `Connected on ${friendlyName}. Automatically prompting 1-click switch to Elysium L2 (Chain ID 99801)...`, 'hedge');
+          setTimeout(async () => {
+            await switchOrAddElysiumNetwork(provider);
+          }, 350);
+        } else {
+          logAudit('NETWORK', 'Connected on Elysium L2 Testnet (Chain ID 99801).', 'accent');
+        }
+      } catch (chainErr) {
+        console.warn('Silent chain check notice:', chainErr);
+      }
+
+      await fetchOnChainBalances(runtimeState.walletAddress);
+      await syncOnChainVaultPosition(runtimeState.walletAddress);
+    } catch (err) {
+      clearTimeout(timeoutTimer);
+      console.warn('Wallet connection error:', err);
+      const msg = err && err.message ? err.message : '';
+      if (err.code === 4001 || msg.toLowerCase().includes('user rejected') || msg.toLowerCase().includes('cancelled')) {
+        showModalAlert('error', 'Connection Cancelled', 'You rejected the connection request in your wallet. Tap to try again when ready.');
+      } else if (err.code === -32002) {
+        showModalAlert('error', 'Pending Request Exists', `Please open ${walletName} extension to approve the pending connection request.`);
+      } else if (err.code === 'TIMEOUT') {
+        showModalAlert('error', 'Request Timed Out', 'Connection request timed out. Please check your wallet extension.');
+      } else {
+        showModalAlert('error', 'Connection Failed', msg || 'Could not establish connection. Please retry or try another wallet.');
       }
     }
   }
@@ -2499,24 +2903,28 @@
     try {
       const provider = await resolveProvider(800);
       if (!provider) {
+        showModalAlert('error', 'No Web3 Provider Found', 'No Web3 wallet extension found. Try connecting with WalletConnect.', '<button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>');
         showToast('No Web3 wallet extension found. Try connecting with WalletConnect.');
-        openWalletSelectModal();
         return;
       }
 
-      showToast('Connecting wallet... Check for extension popup.');
+      showModalAlert('loading', 'Connecting Provider...', 'Please approve the connection in your wallet.');
       const accountsPromise = provider.request({ method: 'eth_requestAccounts' });
       const accounts = await Promise.race([accountsPromise, timeoutPromise]);
       clearTimeout(timeoutTimer);
 
       if (!accounts || accounts.length === 0) {
-        showToast('No accounts selected.');
+        showModalAlert('error', 'No Accounts Selected', 'Please unlock your wallet and choose an account.');
         return;
       }
 
       runtimeState.walletAddress = accounts[0];
       runtimeState.walletConnected = true;
       runtimeState.activeProviderType = 'injected';
+      runtimeState.connectedWalletName = 'Browser Wallet';
+
+      hideModalAlert();
+      closeWalletSelectModal();
 
       updateWalletUI(runtimeState.walletAddress);
       logAudit('WALLET', `Wallet connected: ${formatAddress(runtimeState.walletAddress)}`, 'accent');
@@ -2591,11 +2999,14 @@
       clearTimeout(timeoutTimer);
       console.error('Wallet connection rejected or timed out:', err);
       if (err && err.code === 'TIMEOUT') {
+        showModalAlert('error', 'Request Timed Out', 'Check your wallet for a pending request');
         showToast('Check your wallet for a pending request');
         logAudit('WALLET', 'Wallet approval request timed out after 45s. Check wallet extension popup.', 'hedge');
       } else if (err && (err.code === 4001 || (err.message && err.message.toLowerCase().includes('user rejected')))) {
+        showModalAlert('error', 'Connection Cancelled', 'Wallet connection was cancelled.');
         showToast('Wallet connection was cancelled.');
       } else {
+        showModalAlert('error', 'Connection Error', err.message || 'Rejected');
         showToast('Wallet connection error: ' + (err.message || 'Rejected'));
       }
     } finally {

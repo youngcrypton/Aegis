@@ -57,6 +57,7 @@ export const configSchema = z.object({
     .string()
     .regex(ethereumAddressRegex, "Invalid Ethereum address")
     .default("0x0000000000000000000000000000000000000000"),
+  SENTINEL_HEALTH_TOKEN: z.string().optional(),
   POLL_INTERVAL_MS: z.coerce.number().min(10).max(10000).default(100),
   MAX_SLIPPAGE_BPS: z.coerce.number().min(1).max(500).default(50),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),

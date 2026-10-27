@@ -23,7 +23,7 @@ def compose_pitch_video():
     # Mux video and master synchronized audio
     # -c:v libx264 -crf 18 ensures crystal clear visual fidelity
     # -c:a aac -b:a 192k ensures broadcast audio fidelity
-    # -t 114.0 ensures exact video duration under the 120s hackathon ceiling
+    # -t 114.0 ensures exact video duration under the 120s pitch ceiling
     cmd = [
         ffmpeg_exe, "-y",
         "-i", video_in,

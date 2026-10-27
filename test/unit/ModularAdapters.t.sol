@@ -120,6 +120,59 @@ contract ModularAdaptersTest is Test {
         relayedOracle.updatePrice(0, 0);
     }
 
+    function test_RelayedOracle_DeviationCheck_RevertsOnExcessiveDeviation() public {
+        uint32 perpIndex = 0;
+        uint256 initialPrice = 100_00000000; // $100
+
+        vm.prank(sentinel);
+        relayedOracle.updatePrice(perpIndex, initialPrice);
+
+        // Max deviation is 2000 bps (20%).
+        // A jump from $100 to $125 is 25% deviation -> must revert!
+        vm.prank(sentinel);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                RelayedOracleAdapter.PriceDeviationTooHigh.selector,
+                perpIndex,
+                initialPrice,
+                125_00000000,
+                2500
+            )
+        );
+        relayedOracle.updatePrice(perpIndex, 125_00000000);
+
+        // A drop from $100 to $75 is 25% drop -> must revert!
+        vm.prank(sentinel);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                RelayedOracleAdapter.PriceDeviationTooHigh.selector,
+                perpIndex,
+                initialPrice,
+                75_00000000,
+                2500
+            )
+        );
+        relayedOracle.updatePrice(perpIndex, 75_00000000);
+
+        // But a 15% move (e.g. $115 or $85) must succeed
+        vm.prank(sentinel);
+        relayedOracle.updatePrice(perpIndex, 115_00000000);
+        assertEq(relayedOracle.getPerpPrice(perpIndex), 115_00000000);
+    }
+
+    function test_RelayedOracle_OwnerCanBypassDeviation() public {
+        uint32 perpIndex = 0;
+        uint256 initialPrice = 100_00000000;
+
+        vm.prank(sentinel);
+        relayedOracle.updatePrice(perpIndex, initialPrice);
+
+        // Owner can set any price (e.g. resetting market after a huge crash/event)
+        vm.prank(owner);
+        relayedOracle.updatePrice(perpIndex, 200_00000000); // 100% jump
+        assertEq(relayedOracle.getPerpPrice(perpIndex), 200_00000000);
+    }
+
     // --- AgentDispatchAdapter Tests ---
 
     function test_AgentDispatch_PlaceAndCancelIntent() public {
@@ -182,7 +235,7 @@ contract ModularAdaptersTest is Test {
         mockCollateral.mint(bob, 1 ether);
         vault.registerPosition(address(mockCollateral), 1 ether, 50_000000, 8000); // $50 debt, 80% threshold
 
-        (uint256 hf, bool triggered, uint256 markPrice) = vault.getVaultHealth(bob, perpIndex);
+        (, bool triggered, uint256 markPrice) = vault.getVaultHealth(bob, perpIndex);
         assertEq(markPrice, relayedPrice, "Mark price should come from RelayedOracleAdapter");
         assertFalse(triggered);
         vm.stopPrank();

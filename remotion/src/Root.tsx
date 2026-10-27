@@ -1,18 +1,27 @@
 import React from "react";
 import { Composition } from "remotion";
-import { AegisHackathonDemo120s } from "./compositions/AegisHackathonDemo120s";
+import { AegisPitchDemo120s } from "./compositions/AegisPitchDemo120s";
 import { AegisCinematicShowcase } from "./compositions/AegisCinematicShowcase";
 import { AegisLaunchLight } from "./compositions/AegisLaunchLight";
 import { AegisLaunchTeaser } from "./compositions/AegisLaunchTeaser";
 import { AegisSocialSquare } from "./compositions/AegisSocialSquare";
 import { AegisLiveProductDemo } from "./compositions/AegisLiveProductDemo";
+import { AegisSentinelScene } from "./compositions/AegisSentinelScene";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="AegisHackathonDemo120s"
-        component={AegisHackathonDemo120s}
+        id="AegisSentinelScene"
+        component={AegisSentinelScene}
+        durationInFrames={510}
+        fps={60}
+        width={1440}
+        height={1152}
+      />
+      <Composition
+        id="AegisPitchDemo120s"
+        component={AegisPitchDemo120s}
         durationInFrames={3600}
         fps={30}
         width={1920}

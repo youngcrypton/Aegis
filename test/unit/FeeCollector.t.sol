@@ -328,4 +328,28 @@ contract FeeCollectorTest is Test {
         assertEq(yieldShare, 1);
         assertEq(buyback + yieldShare, 1, "INV-4: Exact conservation on odd 1-wei fee");
     }
+
+    function test_ExecuteBuybackAndBurn_EnforcesMinBuybackRateSlippage() public {
+        uint256 savedPenalty = 2_000 * 1e6; // $2,000 saved -> $200 fee -> $100 buyback budget
+        vm.prank(vault);
+        feeCollector.processAvertedFee(vaultOwner, savedPenalty);
+
+        // Pool rate is 1 USDC = 10 AEGIS (10 ether per 1 USDC).
+        // Set minBuybackRate to 12 ether (requires at least 12 AEGIS per 1 USDC).
+        // Since pool only gives 10 AEGIS per 1 USDC, slippage should revert!
+        vm.prank(owner);
+        feeCollector.setMinBuybackRate(12 ether);
+
+        vm.expectRevert("MockAscendHookPool: slippage exceeded");
+        feeCollector.executeBuybackAndBurn();
+
+        // Now set minBuybackRate to 9 ether (requires at least 9 AEGIS per 1 USDC).
+        // Since pool gives 10 AEGIS per 1 USDC, this must succeed!
+        vm.prank(owner);
+        feeCollector.setMinBuybackRate(9 ether);
+
+        feeCollector.executeBuybackAndBurn();
+        assertEq(feeCollector.buybackBudget(), 0);
+    }
 }
+

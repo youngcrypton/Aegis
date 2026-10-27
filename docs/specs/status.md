@@ -128,11 +128,11 @@ Last updated: 2026-10-11
 
 - **Done:** Authored publication-ready launch article and social thread in `LAUNCH_POST.md`:
  - **Comprehensive Launch Article**: Detailed piece for Mirror / Medium / Substack titled *"Introducing AEGIS: Autonomous Sub-Second Liquidation Protection on HyperCore and Elysium L2"*. Covers the forced liquidation trap ($10-15\%$ penalties, MEV liquidator cartels, cascading flash wicks), the core AEGIS delta-hedging solution via HyperCore Precompile `0x0801` and Predeploy `0x0802`, dynamic bottom-wick tracking with trailing take-profit unwinds back into the vault, Lite Auto-Pilot (retail/micro-capital) vs. Pro Terminal (quants/institutions), non-custodial Invariant INV-1 session keys, 700M $AEGIS tokenomics aligned with the Ascend ecosystem, and an explicit outlook on upcoming roadmap items.
-- **Done:** Full Open Source Release: unignored and committed master architecture files (`PROMPT.md` and `web3-hackathon-architect/`), making 100% of the project specification, quant models, and planning documentation fully public and open source.
+- **Done:** Full Open Source Release: unignored and committed master architecture files (`PROMPT.md` and project architectural blueprints), making 100% of the project specification, quant models, and planning documentation fully public and open source.
 - **Done:** Programmatic Motion & Video Engine in `remotion/` with official AEGIS Light Theme composition (`AegisLaunchLight`), synthesized stereo soundscape (`remotion/public/aegis-launch-sound.wav`), and rendered launch video in `brand/x/aegis-launch-video-light.mp4`.
 - **Done:** Official 3-Minute Live Product Demo Video (`brand/x/aegis-product-demo-3min.mp4` / `brand/x/aegis-live-product-demo.mp4`):
- - High-production direct screen recording of the live running trader application (not slides, not code walkthrough) adhering strictly to hackathon submission requirements.
- - Duration: Exactly 02:44 (164.0 seconds) — strictly under the 3-minute hackathon ceiling.
+ - High-production direct screen recording of the live running trader application (not slides, not code walkthrough) adhering strictly to institutional product requirements.
+ - Duration: Exactly 02:44 (164.0 seconds) — strictly under the 3-minute presentation ceiling.
  - **Loud & Continuous Voiceover Narration**: Resolved root-cause audio cutoff (where `duration=first` in FFmpeg `amix` terminated audio after 25s) by synthesizing a continuous 164.0s master mix (`remotion/build_master_audio.py`) with broadcast-standard vocal compression and makeup gain (-13.97 dBFS RMS, peak -0.17 dBFS) and a subtle ambient cyber-synth bed (-28 dBFS). Narration is loud, crisp, and continuous from second 0 to second 164.
  - **Bold Interactive Presenter Cursor**: Injected high-visibility virtual presenter cursor into DOM during Playwright capture (`record_full_demo.py`), featuring a 34px high-contrast white arrow pointer, luminous glowing cyan spotlight halo (`#5FD9BE`), click ripples, and floating presenter tags (e.g., `1,000.00 HYPE Collateral ($48.5k)`, `$32,000.00 USDC Debt`, `Balanced Preset (H <= 1.15)`, `0.05 HYPE Micro-Deposit Chip`, `0x0802 Sub-78ms Short Hedge Active`, `Emergency Override Killswitch (INV-3)`) that smoothly guide the viewer to each feature as it is spoken.
  - **High-Production Demo Video Thumbnail**: Designed and rendered pixel-perfect 16:9 Retina 2x thumbnail (`brand/x/aegis-demo-thumbnail-1200x675.png`, 2400x1350, 2.0 MB) featuring the AEGIS master 3-blade logo, Elysium L2 and Precompile 0x0801 telemetry badges, live terminal preview with glowing presenter cursor pointing to 1,000 HYPE collateral, frosted glass central Play button (``), and protocol invariants.
@@ -143,7 +143,7 @@ Last updated: 2026-10-11
   - Routed the full video link directly to GitHub raw media streaming (`https://raw.githubusercontent.com/youngcrypton/Aegis/main/brand/x/aegis-product-demo-3min.mp4`) to prevent GitHub from routing into the code viewer interface.
 - **Repository-Wide Generic Emoji Elimination**:
   - Conducted a comprehensive, automated regex audit across all directories, interfaces, and documentation files.
-  - Removed all generic emojis from `README.md`, `download.html`, `docs/docs.js`, `LAUNCH_POST.md`, `MEMORY.md`, `brand/kit/aegis-brand-kit.html`, `web3-hackathon-architect/`, and `.agents/skills/`.
+  - Removed all generic emojis from `README.md`, `download.html`, `docs/docs.js`, `LAUNCH_POST.md`, `MEMORY.md`, `brand/kit/aegis-brand-kit.html`, and `.agents/skills/`.
   - Re-rendered demo thumbnails and scripts with standard, institutional typographic markers and crisp geometric badges.
 
 - **Done:** Official On-Chain Deployment & Seeding on **Elysium L2 Testnet (Chain ID 99801)**:

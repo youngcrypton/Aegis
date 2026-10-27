@@ -42,19 +42,19 @@ Ascend is the premier launchpad and DEX on Elysium, guiding tokens through its 4
 ## 4. Current Status + Launch Plan
 
 ### • Working (Functional Today on Aegis)
-* **Deployed Modular Contracts on Elysium L2 Testnet (Chain ID `99801`):**
-  * `AegisVault.sol`: `0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29`
-  * `AegisSentinelRegistry.sol`: `0x6C64188e1D677Eb85E4aD71836650310281f0893`
-  * `AegisFeeCollector.sol`: `0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae`
-  * `RelayedOracleAdapter.sol`: `0x8829386b87F6CFbf64A3f75916BC96bAb0B12991`
-  * `AgentDispatchAdapter.sol`: `0xBAD4C895DBcA78F10764D73274dC1f314c80237e`
+* **100% Verified Modular Smart Contracts on Elysium L2 Testnet (Chain ID `99801`):**
+  * **`AegisVault.sol`**: [`0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29`](https://testnet.elysium.kinetiq.xyz/address/0xC064495DE20EfeEBB6a4B1dE57ffb48ED8f5dA29?tab=contract) — *Verified on Explorer*
+  * **`AegisSentinelRegistry.sol`**: [`0x6C64188e1D677Eb85E4aD71836650310281f0893`](https://testnet.elysium.kinetiq.xyz/address/0x6C64188e1D677Eb85E4aD71836650310281f0893?tab=contract) — *Verified on Explorer*
+  * **`AegisFeeCollector.sol`**: [`0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae`](https://testnet.elysium.kinetiq.xyz/address/0xCA9D24c4B5025dA065d1AEf92808aB1698f267ae?tab=contract) — *Verified on Explorer*
+  * **`RelayedOracleAdapter.sol`**: [`0x8829386b87F6CFbf64A3f75916BC96bAb0B12991`](https://testnet.elysium.kinetiq.xyz/address/0x8829386b87F6CFbf64A3f75916BC96bAb0B12991?tab=contract) — *Verified on Explorer*
+  * **`AgentDispatchAdapter.sol`**: [`0xBAD4C895DBcA78F10764D73274dC1f314c80237e`](https://testnet.elysium.kinetiq.xyz/address/0xBAD4C895DBcA78F10764D73274dC1f314c80237e?tab=contract) — *Verified on Explorer*
+  * **`MockERC20.sol` ($AEGIS Token)**: [`0x606f01e0cd5B90d09A99442e4265a915CeCa5104`](https://testnet.elysium.kinetiq.xyz/address/0x606f01e0cd5B90d09A99442e4265a915CeCa5104?tab=contract) — *Verified on Explorer*
 * **Ascend Hook Pool Integration in Code:** `AegisFeeCollector.sol` natively interfaces with Ascend's `IAscendHookPool` (`0x2C9e2da841fE245a4d572f94191eB1884866aeBc`) and Universal Router (`0x90332B0ECbb2c9517F405627b0Dd5D5265246563`), enforcing programmatic buyback-and-burn directly on Ascend pools.
 * **100% Automated Test Suite Pass Rate:** 116/116 Foundry unit/invariant/fuzz tests passing across 160,000+ fuzz runs verifying Invariants INV-1 to INV-5 and Phase 1C deferred fee debt; 29/29 Sentinel keeper tests passing.
 * **Live Production Web Terminal:** Deployed at [https://aegishedge.xyz/app](https://aegishedge.xyz/app) with multi-wallet injection (MetaMask, Bitget, OKX, Opus), live RPC telemetry, Concentric Health Gauge, and Lite Auto-Pilot vs Pro Terminal modes.
 * **Complete Documentation:** GitBook portal published at [https://aegishedge.xyz/gitbook](https://aegishedge.xyz/gitbook) and full technical lightpaper in repository.
 
 ### • In Development (Preparing for Ascend & Elysium Mainnet)
-* Automated contract source code verification pipeline on Elysium Blockscout.
 * Decentralized Sentinel Keeper daemon cluster setup for multi-operator mainnet redundancy.
 * Ascend concentrated liquidity pool provisioning for canonical `$AEGIS / USDC` and `$AEGIS / HYPE` pairs.
 * Zero-downtime hot-swap architecture ready to switch from modular adapters to native Elysium ArbOS precompiles (`0x0801` HyperCore L1 memory reader & `0x0802` CLOB writer) post-hardfork without vault migration.
@@ -112,5 +112,5 @@ The **$AEGIS** token has a strict, immutable hard cap of **700,000,000 tokens** 
 | Field | Details |
 | :--- | :--- |
 | **Team Size** | **3 Full-Time Builders** |
-| **Relevant Experience** | • **Founder & Co-Founder:** Proven track record in full-stack Web3 engineering, high-throughput EVM smart contract architecture, high-frequency derivative systems, and motion/interface design. Extensive experience shipping production DeFi protocols, building custom AMM/vault infrastructures, and participating in ecosystem hackathons.<br><br>• **Core Engineer:** Quantitative systems and off-chain keeper automation specialist focusing on sub-second WebSocket telemetry, EIP-712 cryptographic signatures, and risk simulation engines. |
+| **Relevant Experience** | • **Founder & Co-Founder:** Proven track record in full-stack Web3 engineering, high-throughput EVM smart contract architecture, high-frequency derivative systems, and motion/interface design. Extensive experience shipping production DeFi protocols, building custom AMM/vault infrastructures, and shipping ecosystem architectures.<br><br>• **Core Engineer:** Quantitative systems and off-chain keeper automation specialist focusing on sub-second WebSocket telemetry, EIP-712 cryptographic signatures, and risk simulation engines. |
 | **Best Contact** | • **Telegram:** [@young_crypton](https://t.me/young_crypton)<br>• **Discord:** `@youngcrypton` |
