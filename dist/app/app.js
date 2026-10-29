@@ -9,10 +9,10 @@
 
   // --- 1. CONSTANTS & SYSTEM STATE ---
   const VAULT_CONSTANTS = {
-    collateralAmount: 0.10,     // Elysium testnet faucet allocation (0.10 HYPE)
-    debtUsdc: 5.42,             // Proportional debt liability ($5.42 at 65% LTV)
+    collateralAmount: 0.0,      // Empty state default until wallet connection
+    debtUsdc: 0.0,              // Empty state default until on-chain sync
     liquidationThreshold: 0.80, // 80% maintenance threshold (T = 8000 bps)
-    liquidationPrice: 67.75,    // Liquidation price ($5.42 / (0.10 * 0.80))
+    liquidationPrice: 0.0,      // Empty state default
     basePrice: 83.46,           // Live Hyperliquid mark price
     chainId: '0x185d9',         // 99801 in hex
     chainName: 'Elysium L2 Testnet'
@@ -790,6 +790,7 @@
     }
 
     function openDrawer() {
+      dismissSpotlightTour();
       if (drawer) drawer.classList.add('active');
       if (backdrop) backdrop.classList.add('active');
       if (drawerBtn) drawerBtn.setAttribute('aria-expanded', 'true');
@@ -989,13 +990,18 @@
     if (alertTitle) alertTitle.textContent = title;
     if (alertDesc) alertDesc.textContent = desc;
 
+    if (cancelBtn) {
+      cancelBtn.style.display = 'inline-flex';
+      cancelBtn.textContent = type === 'loading' ? 'Cancel' : 'Dismiss';
+    }
+
     if (alertIcon) {
       if (type === 'loading') {
         alertIcon.innerHTML = '<div class="wallet-alert-spinner"></div>';
-        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+      } else if (type === 'info') {
+        alertIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
       } else {
         alertIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-        if (cancelBtn) cancelBtn.style.display = 'none';
       }
     }
 
@@ -1018,6 +1024,7 @@
   }
 
   function hideModalAlert() {
+    isWcConnecting = false;
     const alertBox = document.getElementById('walletModalAlert');
     if (alertBox) {
       alertBox.style.display = 'none';
@@ -1053,6 +1060,7 @@
   }
 
   function openWalletSelectModal() {
+    dismissSpotlightTour();
     const modal = document.getElementById('walletSelectModal') || document.getElementById('walletModal');
     const backdrop = document.getElementById('walletSelectBackdrop') || document.getElementById('walletModalBackdrop');
     hideModalAlert();
@@ -1140,6 +1148,8 @@
   }
 
   // --- INTERACTIVE 4-STEP SPOTLIGHT ONBOARDING TOUR (BRAND KIT COMPLIANT) ---
+  let dismissSpotlightTour = function() {};
+
   function initSpotlightTour() {
     const container = document.getElementById('aegisTourContainer');
     const maskHole = document.getElementById('aegisTourMaskHole');
@@ -1364,6 +1374,12 @@
         } catch (e) {}
       }
     }
+
+    dismissSpotlightTour = function() {
+      if (isTourActive) {
+        endTour(true);
+      }
+    };
 
     function nextStep() {
       if (currentStepIndex < TOUR_STEPS.length - 1) {
@@ -2375,8 +2391,12 @@
           modalVaultActivePill.textContent = 'STANDBY (NOT REGISTERED)';
           modalVaultActivePill.className = 'status-pill pill-hedge';
         }
-        if (modalVaultCol) modalVaultCol.textContent = `${VAULT_CONSTANTS.collateralAmount.toFixed(4)} HYPE (Preset)`;
-        if (modalVaultDebt) modalVaultDebt.textContent = `$${VAULT_CONSTANTS.debtUsdc.toFixed(2)} USD (Preset)`;
+        const walletHype = (runtimeState.balances && runtimeState.balances.hype) || 0.0;
+        VAULT_CONSTANTS.collateralAmount = walletHype;
+        VAULT_CONSTANTS.debtUsdc = 0.0;
+        VAULT_CONSTANTS.liquidationPrice = 0.0;
+        if (modalVaultCol) modalVaultCol.textContent = `${walletHype.toFixed(4)} HYPE (Wallet)`;
+        if (modalVaultDebt) modalVaultDebt.textContent = '$0.00 USD (No Debt)';
         if (modalSessionKeyDisplay) {
           modalSessionKeyDisplay.textContent = 'None';
           modalSessionKeyDisplay.className = 'font-mono text-hedge';
@@ -2468,46 +2488,58 @@
     updateUI();
   }
 
+  function getAppCanonicalUrl() {
+    if (typeof window === 'undefined') return 'https://aegishedge.xyz/app/';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return isLocal ? 'https://aegishedge.xyz/app/' : window.location.href;
+  }
+
+  function getAppDappHost() {
+    if (typeof window === 'undefined') return 'aegishedge.xyz/app/';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return isLocal ? 'aegishedge.xyz/app/' : `${window.location.host}${window.location.pathname}`;
+  }
+
   const WALLET_CONFIGS = {
     metamask: {
       name: 'MetaMask',
       installUrl: 'https://metamask.io/download/',
-      deepLink: () => `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`
-    },
-    okx: {
-      name: 'OKX Wallet',
-      installUrl: 'https://www.okx.com/web3',
-      deepLink: () => `okx://wallet/dapp/url?dappUrl=${encodeURIComponent(window.location.href)}`
-    },
-    trust: {
-      name: 'Trust Wallet',
-      installUrl: 'https://trustwallet.com/download',
-      deepLink: () => `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(window.location.href)}`
-    },
-    bitget: {
-      name: 'Bitget Wallet',
-      installUrl: 'https://web3.bitget.com/',
-      deepLink: () => `bitkeep://bkconnect?action=dapp&url=${encodeURIComponent(window.location.href)}`
-    },
-    rabby: {
-      name: 'Rabby Wallet',
-      installUrl: 'https://rabby.io/',
-      deepLink: null
-    },
-    coinbase: {
-      name: 'Coinbase Wallet',
-      installUrl: 'https://www.coinbase.com/wallet',
-      deepLink: () => `https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(window.location.href)}`
-    },
-    rainbow: {
-      name: 'Rainbow Wallet',
-      installUrl: 'https://rainbow.me/',
-      deepLink: () => `https://rnbwapp.com/`
+      deepLink: () => `https://metamask.app.link/dapp/${getAppDappHost()}`
     },
     zerion: {
       name: 'Zerion Wallet',
       installUrl: 'https://zerion.io/',
-      deepLink: () => `https://wallet.zerion.io/`
+      deepLink: () => `https://zerion.io/ul/dapp?url=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    bitget: {
+      name: 'Bitget Wallet',
+      installUrl: 'https://web3.bitget.com/',
+      deepLink: () => `https://bkcode.vip?action=dapp&url=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    rabby: {
+      name: 'Rabby Wallet',
+      installUrl: 'https://rabby.io/',
+      deepLink: () => `rabby://dapp?url=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    okx: {
+      name: 'OKX Wallet',
+      installUrl: 'https://www.okx.com/web3',
+      deepLink: () => `okx://wallet/dapp/url?dappUrl=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    trust: {
+      name: 'Trust Wallet',
+      installUrl: 'https://trustwallet.com/download',
+      deepLink: () => `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    coinbase: {
+      name: 'Coinbase Wallet',
+      installUrl: 'https://www.coinbase.com/wallet',
+      deepLink: () => `https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(getAppCanonicalUrl())}`
+    },
+    rainbow: {
+      name: 'Rainbow Wallet',
+      installUrl: 'https://rainbow.me/',
+      deepLink: () => `https://rnbwapp.com/dapp?url=${encodeURIComponent(getAppCanonicalUrl())}`
     }
   };
 
@@ -2620,20 +2652,56 @@
     return null;
   }
 
+  let isWcConnecting = false;
+
   async function connectWalletConnect() {
+    if (isWcConnecting) {
+      showToast('WalletConnect connection already in progress...');
+      return;
+    }
+
+    isWcConnecting = true;
+    let timeoutId = null;
+
     try {
-      showModalAlert('loading', 'Initializing WalletConnect...', 'Opening official WalletConnect modal. Scan QR code or select mobile wallet.');
+      showModalAlert(
+        'loading',
+        'Initializing WalletConnect...',
+        'Connecting to relay network. Scan QR code or select your mobile wallet.'
+      );
       showToast('Opening official WalletConnect modal...');
+
       const wcModule = window['@walletconnect/ethereum-provider'];
       if (!wcModule || !wcModule.EthereumProvider) {
-        showModalAlert('error', 'WalletConnect SDK Loading', 'WalletConnect SDK is still loading in your browser. Please retry in a moment.');
-        showToast('WalletConnect SDK loading... please retry in a moment.');
+        showModalAlert(
+          'error',
+          'WalletConnect SDK Loading',
+          'WalletConnect library is still loading in your browser. Please retry in a moment.',
+          '<button class="wallet-alert-btn" id="btnAlertRetryWc" type="button">Retry Connection</button>'
+        );
+        showToast('WalletConnect SDK loading... please retry.');
+        const retryBtn = document.getElementById('btnAlertRetryWc');
+        if (retryBtn) retryBtn.addEventListener('click', () => connectWalletConnect());
+        isWcConnecting = false;
         return;
       }
 
+      // 8-second watchdog timer to eliminate infinite "Initializing..." lockup
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+          const timeoutErr = new Error('WalletConnect relay server took too long to respond.');
+          timeoutErr.code = 'TIMEOUT';
+          reject(timeoutErr);
+        }, 8000);
+      });
+
       if (!activeWcProvider) {
         const projectId = (typeof window !== 'undefined' && window.AEGIS_WC_PROJECT_ID) || 'b56e18d47c72ab683b10814fe9495694';
-        activeWcProvider = await wcModule.EthereumProvider.init({
+        const currentOrigin = (typeof window !== 'undefined' && window.location && window.location.origin) 
+          ? window.location.origin 
+          : 'https://aegishedge.xyz';
+
+        const initPromise = wcModule.EthereumProvider.init({
           projectId: projectId,
           chains: [1],
           optionalChains: [99801, 1],
@@ -2642,13 +2710,18 @@
             1: 'https://cloudflare-eth.com'
           },
           showQrModal: true,
+          qrModalOptions: {
+            themeMode: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+          },
           metadata: {
             name: 'AEGIS Protocol',
             description: 'High-Frequency Risk Sentinel & Pro-Trader Terminal',
-            url: 'https://aegishedge.xyz',
-            icons: ['https://aegishedge.xyz/favicon.svg']
+            url: currentOrigin,
+            icons: [`${currentOrigin}/favicon.svg`]
           }
         });
+
+        activeWcProvider = await Promise.race([initPromise, timeoutPromise]);
 
         activeWcProvider.on('accountsChanged', (accounts) => {
           if (accounts && accounts.length > 0) {
@@ -2676,11 +2749,16 @@
         });
       }
 
-      await activeWcProvider.enable();
+      // Enable session with timeout protection
+      const enablePromise = activeWcProvider.enable();
+      await Promise.race([enablePromise, timeoutPromise]);
+      clearTimeout(timeoutId);
+
       const accounts = activeWcProvider.accounts;
       if (!accounts || accounts.length === 0) {
         showModalAlert('error', 'No Account Selected', 'No account was selected in WalletConnect.');
         showToast('No account selected in WalletConnect.');
+        isWcConnecting = false;
         return;
       }
 
@@ -2722,15 +2800,45 @@
       await fetchOnChainBalances(runtimeState.walletAddress);
       await syncOnChainVaultPosition(runtimeState.walletAddress);
     } catch (err) {
+      if (timeoutId) clearTimeout(timeoutId);
       console.warn('WalletConnect connection flow notice:', err);
+      // Reset active provider on error or timeout so next try starts fresh
+      activeWcProvider = null;
+
       const msg = err && err.message ? err.message : '';
-      if (!msg.toLowerCase().includes('user rejected') && !msg.toLowerCase().includes('user closed')) {
-        showModalAlert('error', 'WalletConnect Notice', msg || 'WalletConnect session could not be established.');
-        showToast(msg || 'WalletConnect session could not be established.');
-      } else {
-        showModalAlert('error', 'Connection Cancelled', 'WalletConnect connection window was closed.');
+      const isTimeout = err && (err.code === 'TIMEOUT' || msg.includes('took too long'));
+      const isUserClosed = msg.toLowerCase().includes('user rejected') || msg.toLowerCase().includes('user closed') || msg.toLowerCase().includes('modal closed');
+
+      if (isTimeout) {
+        showModalAlert(
+          'error',
+          'Connection Timed Out',
+          'The WalletConnect relay did not respond in time. You can retry, or tap your mobile wallet app directly below.',
+          '<button class="wallet-alert-btn" id="btnAlertRetryWc" type="button">Retry WalletConnect</button>'
+        );
+        showToast('WalletConnect timed out. Please retry.');
+      } else if (isUserClosed) {
+        showModalAlert('error', 'Connection Cancelled', 'WalletConnect modal was closed.');
         showToast('WalletConnect connection cancelled.');
+      } else {
+        showModalAlert(
+          'error',
+          'WalletConnect Notice',
+          msg || 'WalletConnect session could not be established. You can retry or choose an installed wallet below.',
+          '<button class="wallet-alert-btn" id="btnAlertRetryWc" type="button">Retry WalletConnect</button>'
+        );
+        showToast(msg || 'WalletConnect could not connect.');
       }
+
+      const retryBtn = document.getElementById('btnAlertRetryWc');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => {
+          hideModalAlert();
+          connectWalletConnect();
+        });
+      }
+    } finally {
+      isWcConnecting = false;
     }
   }
 
@@ -2746,21 +2854,22 @@
     const provider = resolveSpecificProvider(walletKey);
 
     if (!provider) {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && window.innerWidth < 800);
       if (isMobile && typeof config.deepLink === 'function' && config.deepLink()) {
         const link = config.deepLink();
         showModalAlert(
-          'error',
-          `${walletName} Not Detected in Browser`,
-          `Tap below to open in ${walletName} mobile app, or scan with WalletConnect.`,
-          `<a class="wallet-alert-btn" href="${link}">Open in ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>`
+          'info',
+          `Launch ${walletName}`,
+          `Tap below to open Aegis directly inside ${walletName} mobile app, or connect via WalletConnect:`,
+          `<a class="wallet-alert-btn primary" id="btnAlertLaunchApp" href="${link}">Launch ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">WalletConnect</button> <a class="wallet-alert-btn" href="${config.installUrl}" target="_blank" rel="noopener noreferrer">Install ↗</a>`
         );
+        showToast(`Tap "Launch ${walletName}" to open mobile app.`);
       } else {
         showModalAlert(
           'error',
           `${walletName} Not Detected`,
           `${walletName} extension is not installed or active in this browser.`,
-          `<a class="wallet-alert-btn" href="${config.installUrl}" target="_blank" rel="noopener noreferrer">Install ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>`
+          `<a class="wallet-alert-btn primary" href="${config.installUrl}" target="_blank" rel="noopener noreferrer">Install ${walletName} ↗</a> <button class="wallet-alert-btn" id="btnAlertOpenWc" type="button">Connect via WalletConnect</button>`
         );
       }
       return;
@@ -3040,6 +3149,11 @@
     runtimeState.walletAddress = null;
     runtimeState.sessionSignature = null;
     runtimeState.activeProviderType = null;
+    runtimeState.walletBalances = { hype: '0.0000', usdc: '0.00', formatted: '0.0000 HYPE' };
+    runtimeState.balances = { hype: 0.0, usdc: 0.0, kntq: 0.0 };
+    VAULT_CONSTANTS.collateralAmount = 0.0;
+    VAULT_CONSTANTS.debtUsdc = 0.0;
+    VAULT_CONSTANTS.liquidationPrice = 0.0;
 
     if (el.walletAddrText) {
       el.walletAddrText.textContent = 'Connect Wallet';
@@ -3050,11 +3164,16 @@
     const drawerAddr = document.getElementById('drawerWalletAddrText');
     if (drawerAddr) drawerAddr.textContent = 'Connect Wallet';
 
+    if (el.btnLiteActivateShield) {
+      el.btnLiteActivateShield.classList.remove('armed');
+      const btnText = el.liteActivateBtnText || document.getElementById('liteActivateBtnText');
+      if (btnText) btnText.textContent = 'Connect Wallet to Activate Shield';
+    }
+
     closeWalletAccountModal();
     showToast('Wallet disconnected. Tap "Connect Wallet" to reconnect anytime.');
     logAudit('WALLET', 'Session disconnected by user.', 'hedge');
-    syncOnChainVaultPosition(ELYSIUM_CONFIG.defaultAccount);
-    fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
+    updateLiteTelemetryDisplay();
     updateUI();
   }
 
@@ -3081,6 +3200,7 @@
   }
 
   async function handleWalletBtnClick() {
+    dismissSpotlightTour();
     if (runtimeState.walletConnected) {
       openWalletAccountModal();
       return;
@@ -3091,7 +3211,8 @@
   }
 
   async function fetchOnChainBalances(addr) {
-    const targetAddr = addr || runtimeState.walletAddress || ELYSIUM_CONFIG.defaultAccount;
+    const targetAddr = addr || runtimeState.walletAddress;
+    if (!targetAddr) return;
     const refreshInd = document.getElementById('balRefreshIndicator');
     if (refreshInd) {
       refreshInd.innerHTML = '<span class="live-pulse-dot"></span> Querying Elysium L2 RPC...';
@@ -3175,11 +3296,9 @@
       kntq: liveHype
     };
 
-    // Update vault collateral amount to match actual testnet balance if non-zero
-    if (liveHype > 0) {
+    // Update vault collateral amount to match actual testnet balance if non-zero and no loan active
+    if (liveHype > 0 && VAULT_CONSTANTS.debtUsdc <= 0) {
       VAULT_CONSTANTS.collateralAmount = liveHype;
-      VAULT_CONSTANTS.debtUsdc = liveHype * runtimeState.currentPrice * 0.65;
-      VAULT_CONSTANTS.liquidationPrice = VAULT_CONSTANTS.debtUsdc / (liveHype * VAULT_CONSTANTS.liquidationThreshold);
     }
 
     const hypePrice = runtimeState.currentPrice || 83.46;
@@ -3304,13 +3423,13 @@
    * H = (Q_collateral * P_mark * T) / D_debt
    */
   function calculateHealthFactor(price) {
-    if (!VAULT_CONSTANTS.debtUsdc || VAULT_CONSTANTS.debtUsdc <= 0) {
-      return 1.41; // Standard safe benchmark when no debt exists
+    if (!runtimeState.walletConnected || !VAULT_CONSTANTS.debtUsdc || VAULT_CONSTANTS.debtUsdc <= 0) {
+      return null;
     }
-    const collateralValue = (VAULT_CONSTANTS.collateralAmount || 0.10) * price;
+    const collateralValue = (VAULT_CONSTANTS.collateralAmount || 0) * price;
     const numerator = collateralValue * VAULT_CONSTANTS.liquidationThreshold;
     const h = numerator / VAULT_CONSTANTS.debtUsdc;
-    return (isNaN(h) || !isFinite(h)) ? 1.41 : h;
+    return (isNaN(h) || !isFinite(h)) ? null : h;
   }
 
   function syncMetric(primaryEl, mirrorSelector, content, isHtml = false) {
@@ -3328,124 +3447,255 @@
    */
   function updateUI() {
     const price = runtimeState.currentPrice;
+    const isConnected = runtimeState.walletConnected;
     const h = calculateHealthFactor(price);
-    const collateralVal = VAULT_CONSTANTS.collateralAmount * price;
+    const colAmt = VAULT_CONSTANTS.collateralAmount || 0;
+    const debt = VAULT_CONSTANTS.debtUsdc || 0;
+    const collateralVal = colAmt * price;
 
-    // 1. Text telemetry
+    // 1. Public market data (Always live)
     if (el.liveMarkPrice) el.liveMarkPrice.textContent = `$${price.toFixed(2)} USD`;
-    if (el.collateralUsdVal) el.collateralUsdVal.textContent = `$${collateralVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     if (el.clobMidPrice) el.clobMidPrice.textContent = `$${price.toFixed(2)}`;
 
-    // Dynamic Position amounts for Lite vs Pro
-    if (el.posCollateralAmount) {
-      const colAmt = VAULT_CONSTANTS.collateralAmount;
-      el.posCollateralAmount.innerHTML = `${colAmt < 1 ? colAmt.toFixed(2) : colAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">HYPE</span>`;
-    }
-    if (el.posDebtAmount) {
-      const debt = VAULT_CONSTANTS.debtUsdc;
-      el.posDebtAmount.innerHTML = `$${debt < 10 ? debt.toFixed(2) : debt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">USDC</span>`;
-    }
-    if (el.posLiqPrice) {
-      el.posLiqPrice.innerHTML = `$${VAULT_CONSTANTS.liquidationPrice.toFixed(2)} <span class="metric-unit">USD</span>`;
-    }
-
-    // Price change calculation
     const changePct = ((price - VAULT_CONSTANTS.basePrice) / VAULT_CONSTANTS.basePrice) * 100;
     if (el.markPriceChange) {
       el.markPriceChange.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}% (sim)`;
       el.markPriceChange.className = `stat-sub font-mono ${changePct < 0 ? 'text-danger' : 'text-accent'}`;
     }
 
-    // 2. Health Factor Gauges
-    const bufferUsd = (price - VAULT_CONSTANTS.liquidationPrice).toFixed(2);
-    const bufferPct = (((price - VAULT_CONSTANTS.liquidationPrice) / price) * 100).toFixed(1);
+    if (!isConnected) {
+      // --- DISCONNECTED EMPTY STATE ---
+      if (el.posCollateralAmount) el.posCollateralAmount.innerHTML = `-- <span class="metric-unit">HYPE</span>`;
+      if (el.collateralUsdVal) el.collateralUsdVal.textContent = `-- USD`;
+      if (el.posDebtAmount) el.posDebtAmount.innerHTML = `-- <span class="metric-unit">USDC</span>`;
+      if (el.posDebtSub) el.posDebtSub.textContent = 'Connect wallet';
+      if (el.posLiqPrice) el.posLiqPrice.innerHTML = `-- <span class="metric-unit">USD</span>`;
 
-    if (el.gaugeRatioText) {
-      el.gaugeRatioText.textContent = `H = ${h.toFixed(2)} (Buffer: $${bufferUsd} / +${bufferPct}% to Liquidation)`;
-    }
-    if (el.heroHealthValue) {
-      let pillClass = 'pill-accent';
-      let pillText = 'SAFE';
-      if (h <= 1.05) {
-        pillClass = 'pill-danger';
-        pillText = 'CRITICAL';
-      } else if (h <= 1.15) {
-        pillClass = 'pill-hedge';
-        pillText = 'ARMED';
+      if (el.gaugeRatioText) {
+        el.gaugeRatioText.textContent = 'Connect wallet to view live health factor';
       }
-      syncMetric(el.heroHealthValue, '.heroHealthValue-mirror', `${h.toFixed(2)} <span class="status-pill ${pillClass}">${pillText}</span>`, true);
-    }
-    if (el.heroLiquidationBuffer) {
-      syncMetric(el.heroLiquidationBuffer, '.heroLiquidationBuffer-mirror', `Distance to Liquidation: ${bufferPct >= 0 ? '+' : ''}${bufferPct}% ($${bufferUsd})`, false);
-    }
-
-    // Dynamic Radial SVG Gauge Needle Positioning
-    // Scale: H in [0.90, 1.80] mapped to rotation [-90deg, +90deg]
-    let deg = -90 + Math.min(Math.max((h - 0.90) / 0.90, 0), 1) * 180;
-    if (el.gaugeNeedleGroup) {
-      el.gaugeNeedleGroup.setAttribute('transform', `rotate(${deg.toFixed(1)}, 150, 145)`);
-    }
-    if (el.gaugeSvgReadout) {
-      el.gaugeSvgReadout.textContent = h.toFixed(2);
-    }
-
-    // Linear buffer bar track
-    // Mapping: H in [1.00, 1.60] to percentage [0%, 100%]
-    const trackPct = Math.min(Math.max(((h - 1.00) / 0.60) * 100, 2), 98);
-    if (el.gaugeMarker) {
-      el.gaugeMarker.style.left = `${trackPct.toFixed(1)}%`;
-    }
-    if (el.gaugeMarkerVal) {
-      el.gaugeMarkerVal.textContent = h.toFixed(2);
-    }
-
-    // 3. Active Hedge State Box
-    if (runtimeState.activeHedge.isOpen) {
-      const entry = runtimeState.activeHedge.entryPrice;
-      const size = runtimeState.activeHedge.size;
-      const unrlPnl = size * (entry - price);
-      runtimeState.activeHedge.unrealizedPnl = unrlPnl;
-
-      if (el.activeHedgeBox) el.activeHedgeBox.classList.add('hedged');
-      if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge text-hedge';
-      if (el.hedgeStatusText) el.hedgeStatusText.textContent = 'ACTIVE SHORT HEDGE (HYPERCORE CLOB)';
-      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = `${size < 1 ? size.toFixed(4) : size.toFixed(2)} HYPE Short`;
-      if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = `$${entry.toFixed(2)}`;
-      if (el.hedgePnlVal) {
-        el.hedgePnlVal.textContent = `${unrlPnl >= 0 ? '+' : ''}$${unrlPnl.toFixed(2)} USDC`;
-        el.hedgePnlVal.className = `val font-mono ${unrlPnl >= 0 ? 'text-accent' : 'text-danger'}`;
+      if (el.heroHealthValue) {
+        syncMetric(el.heroHealthValue, '.heroHealthValue-mirror', '-- <span class="status-pill">DISCONNECTED</span>', true);
       }
-      if (el.netDeltaVal) {
-        const netDelta = VAULT_CONSTANTS.collateralAmount - size;
-        el.netDeltaVal.textContent = `+${netDelta < 1 ? netDelta.toFixed(4) : netDelta.toFixed(0)} HYPE (Partially Hedged)`;
+      if (el.heroLiquidationBuffer) {
+        syncMetric(el.heroLiquidationBuffer, '.heroLiquidationBuffer-mirror', 'Awaiting wallet connection', false);
       }
       if (el.heroSentinelStatus) {
-        syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', `HEDGED <span class="status-pill pill-hedge">EXECUTED</span>`, true);
+        syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', 'STANDBY <span class="status-pill">OFFLINE</span>', true);
       }
-    } else {
+      if (el.heroTvlValue) {
+        syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', '-- <span class="metric-unit">HYPE</span>', true);
+      }
+      if (el.heroTvlSub) {
+        syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', 'Connect wallet to view', false);
+      }
+
+      // Needle at rest in neutral/disconnected position (-90deg)
+      if (el.gaugeNeedleGroup) {
+        el.gaugeNeedleGroup.setAttribute('transform', 'rotate(-90, 150, 145)');
+      }
+      if (el.gaugeSvgReadout) {
+        el.gaugeSvgReadout.textContent = '--';
+      }
+      if (el.gaugeMarker) {
+        el.gaugeMarker.style.left = '0%';
+      }
+      if (el.gaugeMarkerVal) {
+        el.gaugeMarkerVal.textContent = '--';
+      }
+
+      // Active Hedge Box - Disconnected
       if (el.activeHedgeBox) el.activeHedgeBox.classList.remove('hedged');
       if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge';
-      if (el.hedgeStatusText) {
-        el.hedgeStatusText.textContent = proConfig.manualOverrideActive
-          ? 'OVERRIDDEN — KEYS REVOKED (INV-3)'
-          : 'STANDBY — RISK MONITORED';
-      }
-      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = '0.00 HYPE Short';
+      if (el.hedgeStatusText) el.hedgeStatusText.textContent = 'STANDBY — WALLET DISCONNECTED';
+      if (el.hedgeMetaText) el.hedgeMetaText.textContent = 'Connect wallet to enable autonomous protection';
+      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = '0.00 HYPE';
       if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = '--';
       if (el.hedgePnlVal) {
-        el.hedgePnlVal.textContent = `$${runtimeState.activeHedge.realizedPnlTotal.toFixed(2)} USDC`;
+        el.hedgePnlVal.textContent = '--';
+        el.hedgePnlVal.className = 'val font-mono';
+      }
+      if (el.netDeltaVal) el.netDeltaVal.textContent = '--';
+
+    } else if (debt <= 0) {
+      // --- CONNECTED WITH ZERO DEBT (SAFE) ---
+      if (el.posCollateralAmount) {
+        el.posCollateralAmount.innerHTML = `${colAmt < 1 ? colAmt.toFixed(4) : colAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">HYPE</span>`;
+      }
+      if (el.collateralUsdVal) {
+        el.collateralUsdVal.textContent = `$${collateralVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+      }
+      if (el.posDebtAmount) {
+        el.posDebtAmount.innerHTML = `$0.00 <span class="metric-unit">USDC</span>`;
+      }
+      if (el.posDebtSub) {
+        el.posDebtSub.textContent = 'No Borrowed Debt';
+      }
+      if (el.posLiqPrice) {
+        el.posLiqPrice.innerHTML = `$0.00 <span class="metric-unit">USD</span>`;
+      }
+
+      if (el.gaugeRatioText) {
+        el.gaugeRatioText.textContent = 'H = SAFE (No active debt liability)';
+      }
+      if (el.heroHealthValue) {
+        syncMetric(el.heroHealthValue, '.heroHealthValue-mirror', 'SAFE <span class="status-pill pill-accent">NO DEBT</span>', true);
+      }
+      if (el.heroLiquidationBuffer) {
+        syncMetric(el.heroLiquidationBuffer, '.heroLiquidationBuffer-mirror', 'No Liquidation Risk (Zero Debt)', false);
+      }
+      if (el.heroSentinelStatus) {
+        syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', 'STANDBY <span class="status-pill pill-accent">READY</span>', true);
+      }
+      if (el.heroTvlValue) {
+        syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${colAmt.toFixed(4)} <span class="metric-unit">HYPE</span>`, true);
+      }
+      if (el.heroTvlSub) {
+        syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', colAmt > 0 ? 'Wallet Balance Available' : 'Faucet Claim Available', false);
+      }
+
+      // Needle resting in safe green zone (+45deg)
+      if (el.gaugeNeedleGroup) {
+        el.gaugeNeedleGroup.setAttribute('transform', 'rotate(45, 150, 145)');
+      }
+      if (el.gaugeSvgReadout) {
+        el.gaugeSvgReadout.textContent = 'SAFE';
+      }
+      if (el.gaugeMarker) {
+        el.gaugeMarker.style.left = '90%';
+      }
+      if (el.gaugeMarkerVal) {
+        el.gaugeMarkerVal.textContent = 'SAFE';
+      }
+
+      // Active Hedge Box - Zero Debt
+      if (el.activeHedgeBox) el.activeHedgeBox.classList.remove('hedged');
+      if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge';
+      if (el.hedgeStatusText) el.hedgeStatusText.textContent = 'STANDBY — ZERO BORROW EXPOSURE';
+      if (el.hedgeMetaText) el.hedgeMetaText.textContent = 'Vault ready for 1-click collateral protection';
+      if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = '0.00 HYPE';
+      if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = '--';
+      if (el.hedgePnlVal) {
+        el.hedgePnlVal.textContent = '$0.00 USDC';
         el.hedgePnlVal.className = 'val font-mono';
       }
       if (el.netDeltaVal) {
-        const unhedged = VAULT_CONSTANTS.collateralAmount;
-        el.netDeltaVal.textContent = `+${unhedged < 1 ? unhedged.toFixed(2) : '1,000'} HYPE (Unhedged)`;
+        el.netDeltaVal.textContent = `+${colAmt.toFixed(4)} HYPE (Unhedged)`;
       }
 
-      if (el.heroSentinelStatus) {
-        const sentinelHtml = proConfig.manualOverrideActive
-          ? `OVERRIDDEN <span class="status-pill pill-danger">REVOKED</span>`
-          : `ARMED <span class="status-pill pill-accent">ACTIVE</span>`;
-        syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', sentinelHtml, true);
+    } else {
+      // --- CONNECTED WITH ACTIVE ON-CHAIN DEBT ---
+      if (el.posCollateralAmount) {
+        el.posCollateralAmount.innerHTML = `${colAmt < 1 ? colAmt.toFixed(4) : colAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">HYPE</span>`;
+      }
+      if (el.collateralUsdVal) {
+        el.collateralUsdVal.textContent = `$${collateralVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+      }
+      if (el.posDebtAmount) {
+        el.posDebtAmount.innerHTML = `$${debt < 10 ? debt.toFixed(2) : debt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="metric-unit">USDC</span>`;
+      }
+      if (el.posDebtSub) {
+        el.posDebtSub.textContent = 'Active Debt Liability';
+      }
+      if (el.posLiqPrice) {
+        el.posLiqPrice.innerHTML = `$${VAULT_CONSTANTS.liquidationPrice.toFixed(2)} <span class="metric-unit">USD</span>`;
+      }
+
+      const bufferUsd = (price - VAULT_CONSTANTS.liquidationPrice).toFixed(2);
+      const bufferPct = (((price - VAULT_CONSTANTS.liquidationPrice) / price) * 100).toFixed(1);
+
+      if (el.gaugeRatioText) {
+        el.gaugeRatioText.textContent = `H = ${h.toFixed(2)} (Buffer: $${bufferUsd} / +${bufferPct}% to Liquidation)`;
+      }
+      if (el.heroHealthValue) {
+        let pillClass = 'pill-accent';
+        let pillText = 'SAFE';
+        if (h <= 1.05) {
+          pillClass = 'pill-danger';
+          pillText = 'CRITICAL';
+        } else if (h <= 1.15) {
+          pillClass = 'pill-hedge';
+          pillText = 'ARMED';
+        }
+        syncMetric(el.heroHealthValue, '.heroHealthValue-mirror', `${h.toFixed(2)} <span class="status-pill ${pillClass}">${pillText}</span>`, true);
+      }
+      if (el.heroLiquidationBuffer) {
+        syncMetric(el.heroLiquidationBuffer, '.heroLiquidationBuffer-mirror', `Distance to Liquidation: ${bufferPct >= 0 ? '+' : ''}${bufferPct}% ($${bufferUsd})`, false);
+      }
+      if (el.heroTvlValue) {
+        syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${colAmt.toFixed(4)} <span class="metric-unit">HYPE</span>`, true);
+      }
+      if (el.heroTvlSub) {
+        syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', 'Protected Collateral', false);
+      }
+
+      // Dynamic Radial SVG Gauge Needle Positioning
+      // Scale: H in [0.90, 1.80] mapped to rotation [-90deg, +90deg]
+      let deg = -90 + Math.min(Math.max((h - 0.90) / 0.90, 0), 1) * 180;
+      if (el.gaugeNeedleGroup) {
+        el.gaugeNeedleGroup.setAttribute('transform', `rotate(${deg.toFixed(1)}, 150, 145)`);
+      }
+      if (el.gaugeSvgReadout) {
+        el.gaugeSvgReadout.textContent = h.toFixed(2);
+      }
+
+      // Linear buffer bar track
+      const trackPct = Math.min(Math.max(((h - 1.00) / 0.60) * 100, 2), 98);
+      if (el.gaugeMarker) {
+        el.gaugeMarker.style.left = `${trackPct.toFixed(1)}%`;
+      }
+      if (el.gaugeMarkerVal) {
+        el.gaugeMarkerVal.textContent = h.toFixed(2);
+      }
+
+      // 3. Active Hedge State Box
+      if (runtimeState.activeHedge.isOpen) {
+        const entry = runtimeState.activeHedge.entryPrice;
+        const size = runtimeState.activeHedge.size;
+        const unrlPnl = size * (entry - price);
+        runtimeState.activeHedge.unrealizedPnl = unrlPnl;
+
+        if (el.activeHedgeBox) el.activeHedgeBox.classList.add('hedged');
+        if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge text-hedge';
+        if (el.hedgeStatusText) el.hedgeStatusText.textContent = 'ACTIVE SHORT HEDGE (HYPERCORE CLOB)';
+        if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = `${size < 1 ? size.toFixed(4) : size.toFixed(2)} HYPE Short`;
+        if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = `$${entry.toFixed(2)}`;
+        if (el.hedgePnlVal) {
+          el.hedgePnlVal.textContent = `${unrlPnl >= 0 ? '+' : ''}$${unrlPnl.toFixed(2)} USDC`;
+          el.hedgePnlVal.className = `val font-mono ${unrlPnl >= 0 ? 'text-accent' : 'text-danger'}`;
+        }
+        if (el.netDeltaVal) {
+          const netDelta = colAmt - size;
+          el.netDeltaVal.textContent = `+${netDelta < 1 ? netDelta.toFixed(4) : netDelta.toFixed(0)} HYPE (Partially Hedged)`;
+        }
+        if (el.heroSentinelStatus) {
+          syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', `HEDGED <span class="status-pill pill-hedge">EXECUTED</span>`, true);
+        }
+      } else {
+        if (el.activeHedgeBox) el.activeHedgeBox.classList.remove('hedged');
+        if (el.hedgeStatusBadge) el.hedgeStatusBadge.className = 'hedge-status-badge';
+        if (el.hedgeStatusText) {
+          el.hedgeStatusText.textContent = proConfig.manualOverrideActive
+            ? 'OVERRIDDEN — KEYS REVOKED (INV-3)'
+            : 'STANDBY — RISK MONITORED';
+        }
+        if (el.hedgeSizeVal) el.hedgeSizeVal.textContent = '0.00 HYPE Short';
+        if (el.hedgeEntryVal) el.hedgeEntryVal.textContent = '--';
+        if (el.hedgePnlVal) {
+          el.hedgePnlVal.textContent = `$${runtimeState.activeHedge.realizedPnlTotal.toFixed(2)} USDC`;
+          el.hedgePnlVal.className = 'val font-mono';
+        }
+        if (el.netDeltaVal) {
+          const unhedged = colAmt;
+          el.netDeltaVal.textContent = `+${unhedged < 1 ? unhedged.toFixed(2) : '1,000'} HYPE (Unhedged)`;
+        }
+
+        if (el.heroSentinelStatus) {
+          const sentinelHtml = proConfig.manualOverrideActive
+            ? `OVERRIDDEN <span class="status-pill pill-danger">REVOKED</span>`
+            : `ARMED <span class="status-pill pill-accent">ACTIVE</span>`;
+          syncMetric(el.heroSentinelStatus, '.heroSentinelStatus-mirror', sentinelHtml, true);
+        }
       }
     }
 
@@ -4487,32 +4737,50 @@
     localStorage.setItem('aegis-view-mode', mode);
 
     if (isLite) {
-      applyMicroAmount(liteState.selectedAmount, false);
       applyPreset(liteState.selectedPreset, false);
       if (el.heroTvlLabel) syncMetric(el.heroTvlLabel, '.heroTvlLabel-mirror', 'Protected Collateral (Micro)', false);
-      if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', 'Testnet Faucet Cap: 0.10 HYPE', false);
+      if (runtimeState.walletConnected) {
+        applyMicroAmount(liteState.selectedAmount, false);
+      } else {
+        VAULT_CONSTANTS.collateralAmount = 0.0;
+        VAULT_CONSTANTS.debtUsdc = 0.0;
+        VAULT_CONSTANTS.liquidationPrice = 0.0;
+        if (el.heroTvlValue) syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', '-- <span class="metric-unit">HYPE</span>', true);
+        if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', 'Connect wallet to view', false);
+      }
       logAudit('UI', 'Switched to Lite Auto-Pilot mode. 1-click risk shield active.', 'accent');
       showToast('Switched to Lite Auto-Pilot mode');
     } else {
-      const liveBal = (runtimeState.balances && runtimeState.balances.hype > 0) ? runtimeState.balances.hype : 0.10;
-      VAULT_CONSTANTS.collateralAmount = liveBal;
-      VAULT_CONSTANTS.debtUsdc = liveBal * runtimeState.currentPrice * 0.65;
-      VAULT_CONSTANTS.liquidationPrice = VAULT_CONSTANTS.debtUsdc / (liveBal * VAULT_CONSTANTS.liquidationThreshold);
-      if (el.heroTvlLabel) syncMetric(el.heroTvlLabel, '.heroTvlLabel-mirror', 'Protected Collateral (Elysium)', false);
-      if (el.heroTvlValue) syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${liveBal.toFixed(4)} <span class="metric-unit">HYPE</span>`, true);
-      if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', `Live Mark: $${runtimeState.currentPrice.toFixed(2)} | Faucet Synced`, false);
+      if (el.heroTvlLabel) syncMetric(el.heroTvlLabel, '.heroTvlLabel-mirror', 'Protected Collateral', false);
+      if (runtimeState.walletConnected) {
+        const liveBal = (runtimeState.balances && runtimeState.balances.hype > 0) ? runtimeState.balances.hype : 0.0;
+        VAULT_CONSTANTS.collateralAmount = liveBal;
+        if (el.heroTvlValue) syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${liveBal.toFixed(4)} <span class="metric-unit">HYPE</span>`, true);
+        if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', `Live Mark: $${runtimeState.currentPrice.toFixed(2)} | Faucet Synced`, false);
+      } else {
+        VAULT_CONSTANTS.collateralAmount = 0.0;
+        VAULT_CONSTANTS.debtUsdc = 0.0;
+        VAULT_CONSTANTS.liquidationPrice = 0.0;
+        if (el.heroTvlValue) syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', '-- <span class="metric-unit">HYPE</span>', true);
+        if (el.heroTvlSub) syncMetric(el.heroTvlSub, '.heroTvlSub-mirror', 'Connect wallet to view', false);
+      }
       logAudit('UI', 'Switched to Pro Terminal mode. Real-time Elysium L2 telemetry active.', 'accent');
       showToast('Switched to Pro Terminal mode');
     }
 
+    updateLiteTelemetryDisplay();
     updateUI();
   }
 
   function applyMicroAmount(amount, log = true) {
     liteState.selectedAmount = amount;
-    VAULT_CONSTANTS.collateralAmount = amount;
-    VAULT_CONSTANTS.debtUsdc = amount * 32.0;
-    VAULT_CONSTANTS.liquidationPrice = 40.0;
+    if (runtimeState.walletConnected) {
+      VAULT_CONSTANTS.collateralAmount = amount;
+      if (el.heroTvlValue) {
+        const usdVal = (amount * runtimeState.currentPrice).toFixed(2);
+        syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${amount.toFixed(2)} <span class="metric-unit">HYPE ($${usdVal})</span>`, true);
+      }
+    }
 
     const chips = document.querySelectorAll('.micro-chip-btn');
     chips.forEach(chip => {
@@ -4522,16 +4790,11 @@
       chip.setAttribute('aria-checked', isMatch ? 'true' : 'false');
     });
 
-    if (el.heroTvlValue) {
-      const usdVal = (amount * runtimeState.currentPrice).toFixed(2);
-      syncMetric(el.heroTvlValue, '.heroTvlValue-mirror', `${amount.toFixed(2)} <span class="metric-unit">HYPE ($${usdVal})</span>`, true);
-    }
-
     updateLiteTelemetryDisplay();
     updateUI();
 
-    if (log) {
-      logAudit('LITE', `Selected ${amount} HYPE testnet collateral. Borrow liability: $${(amount * 32).toFixed(2)} USDC.`, 'accent');
+    if (log && runtimeState.walletConnected) {
+      logAudit('LITE', `Selected ${amount} HYPE testnet collateral.`, 'accent');
       showToast(`Selected testnet collateral: ${amount} HYPE`);
     }
   }
@@ -4593,8 +4856,22 @@
       el.liteTriggerPriceDisplay.textContent = `$${proConfig.priceTrigger.toFixed(2)} USD (H = ${proConfig.healthTrigger.toFixed(2)})`;
     }
     if (el.liteHedgeSizeDisplay) {
-      const hedgeSize = VAULT_CONSTANTS.collateralAmount * proConfig.hedgeRatio;
+      const col = runtimeState.walletConnected ? (VAULT_CONSTANTS.collateralAmount || liteState.selectedAmount || 0.05) : (liteState.selectedAmount || 0.05);
+      const hedgeSize = col * proConfig.hedgeRatio;
       el.liteHedgeSizeDisplay.textContent = `${hedgeSize < 1 ? hedgeSize.toFixed(4) : hedgeSize.toFixed(2)} HYPE Short (${(proConfig.hedgeRatio * 100).toFixed(0)}%)`;
+    }
+    const btnText = el.liteActivateBtnText || document.getElementById('liteActivateBtnText');
+    if (btnText && !liteState.shieldActivated) {
+      if (!runtimeState.walletConnected) {
+        btnText.textContent = 'Connect Wallet to Activate Shield';
+      } else {
+        const liveHype = (runtimeState.balances && runtimeState.balances.hype) || 0;
+        if (liveHype === 0) {
+          btnText.textContent = 'Claim Faucet HYPE to Start';
+        } else {
+          btnText.textContent = 'Activate Auto-Pilot Shield';
+        }
+      }
     }
   }
 
@@ -4722,6 +4999,7 @@
   }
 
   function startLiveTicker() {
+    if (runtimeState.tickerInterval) return;
     runtimeState.tickerInterval = setInterval(() => {
       if (!runtimeState.liveTickerActive || runtimeState.simInterval !== null) {
         return;
@@ -4880,9 +5158,11 @@
 
     // 2. Initial verified contract & balance checks
     await checkContractDeployments();
-    await syncOnChainVaultPosition(ELYSIUM_CONFIG.defaultAccount);
+    if (runtimeState.walletConnected && runtimeState.walletAddress) {
+      await syncOnChainVaultPosition(runtimeState.walletAddress);
+      await fetchOnChainBalances(runtimeState.walletAddress);
+    }
     await checkOnChainFeeCollector();
-    await fetchOnChainBalances(ELYSIUM_CONFIG.defaultAccount);
 
     // 3. Start simulation ticker & external reference price feed
     startLiveTicker();

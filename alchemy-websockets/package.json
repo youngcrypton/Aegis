@@ -4,7 +4,7 @@
   "description": "Alchemy Smart WebSockets Demo on Elysium Testnet",
   "main": "demo-script.js",
   "scripts": {
-    "start": "node demo-script.js"
+    "start": "node init && node demo-script.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

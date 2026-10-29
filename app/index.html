@@ -323,21 +323,21 @@
           <div class="hero-metrics-track">
             <!-- Track Set A (Primary) -->
             <div class="metric-card" id="heroTvlCard">
-              <div class="metric-label" id="heroTvlLabel">Protected Collateral (Micro)</div>
-              <div class="metric-value font-mono" id="heroTvlValue">0.10 <span class="metric-unit">HYPE ($8.35)</span></div>
-              <div class="metric-sub text-accent" id="heroTvlSub">Testnet Faucet Cap: 0.10 HYPE</div>
+              <div class="metric-label" id="heroTvlLabel">Protected Collateral</div>
+              <div class="metric-value font-mono" id="heroTvlValue">-- <span class="metric-unit">HYPE</span></div>
+              <div class="metric-sub" id="heroTvlSub">Connect wallet to view</div>
             </div>
 
             <div class="metric-card">
               <div class="metric-label">Health Factor (H)</div>
-              <div class="metric-value font-mono text-accent" id="heroHealthValue">1.41 <span class="status-pill pill-accent">SAFE</span></div>
-              <div class="metric-sub" id="heroLiquidationBuffer">Distance to Liquidation: +21.3%</div>
+              <div class="metric-value font-mono" id="heroHealthValue">-- <span class="status-pill">DISCONNECTED</span></div>
+              <div class="metric-sub" id="heroLiquidationBuffer">Awaiting wallet connection</div>
             </div>
 
             <div class="metric-card">
               <div class="metric-label">Sentinel Defense Status</div>
-              <div class="metric-value font-mono text-accent" id="heroSentinelStatus">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
-              <div class="metric-sub" id="heroSentinelSub">Trigger: $44.20 / H &le; 1.10</div>
+              <div class="metric-value font-mono text-muted" id="heroSentinelStatus">STANDBY <span class="status-pill">OFFLINE</span></div>
+              <div class="metric-sub" id="heroSentinelSub">Connect wallet to activate</div>
             </div>
 
             <div class="metric-card">
@@ -354,21 +354,21 @@
 
             <!-- Track Set B (Mirrored for Continuous Seamless Loop) -->
             <div class="metric-card metric-card-mirror" aria-hidden="true">
-              <div class="metric-label heroTvlLabel-mirror">Protected Collateral (Micro)</div>
-              <div class="metric-value font-mono heroTvlValue-mirror">0.10 <span class="metric-unit">HYPE ($8.35)</span></div>
-              <div class="metric-sub text-accent heroTvlSub-mirror">Testnet Faucet Cap: 0.10 HYPE</div>
+              <div class="metric-label heroTvlLabel-mirror">Protected Collateral</div>
+              <div class="metric-value font-mono heroTvlValue-mirror">-- <span class="metric-unit">HYPE</span></div>
+              <div class="metric-sub heroTvlSub-mirror">Connect wallet to view</div>
             </div>
 
             <div class="metric-card metric-card-mirror" aria-hidden="true">
               <div class="metric-label">Health Factor (H)</div>
-              <div class="metric-value font-mono text-accent heroHealthValue-mirror">1.41 <span class="status-pill pill-accent">SAFE</span></div>
-              <div class="metric-sub heroLiquidationBuffer-mirror">Distance to Liquidation: +21.3%</div>
+              <div class="metric-value font-mono heroHealthValue-mirror">-- <span class="status-pill">DISCONNECTED</span></div>
+              <div class="metric-sub heroLiquidationBuffer-mirror">Awaiting wallet connection</div>
             </div>
 
             <div class="metric-card metric-card-mirror" aria-hidden="true">
               <div class="metric-label">Sentinel Defense Status</div>
-              <div class="metric-value font-mono text-accent heroSentinelStatus-mirror">ARMED <span class="status-pill pill-accent">ACTIVE</span></div>
-              <div class="metric-sub heroSentinelSub-mirror">Trigger: $44.20 / H &le; 1.10</div>
+              <div class="metric-value font-mono text-muted heroSentinelStatus-mirror">STANDBY <span class="status-pill">OFFLINE</span></div>
+              <div class="metric-sub heroSentinelSub-mirror">Connect wallet to activate</div>
             </div>
 
             <div class="metric-card metric-card-mirror" aria-hidden="true">
@@ -439,17 +439,17 @@
           <div class="position-stats-grid">
             <div class="stat-box">
               <span class="stat-name">Collateral Asset</span>
-              <span class="stat-val font-mono" id="posCollateralAmount">1,000.00 <span class="metric-unit">HYPE</span></span>
-              <span class="stat-sub font-mono" id="collateralUsdVal">$48,500.00 USD</span>
+              <span class="stat-val font-mono" id="posCollateralAmount">-- <span class="metric-unit">HYPE</span></span>
+              <span class="stat-sub font-mono" id="collateralUsdVal">-- USD</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Borrowed Debt</span>
-              <span class="stat-val font-mono" id="posDebtAmount">$32,000.00 <span class="metric-unit">USDC</span></span>
-              <span class="stat-sub" id="posDebtSub">Stable Liability</span>
+              <span class="stat-val font-mono" id="posDebtAmount">-- <span class="metric-unit">USDC</span></span>
+              <span class="stat-sub" id="posDebtSub">Connect wallet</span>
             </div>
             <div class="stat-box">
               <span class="stat-name">Liquidation Price</span>
-              <span class="stat-val font-mono text-danger" id="posLiqPrice">$40.00 <span class="metric-unit">USD</span></span>
+              <span class="stat-val font-mono text-danger" id="posLiqPrice">-- <span class="metric-unit">USD</span></span>
               <span class="stat-sub">80% Maintenance Line</span>
             </div>
             <div class="stat-box">
@@ -463,7 +463,7 @@
           <div class="health-gauge-section" id="gaugeCard" data-section="healthGaugeSection">
             <div class="gauge-header">
               <span>Dynamic Health Factor Gauge <span class="status-pill pill-hedge" style="font-size:10px; padding:1px 6px; margin-left:4px;">Simulated Model</span></span>
-              <span class="font-mono text-accent" id="gaugeRatioText">H = 1.41 (Buffer: $8.50 to Liquidation)</span>
+              <span class="font-mono text-accent" id="gaugeRatioText">Connect wallet to view live health factor</span>
             </div>
 
             <!-- Responsive SVG Radial Gauge -->
@@ -479,11 +479,11 @@
                 <path d="M 103.5 45.3 A 110 110 0 0 1 260 145" fill="none" stroke="var(--accent)" stroke-width="16" stroke-linecap="round"/>
 
                 <!-- Value Center Readout (Positioned Above Pivot to Prevent Any Overlap) -->
-                <text x="150" y="104" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="26" fill="var(--ink)" id="gaugeSvgReadout">1.41</text>
+                <text x="150" y="104" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="26" fill="var(--ink)" id="gaugeSvgReadout">--</text>
                 <text x="150" y="122" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" letter-spacing="1.5px" fill="var(--ink-2)">HEALTH FACTOR</text>
 
                 <!-- Gauge Pivot & Needle (Rotates Around 150, 145) -->
-                <g id="gaugeNeedleGroup" transform="rotate(55, 150, 145)" style="transition: transform 300ms ease;">
+                <g id="gaugeNeedleGroup" transform="rotate(-90, 150, 145)" style="transition: transform 300ms ease;">
                   <line x1="150" y1="145" x2="150" y2="44" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>
                   <circle cx="150" cy="145" r="7" fill="var(--ink)"/>
                   <circle cx="150" cy="145" r="3" fill="var(--raised)"/>
@@ -496,9 +496,9 @@
               <div class="gauge-zone zone-danger" style="width: 25%;"></div>
               <div class="gauge-zone zone-warning" style="width: 20%;"></div>
               <div class="gauge-zone zone-safe" style="width: 55%;"></div>
-              <div class="gauge-marker" id="gaugeMarker" style="left: 70%;">
+              <div class="gauge-marker" id="gaugeMarker" style="left: 0%;">
                 <div class="marker-pin"></div>
-                <div class="marker-label font-mono" id="gaugeMarkerVal">1.41</div>
+                <div class="marker-label font-mono" id="gaugeMarkerVal">--</div>
               </div>
             </div>
             <div class="gauge-labels font-mono">
@@ -514,10 +514,10 @@
             <div class="hedge-box-header">
               <div class="hedge-status-badge" id="hedgeStatusBadge">
                 <span class="status-dot"></span>
-                <span id="hedgeStatusText">STANDBY — RISK MONITORED</span>
+                <span id="hedgeStatusText">STANDBY — WALLET DISCONNECTED</span>
               </div>
               <div class="hedge-meta-wrap">
-                <span class="hedge-meta font-mono" id="hedgeMetaText">Hedge Ratio: 50% (500 HYPE Short)</span>
+                <span class="hedge-meta font-mono" id="hedgeMetaText">Connect wallet to enable autonomous protection</span>
                 <button class="btn-inline-sim" id="btnActiveHedgeSimTrigger" type="button" title="Open Autonomous Delta-Hedging Simulator">
                   View Simulator ↗
                 </button>
@@ -526,7 +526,7 @@
             <div class="hedge-details-grid">
               <div class="hedge-item">
                 <span class="lbl">Hedge Position</span>
-                <span class="val font-mono" id="hedgeSizeVal">0.00 HYPE Short</span>
+                <span class="val font-mono" id="hedgeSizeVal">0.00 HYPE</span>
               </div>
               <div class="hedge-item">
                 <span class="lbl">Entry Price</span>
@@ -534,11 +534,11 @@
               </div>
               <div class="hedge-item">
                 <span class="lbl">Floating Hedge PnL</span>
-                <span class="val font-mono" id="hedgePnlVal">$0.00 USDC</span>
+                <span class="val font-mono" id="hedgePnlVal">--</span>
               </div>
               <div class="hedge-item">
                 <span class="lbl">Net Portfolio Delta</span>
-                <span class="val font-mono" id="netDeltaVal">+1,000 HYPE (Unhedged)</span>
+                <span class="val font-mono" id="netDeltaVal">--</span>
               </div>
             </div>
           </div>
@@ -782,7 +782,7 @@
           <div class="lite-action-area">
             <button class="btn-primary lite-activate-btn" id="btnLiteActivateShield" type="button">
               <svg class="btn-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span id="liteActivateBtnText">Activate Auto-Pilot Shield</span>
+              <span id="liteActivateBtnText">Connect Wallet to Activate Shield</span>
             </button>
             <div class="lite-guarantee-note">
               <span>Atomic 1-Click Flow: Connects wallet &bull; Delegates ephemeral session key &bull; Commits AegisVault preset</span>
@@ -1344,8 +1344,9 @@
     <div class="wallet-section-label">RECOMMENDED / MOBILE & QR</div>
     <button class="wallet-featured-card" id="btnConnectWalletConnect" type="button">
       <div class="wallet-featured-icon wc-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5.5 8.5C9.09 5 14.91 5 18.5 8.5L19 9C19.2 9.2 19.2 9.5 19 9.7L17.3 11.4C17.2 11.5 17 11.5 16.9 11.4L16.2 10.7C13.88 8.38 10.12 8.38 7.8 10.7L7 11.5C6.9 11.6 6.7 11.6 6.6 11.5L4.9 9.8C4.7 9.6 4.7 9.3 4.9 9.1L5.5 8.5ZM21.5 11.5L23.1 13.1C23.3 13.3 23.3 13.6 23.1 13.8L17.5 19.4C17.3 19.6 17 19.6 16.8 19.4L12.7 15.3C12.65 15.25 12.55 15.25 12.5 15.3L8.4 19.4C8.2 19.6 7.9 19.6 7.7 19.4L2.1 13.8C1.9 13.6 1.9 13.3 2.1 13.1L3.7 11.5C3.9 11.3 4.2 11.3 4.4 11.5L8.5 15.6C8.55 15.65 8.65 15.65 8.7 15.6L12.8 11.5C13 11.3 13.3 11.3 13.5 11.5L17.6 15.6C17.65 15.65 17.75 15.65 17.8 15.6L21.9 11.5C22.1 11.3 22.4 11.3 22.6 11.5H21.5Z" fill="#3B99FC"/>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="6" fill="#3B99FC"/>
+          <path d="M8.38969 10.3739C11.4882 7.27538 16.5118 7.27538 19.6103 10.3739L19.9832 10.7468C20.1382 10.9017 20.1382 11.1529 19.9832 11.3078L18.7076 12.5835C18.6301 12.6609 18.5045 12.6609 18.4271 12.5835L17.9139 12.0703C15.7523 9.9087 12.2477 9.9087 10.0861 12.0703L9.53655 12.6198C9.45909 12.6973 9.3335 12.6973 9.25604 12.6198L7.98039 11.3442C7.82547 11.1893 7.82547 10.9381 7.98039 10.7832L8.38969 10.3739ZM22.2485 13.012L23.3838 14.1474C23.5387 14.3023 23.5387 14.5535 23.3838 14.7084L18.2645 19.8277C18.1096 19.9827 17.8584 19.9827 17.7035 19.8277C17.7035 19.8277 17.7035 19.8277 17.7035 19.8277L14.0702 16.1944C14.0314 16.1557 13.9686 16.1557 13.9299 16.1944C13.9299 16.1944 13.9299 16.1944 13.9299 16.1944L10.2966 19.8277C10.1417 19.9827 9.89053 19.9827 9.73561 19.8278C9.7356 19.8278 9.7356 19.8277 9.7356 19.8277L4.61619 14.7083C4.46127 14.5534 4.46127 14.3022 4.61619 14.1473L5.75152 13.012C5.90645 12.857 6.15763 12.857 6.31255 13.012L9.94595 16.6454C9.98468 16.6841 10.0475 16.6841 10.0862 16.6454C10.0862 16.6454 10.0862 16.6454 10.0862 16.6454L13.7194 13.012C13.8743 12.857 14.1255 12.857 14.2805 13.012C14.2805 13.012 14.2805 13.012 14.2805 13.012L17.9139 16.6454C17.9526 16.6841 18.0154 16.6841 18.0541 16.6454L21.6874 13.012C21.8424 12.8571 22.0936 12.8571 22.2485 13.012Z" fill="white"/>
         </svg>
       </div>
       <div class="wallet-featured-details">
@@ -1366,15 +1367,20 @@
       <!-- MetaMask -->
       <button class="wallet-grid-item" id="btnWalletMetaMask" data-wallet="metamask" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <path d="M29.07 4L17.63 12.57l2.13-5.07L29.07 4z" fill="#E2761B"/>
-            <path d="M2.93 4l11.33 8.64-2.02-5.14L2.93 4zM24.84 21.65l-2.92 4.48 5.76 1.59 1.65-5.96-4.49-.11zM1.68 21.76l1.64 5.96 5.77-1.59-2.93-4.48-4.48.11z" fill="#E4761B"/>
-            <path d="M9.06 14.17l-1.6 2.42 5.72.25-.19-6.19-3.93 3.52zM22.94 14.17l-3.97-3.57-.14 6.24 5.71-.25-1.6-2.42z" fill="#E4761B"/>
-            <path d="M9.16 26.13l3.75-1.83-3.23-2.52-.52 4.35zM19.09 24.3l3.75 1.83-.52-4.35-3.23 2.52z" fill="#D7C1B3"/>
-            <path d="M12.91 24.3l3.09-1.5 3.09 1.5-3.09 3.42-3.09-3.42z" fill="#233447"/>
-            <path d="M12.7 18.25l-2.6-1.66-3.83.17 5.51 5.37.92-3.88zM19.3 18.25l.92 3.88 5.51-5.37-3.83-.17-2.6 1.66z" fill="#CD6116"/>
-            <path d="M25.73 16.59l-5.51 5.37 2.62 2.06 5.8-1.6 1.09-5.71-4-.12zM6.27 16.59l-4 .12 1.09 5.71 5.8 1.6 2.62-2.06-5.51-5.37z" fill="#E4751F"/>
-            <path d="M16 12.8l3.11 3.96 3.83-.17-5.71-4.88-1.23 1.09zM16 12.8l-1.23-1.09-5.71 4.88 3.83.17L16 12.8z" fill="#F6851B"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28">
+            <path fill="#fff" d="M0 0h28v28H0z"/>
+            <g clip-path="url(#mmClipA)">
+              <path fill="#ff5c16" d="m24.024 23.824-4.846-1.434-3.655 2.172-2.55-.001-3.656-2.171-4.844 1.434L3 18.88l1.473-5.488L3 8.751 4.473 3l7.569 4.496h4.413L24.024 3l1.473 5.751-1.473 4.64 1.473 5.488z"/>
+              <path fill="#ff5c16" d="m4.474 3 7.57 4.499-.302 3.087zm4.844 15.881 3.33 2.522-3.33.987zm3.064-4.17-.64-4.123-4.097 2.804h-.002v.001l.013 2.886 1.661-1.567zM24.024 3l-7.57 4.499.3 3.087zM19.18 18.881l-3.33 2.522 3.33.987zm1.674-5.488v-.002zl-4.097-2.804-.64 4.124h3.064l1.662 1.567z"/>
+              <path fill="#e34807" d="m9.317 22.39-4.844 1.434L3 18.881h6.317zm3.064-7.68.925 5.962-1.282-3.315-4.37-1.078 1.662-1.568zm6.799 7.68 4.844 1.434 1.473-4.943H19.18zm-3.064-7.68-.925 5.962 1.282-3.315 4.37-1.078-1.663-1.568z"/>
+              <path fill="#ff8d5d" d="m3 18.88 1.473-5.489h3.169l.012 2.887 4.37 1.078 1.282 3.314-.659.73-3.33-2.522H3zm22.497 0-1.473-5.489h-3.17l-.01 2.887-4.371 1.078-1.282 3.314.659.73 3.33-2.522h6.317zM16.455 7.495h-4.413l-.3 3.087 1.565 10.084h1.884l1.565-10.084z"/>
+              <path fill="#661800" d="M4.473 3 3 8.751l1.473 4.64h3.169l4.1-2.805zm6.992 12.908H10.03l-.781.761 2.776.685-.56-1.447M24.024 3l1.473 5.751-1.473 4.64h-3.17l-4.098-2.805zm-6.99 12.908h1.437l.782.762-2.78.686.56-1.45zm-1.512 6.687.328-1.193-.66-.73h-1.885l-.659.73.327 1.192"/>
+              <path fill="#c0c4cd" d="M15.522 22.594v1.969h-2.548v-1.969z"/>
+              <path fill="#e7ebf6" d="m9.318 22.388 3.658 2.174v-1.969l-.328-1.192zm9.862 0-3.658 2.174v-1.969l.328-1.192z"/>
+            </g>
+            <defs>
+              <clipPath id="mmClipA"><path fill="#fff" d="M3 3h22.5v21.563H3z"/></clipPath>
+            </defs>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1389,12 +1395,9 @@
       <!-- OKX Wallet -->
       <button class="wallet-grid-item" id="btnWalletOkx" data-wallet="okx" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#000000"/>
-            <rect x="7" y="7" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
-            <rect x="18" y="7" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
-            <rect x="7" y="18" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
-            <rect x="18" y="18" width="7" height="7" rx="1.5" fill="#FFFFFF"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28">
+            <path fill="#000" d="M0 0h28v28H0z"/>
+            <path fill="#fff" fill-rule="evenodd" d="M10.819 5.556H5.93a.376.376 0 0 0-.375.375v4.888c0 .207.168.375.375.375h4.888a.376.376 0 0 0 .375-.376V5.932a.376.376 0 0 0-.376-.375Zm5.64 5.638h-4.886a.376.376 0 0 0-.376.376v4.887c0 .208.168.376.376.376h4.887a.376.376 0 0 0 .376-.375V11.57a.376.376 0 0 0-.376-.377Zm.75-5.638h4.887c.208 0 .376.168.376.375v4.888a.376.376 0 0 1-.376.375H17.21a.376.376 0 0 1-.376-.376V5.933c0-.208.169-.376.376-.376Zm-6.39 11.277H5.93a.376.376 0 0 0-.375.376v4.887c0 .208.168.376.375.376h4.888a.376.376 0 0 0 .375-.376V17.21a.376.376 0 0 0-.376-.376Zm6.39 0h4.887c.208 0 .376.169.376.376v4.887a.376.376 0 0 1-.376.376H17.21a.376.376 0 0 1-.376-.376V17.21c0-.207.169-.376.376-.376Z" clip-rule="evenodd"/>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1409,10 +1412,20 @@
       <!-- Trust Wallet -->
       <button class="wallet-grid-item" id="btnWalletTrust" data-wallet="trust" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#0500FF" fill-opacity="0.12"/>
-            <path d="M16 5L6 9.5V16C6 22.3 10.3 27.5 16 29C21.7 27.5 26 22.3 26 16V9.5L16 5Z" fill="#0500FF"/>
-            <path d="M16 7.5L8 11.2V16C8 20.8 11.2 25.1 16 26.6V7.5Z" fill="#FFFFFF"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28">
+            <path fill="#fff" d="M0 0h28v28H0z"/>
+            <path fill="#0500FF" d="M6 7.583 13.53 5v17.882C8.15 20.498 6 15.928 6 13.345V7.583Z"/>
+            <path fill="url(#twShieldGrad)" d="M22 7.583 13.53 5v17.882c6.05-2.384 8.47-6.954 8.47-9.537V7.583Z"/>
+            <defs>
+              <linearGradient id="twShieldGrad" x1="19.768" x2="14.072" y1="3.753" y2="22.853" gradientUnits="userSpaceOnUse">
+                <stop offset=".02" stop-color="#00F"/>
+                <stop offset=".08" stop-color="#0094FF"/>
+                <stop offset=".16" stop-color="#48FF91"/>
+                <stop offset=".42" stop-color="#0094FF"/>
+                <stop offset=".68" stop-color="#0038FF"/>
+                <stop offset=".9" stop-color="#0500FF"/>
+              </linearGradient>
+            </defs>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1427,10 +1440,9 @@
       <!-- Bitget Wallet -->
       <button class="wallet-grid-item" id="btnWalletBitget" data-wallet="bitget" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#005B94"/>
-            <path d="M7 16L16 7L25 16L16 25L7 16Z" fill="#00F0FF"/>
-            <path d="M12 16L16 12L20 16L16 20L12 16Z" fill="#001B3A"/>
+          <svg width="28" height="28" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="512" height="512" fill="#001F29"/>
+            <path d="M219.948 95.7022C201.623 95.6929 183.33 95.6835 164.941 95.7116C153.822 95.7116 149.651 109.671 157.921 117.939L283.098 243.117C287.004 246.69 289.441 250.574 289.53 255.693C289.441 260.812 287.004 264.696 283.098 268.269L157.921 393.446C149.651 401.715 153.822 415.674 164.941 415.674C183.33 415.702 201.623 415.693 219.948 415.683C229.122 415.679 238.305 415.674 247.511 415.674C259.555 415.674 266.72 409.24 273.154 402.805L386.047 289.912C395.057 280.902 403.119 268.939 403.009 255.693C403.119 242.447 395.057 230.484 386.047 221.474L273.154 108.58C266.72 102.146 259.555 95.7116 247.511 95.7116C238.305 95.7116 229.122 95.7069 219.948 95.7022Z" fill="#00F0FF"/>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1445,14 +1457,33 @@
       <!-- Rabby Wallet -->
       <button class="wallet-grid-item" id="btnWalletRabby" data-wallet="rabby" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#8697FF" fill-opacity="0.18"/>
-            <circle cx="16" cy="16" r="11" fill="#7084FF"/>
-            <path d="M11 19C11 16.5 13 14 16 14C19 14 21 16.5 21 19C21 21.5 19 23 16 23C13 23 11 21.5 11 19Z" fill="#FFFFFF"/>
-            <ellipse cx="14" cy="11.5" rx="1.8" ry="3.8" fill="#FFFFFF"/>
-            <ellipse cx="18" cy="11.5" rx="1.8" ry="3.8" fill="#FFFFFF"/>
-            <circle cx="14" cy="18" r="1" fill="#7084FF"/>
-            <circle cx="18" cy="18" r="1" fill="#7084FF"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28">
+            <g clip-path="url(#rabbyClip)">
+              <path fill="#8697FF" d="M28 0H0v28h28V0Z"/>
+              <path fill="url(#rbGradB)" d="M22.54 15.078c.677-1.514-2.673-5.744-5.874-7.506-2.017-1.365-4.12-1.178-4.545-.579-.935 1.316 3.094 2.43 5.788 3.731-.58.252-1.125.703-1.446 1.28-1.004-1.096-3.209-2.04-5.796-1.28-1.743.513-3.191 1.721-3.751 3.546a1.097 1.097 0 1 0-.445 2.1c.112 0 .463-.075.463-.075l5.612.041c-2.244 3.56-4.018 4.081-4.018 4.698s1.697.45 2.335.22c3.05-1.1 6.327-4.531 6.89-5.519 2.36.295 4.345.33 4.786-.657Z"/>
+              <path fill="url(#rbGradC)" fill-rule="evenodd" d="m17.885 10.713.025.01c.125-.049.105-.233.07-.378-.078-.333-1.438-1.676-2.715-2.277-1.743-.82-3.025-.777-3.212-.398.356.726 1.998 1.408 3.714 2.12.723.3 1.46.606 2.118.923Z" clip-rule="evenodd"/>
+              <path fill="url(#rbGradD)" fill-rule="evenodd" d="M15.701 18.036a10.296 10.296 0 0 0-1.2-.37c.482-.862.583-2.138.128-2.945-.639-1.133-1.44-1.736-3.304-1.736-1.024 0-3.783.346-3.832 2.648-.005.242 0 .464.017.667l5.036.037a17.264 17.264 0 0 1-1.871 2.483c.669.172 1.221.316 1.728.448.48.125.92.24 1.38.357a21.003 21.003 0 0 0 1.918-1.59Z" clip-rule="evenodd"/>
+              <path fill="url(#rbGradE)" d="M6.848 16.063c.206 1.75 1.2 2.435 3.232 2.638 2.032.203 3.197.067 4.749.208 1.296.118 2.453.778 2.882.55.386-.205.17-.947-.347-1.423-.67-.617-1.597-1.046-3.229-1.199.325-.89.234-2.138-.27-2.817-.731-.982-2.079-1.426-3.785-1.232-1.782.202-3.49 1.08-3.232 3.275Z"/>
+            </g>
+            <defs>
+              <linearGradient id="rbGradB" x1="10.464" x2="22.394" y1="13.737" y2="17.12" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fff"/>
+                <stop offset="1" stop-color="#fff"/>
+              </linearGradient>
+              <linearGradient id="rbGradC" x1="20.386" x2="11.779" y1="13.509" y2="4.879" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#7258DC"/>
+                <stop offset="1" stop-color="#797DEA" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="rbGradD" x1="15.94" x2="7.673" y1="18.337" y2="13.584" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#7461EA"/>
+                <stop offset="1" stop-color="#BFC2FF" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="rbGradE" x1="11.177" x2="16.765" y1="13.648" y2="20.749" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fff"/>
+                <stop offset=".984" stop-color="#D5CEFF"/>
+              </linearGradient>
+              <clipPath id="rabbyClip"><path fill="#fff" d="M0 0h28v28H0z"/></clipPath>
+            </defs>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1467,9 +1498,9 @@
       <!-- Coinbase Wallet -->
       <button class="wallet-grid-item" id="btnWalletCoinbase" data-wallet="coinbase" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#0052FF"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M16 6C10.477 6 6 10.477 6 16C6 21.523 10.477 26 16 26C21.523 26 26 21.523 26 16C26 10.477 21.523 6 16 6ZM12.5 13.5H19.5V18.5H12.5V13.5Z" fill="#FFFFFF"/>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" fill="#2C5FF6"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M14 23.8C19.4124 23.8 23.8 19.4124 23.8 14C23.8 8.58761 19.4124 4.2 14 4.2C8.58761 4.2 4.2 8.58761 4.2 14C4.2 19.4124 8.58761 23.8 14 23.8ZM11.55 10.8C11.1358 10.8 10.8 11.1358 10.8 11.55V16.45C10.8 16.8642 11.1358 17.2 11.55 17.2H16.45C16.8642 17.2 17.2 16.8642 17.2 16.45V11.55C17.2 11.1358 16.8642 10.8 16.45 10.8H11.55Z" fill="white"/>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1484,13 +1515,29 @@
       <!-- Rainbow Wallet -->
       <button class="wallet-grid-item" id="btnWalletRainbow" data-wallet="rainbow" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#001A72"/>
-            <path d="M7 23C7 16.925 11.925 12 18 12V8C9.716 8 3 14.716 3 23H7Z" fill="#FF4438"/>
-            <path d="M10 23C10 18.582 13.582 15 18 15V12C11.925 12 7 16.925 7 23H10Z" fill="#FF8A00"/>
-            <path d="M13 23C13 20.239 15.239 18 18 18V15C13.582 15 10 18.582 10 23H13Z" fill="#FFD600"/>
-            <path d="M16 23C16 21.895 16.895 21 18 21V18C15.239 18 13 20.239 13 23H16Z" fill="#00E599"/>
-            <circle cx="21" cy="21" r="4.5" fill="#0085FF"/>
+          <svg width="28" height="28" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="120" fill="url(#rbLinear0)"/>
+            <path d="M20 38H26C56.9279 38 82 63.0721 82 94V100H94C97.3137 100 100 97.3137 100 94C100 53.1309 66.8691 20 26 20C22.6863 20 20 22.6863 20 26V38Z" fill="url(#rbRadial1)"/>
+            <path d="M84 94H100C100 97.3137 97.3137 100 94 100H84V94Z" fill="url(#rbLinear2)"/>
+            <path d="M26 20L26 36H20L20 26C20 22.6863 22.6863 20 26 20Z" fill="url(#rbLinear3)"/>
+            <path d="M20 36H26C58.0325 36 84 61.9675 84 94V100H66V94C66 71.9086 48.0914 54 26 54H20V36Z" fill="url(#rbRadial4)"/>
+            <path d="M68 94H84V100H68V94Z" fill="url(#rbLinear5)"/>
+            <path d="M20 52L20 36L26 36L26 52H20Z" fill="url(#rbLinear6)"/>
+            <path d="M20 62C20 65.3137 22.6863 68 26 68C40.3594 68 52 79.6406 52 94C52 97.3137 54.6863 100 58 100H68V94C68 70.804 49.196 52 26 52H20V62Z" fill="url(#rbRadial7)"/>
+            <path d="M52 94H68V100H58C54.6863 100 52 97.3137 52 94Z" fill="url(#rbRadial8)"/>
+            <path d="M26 68C22.6863 68 20 65.3137 20 62L20 52L26 52L26 68Z" fill="url(#rbRadial9)"/>
+            <defs>
+              <linearGradient id="rbLinear0" x1="60" y1="0" x2="60" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#174299"/><stop offset="1" stop-color="#001E59"/></linearGradient>
+              <radialGradient id="rbRadial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(26 94) rotate(-90) scale(74)"><stop offset="0.770277" stop-color="#FF4000"/><stop offset="1" stop-color="#8754C9"/></radialGradient>
+              <linearGradient id="rbLinear2" x1="83" y1="97" x2="100" y2="97" gradientUnits="userSpaceOnUse"><stop stop-color="#FF4000"/><stop offset="1" stop-color="#8754C9"/></linearGradient>
+              <linearGradient id="rbLinear3" x1="23" y1="20" x2="23" y2="37" gradientUnits="userSpaceOnUse"><stop stop-color="#8754C9"/><stop offset="1" stop-color="#FF4000"/></linearGradient>
+              <radialGradient id="rbRadial4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(26 94) rotate(-90) scale(58)"><stop offset="0.723929" stop-color="#FFF700"/><stop offset="1" stop-color="#FF9901"/></radialGradient>
+              <linearGradient id="rbLinear5" x1="68" y1="97" x2="84" y2="97" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF700"/><stop offset="1" stop-color="#FF9901"/></linearGradient>
+              <linearGradient id="rbLinear6" x1="23" y1="52" x2="23" y2="36" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF700"/><stop offset="1" stop-color="#FF9901"/></linearGradient>
+              <radialGradient id="rbRadial7" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(26 94) rotate(-90) scale(42)"><stop offset="0.59513" stop-color="#00AAFF"/><stop offset="1" stop-color="#01DA40"/></radialGradient>
+              <radialGradient id="rbRadial8" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(51 97) scale(17 45.3333)"><stop stop-color="#00AAFF"/><stop offset="1" stop-color="#01DA40"/></radialGradient>
+              <radialGradient id="rbRadial9" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 69) rotate(-90) scale(17 322.37)"><stop stop-color="#00AAFF"/><stop offset="1" stop-color="#01DA40"/></radialGradient>
+            </defs>
           </svg>
         </div>
         <div class="wallet-grid-info">
@@ -1505,9 +1552,9 @@
       <!-- Zerion -->
       <button class="wallet-grid-item" id="btnWalletZerion" data-wallet="zerion" type="button">
         <div class="wallet-grid-icon">
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="6" fill="#2962FF"/>
-            <path d="M8 9H24L14 17H24V23H8L18 15H8V9Z" fill="#FFFFFF"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 28 28">
+            <path fill="#2962EF" d="M0 0h28v28H0z"/>
+            <path fill="#fff" d="M6.073 7c-.48 0-.665.593-.262.841l10.073 6.074a.577.577 0 0 0 .758-.139l4.43-5.814c.3-.404-.004-.962-.525-.962H6.073ZM21.904 21c.48 0 .67-.596.267-.844l-10.075-6.073a.569.569 0 0 0-.751.146l-4.437 5.813c-.301.404.012.958.534.958h14.462Z"/>
           </svg>
         </div>
         <div class="wallet-grid-info">
