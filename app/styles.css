@@ -126,7 +126,7 @@ h1, h2, h3, .display-font {
   gap: 8px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 2100;
   flex-wrap: nowrap;
 }
 
@@ -2267,7 +2267,7 @@ body.mode-lite .lite-telemetry-card {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 998;
+  z-index: 2500;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -2286,7 +2286,7 @@ body.mode-lite .lite-telemetry-card {
   width: min(340px, 88vw);
   background: var(--raised);
   border-right: 1px solid var(--rule);
-  z-index: 999;
+  z-index: 2501;
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 20px 18px;
@@ -2482,7 +2482,7 @@ body.mode-lite .lite-telemetry-card {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 998;
+  z-index: 3000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -2503,7 +2503,7 @@ body.mode-lite .lite-telemetry-card {
   border: 1px solid var(--rule);
   border-radius: 16px;
   padding: 22px;
-  z-index: 999;
+  z-index: 3001;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.24);
   opacity: 0;
   pointer-events: none;
@@ -2635,9 +2635,10 @@ body.mode-lite .lite-telemetry-card {
    Compliant with AEGIS Brand Kit (tokens.css) & AGENTS.md
    ========================================================================== */
 .wallet-select-modal {
-  width: min(520px, 94vw);
+  width: min(520px, calc(100vw - 32px));
   max-height: 90vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
 }
@@ -2665,6 +2666,11 @@ body.mode-lite .lite-telemetry-card {
 }
 
 .wallet-modal-alert.is-loading {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--ground));
+}
+
+.wallet-modal-alert.is-info {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, var(--ground));
 }
@@ -2777,6 +2783,17 @@ body.mode-lite .lite-telemetry-card {
   color: var(--accent);
 }
 
+.wallet-alert-btn.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+.wallet-alert-btn.primary:hover {
+  filter: brightness(1.08);
+  color: var(--on-accent);
+}
+
 /* Featured WalletConnect Hero Card */
 .wallet-featured-card {
   display: flex;
@@ -2856,8 +2873,37 @@ body.mode-lite .lite-telemetry-card {
 }
 
 @media (max-width: 480px) {
+  .wallet-select-modal,
+  .settings-modal {
+    width: min(520px, calc(100vw - 32px));
+    padding: 16px 14px 20px 14px;
+    max-height: 85vh;
+  }
+
+  .settings-close-btn,
+  .wallet-modal-close-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .wallet-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .wallet-grid-item {
+    padding: 11px 12px;
+  }
+
+  .wallet-featured-card {
+    padding: 12px 14px;
+  }
+
+  .wallet-select-footer {
+    padding-bottom: env(safe-area-inset-bottom, 12px);
   }
 }
 
@@ -2890,8 +2936,15 @@ body.mode-lite .lite-telemetry-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.wallet-grid-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .wallet-grid-info {
@@ -3996,7 +4049,7 @@ body.mode-lite .lite-telemetry-card {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 99990;
+  z-index: 2000;
   pointer-events: none;
   opacity: 0;
   transition: opacity 250ms ease;
@@ -4014,7 +4067,7 @@ body.mode-lite .lite-telemetry-card {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 99991;
+  z-index: 2001;
   pointer-events: auto;
 }
 
@@ -4040,7 +4093,7 @@ body.mode-lite .lite-telemetry-card {
   border-radius: 16px;
   box-shadow: 0 0 0 4px rgba(7, 112, 95, 0.20), 0 0 24px rgba(7, 112, 95, 0.35);
   pointer-events: none;
-  z-index: 99992;
+  z-index: 2002;
   transition: top 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
               left 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
               width 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -4061,7 +4114,7 @@ body.mode-lite .lite-telemetry-card {
   border-radius: 16px;
   box-shadow: 0 16px 40px rgba(22, 18, 48, 0.16);
   padding: 20px;
-  z-index: 99995;
+  z-index: 2005;
   color: var(--ink);
   font-family: var(--text);
   box-sizing: border-box;

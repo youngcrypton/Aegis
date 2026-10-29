@@ -502,12 +502,13 @@ contract AegisVaultTest is Test {
         MockHyperCorePrecompile(PRECOMPILE_0x0801).setMockPrice(PERP_INDEX, 38_00000000);
 
         // 4. Opening hedge 2 must now succeed!
+        // Note: limitPrice must respect maxSlippageBps (50 bps = 0.50%) against mark price ($38.00 -> min $37.81)
         bytes memory sigHedge2 = _signHedge(
             sessionKeyPrivateKey,
             borrower,
             PERP_INDEX,
             -75 ether,
-            37_50000000,
+            37_90000000,
             vault.vaultNonces(borrower),
             block.timestamp + 1 hours
         );
@@ -515,7 +516,7 @@ contract AegisVaultTest is Test {
             borrower,
             PERP_INDEX,
             -75 ether,
-            37_50000000,
+            37_90000000,
             block.timestamp + 1 hours,
             sigHedge2
         );
