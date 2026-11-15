@@ -21,9 +21,6 @@ GEMINI.md
 
 
 # Temporary push scripts & scratch
-branch_structure.json
-temp_auto_push.bat
-temp_interactive_push.bat
 scratch/
 capture/
 render.log
@@ -46,4 +43,3 @@ __pycache__/
 scripts/__pycache__/
 scripts/parse_ecosystem.py
 
-config.bat
